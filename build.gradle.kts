@@ -55,7 +55,6 @@ subprojects {
             user = System.getenv("BINTRAY_USER")
             key = System.getenv("BINTRAY_KEY")
             publish = true
-            dryRun = true
 
             setPublications(project.name)
 
@@ -67,7 +66,6 @@ subprojects {
                 websiteUrl = "https://http4k.org"
                 issueTrackerUrl = "https://github.com/http4k/http4k/issues"
                 vcsUrl = "https://github.com/http4k/http4k.git"
-                githubRepo = vcsUrl
                 setLicenses("Apache-2.0")
                 publicDownloadNumbers = true
 
