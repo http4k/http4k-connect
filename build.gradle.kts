@@ -23,6 +23,8 @@ allprojects {
         jcenter()
     }
 
+    kotlinProject()
+
     publishing {
         publications {
             create<MavenPublication>(project.name) {
