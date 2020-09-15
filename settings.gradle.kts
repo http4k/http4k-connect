@@ -8,8 +8,8 @@ fun includeSystem(system: String) {
         ":$projectName",
         ":$projectName-fake"
     )
-    project(":$projectName").projectDir = File("$system/$projectName")
-    project(":$projectName-fake").projectDir = File("$system/$projectName-fake")
+    project(":$projectName").projectDir = File("$system/client")
+    project(":$projectName-fake").projectDir = File("$system/fake")
 }
 
 fun includeSystem(owner: String, system: String) {
@@ -18,6 +18,6 @@ fun includeSystem(owner: String, system: String) {
         ":$projectName",
         ":$projectName-fake"
     )
-    project(":$projectName").projectDir = File("$owner/$system/$projectName")
-    project(":$projectName-fake").projectDir = File("$owner/$system/$projectName-fake")
+    project(":$projectName").projectDir = File("$owner/$system/client")
+    project(":$projectName-fake").projectDir = File("$owner/$system/fake")
 }
