@@ -22,6 +22,7 @@ import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.core.UriTemplate
 import org.http4k.core.body.form
 import org.http4k.core.then
+import org.http4k.filter.DEFAULT_USER_AGENT
 import org.http4k.filter.LogPageView
 import org.http4k.filter.ServerFilters
 import org.http4k.hamkrest.hasStatus
@@ -100,6 +101,7 @@ class GoogleAnalyticsTest {
 
     private fun assertPageView(title: String, path: String, host: String) {
         assertThat(testHttpClient.captured, equalTo(Request(POST, "/collect")
+            .header("User-Agent", DEFAULT_USER_AGENT)
             .form(VERSION, "1")
             .form(MEASUREMENT_ID, "TEST-MEASUREMENT-ID")
             .form(CLIENT_ID, "TEST-CLIENT-ID")
