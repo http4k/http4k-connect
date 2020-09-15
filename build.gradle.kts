@@ -88,9 +88,3 @@ subprojects {
         }
     }
 }
-
-dependencies {
-    subprojects.forEach {
-        archives(it)
-    }
-}
