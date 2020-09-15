@@ -7,7 +7,6 @@ import org.http4k.connect.google.GoogleAnalytics.Companion.CLIENT_ID
 import org.http4k.connect.google.GoogleAnalytics.Companion.DOCUMENT_HOST
 import org.http4k.connect.google.GoogleAnalytics.Companion.DOCUMENT_PATH
 import org.http4k.connect.google.GoogleAnalytics.Companion.DOCUMENT_TITLE
-import org.http4k.connect.google.GoogleAnalytics.Companion.LogPageView
 import org.http4k.connect.google.GoogleAnalytics.Companion.MEASUREMENT_ID
 import org.http4k.connect.google.GoogleAnalytics.Companion.VERSION
 import org.http4k.core.HttpHandler
@@ -23,6 +22,8 @@ import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.core.UriTemplate
 import org.http4k.core.body.form
 import org.http4k.core.then
+import org.http4k.filter.LogPageView
+import org.http4k.filter.ServerFilters
 import org.http4k.hamkrest.hasStatus
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.Test
@@ -30,7 +31,7 @@ import org.junit.jupiter.api.Test
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
     private val client = GoogleAnalytics.Http(testHttpClient, "TEST-MEASUREMENT-ID")
-    private val analytics = LogPageView(client) { "TEST-CLIENT-ID" }.then {
+    private val analytics = ServerFilters.LogPageView(client) { "TEST-CLIENT-ID" }.then {
         when {
             it.uri.path.contains("fail") -> Response(BAD_REQUEST)
             it.uri.path.contains("informational") -> Response(CONTINUE)
