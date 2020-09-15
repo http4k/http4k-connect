@@ -9,6 +9,6 @@ class FakeGoogleAnalyticsTest {
 
     @Test
     fun `can log page view`() {
-        analytics.pageView("SOME_CLIENT_ID", "title", "/doc/path", "www.http4k.org")
+        analytics.pageView("some-user-agent", "SOME_CLIENT_ID", "title", "/doc/path", "www.http4k.org")
     }
 }

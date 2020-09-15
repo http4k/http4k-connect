@@ -6,12 +6,13 @@ import org.http4k.core.Request
 import org.http4k.core.body.form
 
 interface GoogleAnalytics {
-    fun pageView(clientId: String, documentTitle: String, documentPath: String, documentHost: String)
+    fun pageView(userAgent: String, clientId: String, documentTitle: String, documentPath: String, documentHost: String)
 
     companion object {
         fun Http(analyticsHandler: HttpHandler, trackingId: String) = object : GoogleAnalytics {
-            override fun pageView(clientId: String, documentTitle: String, documentPath: String, documentHost: String) {
+            override fun pageView(userAgent: String, clientId: String, documentTitle: String, documentPath: String, documentHost: String) {
                 analyticsHandler(Request(POST, "/collect")
+                    .header("User-Agent", userAgent)
                     .form(VERSION, "1")
                     .form(MEASUREMENT_ID, trackingId)
                     .form(CLIENT_ID, clientId)
