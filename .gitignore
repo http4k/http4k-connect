@@ -1,0 +1,11 @@
+.idea/
+*.iml
+.gradle/
+build/
+.DS_Store
+classes/
+/site/
+out/
+store/
+intellij-settings/
+local.properties
