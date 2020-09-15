@@ -55,7 +55,6 @@ subprojects {
             user = System.getenv("BINTRAY_USER")
             key = System.getenv("BINTRAY_KEY")
             publish = true
-            dryRun = true
 
             setPublications(project.name)
 
