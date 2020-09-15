@@ -25,6 +25,11 @@ subprojects {
 
     kotlinProject()
 
+    val sourcesJar by tasks.creating(Jar::class) {
+        archiveClassifier.set("sources")
+        from(project.the<SourceSetContainer>()["main"].allSource)
+    }
+
     publishing {
         publications {
             create<MavenPublication>(project.name) {
@@ -48,6 +53,7 @@ subprojects {
                         appendNode("licenses").appendNode("license").appendNode("name", "Apache License, Version 2.0").parent().appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.html")
                     }
                 }
+                artifact(sourcesJar)
             }
         }
 
