@@ -1,12 +1,23 @@
 include("http4k-connect-bom")
 includeSystem("example")
-includeSystem("google")
+includeSystem("google", "analytics")
 
-fun includeSystem(name: String) {
+fun includeSystem(system: String) {
+    val projectName = "http4k-connect-$system"
     include(
-        ":http4k-connect-$name",
-        ":http4k-connect-$name-fake"
+        ":$projectName",
+        ":$projectName-fake"
     )
-    project(":http4k-connect-$name").projectDir = File("$name/http4k-connect-$name")
-    project(":http4k-connect-$name-fake").projectDir = File("$name/http4k-connect-$name-fake")
+    project(":$projectName").projectDir = File("$system/$projectName")
+    project(":$projectName-fake").projectDir = File("$system/$projectName-fake")
+}
+
+fun includeSystem(owner: String, system: String) {
+    val projectName = "http4k-connect-$owner-$system"
+    include(
+        ":$projectName",
+        ":$projectName-fake"
+    )
+    project(":$projectName").projectDir = File("$owner/$system/$projectName")
+    project(":$projectName-fake").projectDir = File("$owner/$system/$projectName-fake")
 }
