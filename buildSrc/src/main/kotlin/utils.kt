@@ -1,5 +1,7 @@
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.kotlin
 
 fun Project.kotlinProject() {
@@ -13,5 +15,9 @@ fun Project.kotlinProject() {
         "testImplementation"("org.http4k:http4k-testing-hamkrest")
         "testImplementation"("org.junit.jupiter:junit-jupiter-api")
         "testImplementation"("org.junit.jupiter:junit-jupiter-engine")
+    }
+
+    (tasks["test"] as Test).apply {
+        useJUnitPlatform()
     }
 }

@@ -3,11 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":example:http4k-connect-example"))
-}
-
-tasks {
-    test {
-        useJUnitPlatform()
-    }
+    implementation(project(":http4k-connect-example"))
 }

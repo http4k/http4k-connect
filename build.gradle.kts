@@ -14,8 +14,6 @@ subprojects {
         plugin("maven-publish")
     }
 
-    println(project.name)
-
     group = "org.http4k"
 
     version = if (project.hasProperty("releaseVersion")) project.property("releaseVersion")!!.toString() else "LOCAL"
