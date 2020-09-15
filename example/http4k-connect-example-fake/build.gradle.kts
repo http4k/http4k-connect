@@ -5,7 +5,7 @@ plugins {
 kotlinProject()
 
 dependencies {
-    implementation(project(":http4k-connect-example:client"))
+    implementation(project(":example:http4k-connect-example"))
 }
 
 tasks {
