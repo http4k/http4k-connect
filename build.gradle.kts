@@ -5,7 +5,7 @@ plugins {
     id("com.jfrog.bintray") version "1.8.4"
 }
 
-allprojects {
+subprojects {
     apply {
         plugin("java")
         plugin("org.jetbrains.kotlin.jvm")
@@ -13,6 +13,8 @@ allprojects {
         plugin("maven")
         plugin("maven-publish")
     }
+
+    println(project.name)
 
     group = "org.http4k"
 
