@@ -7,5 +7,13 @@ set -o nounset
 
 NEW_VERSION=$1
 
-git tag -a "$NEW_VERSION" -m "http4k-connect version $NEW_VERSION"
+git stash
+
+BINTRAY_VERSION=$(curl -s https://bintray.com/api/v1/packages/http4k/maven/http4k-connect-bom/versions/_latest | tools/jq -r .name)
+
+sed -i '' s/"$BINTRAY_VERSION"/"$NEW_VERSION"/g README.md
+
+git tag -a "$NEW_VERSION" -m "http4k-connect version $NEW_VERSION (was $BINTRAY_VERSION)"
 git push origin "$NEW_VERSION"
+
+git stash apply
