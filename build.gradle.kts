@@ -44,7 +44,7 @@ subprojects {
                             .appendNode("developer").appendNode("name", "David Denton").parent().appendNode("email", "david@http4k.org")
                             .parent().parent()
                             .appendNode("developer").appendNode("name", "Albert Latacz").parent().appendNode("email", "albert@http4k.org")
-                        appendNode("scm").appendNode("url", "git@github.com:http4k/http4k-connect.git").parent().appendNode("connection", "scm:git:git@github.com:http4k/http4k.git").parent().appendNode("developerConnection", "scm:git:git@github.com:http4k/http4k.git")
+                        appendNode("scm").appendNode("url", "git@github.com:http4k/http4k-connect.git").parent().appendNode("connection", "scm:git:git@github.com:http4k/http4k.git").parent().appendNode("developerConnection", "scm:git:git@github.com:http4k/http4k-connect.git")
                         appendNode("licenses").appendNode("license").appendNode("name", "Apache License, Version 2.0").parent().appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.html")
                     }
                 }
@@ -64,8 +64,8 @@ subprojects {
                 name = project.name
                 desc = description
                 websiteUrl = "https://http4k.org"
-                issueTrackerUrl = "https://github.com/http4k/http4k/issues"
-                vcsUrl = "https://github.com/http4k/http4k.git"
+                issueTrackerUrl = "https://github.com/http4k/http4k-connect/issues"
+                vcsUrl = "https://github.com/http4k/http4k-connect.git"
                 setLicenses("Apache-2.0")
                 publicDownloadNumbers = true
 
