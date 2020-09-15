@@ -2,8 +2,6 @@ plugins {
     kotlin("jvm")
 }
 
-kotlinProject()
-
 description = "Http4k Connect Bill Of Materials (BOM)"
 
 dependencies {
