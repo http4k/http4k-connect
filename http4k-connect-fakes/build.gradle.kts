@@ -4,7 +4,7 @@ plugins {
 
 kotlinProject()
 
-description = "Http4k Connect Bill Of Materials (BOM)"
+description = "Http4k Connect Fakes"
 
 dependencies {
     constraints {
