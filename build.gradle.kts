@@ -1,25 +1,22 @@
 plugins {
     base
+    kotlin("jvm") version "1.3.72" apply false
     `maven-publish`
     id("com.jfrog.bintray") version "1.8.4"
-    kotlin("jvm") version "1.3.72" apply false
 }
 
 allprojects {
+    apply {
+        plugin("java")
+        plugin("org.jetbrains.kotlin.jvm")
+        plugin("com.jfrog.bintray")
+        plugin("maven")
+        plugin("maven-publish")
+    }
+
     group = "org.http4k"
 
     version = if (project.hasProperty("releaseVersion")) project.property("releaseVersion")!!.toString() else "LOCAL"
-
-    dependencies {
-        "implementation"(kotlin("stdlib"))
-        "implementation"(platform("org.http4k:http4k-bom:3.260.0"))
-        "implementation"("org.http4k:http4k-core")
-
-        "testImplementation"(platform("org.junit:junit-bom:5.7.0"))
-        "testImplementation"("org.http4k:http4k-testing-hamkrest")
-        "testImplementation"("org.junit.jupiter:junit-jupiter-api")
-        "testImplementation"("org.junit.jupiter:junit-jupiter-engine")
-    }
 
     repositories {
         mavenCentral()
@@ -64,7 +61,6 @@ allprojects {
                 repo = "maven"
                 userOrg = "http4k"
                 name = project.name
-
                 desc = description
                 websiteUrl = "https://http4k.org"
                 issueTrackerUrl = "https://github.com/http4k/http4k/issues"
