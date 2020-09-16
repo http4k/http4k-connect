@@ -1,6 +1,7 @@
 package org.http4k.filter
 
-import org.http4k.connect.google.GoogleAnalytics
+import org.http4k.connect.google.analytics.ClientId
+import org.http4k.connect.google.analytics.GoogleAnalytics
 import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
@@ -11,7 +12,7 @@ import java.util.UUID
  * Log page view to Google Analytics
  */
 fun ServerFilters.LogPageView(analytics: GoogleAnalytics,
-                              clientId: (Request) -> String = { UUID.randomUUID().toString() }): Filter = object : Filter {
+                              clientId: (Request) -> ClientId = { ClientId(UUID.randomUUID().toString()) }): Filter = object : Filter {
     override fun invoke(handler: HttpHandler): HttpHandler = { request ->
         handler(request).also {
             if (it.status.successful || it.status.informational || it.status.redirection) {
