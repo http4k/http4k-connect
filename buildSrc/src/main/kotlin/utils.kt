@@ -21,3 +21,9 @@ fun Project.kotlinProject() {
         useJUnitPlatform()
     }
 }
+
+fun Project.fakeProject() {
+    dependencies {
+        "implementation"(project(":common"))
+    }
+}

@@ -25,9 +25,24 @@ subprojects {
 
     kotlinProject()
 
+    if(project.name.endsWith("fake")) {
+        fakeProject()
+    }
+
     val sourcesJar by tasks.creating(Jar::class) {
         archiveClassifier.set("sources")
         from(project.the<SourceSetContainer>()["main"].allSource)
+    }
+
+    val testJar by tasks.creating(Jar::class) {
+        archiveClassifier.set("sources")
+        from(project.the<SourceSetContainer>()["test"].allSource)
+    }
+
+    configurations.create("test-artifacts").extendsFrom(configurations.getByName("testRuntime"))
+
+    artifacts.apply {
+        add("test-artifacts", testJar)
     }
 
     publishing {

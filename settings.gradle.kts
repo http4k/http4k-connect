@@ -1,3 +1,4 @@
+include("common")
 include("http4k-connect-bom")
 includeSystem("example")
 includeSystem("google", "analytics")
