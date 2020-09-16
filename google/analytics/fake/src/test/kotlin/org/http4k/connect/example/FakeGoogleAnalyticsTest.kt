@@ -11,7 +11,6 @@ import org.http4k.connect.google.analytics.Http
 import org.http4k.connect.google.analytics.RemoteFailure
 import org.http4k.connect.google.analytics.TrackingId
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class FakeGoogleAnalyticsTest {
@@ -26,9 +25,8 @@ class FakeGoogleAnalyticsTest {
     }
 
     @Test
-    @Disabled
     fun `on error`() {
-//        http.misbehave()
+        http.returnStatus(INTERNAL_SERVER_ERROR)
         assertThat(
             analytics.pageView("some-user-agent", ClientId("SOME_CLIENT_ID"), "title", "/doc/path", "www.http4k.org"),
             equalTo(failure(RemoteFailure(INTERNAL_SERVER_ERROR))))
