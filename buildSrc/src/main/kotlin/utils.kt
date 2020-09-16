@@ -26,6 +26,6 @@ fun Project.kotlinProject() {
 
 fun Project.fakeProject() {
     dependencies {
-        "implementation"(project(":common"))
+        "api"(project(":common"))
     }
 }

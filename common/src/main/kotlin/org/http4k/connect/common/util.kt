@@ -1,5 +1,8 @@
-package org.http4k.connect.fake
+package org.http4k.connect.common
 
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Success
 import org.http4k.chaos.Behaviour
 import org.http4k.chaos.ChaosBehaviours.ReturnStatus
 import org.http4k.chaos.ChaosEngine
@@ -22,3 +25,6 @@ abstract class ChaosFake : HttpHandler {
         return chaosEngine.then(app).invoke(request)
     }
 }
+
+fun <T, E> success(r: T): Result<T, E> = Success(r)
+fun <T, E> failure(e: E): Result<T, E> = Failure(e)

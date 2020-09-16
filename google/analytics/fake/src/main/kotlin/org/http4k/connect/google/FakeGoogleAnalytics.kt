@@ -1,6 +1,6 @@
 package org.http4k.connect.google
 
-import org.http4k.connect.fake.ChaosFake
+import org.http4k.connect.common.ChaosFake
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
