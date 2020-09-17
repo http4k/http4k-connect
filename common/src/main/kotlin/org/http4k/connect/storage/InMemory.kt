@@ -19,5 +19,5 @@ fun <T> Storage.Companion.InMemory() = object : Storage<T> {
         return true
     }
 
-    override fun <T> keySet(prefix: String, decodeFunction: (String) -> T): Set<T> = byKey.keys.filter { it.startsWith(prefix) }.map { decodeFunction(it) }.toSet()
+    override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> = byKey.keys.filter { it.startsWith(keyPrefix) }.map { decodeFunction(it) }.toSet()
 }

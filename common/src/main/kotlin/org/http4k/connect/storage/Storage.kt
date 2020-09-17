@@ -6,7 +6,7 @@ interface Storage<T> {
     fun create(key: String, data: T): Boolean
     fun update(key: String, data: T): Boolean
     fun remove(key: String): Boolean
-    fun <T> keySet(prefix: String, decodeFunction: (String) -> T): Set<T>
+    fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T>
     fun removeAll(): Boolean
 
     companion object
