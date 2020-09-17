@@ -8,7 +8,6 @@ import org.http4k.hamkrest.hasStatus
 import org.junit.jupiter.api.Test
 
 abstract class FakeSystemContract(private val http: ChaosFake) {
-
     protected abstract val validRequest: Request
 
     @Test

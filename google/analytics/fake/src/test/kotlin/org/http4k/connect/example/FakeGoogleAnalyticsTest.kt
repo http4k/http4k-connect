@@ -20,4 +20,5 @@ class FakeGoogleAnalyticsTest : FakeSystemContract() {
             analytics.pageView("some-user-agent", ClientId("SOME_CLIENT_ID"), "title", "/doc/path", "www.http4k.org"),
             equalTo(success(Unit)))
     }
+}
 
