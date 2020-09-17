@@ -12,7 +12,7 @@ fun includeSystem(system: String) {
 fun includeSystem(owner: String, system: String) {
     val projectName = "http4k-connect-$owner-$system"
     includeWithName(projectName, "$owner/$system/client")
-    includeWithName("$projectName-fake", "$owner/$system/$owner/$system/client")
+    includeWithName("$projectName-fake", "$owner/$system/$owner/$system/fake")
 }
 
 fun includeWithName(projectName: String, file: String) {
