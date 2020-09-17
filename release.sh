@@ -16,4 +16,6 @@ sed -i '' s/"$BINTRAY_VERSION"/"$NEW_VERSION"/g README.md
 git tag -a "$NEW_VERSION" -m "http4k-connect version $NEW_VERSION (was $BINTRAY_VERSION)"
 git push origin "$NEW_VERSION"
 
+git push
+
 git stash apply

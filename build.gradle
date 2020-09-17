@@ -128,7 +128,7 @@ allprojects {
         publish = true
         pkg {
             repo = 'maven'
-            userOrg = "org.http4k"
+            userOrg = "http4k"
             name = project.name
 
             desc = description
