@@ -5,7 +5,7 @@ import io.lettuce.core.RedisURI
 import io.lettuce.core.SetArgs.Builder
 import io.lettuce.core.api.sync.RedisCommands
 import org.http4k.core.Uri
-import org.http4k.format.Jackson
+import org.http4k.format.AutoMarshalling
 import java.net.URI
 import java.util.concurrent.TimeUnit.HOURS
 
@@ -37,5 +37,5 @@ fun <T> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Stor
         redis.keys("$keyPrefix*").map { decodeFunction(it) }.toSet()
 }
 
-inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri) =
-    Redis(create(RedisURI.create(URI(uri.toString()))).connect(AutoCodec<T>(Jackson)).sync())
+inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, autoMarshalling: AutoMarshalling) =
+    Redis(create(RedisURI.create(URI(uri.toString()))).connect(AutoCodec<T>(autoMarshalling)).sync())
