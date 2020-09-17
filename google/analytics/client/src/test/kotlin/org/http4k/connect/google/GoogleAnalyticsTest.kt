@@ -3,12 +3,16 @@ package org.http4k.connect.google
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.google.GoogleAnalytics.Companion.CLIENT_ID
-import org.http4k.connect.google.GoogleAnalytics.Companion.DOCUMENT_HOST
-import org.http4k.connect.google.GoogleAnalytics.Companion.DOCUMENT_PATH
-import org.http4k.connect.google.GoogleAnalytics.Companion.DOCUMENT_TITLE
-import org.http4k.connect.google.GoogleAnalytics.Companion.MEASUREMENT_ID
-import org.http4k.connect.google.GoogleAnalytics.Companion.VERSION
+import org.http4k.connect.google.analytics.CLIENT_ID
+import org.http4k.connect.google.analytics.ClientId
+import org.http4k.connect.google.analytics.DOCUMENT_HOST
+import org.http4k.connect.google.analytics.DOCUMENT_PATH
+import org.http4k.connect.google.analytics.DOCUMENT_TITLE
+import org.http4k.connect.google.analytics.GoogleAnalytics
+import org.http4k.connect.google.analytics.Http
+import org.http4k.connect.google.analytics.MEASUREMENT_ID
+import org.http4k.connect.google.analytics.TrackingId
+import org.http4k.connect.google.analytics.VERSION
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
@@ -31,8 +35,8 @@ import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalytics.Http(testHttpClient, "TEST-MEASUREMENT-ID")
-    private val analytics = ServerFilters.LogPageView(client) { "TEST-CLIENT-ID" }.then {
+    private val client = GoogleAnalytics.Http(testHttpClient, TrackingId("TEST-MEASUREMENT-ID"))
+    private val analytics = ServerFilters.LogPageView(client) { ClientId("TEST-CLIENT-ID") }.then {
         when {
             it.uri.path.contains("fail") -> Response(BAD_REQUEST)
             it.uri.path.contains("informational") -> Response(CONTINUE)

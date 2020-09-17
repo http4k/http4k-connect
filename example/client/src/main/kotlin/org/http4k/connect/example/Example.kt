@@ -1,16 +1,12 @@
 package org.http4k.connect.example
 
-import org.http4k.core.HttpHandler
-import org.http4k.core.Method
-import org.http4k.core.Request
+import dev.forkhandles.result4k.Result
+import org.http4k.core.Status
+
+data class RemoteFailure(val status: Status)
 
 interface Example {
-    fun echo(input: String): String
+    fun echo(input: String): Result<String, RemoteFailure>
 
-    companion object {
-        fun Http(httpHandler: HttpHandler) = object : Example {
-            override fun echo(input: String) = httpHandler(Request(Method.GET, "echo").body(input)).bodyString()
-        }
-    }
+    companion object
 }
-
