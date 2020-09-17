@@ -1,5 +1,8 @@
 includeWithName("http4k-connect-common", "common")
-include("http4k-connect-bom")
+includeWithName("http4k-connect-bom", "bom")
+includeWithName("http4k-connect-storage-redis", "storage/redis")
+
+includeSystem("amazon", "s3")
 includeSystem("example")
 includeSystem("google", "analytics")
 
