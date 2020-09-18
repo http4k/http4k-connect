@@ -12,7 +12,9 @@ import java.util.concurrent.TimeUnit.HOURS
 fun <T> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Storage<T> {
     private val lifetime = HOURS.toSeconds(1)
 
-    override fun get(key: String): T? = redis.get(key)
+    override fun get(key: String): T? {
+        return redis.get(key)
+    }
 
     override fun set(key: String, data: T) {
         redis.set(key, data, Builder.ex(lifetime))
@@ -29,7 +31,11 @@ fun <T> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Stor
     override fun remove(key: String): Boolean = redis.del(key) == 1L
 
     override fun removeAll(keyPrefix: String): Boolean {
-        if(keyPrefix.isEmpty()) redis.del(*redis.keys("$keyPrefix.*").toTypedArray()) else redis.flushall()
+        if (keyPrefix.isEmpty()) {
+            val keys = redis.keys("$keyPrefix.*")
+            if (keys.isNotEmpty()) redis.del(*keys.toTypedArray())
+        } else redis.flushall()
+
         return true
     }
 

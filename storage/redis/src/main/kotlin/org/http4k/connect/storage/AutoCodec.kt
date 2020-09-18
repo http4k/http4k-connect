@@ -14,5 +14,3 @@ inline fun <reified T : Any> AutoCodec(autoMarshalling: AutoMarshalling) = objec
 
     override fun encodeValue(value: T): ByteBuffer = ByteBuffer.wrap(autoMarshalling.asFormatString(value).toByteArray())
 }
-
-

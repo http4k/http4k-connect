@@ -41,7 +41,7 @@ allprojects {
         testImplementation "org.junit.jupiter:junit-jupiter-engine"
     }
 
-    if(project.name.endsWith("fake")) {
+    if (project.name.endsWith("fake") || project.name.startsWith("http4k-connect-storage")) {
         dependencies {
             implementation project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
