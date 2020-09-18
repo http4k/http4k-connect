@@ -6,10 +6,18 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class StorageContract(private val storage: Storage<String>) {
+    private val prefix = UUID.randomUUID().toString()
+
+    @BeforeEach
+    fun clear() {
+        storage.removeAll(prefix)
+    }
+
     @Test
     fun `item lifecycle`() {
         val key = UUID.randomUUID().toString()
@@ -41,13 +49,13 @@ abstract class StorageContract(private val storage: Storage<String>) {
     fun `collection operations`() {
         val key1 = UUID.randomUUID().toString()
         val key2 = UUID.randomUUID().toString()
-        assertTrue(storage.removeAll())
+        assertTrue(storage.removeAll(prefix))
 
         storage[key1] = UUID.randomUUID().toString()
         storage[key2] = UUID.randomUUID().toString()
 
         assertThat(storage.keySet("") { it + it }, equalTo(setOf(key1 + key1, key2 + key2)))
-        assertTrue(storage.removeAll())
+        assertTrue(storage.removeAll(prefix))
     }
 }
 
