@@ -193,6 +193,10 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     }
 }
 
+dependencies {
+    implementation "org.http4k:http4k-format-jackson"
+}
+
 sourceSets {
     test {
         kotlin {
