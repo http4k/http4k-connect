@@ -9,3 +9,4 @@ out/
 store/
 intellij-settings/
 local.properties
+**/scratch.kt
