@@ -43,8 +43,8 @@ allprojects {
 
     if(project.name.endsWith("fake")) {
         dependencies {
-            implementation project(":http4k-connect-common")
-            testImplementation project(path: ":http4k-connect-common", configuration: 'testArtifacts')
+            implementation project(":http4k-connect-core")
+            testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
         }
     }
 

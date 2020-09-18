@@ -1,4 +1,4 @@
-includeWithName("http4k-connect-common", "common")
+includeWithName("http4k-connect-core", "core")
 includeWithName("http4k-connect-bom", "bom")
 includeWithName("http4k-connect-storage-redis", "storage/redis")
 
