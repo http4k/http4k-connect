@@ -2,7 +2,6 @@ package org.http4k.connect.example
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.FakeSystemContract
 import org.http4k.connect.common.success
 import org.http4k.connect.google.FakeGoogleAnalytics
 import org.http4k.connect.google.analytics.ClientId

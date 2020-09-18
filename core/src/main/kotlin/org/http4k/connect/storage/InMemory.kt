@@ -14,10 +14,13 @@ fun <T> Storage.Companion.InMemory() = object : Storage<T> {
     override fun update(key: String, data: T) = byKey[key] != null && byKey.put(key, data) != null
 
     override fun remove(key: String) = byKey.remove(key) != null
-    override fun removeAll(): Boolean {
-        byKey.clear()
+
+    override fun removeAll(keyPrefix: String): Boolean {
+        byKey.keys().iterator().forEach { if (it.startsWith(keyPrefix)) remove(it) }
         return true
     }
 
     override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> = byKey.keys.filter { it.startsWith(keyPrefix) }.map { decodeFunction(it) }.toSet()
 }
+
+fun <T> StorageProvider.Companion.InMemory() = StorageProvider(Storage.InMemory<T>())

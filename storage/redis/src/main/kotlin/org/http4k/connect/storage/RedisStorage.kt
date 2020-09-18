@@ -28,8 +28,8 @@ fun <T> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Stor
 
     override fun remove(key: String): Boolean = redis.del(key) == 1L
 
-    override fun removeAll(): Boolean {
-        redis.flushall()
+    override fun removeAll(keyPrefix: String): Boolean {
+        if(keyPrefix.isEmpty()) redis.del(*redis.keys("$keyPrefix.*").toTypedArray()) else redis.flushall()
         return true
     }
 
