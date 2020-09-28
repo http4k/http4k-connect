@@ -13,6 +13,8 @@ BINTRAY_VERSION=$(curl -s https://bintray.com/api/v1/packages/http4k/maven/http4
 
 sed -i '' s/"$BINTRAY_VERSION"/"$NEW_VERSION"/g README.md
 
+git add README.md
+git commit -am"upgrade"
 git tag -a "$NEW_VERSION" -m "http4k-connect version $NEW_VERSION (was $BINTRAY_VERSION)"
 git push origin "$NEW_VERSION"
 

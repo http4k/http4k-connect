@@ -10,7 +10,7 @@ To install:
 
 ```groovy
 dependencies {
-    implementation platform("org.http4k:http4k-connect-bom:0.5.0.0")
+    implementation platform("org.http4k:http4k-connect-bom:0.6.0.0")
     implementation "org.http4k:http4k-connect-google-analytics"
     implementation "org.http4k:http4k-connect-google-analytics-fake"
 }
