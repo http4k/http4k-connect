@@ -6,7 +6,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status
 
 class CapturingHttpHandler : HttpHandler {
-    lateinit var captured: Request
+    var captured: Request? = null
     var response: Response = Response(Status.OK)
 
     override fun invoke(request: Request): Response {

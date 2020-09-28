@@ -1,4 +1,4 @@
-package org.http4k.connect.example
+package org.http4k.connect.google.analytics
 
 import org.http4k.connect.FakeSystemContract
 import org.http4k.connect.google.FakeGoogleAnalytics

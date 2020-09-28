@@ -1,4 +1,4 @@
-package org.http4k.connect.example
+package org.http4k.connect.google.analytics
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
