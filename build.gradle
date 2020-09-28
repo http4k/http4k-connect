@@ -46,6 +46,10 @@ allprojects {
             implementation project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
         }
+    } else {
+        dependencies {
+            testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
+        }
     }
 
     jacoco {
