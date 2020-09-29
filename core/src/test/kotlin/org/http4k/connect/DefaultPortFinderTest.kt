@@ -12,10 +12,10 @@ class FakeSystem2 : ChaosFake() {
     override val app = TODO()
 }
 
-class DefaultPortFinder {
+class DefaultPortFinderTest {
     @Test
     fun `find default port numbers`() {
-        assertThat(FakeSystem1::class.defaultPort(), equalTo(55055))
-        assertThat(FakeSystem2::class.defaultPort(), equalTo(56828))
+        assertThat(FakeSystem1::class.defaultPort(), equalTo(59155))
+        assertThat(FakeSystem2::class.defaultPort(), equalTo(25393))
     }
 }
