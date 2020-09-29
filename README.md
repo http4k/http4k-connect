@@ -16,6 +16,7 @@ dependencies {
 }
 ```
 
-Currently supported APIs:
+Currently supported APIs and Fakes:
 
-- Google Analytics - default port: 30000
+- Amazon S3 - default port: 26467
+- Google Analytics - default port: 35628
