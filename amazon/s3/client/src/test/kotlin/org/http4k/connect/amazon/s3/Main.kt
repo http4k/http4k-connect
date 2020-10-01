@@ -6,12 +6,8 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.cloudnative.env.fromConfigFile
-import org.http4k.core.Method
-import org.http4k.core.Request
 import org.http4k.core.Uri
 import org.http4k.core.then
-import org.http4k.filter.AwsAuth
-import org.http4k.filter.ClientFilters
 import org.http4k.filter.DebuggingFilters
 import org.http4k.lens.composite
 import java.io.File
@@ -29,13 +25,11 @@ fun main() {
     val region = EnvironmentKey.required("default-region")(env)
     val scope = AwsCredentialScope(region, "s3")
 
-    val http = ClientFilters.AwsAuth(scope, credentials).then(DebuggingFilters.PrintRequestAndResponse()).then(JavaHttpClient())
+    val baseHttp = DebuggingFilters.PrintRequestAndResponse().then(JavaHttpClient())
 
-    val message = http(Request(Method.GET, Uri.of("https://s3.$region.amazonaws.com/"))).bodyString()
-
-    val d = documentBuilderFactory.parse(message.byteInputStream())
-
-    println(d.documentElement.getElementsByTagName("Name").length)
+    val s3 = S3.Http(Uri.of("https://s3.$region.amazonaws.com"), baseHttp, scope, { credentials } )
+    s3.create(BucketName("foobar"))
+    println(s3.buckets())
 }
 
 

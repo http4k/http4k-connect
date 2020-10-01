@@ -12,6 +12,7 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
@@ -22,76 +23,99 @@ import java.io.StringReader
 import java.time.Clock
 import javax.xml.parsers.DocumentBuilderFactory
 
-fun S3.Companion.Http(http: HttpHandler,
+fun S3.Companion.Http(uri: Uri,
+                      rawHttp: HttpHandler,
                       scope: AwsCredentialScope,
                       credentialsProvider: () -> AwsCredentials,
                       clock: Clock = Clock.systemDefaultZone(),
-                      payloadMode: Payload.Mode = Payload.Mode.Signed
-) = S3.Http(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode).then(http))
+                      payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3 {
+    private val http =
+        ClientFilters.SetBaseUriFrom(uri)
+            .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
+            .then(rawHttp)
 
-fun S3.Companion.Http(http: HttpHandler) = object : S3 {
     override fun buckets(): Result<Iterable<BucketName>, RemoteFailure> {
-        val response = http(Request(GET, "/"))
-        val buckets = documentBuilderFactory
-            .parse(response.body.stream)
-            .getElementsByTagName("Name")
+        val request = Request(GET, "/")
+        val response = http(request)
 
-        return when {
-            response.status.successful -> Success(
-                (0..buckets.length)
-                    .map { BucketName(buckets.item(it).textContent) }
-            )
-            else -> Failure(RemoteFailure(response.status))
+        return with(response) {
+            when {
+                status.successful -> {
+                    val buckets = documentBuilderFactory.parse(body.stream).getElementsByTagName("Name")
+                    Success((0 until buckets.length).map { BucketName(buckets.item(it).textContent) })
+                }
+                else -> Failure(RemoteFailure(request.uri, status))
+            }
         }
     }
 
     override fun create(bucketName: BucketName): Result<Unit, RemoteFailure> {
-        TODO("Not yet implemented")
-    }
+        val request = Request(PUT, "/$bucketName")
+        val response = http(request)
 
-    override fun delete(bucketName: BucketName): Result<Unit, RemoteFailure> {
-        TODO("Not yet implemented")
-    }
-}
-
-fun S3.Bucket.Companion.Http(http: HttpHandler,
-                             scope: AwsCredentialScope,
-                             credentialsProvider: () -> AwsCredentials,
-                             clock: Clock = Clock.systemDefaultZone(),
-                             payloadMode: Payload.Mode = Payload.Mode.Signed
-) = ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode).then(http)
-
-fun S3.Bucket.Companion.Http(http: HttpHandler) = object : S3.Bucket {
-    override fun create() = Request(PUT, "").call()
-    override fun delete() = Request(DELETE, "").call()
-    override fun delete(key: BucketKey) = key.url(DELETE).call()
-    override fun set(key: BucketKey, content: InputStream) = key.url(PUT).body(content).call()
-
-    override fun delete(keys: Iterable<BucketKey>): Result<Unit, RemoteFailure> {
-        TODO("Not yet implemented")
-    }
-
-    override fun get(key: BucketKey) = with(http(key.url(GET))) {
-        when {
-            status.successful -> Success(body.stream)
-            status == NOT_FOUND -> Success(null)
-            else -> Failure(RemoteFailure(status))
+        return with(response) {
+            when {
+                status.successful -> Success(Unit)
+                else -> Failure(RemoteFailure(request.uri, status))
+            }
         }
     }
 
-    override fun list(): Result<BucketKey, RemoteFailure> {
-        TODO("Not yet implemented")
+    override fun delete(bucketName: BucketName): Result<Unit, RemoteFailure> {
+        val request = Request(DELETE, "/$bucketName")
+        val response = http(request)
+
+        return with(response) {
+            when {
+                status.successful -> Success(Unit)
+                else -> Failure(RemoteFailure(request.uri, status))
+            }
+        }
+    }
+}
+
+fun S3.Bucket.Companion.Http(uri: Uri,
+                             rawHttp: HttpHandler,
+                             scope: AwsCredentialScope,
+                             credentialsProvider: () -> AwsCredentials,
+                             clock: Clock = Clock.systemDefaultZone(),
+                             payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
+    private val http =
+        ClientFilters.SetBaseUriFrom(uri)
+            .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
+            .then(rawHttp)
+
+    override fun delete(key: BucketKey) = key.request(DELETE).call()
+    override fun set(key: BucketKey, content: InputStream) = key.request(PUT).body(content).call()
+
+    override fun get(key: BucketKey) = with(http(key.request(GET))) {
+        when {
+            status.successful -> Success(body.stream)
+            status == NOT_FOUND -> Success(null)
+            else -> Failure(RemoteFailure(key.request(GET).uri, status))
+        }
+    }
+
+    override fun list(): Result<List<BucketKey>, RemoteFailure> {
+        val request = Request(GET, "/")
+
+        return with(http(request)) {
+            when {
+                status.successful -> Success(emptyList())
+                else -> Failure(RemoteFailure(request.uri, status))
+            }
+        }
     }
 
     private fun Request.call() = with(http(this)) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(RemoteFailure(status))
+            else -> Failure(RemoteFailure(uri, status))
         }
     }
 }
 
-private fun BucketKey.url(method: Method) = Request(method, "/$value")
+private fun BucketKey.request(method: Method) = Request(method, "/$value")
 
 internal val documentBuilderFactory by lazy {
     DocumentBuilderFactory.newInstance()
