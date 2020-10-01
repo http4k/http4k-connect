@@ -12,11 +12,9 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.NOT_FOUND
-import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
-import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.Payload
 import org.xml.sax.InputSource
 import java.io.InputStream
@@ -32,31 +30,36 @@ fun S3.Companion.Http(http: HttpHandler,
 ) = S3.Http(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode).then(http))
 
 fun S3.Companion.Http(http: HttpHandler) = object : S3 {
-    override fun bucket(bucketName: BucketName): Result<S3.Bucket, RemoteFailure> {
-        val status = http(Request(GET, bucketName.url()).query("location", null)).status
+    override fun buckets(): Result<Iterable<BucketName>, RemoteFailure> {
+        val response = http(Request(GET, "/"))
+        val buckets = documentBuilderFactory
+            .parse(response.body.stream)
+            .getElementsByTagName("Name")
+
         return when {
-            status.successful -> Success(S3.Bucket.Http(SetBaseUriFrom(bucketName.url()).then(http)))
-            else -> Failure(RemoteFailure(status))
+            response.status.successful -> Success(
+                (0..buckets.length)
+                    .map { BucketName(buckets.item(it).textContent) }
+            )
+            else -> Failure(RemoteFailure(response.status))
         }
     }
 
-    override fun buckets(): Result<Iterable<BucketName>, RemoteFailure> {
+    override fun create(bucketName: BucketName): Result<Unit, RemoteFailure> {
+        TODO("Not yet implemented")
+    }
 
-        http(Request(GET, "/"))
-
-        return Success(emptyList())
+    override fun delete(bucketName: BucketName): Result<Unit, RemoteFailure> {
+        TODO("Not yet implemented")
     }
 }
 
 fun S3.Bucket.Companion.Http(http: HttpHandler,
-                             bucketName: BucketName,
                              scope: AwsCredentialScope,
                              credentialsProvider: () -> AwsCredentials,
                              clock: Clock = Clock.systemDefaultZone(),
                              payloadMode: Payload.Mode = Payload.Mode.Signed
-) = SetBaseUriFrom(bucketName.url())
-    .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
-    .then(http)
+) = ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode).then(http)
 
 fun S3.Bucket.Companion.Http(http: HttpHandler) = object : S3.Bucket {
     override fun create() = Request(PUT, "").call()
@@ -87,8 +90,6 @@ fun S3.Bucket.Companion.Http(http: HttpHandler) = object : S3.Bucket {
         }
     }
 }
-
-private fun BucketName.url() = Uri.of("https://$name.s3.amazonaws.com/")
 
 private fun BucketKey.url(method: Method) = Request(method, "/$value")
 
