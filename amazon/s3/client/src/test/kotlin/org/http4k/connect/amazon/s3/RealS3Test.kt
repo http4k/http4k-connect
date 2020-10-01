@@ -7,10 +7,14 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.cloudnative.env.fromConfigFile
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Uri
+import org.http4k.core.then
+import org.http4k.filter.DebuggingFilters
 import org.http4k.lens.composite
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.UUID
 
 interface S3Contract {
     val http: HttpHandler
@@ -19,14 +23,17 @@ interface S3Contract {
 
     @Test
     fun `lifecycle`() {
-        val bucketName = BucketName(UUID.randomUUID().toString())
-        val http1 = S3.Http(http, scope, { credentials })
+        val http1 = S3.Http(DebuggingFilters.PrintRequestAndResponse().then(http), scope, { credentials })
+
+        println(http1.buckets())
+
     }
 }
 
 class RealS3Test : S3Contract {
     override val credentials: AwsCredentials
     override val scope: AwsCredentialScope
+    override val http: HttpHandler
 
     init {
         val env = Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/config")) overrides
@@ -37,8 +44,10 @@ class RealS3Test : S3Contract {
                 EnvironmentKey.required("default-aws-access-key-id")(it)
             )
         }(env)
-        scope = AwsCredentialScope(EnvironmentKey.required("default-region")(env), "s3")
+        val region = EnvironmentKey.required("default-region")(env)
+        scope = AwsCredentialScope(region, "s3")
+        http = JavaHttpClient()
+        println(http(Request(Method.GET, Uri.of("https://s3.$region.amazonaws.com/"))))
     }
-
-    override val http = JavaHttpClient()
 }
+

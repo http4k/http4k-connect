@@ -18,8 +18,11 @@ import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.Payload
+import org.xml.sax.InputSource
 import java.io.InputStream
+import java.io.StringReader
 import java.time.Clock
+import javax.xml.parsers.DocumentBuilderFactory
 
 fun S3.Companion.Http(http: HttpHandler,
                       scope: AwsCredentialScope,
@@ -38,7 +41,10 @@ fun S3.Companion.Http(http: HttpHandler) = object : S3 {
     }
 
     override fun buckets(): Result<Iterable<BucketName>, RemoteFailure> {
-        TODO("Not yet implemented")
+
+        http(Request(GET, "/"))
+
+        return Success(emptyList())
     }
 }
 
@@ -85,3 +91,9 @@ fun S3.Bucket.Companion.Http(http: HttpHandler) = object : S3.Bucket {
 private fun BucketName.url() = Uri.of("https://$name.s3.amazonaws.com/")
 
 private fun BucketKey.url(method: Method) = Request(method, "/$value")
+
+internal val documentBuilderFactory by lazy {
+    DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder()
+        .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
+}
