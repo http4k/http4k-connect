@@ -28,15 +28,17 @@ abstract class S3BucketContract(private val http: HttpHandler) {
 
     @Test
     fun `bucket key lifecycle`() {
-        assertThat(s3Bucket.list().successValue().contains(key), equalTo(false))
-        assertThat(s3Bucket.get(key).successValue(), absent())
-        assertThat(s3Bucket.set(key, "hello".byteInputStream()), equalTo(Success(Unit)))
-        assertThat(s3Bucket.get(key).successValue().let { String(it!!.readBytes()) }, equalTo("hello"))
-        assertThat(s3Bucket.list().successValue().contains(key), equalTo(true))
-        assertThat(s3Bucket.set(key, "there".byteInputStream()), equalTo(Success(Unit)))
-        assertThat(s3Bucket.get(key).successValue().let { String(it!!.readBytes()) }, equalTo("there"))
-        assertThat(s3Bucket.delete(key), equalTo(Success(Unit)))
-        assertThat(s3Bucket.get(key).successValue(), absent())
-        assertThat(s3Bucket.list().successValue().contains(key), equalTo(false))
+        with(s3Bucket) {
+            assertThat(list().successValue().contains(key), equalTo(false))
+            assertThat(get(key).successValue(), absent())
+            assertThat(set(key, "hello".byteInputStream()), equalTo(Success(Unit)))
+            assertThat(get(key).successValue().let { String(it!!.readBytes()) }, equalTo("hello"))
+            assertThat(list().successValue().contains(key), equalTo(true))
+            assertThat(set(key, "there".byteInputStream()), equalTo(Success(Unit)))
+            assertThat(get(key).successValue().let { String(it!!.readBytes()) }, equalTo("there"))
+            assertThat(delete(key), equalTo(Success(Unit)))
+            assertThat(get(key).successValue(), absent())
+            assertThat(list().successValue().contains(key), equalTo(false))
+        }
     }
 }
