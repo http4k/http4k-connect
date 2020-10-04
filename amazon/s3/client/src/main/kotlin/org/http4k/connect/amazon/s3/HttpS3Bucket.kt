@@ -40,7 +40,7 @@ fun S3.Bucket.Companion.Http(uri: Uri,
     }
 
     override fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
-        with(http(Request(PUT, it))) {
+        with(http(Request(PUT, it).body(content))) {
             when {
                 status.successful -> Success(Unit)
                 else -> Failure(RemoteFailure(it, status))
@@ -61,7 +61,10 @@ fun S3.Bucket.Companion.Http(uri: Uri,
     override fun list() = Uri.of("/").let {
         with(http(Request(GET, it))) {
             when {
-                status.successful -> Success(emptyList<BucketKey>())
+                status.successful -> {
+                    val keys = documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")
+                    Success((0 until keys.length).map { BucketKey(keys.item(it).textContent) })
+                }
                 else -> Failure(RemoteFailure(it, status))
             }
         }

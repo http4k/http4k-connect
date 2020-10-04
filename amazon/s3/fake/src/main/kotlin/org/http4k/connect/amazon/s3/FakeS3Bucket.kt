@@ -17,31 +17,48 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.ViewModel
 import org.http4k.template.viewModel
+import java.time.Clock
+import java.time.Instant
 
-class FakeS3Bucket(private val buckets: Storage<ByteArray> = Storage.InMemory()) : ChaosFake() {
+data class BucketKeyContent(val key: BucketKey, val content: ByteArray, val modified: Instant) {
+    val size = content.size
+}
+
+data class ListBucketResult(val keys: List<BucketKeyContent>) : ViewModel {
+    val keyCount = keys.size
+    val maxKeys = Integer.MAX_VALUE
+}
+
+class FakeS3Bucket(
+    private val bucketContents: Storage<BucketKeyContent> = Storage.InMemory(),
+    private val clock: Clock = Clock.systemDefaultZone()
+) : ChaosFake() {
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
     override val app = routes(
         "/{key:.+}" bind routes(
             GET to {
                 val key = it.path("key")!!
-                buckets[key]?.let {
-                    Response(OK).body(Body(it.inputStream()))
+                bucketContents[key]?.let {
+                    Response(OK).body(Body(it.content.inputStream()))
                 } ?: Response(NOT_FOUND)
             },
             PUT to {
                 val key = it.path("key")!!
-                buckets[key] ?: { buckets[key] = it.body.payload.array() }()
+                bucketContents[key] = BucketKeyContent(BucketKey(key), it.body.payload.array(), Instant.now(clock))
                 Response(CREATED)
             },
             DELETE to {
                 val key = it.path("key")!!
-                Response(if (buckets.remove(key)) OK else NOT_FOUND)
+                Response(if (bucketContents.remove(key)) OK else NOT_FOUND)
             }
         ),
         "/" bind GET to {
-            Response(OK).with(lens of ListAllMyBuckets(buckets.keySet("", ::BucketName).toList()))
+            Response(OK).with(lens of ListBucketResult(
+                bucketContents.keySet("") { it }
+                    .map { bucketContents[it]!! }))
         }
     )
 }

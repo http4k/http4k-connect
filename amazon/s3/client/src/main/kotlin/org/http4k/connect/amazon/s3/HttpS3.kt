@@ -15,10 +15,7 @@ import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.Payload
-import org.xml.sax.InputSource
-import java.io.StringReader
 import java.time.Clock
-import javax.xml.parsers.DocumentBuilderFactory
 
 fun S3.Companion.Http(uri: Uri,
                       rawHttp: HttpHandler,
@@ -61,10 +58,4 @@ fun S3.Companion.Http(uri: Uri,
             }
         }
     }
-}
-
-internal val documentBuilderFactory by lazy {
-    DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder()
-        .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
 }
