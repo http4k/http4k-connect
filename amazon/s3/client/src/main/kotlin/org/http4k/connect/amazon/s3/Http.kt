@@ -34,7 +34,7 @@ fun S3.Companion.Http(uri: Uri,
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 
-    override fun buckets(): Result<Iterable<BucketName>, RemoteFailure> {
+    override fun buckets(): Result<List<BucketName>, RemoteFailure> {
         val request = Request(GET, "/")
         val response = http(request)
 
@@ -61,13 +61,14 @@ fun S3.Companion.Http(uri: Uri,
         }
     }
 
-    override fun delete(bucketName: BucketName): Result<Unit, RemoteFailure> {
+    override fun delete(bucketName: BucketName): Result<Unit?, RemoteFailure> {
         val request = Request(DELETE, "/$bucketName")
         val response = http(request)
 
         return with(response) {
             when {
                 status.successful -> Success(Unit)
+                status == NOT_FOUND -> Success(null)
                 else -> Failure(RemoteFailure(request.uri, status))
             }
         }

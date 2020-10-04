@@ -15,11 +15,17 @@ data class BucketKey(val value: String) {
     override fun toString() = value
 }
 
+/**
+ * Interface for global S3 operations
+ */
 interface S3 {
-    fun buckets(): Result<Iterable<BucketName>, RemoteFailure>
+    fun buckets(): Result<List<BucketName>, RemoteFailure>
     fun create(bucketName: BucketName): Result<Unit, RemoteFailure>
-    fun delete(bucketName: BucketName): Result<Unit, RemoteFailure>
+    fun delete(bucketName: BucketName): Result<Unit?, RemoteFailure>
 
+    /**
+     * Interface for bucket-specific S3 operations
+     */
     interface Bucket {
         fun delete(key: BucketKey): Result<Unit, RemoteFailure>
         fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>

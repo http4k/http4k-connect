@@ -27,7 +27,7 @@ fun main() {
 
     val baseHttp = DebuggingFilters.PrintRequestAndResponse().then(JavaHttpClient())
 
-    val s3 = S3.Http(Uri.of("https://s3.$region.amazonaws.com"), baseHttp, scope, { credentials } )
+    val s3 = S3.Http(Uri.of("https://s3.amazonaws.com"), baseHttp, scope, { credentials } )
     s3.create(BucketName("foobar"))
     println(s3.buckets())
 }
