@@ -11,7 +11,7 @@ import org.http4k.core.Uri
 import org.http4k.lens.composite
 import java.io.File
 
-class RealS3GlobalOperationsTest : S3GlobalOperationsContract() {
+class RealS3GlobalTest : S3GlobalContract() {
     override val credentials: AwsCredentials
     override val scope: AwsCredentialScope
     override val http: HttpHandler

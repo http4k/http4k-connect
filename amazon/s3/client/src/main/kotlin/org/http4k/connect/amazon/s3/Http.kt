@@ -1,12 +1,10 @@
 package org.http4k.connect.amazon.s3
 
 import dev.forkhandles.result4k.Failure
-import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.core.HttpHandler
-import org.http4k.core.Method
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
@@ -34,42 +32,33 @@ fun S3.Companion.Http(uri: Uri,
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 
-    override fun buckets(): Result<List<BucketName>, RemoteFailure> {
-        val request = Request(GET, "/")
-        val response = http(request)
-
-        return with(response) {
+    override fun buckets() = Uri.of("/").let {
+        with(http(Request(GET, it))) {
             when {
                 status.successful -> {
                     val buckets = documentBuilderFactory.parse(body.stream).getElementsByTagName("Name")
                     Success((0 until buckets.length).map { BucketName(buckets.item(it).textContent) })
                 }
-                else -> Failure(RemoteFailure(request.uri, status))
+                else -> Failure(RemoteFailure(it, status))
             }
         }
     }
 
-    override fun create(bucketName: BucketName): Result<Unit, RemoteFailure> {
-        val request = Request(PUT, "/$bucketName")
-        val response = http(request)
-
-        return with(response) {
+    override fun create(bucketName: BucketName) = Uri.of("/$bucketName").let {
+        with(http(Request(PUT, it))) {
             when {
                 status.successful -> Success(Unit)
-                else -> Failure(RemoteFailure(request.uri, status))
+                else -> Failure(RemoteFailure(it, status))
             }
         }
     }
 
-    override fun delete(bucketName: BucketName): Result<Unit?, RemoteFailure> {
-        val request = Request(DELETE, "/$bucketName")
-        val response = http(request)
-
-        return with(response) {
+    override fun delete(bucketName: BucketName) = Uri.of("/$bucketName").let {
+        with(http(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(request.uri, status))
+                else -> Failure(RemoteFailure(it, status))
             }
         }
     }
@@ -86,37 +75,44 @@ fun S3.Bucket.Companion.Http(uri: Uri,
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 
-    override fun delete(key: BucketKey) = key.request(DELETE).call()
-    override fun set(key: BucketKey, content: InputStream) = key.request(PUT).body(content).call()
-
-    override fun get(key: BucketKey) = with(http(key.request(GET))) {
-        when {
-            status.successful -> Success(body.stream)
-            status == NOT_FOUND -> Success(null)
-            else -> Failure(RemoteFailure(key.request(GET).uri, status))
-        }
-    }
-
-    override fun list(): Result<List<BucketKey>, RemoteFailure> {
-        val request = Request(GET, "/")
-
-        return with(http(request)) {
+    override fun delete(key: BucketKey) = Uri.of("/$key").let {
+        with(http(Request(DELETE, it))) {
             when {
-                status.successful -> Success(emptyList())
-                else -> Failure(RemoteFailure(request.uri, status))
+                status.successful -> Success(Unit)
+                status == NOT_FOUND -> Success(null)
+                else -> Failure(RemoteFailure(Request(DELETE, "/$key").uri, status))
             }
         }
     }
 
-    private fun Request.call() = with(http(this)) {
-        when {
-            status.successful -> Success(Unit)
-            else -> Failure(RemoteFailure(uri, status))
+    override fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
+        with(http(Request(PUT, it))) {
+            when {
+                status.successful -> Success(Unit)
+                else -> Failure(RemoteFailure(it, status))
+            }
+        }
+    }
+
+    override fun get(key: BucketKey) = Uri.of("/$key").let {
+        with(http(Request(GET, it))) {
+            when {
+                status.successful -> Success(body.stream)
+                status == NOT_FOUND -> Success(null)
+                else -> Failure(RemoteFailure(it, status))
+            }
+        }
+    }
+
+    override fun list() = Uri.of("/").let {
+        with(http(Request(GET, it))) {
+            when {
+                status.successful -> Success(emptyList<BucketKey>())
+                else -> Failure(RemoteFailure(it, status))
+            }
         }
     }
 }
-
-private fun BucketKey.request(method: Method) = Request(method, "/$value")
 
 internal val documentBuilderFactory by lazy {
     DocumentBuilderFactory.newInstance()

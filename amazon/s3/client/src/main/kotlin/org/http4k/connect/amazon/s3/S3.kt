@@ -20,9 +20,9 @@ interface S3 {
      * Interface for bucket-specific S3 operations
      */
     interface Bucket {
-        fun delete(key: BucketKey): Result<Unit, RemoteFailure>
-        fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>
+        fun delete(key: BucketKey): Result<Unit?, RemoteFailure>
         fun get(key: BucketKey): Result<InputStream?, RemoteFailure>
+        fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>
         fun list(): Result<List<BucketKey>, RemoteFailure>
 
         companion object
