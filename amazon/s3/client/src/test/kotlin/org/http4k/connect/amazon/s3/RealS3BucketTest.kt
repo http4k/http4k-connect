@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.s3
 
 import org.http4k.client.JavaHttpClient
-import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 
-class RealS3GlobalTest : S3GlobalContract(JavaHttpClient()) {
+class RealS3BucketTest : S3BucketContract(JavaHttpClient()) {
     override val aws get() = configAwsEnvironment()
 
     @BeforeEach
@@ -12,7 +12,7 @@ class RealS3GlobalTest : S3GlobalContract(JavaHttpClient()) {
         try {
             aws
         } catch (e: Exception) {
-            assumeTrue(false)
+            Assumptions.assumeTrue(false)
         }
     }
 }

@@ -4,25 +4,19 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
-import org.http4k.aws.AwsCredentialScope
-import org.http4k.aws.AwsCredentials
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3BucketContract {
-    abstract val http: HttpHandler
-    abstract val uri: Uri
-    abstract val credentials: AwsCredentials
-    abstract val scope: AwsCredentialScope
+abstract class S3BucketContract(private val http: HttpHandler) {
+    abstract val aws: AwsEnvironment
 
     private val s3Bucket by lazy {
-        S3.Bucket.Http(uri, PrintRequestAndResponse().then(http), scope, { credentials })
+        S3.Bucket.Http(aws.uri, PrintRequestAndResponse().then(http), aws.scope, { aws.credentials })
     }
 
     private val key = BucketKey(UUID.randomUUID().toString())
