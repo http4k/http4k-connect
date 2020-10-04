@@ -1,7 +1,7 @@
 package org.http4k.connect
 
 import com.natpryce.hamkrest.assertion.assertThat
-import org.http4k.connect.common.ChaosFake
+import com.natpryce.hamkrest.greaterThan
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.I_M_A_TEAPOT
 import org.http4k.hamkrest.hasStatus
@@ -17,5 +17,11 @@ abstract class FakeSystemContract(private val fake: ChaosFake) {
         assertThat(fake(anyValidRequest), hasStatus(I_M_A_TEAPOT))
         fake.behave()
         assertThat(fake(anyValidRequest), hasStatus(originalStatus))
+    }
+
+    @Test
+    fun `default port number is suitably random`() {
+        assertThat(fake::class.defaultPort(), greaterThan(10000))
+        assertThat(fake::class.defaultPort() % 100, greaterThan(0))
     }
 }

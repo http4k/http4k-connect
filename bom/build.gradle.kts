@@ -1,7 +1,3 @@
-plugins {
-    kotlin("jvm")
-}
-
 description = "Http4k Connect Bill Of Materials (BOM)"
 
 dependencies {

@@ -36,14 +36,26 @@ allprojects {
 
         testImplementation platform("org.junit:junit-bom:$junit_version")
         testImplementation "org.http4k:http4k-testing-hamkrest"
+        testImplementation "org.http4k:http4k-cloudnative"
 
         testImplementation "org.junit.jupiter:junit-jupiter-api"
         testImplementation "org.junit.jupiter:junit-jupiter-engine"
     }
 
-    if (project.name.endsWith("fake") || project.name.startsWith("http4k-connect-storage")) {
-        dependencies {
+    dependencies {
+        if (project.name.endsWith("fake")) {
             implementation project(":http4k-connect-core")
+            testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
+            implementation project(":" + project.name.substring(0, project.name.length() - 5))
+        } else if (project.name.startsWith("http4k-connect-storage")) {
+            implementation project(":http4k-connect-core")
+            testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
+        } else if (project.name == "http4k-connect") {
+            //
+        } else if (project.name == "http4k-connect-bom") {
+            //
+        } else if (!project.name.endsWith("core")) {
+            testImplementation(project(":" + project.name + "-fake"))
             testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
         }
     }
