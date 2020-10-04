@@ -16,7 +16,6 @@ import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.Payload
 import org.xml.sax.InputSource
-import java.io.InputStream
 import java.io.StringReader
 import java.time.Clock
 import javax.xml.parsers.DocumentBuilderFactory
@@ -58,56 +57,6 @@ fun S3.Companion.Http(uri: Uri,
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
-            }
-        }
-    }
-}
-
-fun S3.Bucket.Companion.Http(uri: Uri,
-                             rawHttp: HttpHandler,
-                             scope: AwsCredentialScope,
-                             credentialsProvider: () -> AwsCredentials,
-                             clock: Clock = Clock.systemDefaultZone(),
-                             payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
-    private val http =
-        ClientFilters.SetBaseUriFrom(uri)
-            .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
-            .then(rawHttp)
-
-    override fun delete(key: BucketKey) = Uri.of("/$key").let {
-        with(http(Request(DELETE, it))) {
-            when {
-                status.successful -> Success(Unit)
-                status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(Request(DELETE, "/$key").uri, status))
-            }
-        }
-    }
-
-    override fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
-        with(http(Request(PUT, it))) {
-            when {
-                status.successful -> Success(Unit)
-                else -> Failure(RemoteFailure(it, status))
-            }
-        }
-    }
-
-    override fun get(key: BucketKey) = Uri.of("/$key").let {
-        with(http(Request(GET, it))) {
-            when {
-                status.successful -> Success(body.stream)
-                status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
-            }
-        }
-    }
-
-    override fun list() = Uri.of("/").let {
-        with(http(Request(GET, it))) {
-            when {
-                status.successful -> Success(emptyList<BucketKey>())
                 else -> Failure(RemoteFailure(it, status))
             }
         }
