@@ -7,13 +7,6 @@ import java.io.InputStream
 
 data class RemoteFailure(val uri: Uri, val status: Status)
 
-data class BucketName(val name: String) {
-    override fun toString() = name
-}
-
-data class BucketKey(val value: String) {
-    override fun toString() = value
-}
 
 /**
  * Interface for global S3 operations
