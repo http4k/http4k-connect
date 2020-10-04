@@ -31,6 +31,9 @@ data class ListBucketResult(val keys: List<BucketKeyContent>) : ViewModel {
     val maxKeys = Integer.MAX_VALUE
 }
 
+/**
+ * Bucket-level S3 operations (get/set/delete content)
+ */
 class FakeS3Bucket(
     private val bucketContents: Storage<BucketKeyContent> = Storage.InMemory(),
     private val clock: Clock = Clock.systemDefaultZone()

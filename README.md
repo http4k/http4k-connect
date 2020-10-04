@@ -18,5 +18,7 @@ dependencies {
 
 Currently supported APIs and Fakes:
 
-- Amazon S3 - default port: 26467
+- Amazon S3
+    - Global: default port: 26467
+    - Bucket: default port: 42628
 - Google Analytics - default port: 35628

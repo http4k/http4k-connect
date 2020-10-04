@@ -22,6 +22,9 @@ import org.http4k.template.viewModel
 
 data class ListAllMyBuckets(val buckets: List<BucketName>) : ViewModel
 
+/**
+ * Global S3 operations (manage buckets)
+ */
 class FakeS3(private val buckets: Storage<Unit> = Storage.InMemory()) : ChaosFake() {
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
