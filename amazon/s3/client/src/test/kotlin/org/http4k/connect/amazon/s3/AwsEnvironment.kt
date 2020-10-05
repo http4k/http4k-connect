@@ -5,16 +5,14 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.cloudnative.env.fromConfigFile
-import org.http4k.core.Uri
 import org.http4k.lens.composite
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
-data class AwsEnvironment(val credentials: AwsCredentials, val scope: AwsCredentialScope, val uri: Uri)
+data class AwsEnvironment(val credentials: AwsCredentials, val scope: AwsCredentialScope)
 
 val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
-    AwsCredentialScope("ldn-north-1", "s3"),
-    Uri.of("http://fakeS3Bucket")
+    AwsCredentialScope("ldn-north-1", "s3")
 )
 
 fun configAwsEnvironment(): AwsEnvironment {
@@ -30,7 +28,6 @@ fun configAwsEnvironment(): AwsEnvironment {
                 EnvironmentKey.required("default-aws-secret-access-key")(it)
             )
         }(env),
-        AwsCredentialScope(region, "s3"),
-        Uri.of("https://s3.amazonaws.com/")
+        AwsCredentialScope(region, "s3")
     )
 }

@@ -6,8 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.core.then
-import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -16,7 +14,7 @@ abstract class S3BucketContract(private val http: HttpHandler) {
     abstract val aws: AwsEnvironment
 
     private val s3Bucket by lazy {
-        S3.Bucket.Http(aws.uri, PrintRequestAndResponse().then(http), aws.scope, { aws.credentials })
+        S3.Bucket.Http(BucketName("http4k"), http, aws.scope, { aws.credentials })
     }
 
     private val key = BucketKey(UUID.randomUUID().toString())

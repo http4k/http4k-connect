@@ -18,14 +18,14 @@ import org.http4k.filter.Payload
 import java.io.InputStream
 import java.time.Clock
 
-fun S3.Bucket.Companion.Http(uri: Uri,
+fun S3.Bucket.Companion.Http(bucketName: BucketName,
                              rawHttp: HttpHandler,
                              scope: AwsCredentialScope,
                              credentialsProvider: () -> AwsCredentials,
                              clock: Clock = Clock.systemDefaultZone(),
                              payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
     private val http =
-        ClientFilters.SetBaseUriFrom(uri)
+        ClientFilters.SetBaseUriFrom(Uri.of("https://$bucketName.s3.amazonaws.com/"))
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 
