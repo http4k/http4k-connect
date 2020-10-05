@@ -46,7 +46,7 @@ allprojects {
         if (project.name.endsWith("fake")) {
             implementation project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
-            implementation project(":" + project.name.substring(0, project.name.length() - 5))
+            implementation project(":${project.name.substring(0, project.name.length() - 5)}")
         } else if (project.name.startsWith("http4k-connect-storage")) {
             implementation project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
@@ -55,7 +55,7 @@ allprojects {
         } else if (project.name == "http4k-connect-bom") {
             //
         } else if (!project.name.endsWith("core")) {
-            testImplementation(project(":" + project.name + "-fake"))
+            testImplementation project(":${project.name}-fake")
             testImplementation project(path: ":http4k-connect-core", configuration: 'testArtifacts')
         }
     }
