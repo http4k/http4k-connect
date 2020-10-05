@@ -21,7 +21,9 @@ abstract class ChaosFake : HttpHandler {
     private val chaosEngine = ChaosEngine()
 
     fun behave() = chaosEngine.disable()
+
     fun misbehave(behaviour: Behaviour = ChaosBehaviours.ReturnStatus(Status.INTERNAL_SERVER_ERROR)) = chaosEngine.enable(behaviour)
+
     fun returnStatus(status: Status) = misbehave(ChaosBehaviours.ReturnStatus(status))
 
     override operator fun invoke(request: Request) = chaosEngine.then(app).invoke(request)

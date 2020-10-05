@@ -9,6 +9,7 @@ import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
+import org.http4k.core.Status.Companion.CONFLICT
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Uri
 import org.http4k.core.then
@@ -29,12 +30,32 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 
+    override fun create() = Uri.of("/").let {
+        with(http(Request(PUT, it))) {
+            when {
+                status.successful -> Success(Unit)
+                status == CONFLICT -> Success(Unit)
+                else -> Failure(RemoteFailure(it, status))
+            }
+        }
+    }
+
+    override fun delete() = Uri.of("/").let {
+        with(http(Request(DELETE, it))) {
+            when {
+                status.successful -> Success(Unit)
+                status == NOT_FOUND -> Success(null)
+                else -> Failure(RemoteFailure(it, status))
+            }
+        }
+    }
+
     override fun delete(key: BucketKey) = Uri.of("/$key").let {
         with(http(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(Request(DELETE, "/$key").uri, status))
+                else -> Failure(RemoteFailure(it, status))
             }
         }
     }
