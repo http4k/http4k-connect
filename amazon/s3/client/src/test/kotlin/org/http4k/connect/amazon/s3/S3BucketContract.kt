@@ -46,7 +46,7 @@ abstract class S3BucketContract(private val http: HttpHandler) {
 
             assertThat(copy(key, newKey), equalTo(Success(Unit)))
             assertThat(String(get(newKey).successValue()!!.readBytes()), equalTo("there"))
-            assertThat(list().successValue().contains(newKey), equalTo(false))
+            assertThat(list().successValue().contains(newKey), equalTo(true))
             assertThat(delete(newKey), equalTo(Success(Unit)))
             assertThat(delete(key), equalTo(Success(Unit)))
             assertThat(get(key).successValue(), absent())

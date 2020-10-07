@@ -47,7 +47,7 @@ class FakeS3(
                 when (val subdomain = it.subdomain()) {
                     "s3" -> putBucket(id)
                     else -> {
-                        when(val source = it.header("x-amz-copy-source")) {
+                        when (val source = it.header("x-amz-copy-source")) {
                             null -> putKey(subdomain, id, it.body.payload.array())
                             else -> copyKey(subdomain, source, id)
                         }
@@ -85,10 +85,10 @@ class FakeS3(
         )
     )
 
-    private fun copyKey(subdomain: String, source: String, destination: String) =
-        bucketContent["$subdomain-$source"]
+    private fun copyKey(destinationBucket: String, source: String, destinationKey: String) =
+        bucketContent[source.split("/").let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
             ?.let {
-                putKey(subdomain, destination, it.content)
+                putKey(destinationBucket, destinationKey, it.content)
                 Response(OK)
             } ?: Response(NOT_FOUND)
 
