@@ -31,3 +31,8 @@ jobs:
           BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
           SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
           SONATYPE_KEY: ${{ secrets.SONATYPE_KEY }}
+      - name: Release to Maven
+        run: ./release-maven-central.sh
+        env:
+          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_KEY: ${{ secrets.SONATYPE_KEY }}
