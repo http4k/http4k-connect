@@ -46,7 +46,13 @@ class FakeS3(
                 val id = it.path("id")!!
                 when (val subdomain = it.subdomain()) {
                     "s3" -> putBucket(id)
-                    else -> putKey(subdomain, id, it.body.payload.array())
+                    else -> {
+                        when(val source = it.header("x-amz-copy-source")) {
+                            null -> putKey(subdomain, id, it.body.payload.array())
+                            else -> copyKey(subdomain, source, id)
+                        }
+
+                    }
                 }
             },
             DELETE to {
@@ -78,6 +84,14 @@ class FakeS3(
             }
         )
     )
+
+    private fun copyKey(subdomain: String, source: String, destination: String) =
+        bucketContent["$subdomain-$source"]
+            ?.let {
+                putKey(subdomain, destination, it.content)
+                Response(OK)
+            } ?: Response(NOT_FOUND)
+
 
     private fun getKey(bucket: String, key: String): Response {
         return buckets[bucket]

@@ -52,6 +52,15 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
+    override fun copy(originalKey: BucketKey, newKey: BucketKey) =  Uri.of("/$newKey").let {
+        with(http(Request(PUT, it).header("x-amz-copy-source", "$bucketName/$originalKey"))) {
+            when {
+                status.successful -> Success(Unit)
+                else -> Failure(RemoteFailure(it, status))
+            }
+        }
+    }
+
     override fun delete(key: BucketKey) = Uri.of("/$key").let {
         with(http(Request(DELETE, it))) {
             when {

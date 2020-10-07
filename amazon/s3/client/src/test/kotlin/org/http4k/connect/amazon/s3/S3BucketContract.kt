@@ -33,6 +33,8 @@ abstract class S3BucketContract(private val http: HttpHandler) {
     @Test
     fun `bucket key lifecycle`() {
         with(s3Bucket) {
+            val newKey = BucketKey(UUID.randomUUID().toString())
+
             assertThat(create(), equalTo(Success(Unit)))
             assertThat(list().successValue().contains(key), equalTo(false))
             assertThat(get(key).successValue(), absent())
@@ -41,6 +43,11 @@ abstract class S3BucketContract(private val http: HttpHandler) {
             assertThat(list().successValue().contains(key), equalTo(true))
             assertThat(set(key, "there".byteInputStream()), equalTo(Success(Unit)))
             assertThat(String(get(key).successValue()!!.readBytes()), equalTo("there"))
+
+            assertThat(copy(key, newKey), equalTo(Success(Unit)))
+            assertThat(String(get(newKey).successValue()!!.readBytes()), equalTo("there"))
+            assertThat(list().successValue().contains(newKey), equalTo(false))
+            assertThat(delete(newKey), equalTo(Success(Unit)))
             assertThat(delete(key), equalTo(Success(Unit)))
             assertThat(get(key).successValue(), absent())
             assertThat(list().successValue().contains(key), equalTo(false))
