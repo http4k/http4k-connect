@@ -11,6 +11,7 @@ import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Uri
+import org.http4k.core.filters.SetXForwardedHost
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
@@ -24,6 +25,7 @@ fun S3.Companion.Http(rawHttp: HttpHandler,
                       payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3 {
     private val http =
         ClientFilters.SetBaseUriFrom(Uri.of("https://s3.amazonaws.com/"))
+            .then(ClientFilters.SetXForwardedHost())
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 

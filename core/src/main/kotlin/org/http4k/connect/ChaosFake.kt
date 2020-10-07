@@ -30,7 +30,7 @@ abstract class ChaosFake : HttpHandler {
 
     fun start(port: Int = this::class.defaultPort(),
               serverConfig: (Int) -> ServerConfig = ::SunHttp) =
-        asServer(serverConfig(port)).start().also {
+            asServer(serverConfig(port)).start().also {
             println("Started ${this::class.simpleName} on $port")
         }
 }

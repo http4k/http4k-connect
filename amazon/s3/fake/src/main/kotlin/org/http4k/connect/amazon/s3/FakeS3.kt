@@ -27,8 +27,8 @@ import java.time.Instant
  * Global S3 operations (manage buckets)
  */
 class FakeS3(
-    private val buckets: Storage<Storage<BucketKeyContent>> = Storage.InMemory(),
-    private val toBucket: (BucketName) -> Storage<BucketKeyContent> = { Storage.InMemory() },
+    private val buckets: Storage<Unit> = Storage.InMemory(),
+    private val bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
     private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake() {
 
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
@@ -79,18 +79,20 @@ class FakeS3(
         )
     )
 
-    private fun getKey(bucket: String, key: String) = buckets[bucket]
-        ?.let {
-            it[key]?.content?.inputStream()
-        }?.let { Response(OK).body(it) }
-         ?: Response(NOT_FOUND)
+    private fun getKey(bucket: String, key: String): Response {
+        return buckets[bucket]
+            ?.let {
+                bucketContent["$bucket-$key"]?.content?.inputStream()
+            }?.let { Response(OK).body(it) }
+            ?: Response(NOT_FOUND)
+    }
 
     private fun listBucketKeys(bucket: String) = buckets[bucket]
-        ?.let { contents ->
+        ?.let {
             Response(OK)
                 .with(lens of ListBucketResult(
-                    contents.keySet("") { it }
-                        .map { contents[it]!! }
+                    bucketContent.keySet(bucket) { it.removePrefix("$bucket-") }
+                        .map { bucketContent["$bucket-$it"]!! }
                 ))
         }
         ?: Response(NOT_FOUND)
@@ -101,22 +103,23 @@ class FakeS3(
     private fun deleteBucket(bucket: String) = Response(if (buckets.remove(bucket)) OK else NOT_FOUND)
 
     private fun deleteKey(bucket: String, key: String) = (buckets[bucket]
-        ?.let { Response(if (it.remove(key)) OK else NOT_FOUND) }
+        ?.let { Response(if (bucketContent.remove("$bucket-$key")) OK else NOT_FOUND) }
         ?: Response(NOT_FOUND))
 
     private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
         ?.let {
-            it[key] = BucketKeyContent(BucketKey(key), bytes, Instant.now(clock))
+            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey(key), bytes, Instant.now(clock))
             Response(CREATED)
         }
         ?: Response(NOT_FOUND)
 
     private fun putBucket(id: String): Response {
-        buckets[id] ?: { buckets[id] = toBucket(BucketName(id)) }()
+        buckets[id] ?: { buckets[id] = Unit }()
         return Response(CREATED)
     }
 
-    private fun Request.subdomain() = header("host")?.split('.')?.firstOrNull() ?: ""
+    private fun Request.subdomain() =
+        (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: "unknown"
 }
 
 fun main() {
