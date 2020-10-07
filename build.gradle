@@ -72,6 +72,7 @@ allprojects {
 
     version = project.hasProperty('releaseVersion') ? project.releaseVersion : 'LOCAL'
     group = 'org.http4k'
+    description = project.name
 
     test {
         useJUnitPlatform()
