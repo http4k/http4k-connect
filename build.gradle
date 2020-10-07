@@ -218,3 +218,9 @@ sourceSets {
 }
 
 tasks["bintrayUpload"].onlyIf { false }
+
+tasks.create("listProjects") {
+    doLast {
+        subprojects.forEach { println(it.name) }
+    }
+}
