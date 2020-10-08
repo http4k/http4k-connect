@@ -1,27 +1,29 @@
 package org.http4k.connect.google.analytics
 
 import dev.forkhandles.result4k.Failure
-import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
+import org.http4k.connect.RemoteFailure
 import org.http4k.core.HttpHandler
-import org.http4k.core.Method
+import org.http4k.core.Method.POST
 import org.http4k.core.Request
+import org.http4k.core.Uri
 import org.http4k.core.body.form
 
 fun GoogleAnalytics.Companion.Http(http: HttpHandler, trackingId: TrackingId) = object : GoogleAnalytics {
-    override fun pageView(userAgent: String, clientId: ClientId, documentTitle: String, documentPath: String, documentHost: String): Result<Unit, RemoteFailure> {
-        val status = http(Request(Method.POST, "/collect")
-            .header("User-Agent", userAgent)
-            .form(VERSION, "1")
-            .form(MEASUREMENT_ID, trackingId.value)
-            .form(CLIENT_ID, clientId.value)
-            .form(DOCUMENT_TITLE, documentTitle)
-            .form(DOCUMENT_PATH, documentPath)
-            .form(DOCUMENT_HOST, documentHost)
-        ).status
-
-        return if (status.successful) Success(Unit) else Failure(RemoteFailure(status))
-    }
+    override fun pageView(userAgent: String, clientId: ClientId, documentTitle: String, documentPath: String, documentHost: String) =
+        Uri.of("/collect").let {
+            with(http(Request(POST, it)
+                .header("User-Agent", userAgent)
+                .form(VERSION, "1")
+                .form(MEASUREMENT_ID, trackingId.value)
+                .form(CLIENT_ID, clientId.value)
+                .form(DOCUMENT_TITLE, documentTitle)
+                .form(DOCUMENT_PATH, documentPath)
+                .form(DOCUMENT_HOST, documentHost)
+            )) {
+                if (status.successful) Success(Unit) else Failure(RemoteFailure(it, status))
+            }
+        }
 }
 
 const val VERSION = "v"

@@ -1,12 +1,8 @@
 package org.http4k.connect.amazon.s3
 
 import dev.forkhandles.result4k.Result
-import org.http4k.core.Status
-import org.http4k.core.Uri
+import org.http4k.connect.RemoteFailure
 import java.io.InputStream
-
-data class RemoteFailure(val uri: Uri, val status: Status)
-
 
 /**
  * Interface for global S3 operations

@@ -47,16 +47,17 @@ allprojects {
             implementation project(":http4k-connect-core")
         } else if (project.name.endsWith("fake")) {
             implementation project(":http4k-connect-core-fake")
-            testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
             implementation project(":${project.name.substring(0, project.name.length() - 5)}")
+            testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
         } else if (project.name.startsWith("http4k-connect-storage")) {
             implementation project(":http4k-connect-core-fake")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
         } else if (project.name == "http4k-connect") {
-            //
+            // uber project
         } else if (project.name == "http4k-connect-bom") {
-            //
-        } else if (!project.name.endsWith("core")) {
+            // bom - no code
+        } else if (project.name != "http4k-connect-core") {
+            implementation project(":http4k-connect-core")
             testImplementation project(":${project.name}-fake")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
         }
