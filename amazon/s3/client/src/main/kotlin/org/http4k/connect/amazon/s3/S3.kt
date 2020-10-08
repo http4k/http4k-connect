@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.s3
 
 import dev.forkhandles.result4k.Result
+import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
 import java.io.InputStream
 
@@ -8,7 +9,7 @@ import java.io.InputStream
  * Interface for global S3 operations
  */
 interface S3 {
-    fun buckets(): Result<List<BucketName>, RemoteFailure>
+    fun buckets(): Result<Listing<BucketName>, RemoteFailure>
     fun create(bucketName: BucketName): Result<Unit, RemoteFailure>
     fun delete(bucketName: BucketName): Result<Unit?, RemoteFailure>
 
@@ -22,7 +23,11 @@ interface S3 {
         fun get(key: BucketKey): Result<InputStream?, RemoteFailure>
         fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>
         fun copy(originalKey: BucketKey, newKey: BucketKey): Result<Unit, RemoteFailure>
-        fun list(): Result<List<BucketKey>, RemoteFailure>
+
+        /**
+         * List items in a bucket. Note that the S3 API maxes out at 1000 items.
+         */
+        fun list(): Result<Listing<BucketKey>, RemoteFailure>
 
         companion object
     }

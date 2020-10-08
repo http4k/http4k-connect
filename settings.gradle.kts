@@ -1,6 +1,6 @@
 includeSystem("core")
 includeWithName("http4k-connect-bom", "bom")
-includeWithName("http4k-connect-storage-redis", "storage/redis")
+includeStorage("redis")
 
 includeSystem("amazon", "s3")
 includeSystem("example")
@@ -21,4 +21,8 @@ fun includeSystem(owner: String, system: String) {
 fun includeWithName(projectName: String, file: String) {
     include(":$projectName")
     project(":$projectName").projectDir = File(file)
+}
+
+fun includeStorage(name: String) {
+    includeWithName("http4k-connect-storage-$name", "storage/$name")
 }

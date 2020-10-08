@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
+import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
@@ -53,7 +54,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun copy(originalKey: BucketKey, newKey: BucketKey) =  Uri.of("/$newKey").let {
+    override fun copy(originalKey: BucketKey, newKey: BucketKey) = Uri.of("/$newKey").let {
         with(http(Request(PUT, it).header("x-amz-copy-source", "$bucketName/$originalKey"))) {
             when {
                 status.successful -> Success(Unit)
@@ -96,7 +97,8 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
             when {
                 status.successful -> {
                     val keys = documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")
-                    Success((0 until keys.length).map { BucketKey(keys.item(it).textContent) })
+                    val items = (0 until keys.length).map { BucketKey(keys.item(it).textContent) }
+                    Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
                 }
                 else -> Failure(RemoteFailure(it, status))
             }

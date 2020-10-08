@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
+import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
@@ -35,7 +36,8 @@ fun S3.Companion.Http(rawHttp: HttpHandler,
             when {
                 status.successful -> {
                     val buckets = documentBuilderFactory.parse(body.stream).getElementsByTagName("Name")
-                    Success((0 until buckets.length).map { BucketName(buckets.item(it).textContent) })
+                    val items = (0 until buckets.length).map { BucketName(buckets.item(it).textContent) }
+                    Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
                 }
                 else -> Failure(RemoteFailure(it, status))
             }
