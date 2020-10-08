@@ -2,6 +2,9 @@ package org.http4k.connect
 
 data class Pages(val pageNumber: Int, val maxPages: Int?)
 
+/**
+ * Common type representing a list of results coming from a service.
+ */
 sealed class Listing<out T> : Iterable<T> {
     object Empty : Listing<Nothing>(), Iterable<Nothing> by emptyList()
 
