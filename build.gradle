@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.kt3k.coveralls' version "2.10.1"
+    id "com.github.kt3k.coveralls" version "2.10.1"
     id "com.jfrog.bintray" version "1.8.4"
 }
 
@@ -21,12 +21,12 @@ allprojects {
         jcenter()
     }
 
-    apply plugin: 'kotlin'
-    apply plugin: 'jacoco'
-    apply plugin: 'com.github.kt3k.coveralls'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
+    apply plugin: "kotlin"
+    apply plugin: "jacoco"
+    apply plugin: "com.github.kt3k.coveralls"
+    apply plugin: "com.jfrog.bintray"
+    apply plugin: "maven"
+    apply plugin: "maven-publish"
 
     dependencies {
         implementation platform("org.http4k:http4k-bom:$http4k_version")
@@ -48,23 +48,23 @@ allprojects {
         } else if (project.name.endsWith("fake")) {
             implementation project(":http4k-connect-core-fake")
             implementation project(":${project.name.substring(0, project.name.length() - 5)}")
-            testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
+            testImplementation project(path: ":${project.name.substring(0, project.name.length() - 5)}", configuration: "testArtifacts")
+            testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         } else if (project.name.startsWith("http4k-connect-storage")) {
             implementation project(":http4k-connect-core-fake")
-            testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
+            testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         } else if (project.name == "http4k-connect") {
             // uber project
         } else if (project.name == "http4k-connect-bom") {
             // bom - no code
         } else if (project.name != "http4k-connect-core") {
             implementation project(":http4k-connect-core")
-            testImplementation project(":${project.name}-fake")
-            testImplementation project(path: ":http4k-connect-core-fake", configuration: 'testArtifacts')
+            testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         }
     }
 
     jacoco {
-        toolVersion = '0.8.3'
+        toolVersion = "0.8.3"
     }
 
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
@@ -73,8 +73,8 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    version = project.hasProperty('releaseVersion') ? project.releaseVersion : 'LOCAL'
-    group = 'org.http4k'
+    version = project.hasProperty("releaseVersion") ? project.releaseVersion : "LOCAL"
+    group = "org.http4k"
     description = project.name
 
     test {
@@ -82,12 +82,12 @@ allprojects {
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
+        classifier = "sources"
         from sourceSets.main.allSource
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
+        classifier = "javadoc"
         from javadoc.destinationDir
     }
 
@@ -110,22 +110,22 @@ allprojects {
                 artifactId = archivesBaseName
 
                 pom.withXml {
-                    asNode().appendNode('name', archivesBaseName)
-                    asNode().appendNode('description', description)
-                    asNode().appendNode('url', 'https://http4k.org')
-                    asNode().appendNode('developers')
-                        .appendNode('developer').appendNode('name', 'David Denton').parent().appendNode('email', 'david@http4k.org')
+                    asNode().appendNode("name", archivesBaseName)
+                    asNode().appendNode("description", description)
+                    asNode().appendNode("url", "https://http4k.org")
+                    asNode().appendNode("developers")
+                        .appendNode("developer").appendNode("name", "David Denton").parent().appendNode("email", "david@http4k.org")
                         .parent().parent()
-                        .appendNode('developer').appendNode('name', 'Albert Latacz').parent().appendNode('email', 'albert@http4k.org')
+                        .appendNode("developer").appendNode("name", "Albert Latacz").parent().appendNode("email", "albert@http4k.org")
                         .parent().parent()
-                        .appendNode('developer').appendNode('name', 'Ivan Sanchez').parent().appendNode('email', 'ivan@http4k.org')
-                    asNode().appendNode('scm').
-                        appendNode('url', 'git@github.com:http4k/http4k-connect.git').parent().
-                        appendNode('connection', 'scm:git:git@github.com:http4k/http4k-connect.git').parent().
-                        appendNode('developerConnection', 'scm:git:git@github.com:http4k/http4k-connect.git')
-                    asNode().appendNode('licenses').appendNode('license').
-                        appendNode('name', 'Apache License, Version 2.0').parent().
-                        appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.html')
+                        .appendNode("developer").appendNode("name", "Ivan Sanchez").parent().appendNode("email", "ivan@http4k.org")
+                    asNode().appendNode("scm").
+                        appendNode("url", "git@github.com:http4k/http4k-connect.git").parent().
+                        appendNode("connection", "scm:git:git@github.com:http4k/http4k-connect.git").parent().
+                        appendNode("developerConnection", "scm:git:git@github.com:http4k/http4k-connect.git")
+                    asNode().appendNode("licenses").appendNode("license").
+                        appendNode("name", "Apache License, Version 2.0").parent().
+                        appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.html")
                 }
                 from components.java
 
@@ -136,22 +136,22 @@ allprojects {
     }
 
     bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
+        user = System.getenv("BINTRAY_USER")
+        key = System.getenv("BINTRAY_KEY")
 
-        publications = ['mavenJava']
+        publications = ["mavenJava"]
         dryRun = false
         publish = true
         pkg {
-            repo = 'maven'
+            repo = "maven"
             userOrg = "http4k"
             name = project.name
 
             desc = description
-            websiteUrl = 'https://http4k.org'
-            issueTrackerUrl = 'https://github.com/http4k/http4k-connect/issues'
-            vcsUrl = 'https://github.com/http4k/http4k-connect.git'
-            licenses = ['Apache-2.0']
+            websiteUrl = "https://http4k.org"
+            issueTrackerUrl = "https://github.com/http4k/http4k-connect/issues"
+            vcsUrl = "https://github.com/http4k/http4k-connect.git"
+            licenses = ["Apache-2.0"]
             labels = []
             publicDownloadNumbers = true
             version {
@@ -162,9 +162,9 @@ allprojects {
                 }
                 mavenCentralSync {
                     sync = false
-                    user = System.getenv('SONATYPE_USER')
-                    password = System.getenv('SONATYPE_KEY')
-                    close = '1'
+                    user = System.getenv("SONATYPE_USER")
+                    password = System.getenv("SONATYPE_KEY")
+                    close = "1"
                 }
             }
         }
@@ -178,9 +178,9 @@ allprojects {
 
     jar {
         manifest {
-            attributes 'Implementation-Title': project.name,
-                'Implementation-Vendor': 'org.http4k',
-                'Implementation-Version': project.version
+            attributes "Implementation-Title": project.name,
+                "Implementation-Vendor": "org.http4k",
+                "Implementation-Version": project.version
         }
     }
 }
@@ -199,7 +199,7 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = subprojects.test
     getSourceDirectories().from(subprojects.sourceSets.main.allSource.srcDirs)
     getClassDirectories().from(subprojects.sourceSets.main.output)
-    getExecutionData().from(subprojects.findAll { it.name != 'http4k-connect-bom' }.jacocoTestReport.executionData)
+    getExecutionData().from(subprojects.findAll { it.name != "http4k-connect-bom" }.jacocoTestReport.executionData)
 
     reports {
         html.enabled = true
@@ -216,7 +216,7 @@ dependencies {
 sourceSets {
     test {
         kotlin {
-            srcDirs 'src/test/kotlin'
+            srcDirs "src/test/kotlin"
         }
     }
 }
