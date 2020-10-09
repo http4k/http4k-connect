@@ -11,3 +11,4 @@
 ### Notes for adding Storage implementations
 - The naming of the modules is: `http4k-connect-storage-<type>`. To add the module in the right place in `settings.gradle.kts` use the function provided.
 - There is a contract `StorageContract` to prove that the implementation.
+- Testcontainers can be used to prove out testing for various storage backends
