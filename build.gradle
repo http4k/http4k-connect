@@ -31,15 +31,18 @@ allprojects {
     dependencies {
         implementation platform("org.http4k:http4k-bom:$http4k_version")
         implementation platform("dev.forkhandles:forkhandles-bom:$forkhandles_version")
-        implementation "org.http4k:http4k-core"
-        implementation "dev.forkhandles:result4k"
+        implementation("org.http4k:http4k-core")
+        implementation("dev.forkhandles:result4k")
 
         testImplementation platform("org.junit:junit-bom:$junit_version")
-        testImplementation "org.http4k:http4k-testing-hamkrest"
-        testImplementation "org.http4k:http4k-cloudnative"
+        testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_version")
+        testImplementation("org.http4k:http4k-testing-hamkrest")
+        testImplementation("org.http4k:http4k-cloudnative")
 
-        testImplementation "org.junit.jupiter:junit-jupiter-api"
-        testImplementation "org.junit.jupiter:junit-jupiter-engine"
+        testImplementation("org.junit.jupiter:junit-jupiter-api")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation("org.testcontainers:junit-jupiter")
+        testImplementation("org.testcontainers:testcontainers")
     }
 
     dependencies {
