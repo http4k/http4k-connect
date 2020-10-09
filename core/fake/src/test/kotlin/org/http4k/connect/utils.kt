@@ -7,9 +7,8 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
-import org.junit.jupiter.api.Assumptions.assumeTrue
-import java.io.IOException
-import java.net.Socket
+import org.junit.Assume.assumeTrue
+import java.lang.Runtime.getRuntime
 
 class CapturingHttpHandler : HttpHandler {
     var captured: Request? = null
@@ -27,10 +26,5 @@ fun <T, E> Result<T, E>.successValue(): T = when (this) {
 }
 
 fun assumeDockerDaemonRunning() {
-    assumeTrue(try {
-        Socket("localhost", 2376)
-        true;
-    } catch (ignored: IOException) {
-        false;
-    })
+    assumeTrue("Docker is not running", getRuntime().exec("docker ps").errorStream.bufferedReader().readText().isEmpty())
 }
