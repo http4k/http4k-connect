@@ -10,11 +10,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class StorageContract(private val storage: Storage<String>) {
+abstract class StorageContract {
     private val prefix = UUID.randomUUID().toString()
 
+    abstract val storage: Storage<String>
+
+    open fun setUp() {}
+
     @BeforeEach
-    fun clear() {
+    fun prepare() {
+        setUp()
         storage.removeAll(prefix)
     }
 

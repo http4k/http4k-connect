@@ -1,3 +1,5 @@
 package org.http4k.connect.storage
 
-class InMemoryStorageTest : StorageContract(Storage.InMemory())
+class InMemoryStorageTest : StorageContract() {
+    override val storage = Storage.InMemory<String>()
+}

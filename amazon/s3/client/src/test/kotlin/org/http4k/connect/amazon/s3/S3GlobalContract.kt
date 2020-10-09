@@ -18,11 +18,11 @@ abstract class S3GlobalContract(private val http: HttpHandler) {
 
     private val bucket = BucketName(UUID.randomUUID().toString())
 
-    open fun setup() {}
+    open fun setUp() {}
 
     @BeforeEach
     fun cleanup() {
-        setup()
+        setUp()
         s3.delete(bucket).successValue()
     }
 

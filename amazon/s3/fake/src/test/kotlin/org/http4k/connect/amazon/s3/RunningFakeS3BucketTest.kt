@@ -15,7 +15,7 @@ class RunningFakeS3BucketTest : S3BucketContract(
     override val aws = fakeAwsEnvironment
     private lateinit var server: Http4kServer
 
-    override fun setup() {
+    override fun setUp() {
         server = FakeS3().start()
     }
 

@@ -21,11 +21,11 @@ abstract class S3BucketContract(private val http: HttpHandler) {
 
     private val key = BucketKey(UUID.randomUUID().toString())
 
-    open fun setup() {}
+    open fun setUp() {}
 
     @BeforeEach
     fun cleanup() {
-        setup()
+        setUp()
         s3Bucket.delete(key).successValue()
         s3Bucket.delete().successValue()
     }
