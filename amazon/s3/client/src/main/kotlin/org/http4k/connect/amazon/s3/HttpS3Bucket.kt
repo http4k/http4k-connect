@@ -14,7 +14,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status.Companion.CONFLICT
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Uri
-import org.http4k.core.filters.SetXForwardedHost
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
