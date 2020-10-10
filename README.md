@@ -11,7 +11,7 @@ To install:
 
 ```groovy
 dependencies {
-    implementation platform("org.http4k:http4k-connect-bom:0.11.0.0")
+    implementation platform("org.http4k:http4k-connect-bom:0.12.0.0")
     implementation "org.http4k:http4k-connect-amazon-s3"
     implementation "org.http4k:http4k-connect-amazon-s3-fake"
 }
