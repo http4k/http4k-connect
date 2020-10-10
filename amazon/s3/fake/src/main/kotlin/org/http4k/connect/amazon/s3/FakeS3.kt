@@ -22,6 +22,7 @@ import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
 import java.time.Instant
+import java.util.Base64
 
 /**
  * Global S3 operations (manage buckets)
@@ -88,7 +89,7 @@ class FakeS3(
     private fun copyKey(destinationBucket: String, source: String, destinationKey: String) =
         bucketContent[source.split("/").let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
             ?.let {
-                putKey(destinationBucket, destinationKey, it.content)
+                putKey(destinationBucket, destinationKey, Base64.getDecoder().decode(it.content))
                 Response(OK)
             } ?: Response(NOT_FOUND)
 
@@ -96,7 +97,7 @@ class FakeS3(
     private fun getKey(bucket: String, key: String): Response {
         return buckets[bucket]
             ?.let {
-                bucketContent["$bucket-$key"]?.content?.inputStream()
+                bucketContent["$bucket-$key"]?.content?.let { Base64.getDecoder().decode(it).inputStream() }
             }?.let { Response(OK).body(it) }
             ?: Response(NOT_FOUND)
     }
@@ -123,7 +124,9 @@ class FakeS3(
 
     private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
         ?.let {
-            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey(key), bytes, Instant.now(clock))
+            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey(key),
+                Base64.getEncoder().encodeToString(bytes),
+                Instant.now(clock))
             Response(CREATED)
         }
         ?: Response(NOT_FOUND)
