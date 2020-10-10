@@ -2,7 +2,7 @@ package org.http4k.connect.storage
 
 import java.util.concurrent.ConcurrentHashMap
 
-fun <T> Storage.Companion.InMemory() = object : Storage<T> {
+fun <T : Any> Storage.Companion.InMemory() = object : Storage<T> {
     private val byKey = ConcurrentHashMap<String, T>()
 
     override fun get(key: String): T? = byKey[key]
@@ -15,10 +15,12 @@ fun <T> Storage.Companion.InMemory() = object : Storage<T> {
 
     override fun remove(key: String) = byKey.remove(key) != null
 
-    override fun removeAll(keyPrefix: String): Boolean {
-        byKey.keys().iterator().forEach { if (it.startsWith(keyPrefix)) remove(it) }
-        return true
-    }
+    override fun removeAll(keyPrefix: String) =
+        if (byKey.isEmpty()) false
+        else {
+            byKey.keys().iterator().forEach { if (it.startsWith(keyPrefix)) remove(it) }
+            true
+        }
 
     override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> = byKey.keys.filter { it.startsWith(keyPrefix) }.map { decodeFunction(it) }.toSet()
 

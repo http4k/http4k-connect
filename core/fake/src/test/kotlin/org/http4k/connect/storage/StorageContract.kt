@@ -25,7 +25,7 @@ abstract class StorageContract {
 
     @Test
     fun `item lifecycle`() {
-        val key = UUID.randomUUID().toString()
+        val key = prefix + UUID.randomUUID().toString()
         val value = UUID.randomUUID().toString()
         assertThat(storage[key], absent())
 
@@ -52,14 +52,14 @@ abstract class StorageContract {
 
     @Test
     fun `collection operations`() {
-        val key1 = UUID.randomUUID().toString()
-        val key2 = UUID.randomUUID().toString()
-        assertTrue(storage.removeAll(prefix))
+        val key1 = prefix + UUID.randomUUID().toString()
+        val key2 = prefix + UUID.randomUUID().toString()
+        assertFalse(storage.removeAll(prefix))
 
         storage[key1] = UUID.randomUUID().toString()
         storage[key2] = UUID.randomUUID().toString()
 
-        assertThat(storage.keySet("") { it + it }, equalTo(setOf(key1 + key1, key2 + key2)))
+        assertThat(storage.keySet(prefix) { it + it }, equalTo(setOf(key1 + key1, key2 + key2)))
         assertTrue(storage.removeAll(prefix))
     }
 }
