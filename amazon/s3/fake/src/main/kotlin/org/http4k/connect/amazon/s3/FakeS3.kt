@@ -36,6 +36,8 @@ class FakeS3(
 
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
+    private val GLOBAL_BUCKET = "unknown"
+
     override val app = routes(
         "/{id:.+}" bind routes(
             GET to {
@@ -138,8 +140,11 @@ class FakeS3(
         return Response(CREATED)
     }
 
-    private fun Request.subdomain() =
-        (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: "unknown"
+    private fun Request.subdomain(): String =
+        (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: {
+            buckets.create(GLOBAL_BUCKET, Unit)
+            GLOBAL_BUCKET
+        }()
 
     /**
      * Convenience function to get an S3 client for global operations
