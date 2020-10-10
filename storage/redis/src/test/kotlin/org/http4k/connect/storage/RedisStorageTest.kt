@@ -2,7 +2,6 @@ package org.http4k.connect.storage
 
 import org.http4k.connect.assumeDockerDaemonRunning
 import org.http4k.core.Uri
-import org.http4k.format.RedisJackson
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -20,6 +19,6 @@ class RedisStorageTest : StorageContract() {
         .withExposedPorts(6379)
 
     override val storage: Storage<String> by lazy {
-        Storage.RedisJackson<String>(Uri.of("redis://${redis.host}:${redis.firstMappedPort}"))
+        Storage.Redis<String>(Uri.of("redis://${redis.host}:${redis.firstMappedPort}"))
     }
 }

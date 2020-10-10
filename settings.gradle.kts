@@ -1,6 +1,6 @@
 includeSystem("core")
 includeWithName("http4k-connect-bom", "bom")
-includeStorage("postgres")
+includeStorage("jdbc")
 includeStorage("redis")
 
 includeSystem("amazon", "s3")

@@ -7,13 +7,14 @@ import io.lettuce.core.api.sync.RedisCommands
 import io.lettuce.core.codec.RedisCodec
 import org.http4k.core.Uri
 import org.http4k.format.AutoMarshalling
+import org.http4k.format.Jackson
 import java.net.URI
 import java.util.concurrent.TimeUnit.HOURS
 
 /**
  * Connect to Redis using Automarshalling
  */
-inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, autoMarshalling: AutoMarshalling) =
+inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, autoMarshalling: AutoMarshalling = Jackson) =
     Redis(uri, AutoRedisCodec<T>(autoMarshalling))
 
 /**
@@ -26,7 +27,7 @@ inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, codec: RedisCodec
 /**
  * Redis-backed storage implementation. You probably want to use one of the builder functions instead of this
  */
-fun <T> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Storage<T> {
+fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Storage<T> {
 
     private val lifetime = HOURS.toSeconds(1)
 
@@ -47,12 +48,13 @@ fun <T> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Stor
     override fun remove(key: String): Boolean = redis.del(key) == 1L
 
     override fun removeAll(keyPrefix: String): Boolean {
-        if (keyPrefix.isEmpty()) {
-            val keys = redis.keys("$keyPrefix.*")
-            if (keys.isNotEmpty()) redis.del(*keys.toTypedArray())
-        } else redis.flushall()
+        val keys = redis.keys("$keyPrefix*")
+        return if (keys.isEmpty()) false
+        else {
+            redis.del(*keys.toTypedArray())
+            true
+        }
 
-        return true
     }
 
     override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> =
