@@ -1,3 +1,3 @@
 dependencies {
-    implementation("org.http4k:http4k-aws")
+    api("org.http4k:http4k-aws")
 }

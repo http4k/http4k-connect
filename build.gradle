@@ -31,8 +31,8 @@ allprojects {
     dependencies {
         implementation platform("org.http4k:http4k-bom:$http4k_version")
         implementation platform("dev.forkhandles:forkhandles-bom:$forkhandles_version")
-        implementation("org.http4k:http4k-core")
-        implementation("dev.forkhandles:result4k")
+        api("org.http4k:http4k-core")
+        api("dev.forkhandles:result4k")
 
         testImplementation platform("org.junit:junit-bom:$junit_version")
         testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_version")
@@ -47,14 +47,14 @@ allprojects {
 
     dependencies {
         if (project.name.endsWith("core-fake")) {
-            implementation project(":http4k-connect-core")
+            api project(":http4k-connect-core")
         } else if (project.name.endsWith("fake")) {
-            implementation project(":http4k-connect-core-fake")
-            implementation project(":${project.name.substring(0, project.name.length() - 5)}")
+            api project(":http4k-connect-core-fake")
+            api project(":${project.name.substring(0, project.name.length() - 5)}")
             testImplementation project(path: ":${project.name.substring(0, project.name.length() - 5)}", configuration: "testArtifacts")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         } else if (project.name.startsWith("http4k-connect-storage")) {
-            implementation project(":http4k-connect-core-fake")
+            api project(":http4k-connect-core-fake")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         } else if (project.name == "http4k-connect") {
             rootProject.subprojects.forEach {
@@ -63,7 +63,7 @@ allprojects {
         } else if (project.name == "http4k-connect-bom") {
             // bom - no code
         } else if (project.name != "http4k-connect-core") {
-            implementation project(":http4k-connect-core")
+            api project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         }
     }
@@ -212,10 +212,6 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         csv.enabled = false
         xml.destination = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
     }
-}
-
-dependencies {
-    implementation "org.http4k:http4k-format-jackson"
 }
 
 sourceSets {
