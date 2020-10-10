@@ -10,7 +10,7 @@ import java.util.UUID
 class JdbcStorageTest : StorageContract() {
     private val name = UUID.randomUUID().toString()
 
-    override val storage: Storage<String> by lazy {
+    override val storage: Storage<AnEntity> by lazy {
         val ds = HikariDataSource(
             HikariConfig().apply {
                 driverClassName = "org.h2.Driver"
@@ -18,7 +18,7 @@ class JdbcStorageTest : StorageContract() {
             })
 
         transaction(Database.connect(ds)) {
-            SchemaUtils.create(StorageTable("String"))
+            SchemaUtils.create(StorageTable("AnEntity"))
         }
 
         Storage.Jdbc(ds)

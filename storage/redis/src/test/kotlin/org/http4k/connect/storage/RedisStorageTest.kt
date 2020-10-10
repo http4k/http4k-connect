@@ -18,7 +18,7 @@ class RedisStorageTest : StorageContract() {
     val redis = GenericContainer<GenericContainer<*>>(DockerImageName.parse("redis:5.0.3-alpine"))
         .withExposedPorts(6379)
 
-    override val storage: Storage<String> by lazy {
-        Storage.Redis<String>(Uri.of("redis://${redis.host}:${redis.firstMappedPort}"))
+    override val storage: Storage<AnEntity> by lazy {
+        Storage.Redis<AnEntity>(Uri.of("redis://${redis.host}:${redis.firstMappedPort}"))
     }
 }
