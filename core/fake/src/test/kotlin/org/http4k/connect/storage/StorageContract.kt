@@ -13,7 +13,8 @@ import java.util.UUID
 data class AnEntity(val name:String)
 
 abstract class StorageContract {
-    private val prefix = UUID.randomUUID().toString()
+    private val prefix1 = UUID.randomUUID().toString()
+    private val prefix2 = UUID.randomUUID().toString()
 
     abstract val storage: Storage<AnEntity>
 
@@ -22,12 +23,12 @@ abstract class StorageContract {
     @BeforeEach
     fun prepare() {
         setUp()
-        storage.removeAll(prefix)
+        storage.removeAll(prefix1)
     }
 
     @Test
     fun `item lifecycle`() {
-        val key = prefix + UUID.randomUUID().toString()
+        val key = prefix1 + UUID.randomUUID().toString()
         val value = AnEntity(UUID.randomUUID().toString())
         assertThat(storage[key], absent())
 
@@ -53,16 +54,44 @@ abstract class StorageContract {
     }
 
     @Test
+    fun `2 storages do not interfere`() {
+        val key1 = prefix1 + UUID.randomUUID().toString()
+        val key2 = prefix2 + UUID.randomUUID().toString()
+        assertThat(storage[key1], absent())
+        assertThat(storage[key2], absent())
+
+        val originalValue = AnEntity(UUID.randomUUID().toString())
+        assertTrue(storage.create(key1, originalValue))
+        assertThat(storage[key1], present(equalTo(originalValue)))
+        assertThat(storage[key2], absent())
+
+        assertTrue(storage.create(key2, originalValue))
+        assertThat(storage[key1], present(equalTo(originalValue)))
+        assertThat(storage[key2], present(equalTo(originalValue)))
+
+        // update value
+        val anotherValue = AnEntity(UUID.randomUUID().toString())
+        assertTrue(storage.update(key1, anotherValue))
+        assertThat(storage[key1], present(equalTo(anotherValue)))
+        assertThat(storage[key2], present(equalTo(originalValue)))
+
+        // remove
+        assertTrue(storage.remove(key1))
+        assertThat(storage[key1], absent())
+        assertThat(storage[key2], present(equalTo(originalValue)))
+    }
+
+    @Test
     fun `collection operations`() {
-        val key1 = prefix + UUID.randomUUID().toString()
-        val key2 = prefix + UUID.randomUUID().toString()
-        assertFalse(storage.removeAll(prefix))
+        val key1 = prefix1 + UUID.randomUUID().toString()
+        val key2 = prefix1 + UUID.randomUUID().toString()
+        assertFalse(storage.removeAll(prefix1))
 
         storage[key1] = AnEntity(UUID.randomUUID().toString())
         storage[key2] = AnEntity(UUID.randomUUID().toString())
 
-        assertThat(storage.keySet(prefix) { it + it }, equalTo(setOf(key1 + key1, key2 + key2)))
-        assertTrue(storage.removeAll(prefix))
+        assertThat(storage.keySet(prefix1) { it + it }, equalTo(setOf(key1 + key1, key2 + key2)))
+        assertTrue(storage.removeAll(prefix1))
     }
 }
 

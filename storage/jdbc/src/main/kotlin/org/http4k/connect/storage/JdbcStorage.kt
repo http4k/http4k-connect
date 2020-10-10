@@ -61,7 +61,7 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
     }
 
     override fun remove(key: String) = tx {
-        table.deleteAll() > 0
+        table.deleteWhere { table.key eq key } > 0
     }
 
     override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T) = tx {
