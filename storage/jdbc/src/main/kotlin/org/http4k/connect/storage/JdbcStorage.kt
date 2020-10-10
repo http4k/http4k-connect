@@ -13,14 +13,18 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import javax.sql.DataSource
 
 /**
- * Database-backed storage implementation. You probably want to use one of the builder functions instead of this
+ * Database-backed storage implementation. Automatically marshals objects to
+ * and from string-value format.
  */
 inline fun <reified T : Any> Storage.Companion.Jdbc(
-    db: Database,
+    dataSource: DataSource,
     tableName: String = T::class.java.simpleName,
     autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
+
+    private val db = Database.connect(dataSource)
 
     private val table = StorageTable(tableName)
 
