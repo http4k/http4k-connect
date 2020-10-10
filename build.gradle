@@ -188,6 +188,14 @@ allprojects {
                 "Implementation-Version": project.version
         }
     }
+
+    sourceSets {
+        test {
+            kotlin {
+                srcDirs "src/examples/kotlin"
+            }
+        }
+    }
 }
 
 compileTestKotlin.kotlinOptions {
@@ -211,14 +219,6 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         xml.enabled = true
         csv.enabled = false
         xml.destination = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
-    }
-}
-
-sourceSets {
-    test {
-        kotlin {
-            srcDirs "src/test/kotlin"
-        }
     }
 }
 
