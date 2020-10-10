@@ -10,7 +10,7 @@ class JdbcStorageTest : StorageContract() {
     override val storage: Storage<String> by lazy {
         val db = Database.connect("jdbc:h2:mem:$name;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         transaction(db) {
-            SchemaUtils.create(Items)
+            SchemaUtils.create(StorageTable("String"))
         }
 
         Storage.Jdbc(db)

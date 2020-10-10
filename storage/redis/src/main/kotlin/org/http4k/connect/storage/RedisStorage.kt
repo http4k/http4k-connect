@@ -54,7 +54,6 @@ fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object 
             redis.del(*keys.toTypedArray())
             true
         }
-
     }
 
     override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> =

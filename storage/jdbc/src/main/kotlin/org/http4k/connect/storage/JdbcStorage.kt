@@ -1,8 +1,9 @@
 package org.http4k.connect.storage
 
-import org.http4k.connect.storage.Items.key
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Jackson
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.deleteAll
@@ -13,19 +14,26 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-inline fun <reified T : Any> Storage.Companion.Jdbc(db: Database, autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
+/**
+ * Database-backed storage implementation. You probably want to use one of the builder functions instead of this
+ */
+inline fun <reified T : Any> Storage.Companion.Jdbc(
+    db: Database,
+    tableName: String = T::class.java.simpleName,
+    autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
+
+    private val table = StorageTable(tableName)
 
     override fun get(key: String) = tx {
-        Items.select { Items.key eq key }.firstOrNull()?.let { autoMarshalling.asA<T>(it[Items.json]) }
+        table.select { table.key eq key }.firstOrNull()?.let { autoMarshalling.asA<T>(it[table.contents]) }
     }
-
 
     override fun set(key: String, data: T) {
         tx {
-            when (Items.select { Items.key eq key }.count()) {
-                0L -> Items.insert {
-                    it[Items.key] = key
-                    it[json] = autoMarshalling.asFormatString(data)
+            when (table.select { table.key eq key }.count()) {
+                0L -> table.insert {
+                    it[table.key] = key
+                    it[contents] = autoMarshalling.asFormatString(data)
                 }
                 else -> update(key, data)
             }
@@ -33,7 +41,7 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(db: Database, autoMarshallin
     }
 
     override fun create(key: String, data: T) = tx {
-        when (Items.select { Items.key eq key }.count()) {
+        when (table.select { table.key eq key }.count()) {
             0L -> {
                 set(key, data)
                 true
@@ -43,31 +51,36 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(db: Database, autoMarshallin
     }
 
     override fun update(key: String, data: T): Boolean = tx {
-        Items.update({ Items.key eq key }) {
-            it[json] = autoMarshalling.asFormatString(data)
+        table.update({ table.key eq key }) {
+            it[contents] = autoMarshalling.asFormatString(data)
         } > 0
     }
 
     override fun remove(key: String) = tx {
-        Items.deleteAll() > 0
+        table.deleteAll() > 0
     }
 
     override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T) = tx {
         when {
-            keyPrefix.isBlank() -> Items.selectAll()
-            else -> Items.select { key like "$keyPrefix%" }
-        }.map { decodeFunction(it[key]) }.toSet()
+            keyPrefix.isBlank() -> table.selectAll()
+            else -> table.select { table.key like "$keyPrefix%" }
+        }.map { decodeFunction(it[table.key]) }.toSet()
     }
 
     override fun removeAll(keyPrefix: String) = tx {
         when {
-            keyPrefix.isBlank() -> Items.deleteAll().run { true }
-            else -> Items.deleteWhere { key like "$keyPrefix%" } > 0
+            keyPrefix.isBlank() -> table.deleteAll().run { true }
+            else -> table.deleteWhere { table.key like "$keyPrefix%" } > 0
         }
     }
 
     private fun <T> tx(statement: Transaction.() -> T): T = transaction(db) {
         statement()
     }
+}
 
+class StorageTable(name: String = "") : IntIdTable(name) {
+    val key: Column<String> = varchar("key", 500)
+    val contents: Column<String> = text("contents")
+    override val primaryKey = PrimaryKey(key)
 }
