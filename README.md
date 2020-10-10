@@ -1,8 +1,9 @@
 # http4k-connect
 
+![https://bintray.com/http4k/maven/http4k-connect-bom/_latestVersion](https://api.bintray.com/packages/http4k/maven/http4k-connect-bom/images/download.svg)
 ![.github/workflows/build.yaml](https://github.com/http4k/http4k-connect/workflows/.github/workflows/build.yaml/badge.svg)
 ![.github/workflows/release.yaml](https://github.com/http4k/http4k-connect/workflows/.github/workflows/release.yaml/badge.svg)
-<a href="http://kotlinlang.org"><img alt="kotlin" src="https://img.shields.io/badge/kotlin-1.4-blue.svg"></a>
+![http://kotlinlang.org](https://img.shields.io/badge/kotlin-1.4-blue.svg)
 
 http4k Connector libraries for external APIs using http4k compatible APIs, along with Fake implementations for usage during testing. These all utilise the uniform `Server as a Function` 
 `HttpHandler` interface exposed by [http4k](https://http4k.org), so you can plug everything together completely in-memory.
