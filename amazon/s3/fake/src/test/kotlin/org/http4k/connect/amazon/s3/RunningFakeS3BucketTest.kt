@@ -9,7 +9,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 
 class RunningFakeS3BucketTest : S3BucketContract(
-    ClientFilters.SetAuthorityFrom(Uri.of("http://localhost:" + FakeS3::class.defaultPort()))
+    ClientFilters.SetBaseUriFrom(Uri.of("http://localhost:" + FakeS3::class.defaultPort()))
         .then(JavaHttpClient())
 ) {
     override val aws = fakeAwsEnvironment
