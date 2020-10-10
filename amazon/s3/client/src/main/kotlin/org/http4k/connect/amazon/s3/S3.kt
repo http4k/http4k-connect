@@ -20,8 +20,8 @@ interface S3 {
         fun create(): Result<Unit, RemoteFailure>
         fun delete(): Result<Unit?, RemoteFailure>
         fun delete(key: BucketKey): Result<Unit?, RemoteFailure>
-        fun get(key: BucketKey): Result<InputStream?, RemoteFailure>
-        fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>
+        operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure>
+        operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>
         fun copy(originalKey: BucketKey, newKey: BucketKey): Result<Unit, RemoteFailure>
 
         /**

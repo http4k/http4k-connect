@@ -73,7 +73,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
+    override operator fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
         with(http(Request(PUT, it).body(content))) {
             when {
                 status.successful -> Success(Unit)
@@ -82,7 +82,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun get(key: BucketKey) = Uri.of("/$key").let {
+    override operator fun get(key: BucketKey) = Uri.of("/$key").let {
         with(http(Request(GET, it))) {
             when {
                 status.successful -> Success(body.stream)
