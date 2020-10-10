@@ -12,24 +12,31 @@ To install:
 
 ```groovy
 dependencies {
+    // install the plaform...
     implementation platform("org.http4k:http4k-connect-bom:0.14.0.0")
+
+    // ...then choose a client
     implementation "org.http4k:http4k-connect-amazon-s3"
-    implementation "org.http4k:http4k-connect-amazon-s3-fake"
-    implementation "org.http4k:http4k-storage-redis"
+
+    // ...a fake for testing
+    testImplementation "org.http4k:http4k-connect-amazon-s3-fake"
+
+    // ...and a storage backend (optional)
+    testImplementation "org.http4k:http4k-storage-redis"
 }
 ```
 
 Supported APIs and Fakes:
 
-- [Amazon S3](./amazon/s3)
-- [Google Analytics](./google/analytics)
-- [Example Template](./example)
+- [Amazon S3](./amazon/s3) -> `"org.http4k:http4k-connect-amazon-s3"` / `"org.http4k:http4k-connect--amazon-s3-fake"`
+- [Google Analytics](./google/analytics) -> `"org.http4k:http4k-connect-google-analytics"` / `"org.http4k:http4k-connect-google-analytic-fake"`
+- [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
 Supported Storage backends:
 
-- [Redis](./storage/redis)
-- [JDBC](./storage/jdbc)
-- [In-Memory](./core/fake)
+- [JDBC](./storage/jdbc) -> `"org.http4k:http4k-connect-storage-jdbc"`
+- [Redis](./storage/redis) -> `"org.http4k:http4k-connect-storage-redis"`
+- [In-Memory](./core/fake) (included with all Fakes)
 
 
 ## Using the Clients and the Fakes
