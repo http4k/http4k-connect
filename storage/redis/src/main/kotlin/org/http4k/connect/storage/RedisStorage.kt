@@ -20,7 +20,7 @@ inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, autoMarshalling: 
 /**
  * Connect to Redis using custom codec
  */
-inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, codec: RedisCodec<String, T>) =
+fun <T : Any> Storage.Companion.Redis(uri: Uri, codec: RedisCodec<String, T>) =
     Redis(create(uri.asRedis()).connect(codec).sync())
 
 
