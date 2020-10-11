@@ -36,6 +36,7 @@ Supported Storage backends:
 
 - [JDBC](./storage/jdbc) -> `"org.http4k:http4k-connect-storage-jdbc"`
 - [Redis](./storage/redis) -> `"org.http4k:http4k-connect-storage-redis"`
+- [S3](./storage/s3) -> `"org.http4k:http4k-connect-storage-s3"`
 - [In-Memory](./core/fake) (included with all Fakes)
 
 
