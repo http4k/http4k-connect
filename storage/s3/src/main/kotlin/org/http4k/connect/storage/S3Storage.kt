@@ -12,8 +12,7 @@ import org.http4k.format.Jackson
 import java.io.InputStream
 
 /**
- * S3-backed storage implementation. Automatically marshals objects to
- * and from string-value format.
+ * S3-backed storage implementation. Automatically marshals objects to and from string-value format.
  */
 inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
     override fun get(key: String): T? {
@@ -65,8 +64,3 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
         }
     }
 }
-
-fun RemoteFailure.throwIt(): Nothing {
-    throw Exception(toString())
-}
-
