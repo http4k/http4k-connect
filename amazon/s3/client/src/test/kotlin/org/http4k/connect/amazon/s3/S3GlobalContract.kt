@@ -13,7 +13,7 @@ abstract class S3GlobalContract(private val http: HttpHandler) {
     abstract val aws: AwsEnvironment
 
     private val s3 by lazy {
-        S3.Http(http, aws.scope, { aws.credentials })
+        S3.Http(aws.scope, { aws.credentials }, http)
     }
 
     private val bucket = BucketName(UUID.randomUUID().toString())

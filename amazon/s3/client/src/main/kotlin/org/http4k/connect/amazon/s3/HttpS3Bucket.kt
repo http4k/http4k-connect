@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
+import org.http4k.client.JavaHttpClient
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
 import org.http4k.core.HttpHandler
@@ -22,9 +23,9 @@ import java.io.InputStream
 import java.time.Clock
 
 fun S3.Bucket.Companion.Http(bucketName: BucketName,
-                             rawHttp: HttpHandler,
                              scope: AwsCredentialScope,
                              credentialsProvider: () -> AwsCredentials,
+                             rawHttp: HttpHandler = JavaHttpClient(),
                              clock: Clock = Clock.systemDefaultZone(),
                              payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
     private val http =

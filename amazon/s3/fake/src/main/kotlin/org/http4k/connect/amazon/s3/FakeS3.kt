@@ -149,16 +149,16 @@ class FakeS3(
     /**
      * Convenience function to get an S3 client for global operations
      */
-    fun s3Client() = S3.Http(this,
+    fun s3Client() = S3.Http(
         AwsCredentialScope("*", "s3"),
-        { AwsCredentials("accessKey", "secret") }, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock)
 
     /**
      * Convenience function to get an S3 client for bucket operations
      */
-    fun s3BucketClient(name: BucketName) = S3.Bucket.Http(name, this,
+    fun s3BucketClient(name: BucketName) = S3.Bucket.Http(name,
         AwsCredentialScope("*", "s3"),
-        { AwsCredentials("accessKey", "secret") }, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 
 fun main() {

@@ -16,7 +16,7 @@ abstract class S3BucketContract(private val http: HttpHandler) {
     private val bucket = BucketName(UUID.randomUUID().toString())
 
     private val s3Bucket by lazy {
-        S3.Bucket.Http(bucket, http, aws.scope, { aws.credentials })
+        S3.Bucket.Http(bucket, aws.scope, { aws.credentials }, http)
     }
 
     private val key = BucketKey(UUID.randomUUID().toString())

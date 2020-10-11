@@ -2,6 +2,7 @@ includeSystem("core")
 includeWithName("http4k-connect-bom", "bom")
 includeStorage("jdbc")
 includeStorage("redis")
+includeStorage("s3")
 
 includeSystem("amazon", "s3")
 includeSystem("example")

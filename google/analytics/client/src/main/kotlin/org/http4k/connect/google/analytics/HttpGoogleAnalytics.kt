@@ -2,6 +2,7 @@ package org.http4k.connect.google.analytics
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
@@ -9,7 +10,8 @@ import org.http4k.core.Request
 import org.http4k.core.Uri
 import org.http4k.core.body.form
 
-fun GoogleAnalytics.Companion.Http(http: HttpHandler, trackingId: TrackingId) = object : GoogleAnalytics {
+fun GoogleAnalytics.Companion.Http(trackingId: TrackingId,
+                                   http: HttpHandler = JavaHttpClient()) = object : GoogleAnalytics {
     override fun pageView(userAgent: String, clientId: ClientId, documentTitle: String, documentPath: String, documentHost: String) =
         Uri.of("/collect").let {
             with(http(Request(POST, it)
