@@ -34,10 +34,11 @@ Supported APIs and Fakes:
 
 Supported Storage backends:
 
+- [In-Memory](./core/fake) (included with all Fakes)
+- [File-Based](./core/fake) (included with all Fakes)
 - [JDBC](./storage/jdbc) -> `"org.http4k:http4k-connect-storage-jdbc"`
 - [Redis](./storage/redis) -> `"org.http4k:http4k-connect-storage-redis"`
 - [S3](./storage/s3) -> `"org.http4k:http4k-connect-storage-s3"`
-- [In-Memory](./core/fake) (included with all Fakes)
 
 
 ## Using the Clients and the Fakes

@@ -2,6 +2,9 @@ package org.http4k.connect.storage
 
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Simple In-Memory, map-backed storage implementation.
+ */
 fun <T : Any> Storage.Companion.InMemory() = object : Storage<T> {
     private val byKey = ConcurrentHashMap<String, T>()
 
