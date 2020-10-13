@@ -110,7 +110,8 @@ class FakeS3(
         ?.let {
             Response(OK)
                 .with(lens of ListBucketResult(
-                    bucketContent.keySet(bucket) { it.removePrefix("$bucket-") }
+                    bucketContent.keySet(bucket) { it }
+                        .map { it.removePrefix("$bucket-") }
                         .map { bucketContent["$bucket-$it"]!! }
                         .sortedBy { it.key.value }
                 ))
