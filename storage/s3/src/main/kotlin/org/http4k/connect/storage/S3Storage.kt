@@ -33,16 +33,16 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
             .map { true }
             .recover { it.throwIt() }
 
-    override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T) =
+    override fun keySet(keyPrefix: String) =
         when (val result = s3.list()) {
             is Success -> result.value
                 .filter { it.value.startsWith(keyPrefix) }
-                .map { decodeFunction(it.value) }
+                .map { it.value }
                 .toSet()
             is Failure -> result.reason.throwIt()
         }
 
-    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix) { it }.map { BucketKey(it) }) {
+    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix).map { BucketKey(it) }) {
         when {
             isEmpty() -> false
             else -> {

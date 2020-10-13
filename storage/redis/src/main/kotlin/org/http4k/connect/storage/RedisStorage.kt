@@ -49,8 +49,8 @@ fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object 
         }
     }
 
-    override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> =
-        redis.keys("$keyPrefix*").map { decodeFunction(it) }.toSet()
+    override fun keySet(keyPrefix: String) =
+        redis.keys("$keyPrefix*").toSet()
 }
 
 fun Uri.asRedis() = RedisURI.create(URI(toString()))

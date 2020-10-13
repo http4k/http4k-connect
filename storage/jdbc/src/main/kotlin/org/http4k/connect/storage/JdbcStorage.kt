@@ -50,11 +50,11 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
         table.deleteWhere { table.key eq key } > 0
     }
 
-    override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T) = tx {
+    override fun keySet(keyPrefix: String) = tx {
         when {
             keyPrefix.isBlank() -> table.selectAll()
             else -> table.select { table.key like "$keyPrefix%" }
-        }.map { decodeFunction(it[table.key]) }.toSet()
+        }.map { it[table.key] }.toSet()
     }
 
     override fun removeAll(keyPrefix: String) = tx {

@@ -10,8 +10,7 @@ interface Storage<T : Any> {
     operator fun set(key: String, data: T)
     fun remove(key: String): Boolean
 
-    // remove decode
-    fun <KEY> keySet(keyPrefix: String, decodeFunction: (String) -> KEY): Set<KEY>
+    fun keySet(keyPrefix: String): Set<String>
 
     fun removeAll(keyPrefix: String = ""): Boolean
 

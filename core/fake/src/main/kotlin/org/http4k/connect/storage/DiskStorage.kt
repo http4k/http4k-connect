@@ -30,7 +30,7 @@ inline fun <reified T : Any> Storage.Companion.Disk(dir: File, autoMarshalling: 
         (dir.listFiles { pathname -> pathname.isFile && pathname.name.startsWith(keyPrefix) }
             ?: emptyArray()).toList()
 
-    override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> = listKeysWith(keyPrefix).map { decodeFunction(it.name) }.toSet()
+    override fun keySet(keyPrefix: String) = listKeysWith(keyPrefix).map { it.name }.toSet()
 
     override fun toString() = listKeysWith("").joinToString(",") { it.name }
 }

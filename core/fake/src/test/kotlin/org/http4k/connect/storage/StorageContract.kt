@@ -81,7 +81,7 @@ abstract class StorageContract {
         storage[key1] = AnEntity(UUID.randomUUID().toString())
         storage[key2] = AnEntity(UUID.randomUUID().toString())
 
-        assertThat(storage.keySet(prefix1) { it }, equalTo(setOf(key1, key2)))
+        assertThat(storage.keySet(prefix1), equalTo(setOf(key1, key2)))
         assertTrue(storage.removeAll(prefix1))
     }
 }

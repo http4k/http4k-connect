@@ -22,7 +22,7 @@ fun <T : Any> Storage.Companion.InMemory() = object : Storage<T> {
             true
         }
 
-    override fun <T> keySet(keyPrefix: String, decodeFunction: (String) -> T): Set<T> = byKey.keys.filter { it.startsWith(keyPrefix) }.map { decodeFunction(it) }.toSet()
+    override fun keySet(keyPrefix: String) = byKey.keys.filter { it.startsWith(keyPrefix) }.toSet()
 
     override fun toString() = byKey.toString()
 }
