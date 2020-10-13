@@ -119,7 +119,7 @@ class FakeS3(
         ?: Response(NOT_FOUND)
 
     private fun listBuckets() = Response(OK)
-        .with(lens of ListAllMyBuckets(buckets.keySet("", ::BucketName).toList().sortedBy { it.name }))
+        .with(lens of ListAllMyBuckets(buckets.keySet("") { it }.map { BucketName(it) }.toList().sortedBy { it.name }))
 
     private fun deleteBucket(bucket: String) = Response(if (buckets.remove(bucket)) OK else NOT_FOUND)
 

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-data class AnEntity(val name:String)
+data class AnEntity(val name: String)
 
 abstract class StorageContract {
     private val prefix1 = UUID.randomUUID().toString()
@@ -81,7 +81,7 @@ abstract class StorageContract {
         storage[key1] = AnEntity(UUID.randomUUID().toString())
         storage[key2] = AnEntity(UUID.randomUUID().toString())
 
-        assertThat(storage.keySet(prefix1) { it + it }, equalTo(setOf(key1 + key1, key2 + key2)))
+        assertThat(storage.keySet(prefix1) { it }, equalTo(setOf(key1, key2)))
         assertTrue(storage.removeAll(prefix1))
     }
 }

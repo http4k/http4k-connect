@@ -42,7 +42,7 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
             is Failure -> result.reason.throwIt()
         }
 
-    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix) { BucketKey(it) }) {
+    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix) { it }.map { BucketKey(it) }) {
         when {
             isEmpty() -> false
             else -> {
