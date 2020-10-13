@@ -13,9 +13,6 @@ fun <T : Any> Storage.Companion.InMemory() = object : Storage<T> {
         byKey[key] = data
     }
 
-    override fun create(key: String, data: T): Boolean = byKey.putIfAbsent(key, data) == null
-    override fun update(key: String, data: T) = byKey[key] != null && byKey.put(key, data) != null
-
     override fun remove(key: String) = byKey.remove(key) != null
 
     override fun removeAll(keyPrefix: String) =

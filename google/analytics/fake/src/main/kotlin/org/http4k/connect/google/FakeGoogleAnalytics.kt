@@ -15,7 +15,7 @@ class FakeGoogleAnalytics(private val views: Storage<Uri> = Storage.InMemory()) 
 
     override val app = routes(
         "/collect" bind POST to {
-            views.create(UUID.randomUUID().toString(), it.uri)
+            views[UUID.randomUUID().toString()] = it.uri
             Response(OK).body(it.body)
         }
     )

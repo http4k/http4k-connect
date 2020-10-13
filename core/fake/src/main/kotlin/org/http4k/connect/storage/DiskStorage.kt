@@ -7,15 +7,11 @@ import java.io.File
 /**
  * Simple On-Disk, file-backed storage implementation.
  */
-inline fun <reified T : Any> Storage.Companion.FileBased(dir: File, autoMarshalling: AutoMarshalling = Jackson) = object : Storage<T> {
+inline fun <reified T : Any> Storage.Companion.Disk(dir: File, autoMarshalling: AutoMarshalling = Jackson) = object : Storage<T> {
     override fun get(key: String): T? = File(dir, key).takeIf { it.exists() }?.readText()?.let { autoMarshalling.asA<T>(it) }
     override fun set(key: String, data: T) {
         File(dir, key).writeText(autoMarshalling.asFormatString(data))
     }
-
-    override fun create(key: String, data: T) = File(dir, key).takeUnless { it.exists() }?.also { set(key, data) } != null
-
-    override fun update(key: String, data: T) = File(dir, key).takeIf { it.exists() }?.also { set(key, data) } != null
 
     override fun remove(key: String) = File(dir, key).delete()
 

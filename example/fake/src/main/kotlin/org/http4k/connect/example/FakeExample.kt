@@ -10,7 +10,7 @@ import java.util.UUID
 
 class FakeExample(private val echos: Storage<String> = Storage.InMemory()) : ChaosFake() {
     override val app = { req: Request ->
-        echos.create(UUID.randomUUID().toString(), req.bodyString())
+        echos[UUID.randomUUID().toString()] = req.bodyString()
         Response(OK).body(req.body)
     }
 }

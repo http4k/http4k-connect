@@ -142,7 +142,7 @@ class FakeS3(
 
     private fun Request.subdomain(): String =
         (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: {
-            buckets.create(GLOBAL_BUCKET, Unit)
+            buckets[GLOBAL_BUCKET] = Unit
             GLOBAL_BUCKET
         }()
 

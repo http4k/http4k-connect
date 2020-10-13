@@ -39,25 +39,11 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
                     it[table.key] = key
                     it[contents] = autoMarshalling.asFormatString(data)
                 }
-                else -> update(key, data)
+                else -> table.update({ table.key eq key }) {
+                    it[contents] = autoMarshalling.asFormatString(data)
+                } > 0
             }
         }
-    }
-
-    override fun create(key: String, data: T) = tx {
-        when (table.select { table.key eq key }.count()) {
-            0L -> {
-                set(key, data)
-                true
-            }
-            else -> false
-        }
-    }
-
-    override fun update(key: String, data: T): Boolean = tx {
-        table.update({ table.key eq key }) {
-            it[contents] = autoMarshalling.asFormatString(data)
-        } > 0
     }
 
     override fun remove(key: String) = tx {

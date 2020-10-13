@@ -28,18 +28,6 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
         s3[BucketKey(key)] = autoMarshalling.asInputStream(data)
     }
 
-    override fun create(key: String, data: T) =
-        get(key)
-            ?.let { false }
-            ?: s3.set(BucketKey(key), autoMarshalling.asInputStream(data))
-                .map { true }
-                .recover { it.throwIt() }
-
-    override fun update(key: String, data: T) =
-        s3.set(BucketKey(key), autoMarshalling.asInputStream(data))
-            .map { true }
-            .recover { it.throwIt() }
-
     override fun remove(key: String) =
         s3.delete(BucketKey(key))
             .map { true }

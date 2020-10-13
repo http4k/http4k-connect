@@ -29,24 +29,15 @@ abstract class StorageContract {
     @Test
     fun `item lifecycle`() {
         val key = prefix1 + UUID.randomUUID().toString()
-        val value = AnEntity(UUID.randomUUID().toString())
         assertThat(storage[key], absent())
 
         // create first time
-        assertTrue(storage.create(key, AnEntity("value")))
+        storage[key] = AnEntity("value")
         assertThat(storage[key], present(equalTo(AnEntity("value"))))
 
         // update value
-        assertTrue(storage.update(key, AnEntity("value2")))
+        storage[key] = AnEntity("value2")
         assertThat(storage[key], present(equalTo(AnEntity("value2"))))
-
-        // put overwrites
-        storage[key] = value
-        assertThat(storage[key], present(equalTo(value)))
-
-        // create doesn't overwrite
-        assertFalse(storage.create(key, AnEntity(UUID.randomUUID().toString())))
-        assertThat(storage[key], present(equalTo(value)))
 
         // remove
         assertTrue(storage.remove(key))
@@ -61,17 +52,17 @@ abstract class StorageContract {
         assertThat(storage[key2], absent())
 
         val originalValue = AnEntity(UUID.randomUUID().toString())
-        assertTrue(storage.create(key1, originalValue))
+        storage[key1] = originalValue
         assertThat(storage[key1], present(equalTo(originalValue)))
         assertThat(storage[key2], absent())
 
-        assertTrue(storage.create(key2, originalValue))
+        storage[key2] = originalValue
         assertThat(storage[key1], present(equalTo(originalValue)))
         assertThat(storage[key2], present(equalTo(originalValue)))
 
         // update value
         val anotherValue = AnEntity(UUID.randomUUID().toString())
-        assertTrue(storage.update(key1, anotherValue))
+        storage[key1] = anotherValue
         assertThat(storage[key1], present(equalTo(anotherValue)))
         assertThat(storage[key2], present(equalTo(originalValue)))
 
