@@ -30,9 +30,8 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
 
-inline fun <reified T : Any> StorageExplorer(storage: Storage<T>,
-                                             bodyLens: BiDiBodyLens<T> = Jackson.autoBody<T>().toLens(),
-                                             storageSecurity: Security = NoSecurity): HttpHandler {
+inline fun <reified T : Any> Storage<T>.asHttpHandler(bodyLens: BiDiBodyLens<T> = Jackson.autoBody<T>().toLens(),
+                                                      storageSecurity: Security = NoSecurity): HttpHandler {
 
     val static = static(Classpath("/META-INF/resources/webjars/swagger-ui/3.35.1"))
 
@@ -43,11 +42,11 @@ inline fun <reified T : Any> StorageExplorer(storage: Storage<T>,
                 descriptionPath = "/openapi"
                 security = storageSecurity
                 routes += listOf(
-                    set(bodyLens, storage),
-                    get(bodyLens, storage),
-                    deletePrefix(storage),
-                    list(storage),
-                    delete(storage)
+                    set(bodyLens, this@asHttpHandler),
+                    get(bodyLens, this@asHttpHandler),
+                    deletePrefix(this@asHttpHandler),
+                    list(this@asHttpHandler),
+                    delete(this@asHttpHandler)
                 )
             },
             "/" bind GET to {

@@ -6,7 +6,7 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
 fun main() {
-    val storageExplorer = StorageExplorer(Storage.InMemory<String>())
+    val storageExplorer = Storage.InMemory<String>().asHttpHandler()
     DebuggingFilters.PrintRequestAndResponse().then(storageExplorer)
     .asServer(SunHttp(8080)).start()
 }
