@@ -3,6 +3,7 @@ includeWithName("http4k-connect-bom", "bom")
 includeStorage("jdbc")
 includeStorage("redis")
 includeStorage("s3")
+includeStorage("viewer")
 
 includeSystem("amazon", "s3")
 includeSystem("example")
