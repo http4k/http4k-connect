@@ -7,6 +7,7 @@ import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
 import org.http4k.contract.security.NoSecurity
 import org.http4k.contract.security.Security
+import org.http4k.core.Body
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
@@ -21,7 +22,7 @@ import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive
 import org.http4k.filter.ServerFilters
-import org.http4k.format.Jackson
+import org.http4k.format.Jackson.auto
 import org.http4k.lens.BiDiBodyLens
 import org.http4k.lens.Path
 import org.http4k.lens.Query
@@ -30,7 +31,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
 
-inline fun <reified T : Any> Storage<T>.asHttpHandler(bodyLens: BiDiBodyLens<T> = Jackson.autoBody<T>().toLens(),
+inline fun <reified T : Any> Storage<T>.asHttpHandler(bodyLens: BiDiBodyLens<T> = Body.auto<T>().toLens(),
                                                       storageSecurity: Security = NoSecurity): HttpHandler {
 
     val static = static(Classpath("/META-INF/resources/webjars/swagger-ui/3.35.1"))
