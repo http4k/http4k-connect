@@ -1,4 +1,6 @@
-# http4k-connect
+<hr/>
+<img src="logo.png" alt="http4k-connect"/>
+<hr/>
 
 ![https://bintray.com/http4k/maven/http4k-connect-bom/_latestVersion](https://api.bintray.com/packages/http4k/maven/http4k-connect-bom/images/download.svg)
 ![.github/workflows/build.yaml](https://github.com/http4k/http4k-connect/workflows/.github/workflows/build.yaml/badge.svg)
