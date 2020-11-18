@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.s3
+package org.http4k.connect.amazon.secretsmanager
 
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.configAwsEnvironment
