@@ -1,5 +1,6 @@
 package org.http4k.connect.amazon.s3
 
+import org.http4k.connect.amazon.AwsEnvironment
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.BeforeEach
 

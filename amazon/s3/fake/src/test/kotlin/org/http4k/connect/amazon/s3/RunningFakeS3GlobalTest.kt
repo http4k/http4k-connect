@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.s3
 
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.defaultPort
 import org.http4k.core.Uri
 import org.http4k.core.then

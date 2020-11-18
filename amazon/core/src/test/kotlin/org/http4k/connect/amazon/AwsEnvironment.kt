@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.s3
+package org.http4k.connect.amazon
 
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
@@ -12,7 +12,7 @@ import java.io.File
 data class AwsEnvironment(val credentials: AwsCredentials, val scope: AwsCredentialScope)
 
 val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
-    AwsCredentialScope("ldn-north-1", "s3")
+    AwsCredentialScope("ldn-north-1", "svc")
 )
 
 fun configAwsEnvironment(): AwsEnvironment {
