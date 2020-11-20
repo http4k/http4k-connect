@@ -8,10 +8,11 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.secretsmanager.SecretsManagerJackson.auto
 import org.http4k.core.Body
+import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
-import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
+import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
@@ -30,17 +31,25 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
     private val http =
         SetBaseUriFrom(Uri.of("https://secretsmanager.${scope.region}.amazonaws.com/"))
             .then(SetXForwardedHost())
+            .then(Filter { next ->
+                {
+                    next(it.replaceHeader("Content-Type", "application/x-amz-json-1.1"))
+                }
+            })
             .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
             .then(rawHttp)
 
-    private val req = Body.auto<Any>().toLens()
+    private val req = SecretsManagerJackson.autoBody<Any>().toLens()
     private val getResp = Body.auto<GetSecretValue.Response>().toLens()
 
     override fun get(request: GetSecretValue.Request) =
         Uri.of("/").let {
-            with(http(Request(GET, it).with(req of request))) {
+            with(http(Request(POST, it)
+                .header("X-Amz-Target", "secretsmanager.GetSecretValue")
+                .with(req of request))) {
                 when {
                     status.successful -> Success(getResp(this))
+                    status == BAD_REQUEST -> Success(null)
                     else -> Failure(RemoteFailure(it, status))
                 }
             }
@@ -50,7 +59,9 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
 
     override fun put(request: PutSecretValue.Request) =
         Uri.of("/").let {
-            with(http(Request(POST, it).with(req of request))) {
+            with(http(Request(POST, it)
+                .header("X-Amz-Target", "secretsmanager.PutSecretValue")
+                .with(req of request))) {
                 when {
                     status.successful -> Success(putResp(this))
                     else -> Failure(RemoteFailure(it, status))

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 
 class RealSecretsManagerBucketTest : SecretsManagerContract(JavaHttpClient()) {
-    override val aws get() = configAwsEnvironment()
+    override val aws get() = configAwsEnvironment("secretsmanager")
 
     @BeforeEach
     fun loadConfig() {

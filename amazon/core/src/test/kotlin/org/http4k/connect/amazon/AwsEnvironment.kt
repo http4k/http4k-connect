@@ -15,7 +15,7 @@ val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
     AwsCredentialScope("ldn-north-1", "svc")
 )
 
-fun configAwsEnvironment(): AwsEnvironment {
+fun configAwsEnvironment(service: String): AwsEnvironment {
     val config = File(System.getProperty("user.home"), ".aws/config").apply { Assumptions.assumeTrue(exists()) }
     val env = Environment.fromConfigFile(config) overrides
         Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
@@ -28,6 +28,6 @@ fun configAwsEnvironment(): AwsEnvironment {
                 EnvironmentKey.required("default-aws-secret-access-key")(it)
             )
         }(env),
-        AwsCredentialScope(region, "s3")
+        AwsCredentialScope(region, service)
     )
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_IGNORED_PRO
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS
 import com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.UPPER_CAMEL_CASE
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.http4k.connect.amazon.ARN
 import org.http4k.connect.amazon.Base64Blob
@@ -22,8 +23,8 @@ data class VersionStage(val value: String)
 object GetSecretValue {
     data class Request(
         val SecretId: SecretId,
-        val VersionId: VersionId,
-        val VersionStage: VersionStage
+        val VersionId: VersionId? = null,
+        val VersionStage: VersionStage? = null
     )
 
     data class Response(
@@ -65,6 +66,7 @@ internal object SecretsManagerJackson : ConfigurableJackson(KotlinModule()
     .text(BiDiMapping(::VersionStage, VersionStage::value))
     .done()
     .deactivateDefaultTyping()
+    .setPropertyNamingStrategy(UPPER_CAMEL_CASE)
     .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
     .configure(FAIL_ON_IGNORED_PROPERTIES, false)
     .configure(USE_BIG_DECIMAL_FOR_FLOATS, true)

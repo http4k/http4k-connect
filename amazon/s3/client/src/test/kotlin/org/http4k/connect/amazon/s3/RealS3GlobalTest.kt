@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 
 class RealS3GlobalTest : S3GlobalContract(JavaHttpClient()) {
-    override val aws get() = configAwsEnvironment()
+    override val aws get() = configAwsEnvironment("s3")
 
     @BeforeEach
     fun loadConfig() {
