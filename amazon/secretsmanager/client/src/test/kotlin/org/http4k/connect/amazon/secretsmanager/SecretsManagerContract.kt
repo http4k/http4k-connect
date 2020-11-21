@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.AwsEnvironment
+import org.http4k.connect.amazon.model.SecretId
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
@@ -20,6 +21,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     }
 
     private val id = SecretId(UUID.randomUUID().toString())
+
     open fun setUp() {}
 
     @BeforeEach
@@ -29,6 +31,6 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
 
     @Test
     fun `secret lifecycle`() {
-        assertThat(secretsManager.get(GetSecretValue.Request(id)), equalTo(Success(null)))
+        assertThat(secretsManager.lookup(GetSecret.Request(id)), equalTo(Success(null)))
     }
 }

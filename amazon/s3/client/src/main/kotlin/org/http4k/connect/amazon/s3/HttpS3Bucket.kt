@@ -7,6 +7,9 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.model.documentBuilderFactory
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET

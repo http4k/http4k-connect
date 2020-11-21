@@ -3,6 +3,8 @@ package org.http4k.connect.amazon.s3
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.model.BucketName
 import java.io.InputStream
 
 /**

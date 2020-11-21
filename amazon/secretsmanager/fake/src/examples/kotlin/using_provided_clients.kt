@@ -1,21 +1,18 @@
-import org.http4k.connect.amazon.Base64Blob
+import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.SecretId
+import org.http4k.connect.amazon.secretsmanager.CreateSecret
 import org.http4k.connect.amazon.secretsmanager.FakeSecretsManager
-import org.http4k.connect.amazon.secretsmanager.GetSecretValue
-import org.http4k.connect.amazon.secretsmanager.PutSecretValue
-import org.http4k.connect.amazon.secretsmanager.SecretId
-import org.http4k.connect.amazon.secretsmanager.VersionId
-import org.http4k.connect.amazon.secretsmanager.VersionStage
+import org.http4k.connect.amazon.secretsmanager.GetSecret
 
 fun main() {
     val fakeSm = FakeSecretsManager()
     val client = fakeSm.client()
-    val secretId = SecretId("")
-    val stage = VersionStage("stage")
+    val secretId = SecretId("a-secret-id")
 
-    println(client.put(
-        PutSecretValue.Request("token",
-            Base64Blob.encoded("hello"),
-            secretId, "",
-            listOf(stage))))
-    println(client.get(GetSecretValue.Request(secretId, VersionId("123"), stage)))
+    println(client.create(
+        CreateSecret.Request("friendly name",
+            Base64Blob.encoded("hello")))
+    )
+
+    println(client.lookup(GetSecret.Request(secretId)))
 }

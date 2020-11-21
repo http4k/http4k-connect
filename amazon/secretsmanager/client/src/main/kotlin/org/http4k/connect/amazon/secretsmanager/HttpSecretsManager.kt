@@ -40,30 +40,60 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
             .then(rawHttp)
 
     private val req = SecretsManagerJackson.autoBody<Any>().toLens()
-    private val getResp = Body.auto<GetSecretValue.Response>().toLens()
 
-    override fun get(request: GetSecretValue.Request) =
+    override fun lookup(request: GetSecret.Request) =
         Uri.of("/").let {
+            val resp = Body.auto<GetSecret.Response>().toLens()
+
             with(http(Request(POST, it)
                 .header("X-Amz-Target", "secretsmanager.GetSecretValue")
                 .with(req of request))) {
                 when {
-                    status.successful -> Success(getResp(this))
+                    status.successful -> Success(resp(this))
                     status == BAD_REQUEST -> Success(null)
                     else -> Failure(RemoteFailure(it, status))
                 }
             }
         }
 
-    private val putResp = Body.auto<PutSecretValue.Response>().toLens()
-
-    override fun put(request: PutSecretValue.Request) =
+    override fun create(request: CreateSecret.Request) =
         Uri.of("/").let {
+            val resp = Body.auto<CreateSecret.Response>().toLens()
+
             with(http(Request(POST, it)
                 .header("X-Amz-Target", "secretsmanager.PutSecretValue")
                 .with(req of request))) {
                 when {
-                    status.successful -> Success(putResp(this))
+                    status.successful -> Success(resp(this))
+                    else -> Failure(RemoteFailure(it, status))
+                }
+            }
+        }
+
+    override fun update(request: UpdateSecret.Request) = Uri.of("/").let {
+        val resp = Body.auto<UpdateSecret.Response>().toLens()
+
+        with(http(Request(POST, it)
+            .header("X-Amz-Target", "secretsmanager.UpdateSecret")
+            .with(req of request))) {
+            when {
+                status.successful -> Success(resp(this))
+                status == BAD_REQUEST -> Success(null)
+                else -> Failure(RemoteFailure(it, status))
+            }
+        }
+    }
+
+    override fun delete(request: DeleteSecret.Request) =
+        Uri.of("/").let {
+            val resp = Body.auto<DeleteSecret.Response>().toLens()
+
+            with(http(Request(POST, it)
+                .header("X-Amz-Target", "secretsmanager.DeleteSecret")
+                .with(req of request))) {
+                when {
+                    status.successful -> Success(resp(this))
+                    status == BAD_REQUEST -> Success(null)
                     else -> Failure(RemoteFailure(it, status))
                 }
             }
