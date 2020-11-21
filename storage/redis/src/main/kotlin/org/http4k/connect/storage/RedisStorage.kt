@@ -35,7 +35,7 @@ fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object 
 
     override fun set(key: String, data: T) {
         val result = redis.set(key, data, Builder.ex(lifetime))
-        if(result != "OK") throw RuntimeException(result)
+        if (result != "OK") throw RuntimeException(result)
     }
 
     override fun remove(key: String): Boolean = redis.del(key) == 1L
