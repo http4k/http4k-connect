@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.secretsmanager
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.AwsEnvironment
 import org.http4k.connect.amazon.model.SecretId
+import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
@@ -20,17 +20,24 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
             PrintRequestAndResponse().then(http))
     }
 
-    private val id = SecretId(UUID.randomUUID().toString())
+    private val name = UUID.randomUUID().toString()
 
     open fun setUp() {}
 
     @BeforeEach
     fun cleanup() {
         setUp()
+        secretsManager.delete(DeleteSecret.Request(SecretId(name)))
     }
 
     @Test
     fun `secret lifecycle`() {
-        assertThat(secretsManager.lookup(GetSecret.Request(id)), equalTo(Success(null)))
+
+        val lookupNothing = secretsManager.lookup(GetSecret.Request(SecretId(name))).successValue()
+        assertThat(lookupNothing, absent())
+        val creation = secretsManager.create(CreateSecret.Request(name, UUID.randomUUID())).successValue()
+
+        val lookupCreated = secretsManager.lookup(GetSecret.Request(SecretId(name))).successValue()
+
     }
 }

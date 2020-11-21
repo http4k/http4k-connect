@@ -78,9 +78,9 @@ object DeleteSecret {
 object CreateSecret {
     data class Request(
         val Name: String,
+        val ClientRequestToken: UUID,
         val SecretBinary: Base64Blob? = null,
         val SecretString: String? = null,
-        val ClientRequestToken: UUID? = null,
         val Description: String? = null,
         val KmsKeyId: String? = null,
         val Tags: Map<String, String>? = null
@@ -89,6 +89,6 @@ object CreateSecret {
     data class Response(
         val ARN: ARN,
         val Name: String,
-        val VersionId: VersionId
+        val VersionId: VersionId?
     )
 }

@@ -61,7 +61,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
             val resp = Body.auto<CreateSecret.Response>().toLens()
 
             with(http(Request(POST, it)
-                .header("X-Amz-Target", "secretsmanager.PutSecretValue")
+                .header("X-Amz-Target", "secretsmanager.CreateSecret")
                 .with(req of request))) {
                 when {
                     status.successful -> Success(resp(this))
