@@ -16,5 +16,5 @@ fun main() {
             Base64Blob.encoded("hello")))
     )
 
-    println(client.lookup(GetSecret.Request(secretId)))
+    println(client.get(GetSecret.Request(secretId)))
 }

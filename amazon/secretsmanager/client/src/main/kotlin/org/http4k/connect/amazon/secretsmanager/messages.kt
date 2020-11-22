@@ -100,6 +100,26 @@ object ListSecrets {
     )
 }
 
+
+object PutSecret {
+    class Request(
+        val SecretId: SecretId,
+        val ClientRequestToken: UUID,
+        secret: Choice2<Base64Blob, String>,
+        val VersionStages: List<String>? = null
+    ) {
+        val SecretBinary = secret.as1()
+        val SecretString = secret.as2()
+    }
+
+    data class Response(
+        val ARN: ARN,
+        val Name: String,
+        val VersionId: VersionId? = null,
+        val VersionStages: List<String>? = null
+    )
+}
+
 object UpdateSecret {
     class Request(
         val SecretId: SecretId,
