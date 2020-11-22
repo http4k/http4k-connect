@@ -57,7 +57,7 @@ object UpdateSecret {
     data class Response(
         val ARN: ARN,
         val Name: String,
-        val VersionId: VersionId
+        val VersionId: VersionId? = null
     )
 }
 
@@ -69,9 +69,47 @@ object DeleteSecret {
     )
 
     data class Response(
+        val Name: String,
         val ARN: ARN,
-        val DeletionDate: Timestamp,
-        val Name: String
+        val DeletionDate: Timestamp
+    )
+}
+
+object ListSecrets {
+    data class Filters(val Key: String, val Values: List<String>)
+
+    enum class SortOrder { asc, desc }
+
+    data class Request(
+        val MaxResults: Int? = null,
+        val NextToken: String? = null,
+        val SortOrder: SortOrder? = null,
+        val Filters: List<Filters>? = null
+    )
+
+    data class RotationRules(val AutomaticallyAfterDays: Number? = null)
+
+    data class Secret(
+        val ARN: ARN? = null,
+        val Name: String? = null,
+        val CreatedDate: Timestamp? = null,
+        val DeletedDate: Timestamp? = null,
+        val Description: String? = null,
+        val KmsKeyId: KmsKeyId? = null,
+        val LastAccessedDate: Timestamp? = null,
+        val LastChangedDate: Timestamp? = null,
+        val LastRotatedDate: Timestamp? = null,
+        val OwningService: String? = null,
+        val RotationEnabled: Boolean? = null,
+        val RotationLambdaARN: ARN? = null,
+        val RotationRules: RotationRules? = null,
+        val SecretVersionsToStages: Map<String, List<String>> = mapOf(),
+        val Tags: Map<String, String> = mapOf()
+    )
+
+    data class Response(
+        val SecretList: List<Secret>,
+        val NextToken: String? = null
     )
 }
 
@@ -89,6 +127,6 @@ object CreateSecret {
     data class Response(
         val ARN: ARN,
         val Name: String,
-        val VersionId: VersionId?
+        val VersionId: VersionId? = null
     )
 }

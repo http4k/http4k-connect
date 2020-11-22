@@ -41,59 +41,41 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
 
     private val req = SecretsManagerJackson.autoBody<Any>().toLens()
 
-    override fun lookup(request: GetSecret.Request) =
-        Uri.of("/").let {
-            val resp = Body.auto<GetSecret.Response>().toLens()
-
-            with(http(Request(POST, it)
-                .header("X-Amz-Target", "secretsmanager.GetSecretValue")
-                .with(req of request))) {
-                when {
-                    status.successful -> Success(resp(this))
-                    status == BAD_REQUEST -> Success(null)
-                    else -> Failure(RemoteFailure(it, status))
-                }
-            }
-        }
-
     override fun create(request: CreateSecret.Request) =
-        Uri.of("/").let {
-            val resp = Body.auto<CreateSecret.Response>().toLens()
-
-            with(http(Request(POST, it)
-                .header("X-Amz-Target", "secretsmanager.CreateSecret")
-                .with(req of request))) {
-                when {
-                    status.successful -> Success(resp(this))
-                    else -> Failure(RemoteFailure(it, status))
-                }
-            }
-        }
-
-    override fun update(request: UpdateSecret.Request) = Uri.of("/").let {
-        val resp = Body.auto<UpdateSecret.Response>().toLens()
-
-        with(http(Request(POST, it)
-            .header("X-Amz-Target", "secretsmanager.UpdateSecret")
-            .with(req of request))) {
-            when {
-                status.successful -> Success(resp(this))
-                status == BAD_REQUEST -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
-            }
-        }
-    }
+        required<CreateSecret.Request, CreateSecret.Response>("CreateSecret", request)
 
     override fun delete(request: DeleteSecret.Request) =
-        Uri.of("/").let {
-            val resp = Body.auto<DeleteSecret.Response>().toLens()
+        optional<DeleteSecret.Request, DeleteSecret.Response>("DeleteSecret", request)
 
+    override fun list(request: ListSecrets.Request) =
+        required<ListSecrets.Request, ListSecrets.Response>("ListSecrets", request)
+
+    override fun lookup(request: GetSecret.Request) =
+        optional<GetSecret.Request, GetSecret.Response>("GetSecret", request)
+
+    override fun update(request: UpdateSecret.Request) =
+        optional<UpdateSecret.Request, UpdateSecret.Response>("UpdateSecret", request)
+
+    private inline fun <Req : Any, reified Resp : Any> optional(operation: String, request: Req) =
+        Uri.of("/").let {
             with(http(Request(POST, it)
-                .header("X-Amz-Target", "secretsmanager.DeleteSecret")
+                .header("X-Amz-Target", "secretsmanager.$operation")
                 .with(req of request))) {
                 when {
-                    status.successful -> Success(resp(this))
+                    status.successful -> Success(Body.auto<Resp>().toLens()(this))
                     status == BAD_REQUEST -> Success(null)
+                    else -> Failure(RemoteFailure(it, status))
+                }
+            }
+        }
+
+    private inline fun <Req : Any, reified Resp : Any> required(operation: String, request: Req) =
+        Uri.of("/").let {
+            with(http(Request(POST, it)
+                .header("X-Amz-Target", "secretsmanager.$operation")
+                .with(req of request))) {
+                when {
+                    status.successful -> Success(Body.auto<Resp>().toLens()(this))
                     else -> Failure(RemoteFailure(it, status))
                 }
             }
