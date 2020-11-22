@@ -2,6 +2,8 @@ package org.http4k.connect.amazon.secretsmanager
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.AwsEnvironment
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.successValue
@@ -15,7 +17,7 @@ import java.util.UUID
 abstract class SecretsManagerContract(private val http: HttpHandler) {
     abstract val aws: AwsEnvironment
 
-    private val secretsManager by lazy {
+    private val sm by lazy {
         SecretsManager.Http(aws.scope, { aws.credentials },
             PrintRequestAndResponse().then(http))
     }
@@ -27,17 +29,18 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     @BeforeEach
     fun cleanup() {
         setUp()
-        secretsManager.list(ListSecrets.Request()).successValue().SecretList.forEach {
-                secretsManager.delete(DeleteSecret.Request(SecretId(it.ARN!!), true)).successValue()
-            }
+        sm.list(ListSecrets.Request()).successValue().SecretList.forEach {
+            sm.delete(DeleteSecret.Request(SecretId(it.ARN!!), true)).successValue()
+        }
     }
 
     @Test
     fun `secret lifecycle`() {
-        val lookupNothing = secretsManager.lookup(GetSecret.Request(SecretId(name))).successValue()
+        val lookupNothing = sm.lookup(GetSecret.Request(SecretId(name))).successValue()
         assertThat(lookupNothing, absent())
-        val creation = secretsManager.create(CreateSecret.Request(name, UUID.randomUUID())).successValue()
-        val lookupCreated = secretsManager.lookup(GetSecret.Request(SecretId(creation.ARN))).successValue()
-        println(lookupCreated)
+        val creation = sm.create(CreateSecret.Request(name, UUID.randomUUID(), SecretString = "hello")).successValue()
+        assertThat(creation.Name, equalTo(name))
+        val lookupCreated = sm.lookup(GetSecret.Request(SecretId(creation.Name))).successValue()
+        assertThat(lookupCreated, present())
     }
 }

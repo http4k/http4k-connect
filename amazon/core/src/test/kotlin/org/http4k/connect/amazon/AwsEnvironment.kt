@@ -6,7 +6,7 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.cloudnative.env.fromConfigFile
 import org.http4k.lens.composite
-import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.io.File
 
 data class AwsEnvironment(val credentials: AwsCredentials, val scope: AwsCredentialScope)
@@ -16,7 +16,7 @@ val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
 )
 
 fun configAwsEnvironment(service: String): AwsEnvironment {
-    val config = File(System.getProperty("user.home"), ".aws/config").apply { Assumptions.assumeTrue(exists()) }
+    val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
     val env = Environment.fromConfigFile(config) overrides
         Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
 
