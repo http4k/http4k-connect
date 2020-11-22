@@ -28,7 +28,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     fun cleanup() {
         setUp()
         secretsManager.list(ListSecrets.Request()).successValue().SecretList.forEach {
-                secretsManager.delete(DeleteSecret.Request(SecretId(it.ARN!!))).successValue()
+                secretsManager.delete(DeleteSecret.Request(SecretId(it.ARN!!), true)).successValue()
             }
     }
 
