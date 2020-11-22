@@ -2,6 +2,7 @@ S3
 ====
 
 The S3 connector consists of 2 interfaces:
+=======
 
 - `S3` for global operations - creating/deleting/listing buckets
 - `S3.Bucket` for bucket level operations - CRUD key contents + list keys
