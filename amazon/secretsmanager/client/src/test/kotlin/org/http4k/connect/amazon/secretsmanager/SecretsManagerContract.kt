@@ -41,7 +41,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
         assertThat(lookupNothing, absent())
         val creation = sm.create(CreateSecret.Request(name, UUID.randomUUID(), Choice2._2("hello"))).successValue()
         assertThat(creation.Name, equalTo(name))
-        val lookupCreated = sm.lookup(GetSecret.Request(SecretId(creation.Name))).successValue()
+        val lookupCreated = sm.lookup(GetSecret.Request(SecretId(name))).successValue()
         assertThat(lookupCreated, present())
     }
 }

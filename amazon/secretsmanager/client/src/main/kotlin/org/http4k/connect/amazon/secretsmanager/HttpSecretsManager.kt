@@ -51,7 +51,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
         required<ListSecrets.Request, ListSecrets.Response>("ListSecrets", request)
 
     override fun lookup(request: GetSecret.Request) =
-        optional<GetSecret.Request, GetSecret.Response>("GetSecret", request)
+        optional<GetSecret.Request, GetSecret.Response>("GetSecretValue", request)
 
     override fun update(request: UpdateSecret.Request) =
         optional<UpdateSecret.Request, UpdateSecret.Response>("UpdateSecret", request)
