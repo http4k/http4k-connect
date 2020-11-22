@@ -29,8 +29,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
                       rawHttp: HttpHandler = JavaHttpClient(),
                       clock: Clock = Clock.systemDefaultZone(),
                       payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3 {
-    private val regionClient = scope.clientFor(Uri.of("https://s3.amazonaws.com/"))
-    private val globalClient = scope.copy(region = "us-east-1").clientFor(Uri.of("https://s3.amazonaws.com/"))
+    private val http = scope.copy(region = "us-east-1").clientFor(Uri.of("https://s3.amazonaws.com/"))
 
     private fun AwsCredentialScope.clientFor(uri: Uri) = SetBaseUriFrom(uri)
         .then(SetXForwardedHost())
@@ -38,7 +37,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
         .then(rawHttp)
 
     override fun buckets() = Uri.of("/").let {
-        with(globalClient(Request(GET, it))) {
+        with(http(Request(GET, it))) {
             when {
                 status.successful -> {
                     val buckets = documentBuilderFactory.parse(body.stream).getElementsByTagName("Name")
@@ -51,7 +50,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
     }
 
     override fun create(bucketName: BucketName) = Uri.of("/$bucketName").let {
-        with(globalClient(Request(PUT, it))) {
+        with(http(Request(PUT, it))) {
             when {
                 status.successful -> Success(Unit)
                 else -> Failure(RemoteFailure(it, status))
@@ -60,7 +59,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
     }
 
     override fun delete(bucketName: BucketName) = Uri.of("/$bucketName").let {
-        with(globalClient(Request(DELETE, it))) {
+        with(http(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
