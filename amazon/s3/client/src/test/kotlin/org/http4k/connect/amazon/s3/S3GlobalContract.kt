@@ -34,7 +34,6 @@ abstract class S3GlobalContract(private val http: HttpHandler) {
             assertThat(buckets().successValue().contains(bucket), equalTo(false))
             assertThat(create(bucket), equalTo(Success(Unit)))
             assertThat(buckets().successValue().contains(bucket), equalTo(true))
-            assertThat(create(bucket), equalTo(Success(Unit)))
             assertThat(delete(bucket), equalTo(Success(Unit)))
             assertThat(buckets().successValue().contains(bucket), equalTo(false))
         }

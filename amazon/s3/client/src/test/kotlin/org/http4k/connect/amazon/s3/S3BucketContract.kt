@@ -39,6 +39,7 @@ abstract class S3BucketContract(private val http: HttpHandler) {
             val newKey = BucketKey(UUID.randomUUID().toString())
 
             assertThat(create().successValue(), equalTo(Unit))
+
             assertThat(list().successValue(), equalTo(Listing.Empty))
             assertThat(get(key).successValue(), absent())
             assertThat(set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
