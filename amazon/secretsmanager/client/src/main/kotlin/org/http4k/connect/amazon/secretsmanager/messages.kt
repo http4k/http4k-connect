@@ -100,9 +100,7 @@ object ListSecrets {
         val OwningService: String? = null,
         val RotationEnabled: Boolean? = null,
         val RotationLambdaARN: ARN? = null,
-        val RotationRules: RotationRules? = null,
-        val SecretVersionsToStages: Map<String, List<String>> = mapOf(),
-        val Tags: Map<String, String>? = mapOf()
+        val RotationRules: RotationRules? = null
     )
 
     data class Response(
