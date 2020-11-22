@@ -226,6 +226,8 @@ tasks["bintrayUpload"].onlyIf { false }
 
 tasks.create("listProjects") {
     doLast {
-        subprojects.forEach { println(it.name) }
+        subprojects
+            .findAll { !it.name.contains("secretsmanager")} // temporary
+            .forEach { println(it.name) }
     }
 }
