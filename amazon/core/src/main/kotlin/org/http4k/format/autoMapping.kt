@@ -2,6 +2,7 @@ package org.http4k.format
 
 import dev.forkhandles.values.Value
 import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.Timestamp
@@ -13,6 +14,7 @@ inline fun <reified V : Value<Long>, T> AutoMappingConfiguration<T>.long(noinlin
 
 fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     text(::ARN)
+    text(::AwsService)
     text(::Base64Blob)
     text(::Region)
     long(::Timestamp)

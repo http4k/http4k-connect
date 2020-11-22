@@ -3,11 +3,24 @@ package org.http4k.connect.amazon.model
 import dev.forkhandles.values.LongValue
 import dev.forkhandles.values.NonEmptyStringValue
 import dev.forkhandles.values.StringValue
+import dev.forkhandles.values.exactLength
 import dev.forkhandles.values.regex
 import org.http4k.base64Decoded
 import org.http4k.base64Encode
 
-class ARN(value: String) : NonEmptyStringValue(value)
+class ARN(value: String) : NonEmptyStringValue(value) {
+    constructor(region: Region,
+                awsService: AwsService,
+                resourceType: String,
+                resourceId: String,
+                account: AwsAccount) : this(
+        "arn:aws:$awsService:$region:$account:$resourceType:$resourceId"
+    )
+}
+
+class AwsAccount(value: Long) : StringValue(value.toString().padStart(12), 12.exactLength)
+
+class AwsService(value: String) : NonEmptyStringValue(value)
 
 class Timestamp(value: Long) : LongValue(value)
 

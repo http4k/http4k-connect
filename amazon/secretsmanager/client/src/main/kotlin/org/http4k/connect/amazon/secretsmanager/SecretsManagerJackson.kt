@@ -16,7 +16,7 @@ import org.http4k.format.text
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
-internal object SecretsManagerJackson : ConfigurableJackson(KotlinModule()
+object SecretsManagerJackson : ConfigurableJackson(KotlinModule()
     .asConfigurable()
     .withStandardMappings()
     .withAwsCoreMappings()
