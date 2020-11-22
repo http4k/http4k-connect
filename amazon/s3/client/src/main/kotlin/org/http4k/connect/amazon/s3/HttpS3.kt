@@ -19,6 +19,8 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
 
@@ -27,14 +29,16 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
                       rawHttp: HttpHandler = JavaHttpClient(),
                       clock: Clock = Clock.systemDefaultZone(),
                       payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3 {
-    private val http =
-        ClientFilters.SetBaseUriFrom(Uri.of("https://s3.amazonaws.com/"))
-            .then(ClientFilters.SetXForwardedHost())
-            .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
-            .then(rawHttp)
+    private val regionClient = scope.clientFor(Uri.of("https://s3.amazonaws.com/"))
+    private val globalClient = scope.copy(region = "us-east-1").clientFor(Uri.of("https://s3.amazonaws.com/"))
+
+    private fun AwsCredentialScope.clientFor(uri: Uri) = SetBaseUriFrom(uri)
+        .then(SetXForwardedHost())
+        .then(ClientFilters.AwsAuth(this, credentialsProvider, clock, payloadMode))
+        .then(rawHttp)
 
     override fun buckets() = Uri.of("/").let {
-        with(http(Request(GET, it))) {
+        with(globalClient(Request(GET, it))) {
             when {
                 status.successful -> {
                     val buckets = documentBuilderFactory.parse(body.stream).getElementsByTagName("Name")
@@ -47,7 +51,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
     }
 
     override fun create(bucketName: BucketName) = Uri.of("/$bucketName").let {
-        with(http(Request(PUT, it))) {
+        with(globalClient(Request(PUT, it))) {
             when {
                 status.successful -> Success(Unit)
                 else -> Failure(RemoteFailure(it, status))
@@ -56,7 +60,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
     }
 
     override fun delete(bucketName: BucketName) = Uri.of("/$bucketName").let {
-        with(http(Request(DELETE, it))) {
+        with(globalClient(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)

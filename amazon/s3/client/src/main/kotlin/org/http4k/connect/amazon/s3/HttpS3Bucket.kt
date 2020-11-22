@@ -21,6 +21,8 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.io.InputStream
 import java.time.Clock
@@ -31,14 +33,16 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
                              rawHttp: HttpHandler = JavaHttpClient(),
                              clock: Clock = Clock.systemDefaultZone(),
                              payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
-    private val http =
-        ClientFilters.SetBaseUriFrom(Uri.of("https://$bucketName.s3.amazonaws.com/"))
-            .then(ClientFilters.SetXForwardedHost())
-            .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
-            .then(rawHttp)
+    private val regionClient = scope.clientFor(Uri.of("https://$bucketName.s3.${scope.region}.amazonaws.com/"))
+    private val globalClient = scope.copy(region = "us-east-1").clientFor(Uri.of("https://$bucketName.s3.amazonaws.com/"))
+
+    private fun AwsCredentialScope.clientFor(uri: Uri) = SetBaseUriFrom(uri)
+        .then(SetXForwardedHost())
+        .then(ClientFilters.AwsAuth(this, credentialsProvider, clock, payloadMode))
+        .then(rawHttp)
 
     override fun create() = Uri.of("/").let {
-        with(http(Request(PUT, it))) {
+        with(globalClient(Request(PUT, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == CONFLICT -> Success(Unit)
@@ -48,7 +52,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override fun delete() = Uri.of("/").let {
-        with(http(Request(DELETE, it))) {
+        with(regionClient(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
@@ -58,7 +62,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override fun copy(originalKey: BucketKey, newKey: BucketKey) = Uri.of("/$newKey").let {
-        with(http(Request(PUT, it).header("x-amz-copy-source", "$bucketName/$originalKey"))) {
+        with(globalClient(Request(PUT, it).header("x-amz-copy-source", "$bucketName/$originalKey"))) {
             when {
                 status.successful -> Success(Unit)
                 else -> Failure(RemoteFailure(it, status))
@@ -67,7 +71,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override fun delete(key: BucketKey) = Uri.of("/$key").let {
-        with(http(Request(DELETE, it))) {
+        with(globalClient(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
@@ -77,7 +81,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override operator fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
-        with(http(Request(PUT, it).body(content))) {
+        with(globalClient(Request(PUT, it).body(content))) {
             when {
                 status.successful -> Success(Unit)
                 else -> Failure(RemoteFailure(it, status))
@@ -86,7 +90,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override operator fun get(key: BucketKey) = Uri.of("/$key").let {
-        with(http(Request(GET, it))) {
+        with(globalClient(Request(GET, it))) {
             when {
                 status.successful -> Success(body.stream)
                 status == NOT_FOUND -> Success(null)
@@ -96,7 +100,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override fun list() = Uri.of("/").let {
-        with(http(Request(GET, it))) {
+        with(globalClient(Request(GET, it))) {
             when {
                 status.successful -> {
                     val keys = documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")
