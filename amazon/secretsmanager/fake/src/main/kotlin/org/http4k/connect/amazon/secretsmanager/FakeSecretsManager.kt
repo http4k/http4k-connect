@@ -8,6 +8,8 @@ import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.model.Timestamp
+import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.secretsmanager.SecretsManagerJackson.auto
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
@@ -22,14 +24,16 @@ import org.http4k.routing.bind
 import org.http4k.routing.header
 import org.http4k.routing.routes
 import java.time.Clock
-import kotlin.random.Random
+import java.util.UUID
 
-data class SecretValue(val secretString: String? = null, val secretBinary: Base64Blob? = null)
+data class SecretValue(
+    val versionId: VersionId,
+    val secretString: String? = null,
+    val secretBinary: Base64Blob? = null)
 
 class FakeSecretsManager(
     private val secrets: Storage<SecretValue> = Storage.InMemory(),
-    private val clock: Clock = Clock.systemDefaultZone(),
-    private val random: Random = Random(1)
+    private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
     override val app = routes(
@@ -46,13 +50,11 @@ class FakeSecretsManager(
     private fun createSecret() = header("X-Amz-Target", "secretsmanager.CreateSecret") bind {
         val req = Body.auto<CreateSecret.Request>().toLens()(it)
 
-        val arn = randomARN(req.Name)
-
-        secrets[keyFor(req.Name, arn)] = SecretValue(req.SecretString, req.SecretBinary)
+        secrets[req.Name] = SecretValue(VersionId(UUID.randomUUID().toString()), req.SecretString, req.SecretBinary)
 
         Response(OK)
             .with(Body.auto<CreateSecret.Response>().toLens()
-                of CreateSecret.Response(arn, req.Name))
+                of CreateSecret.Response(req.Name.toArn(), req.Name))
     }
 
     private fun deleteSecret() = header("X-Amz-Target", "secretsmanager.DeleteSecret") bind {
@@ -61,24 +63,35 @@ class FakeSecretsManager(
 
     private fun getSecret() = header("X-Amz-Target", "secretsmanager.GetSecretValue") bind {
         val req = Body.auto<GetSecret.Request>().toLens()(it)
+        val resourceId = when {
+            req.SecretId.value.startsWith("arn") -> req.SecretId.value.split(":").last()
+            else -> req.SecretId.value
+        }
 
-//        secrets.keySet(req.SecretId.value)
-//            .firstOrNull()
-//            ?: secrets.keySet(req.SecretId.value)
-
-//        Response(OK)
-//            .with(Body.auto<GetSecret.Response>().toLens()
-//                of GetSecret.Response())
-
-        Response(BAD_REQUEST).with(Body.auto<Any>().toLens()
-            of SecretsManagerError("ResourceNotFoundException", "Secrets Manager can't find the specified secret."))
+        secrets.keySet(resourceId).firstOrNull()
+            ?.let { secrets[it] }
+            ?.let {
+                Response(OK)
+                    .with(Body.auto<Any>().toLens() of GetSecret.Response(
+                        resourceId.toArn(),
+                        Timestamp(0),
+                        resourceId,
+                        it.secretBinary,
+                        it.secretString,
+                        it.versionId,
+                        emptyList()
+                    ))
+            }
+            ?: Response(BAD_REQUEST)
+                .with(Body.auto<SecretsManagerError>().toLens()
+                    of SecretsManagerError("ResourceNotFoundException", "Secrets Manager can't find the specified secret."))
     }
 
     private fun listSecrets() = header("X-Amz-Target", "secretsmanager.ListSecrets") bind {
         Response(OK)
             .with(Body.auto<ListSecrets.Response>().toLens()
                 of ListSecrets.Response(secrets.keySet("").map {
-                ListSecrets.Secret(ARN(it.split("^")[1]), it.split("^")[0])
+                ListSecrets.Secret(it.toArn(), it)
             }))
     }
 
@@ -90,11 +103,11 @@ class FakeSecretsManager(
         Response(INTERNAL_SERVER_ERROR)
     }
 
-    private fun randomARN(resourceId: String) = ARN(
+    private fun String.toArn() = ARN(
         Region("us-east-1"),
         AwsService("secretsmanager"),
-        "secret", resourceId,
-        AwsAccount(random.nextInt().toLong()))
+        "secret", this,
+        AwsAccount(0))
 
     private fun keyFor(name: String, arn: ARN) = "$name^$arn"
 

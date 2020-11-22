@@ -18,7 +18,7 @@ class ARN(value: String) : NonEmptyStringValue(value) {
     )
 }
 
-class AwsAccount(value: Long) : StringValue(value.toString().padStart(12), 12.exactLength)
+class AwsAccount(value: Long) : StringValue(value.toString().padStart(12, '0'), 12.exactLength)
 
 class AwsService(value: String) : NonEmptyStringValue(value)
 
