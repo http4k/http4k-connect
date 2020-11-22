@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import org.http4k.connect.Choice2
 import org.http4k.connect.amazon.AwsEnvironment
-import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
@@ -40,7 +39,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     fun `secret lifecycle`() {
         val lookupNothing = sm.lookup(GetSecret.Request(SecretId(name))).successValue()
         assertThat(lookupNothing, absent())
-        val creation = sm.create(CreateSecret.Request(name, UUID.randomUUID(), Choice2._1(Base64Blob.encoded("hello")))).successValue()
+        val creation = sm.create(CreateSecret.Request(name, UUID.randomUUID(), Choice2._2("hello"))).successValue()
         assertThat(creation.Name, equalTo(name))
         val lookupCreated = sm.lookup(GetSecret.Request(SecretId(creation.Name))).successValue()
         assertThat(lookupCreated, present())
