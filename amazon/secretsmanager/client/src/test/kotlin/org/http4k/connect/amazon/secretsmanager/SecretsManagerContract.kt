@@ -35,7 +35,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
         with(sm) {
             list(ListSecrets.Request()).successValue().SecretList
                 .forEach {
-                    delete(DeleteSecret.Request(SecretId(it.ARN!!), true)).successValue()
+                    delete(DeleteSecret.Request(SecretId(it.arn!!), true)).successValue()
                 }
         }
     }
@@ -50,7 +50,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
             assertThat(creation.Name, equalTo(name))
 
             val list = list(ListSecrets.Request()).successValue()
-            assertThat(list.SecretList.any { it.ARN == creation.ARN }, equalTo(true))
+            assertThat(list.SecretList.any { it.arn == creation.arn }, equalTo(true))
 
             val lookupCreated = get(GetSecret.Request(SecretId(name))).successValue()
             assertThat(lookupCreated!!.SecretString, present(equalTo(secretValue)))
@@ -65,7 +65,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
             assertThat(lookupUpdated?.SecretString, present(equalTo(finalValue)))
 
             val deleted = delete(DeleteSecret.Request(SecretId(name))).successValue()
-            assertThat(deleted?.ARN, present(equalTo(updated.ARN)))
+            assertThat(deleted?.arn, present(equalTo(updated.arn)))
 
             val lookupDeleted = get(GetSecret.Request(SecretId(name))).successValue()
             assertThat(lookupDeleted, absent())
