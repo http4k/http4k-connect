@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.secretsmanager
 
-import org.http4k.connect.Choice2
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.KmsKeyId
@@ -11,16 +10,28 @@ import org.http4k.connect.amazon.model.VersionStage
 import java.util.UUID
 
 object CreateSecret {
-    class Request(
+    class Request private constructor(
         val Name: String,
         val ClientRequestToken: UUID,
-        secret: Choice2<Base64Blob, String>,
-        val Description: String? = null,
-        val KmsKeyId: String? = null,
-        val Tags: Map<String, String>? = null
+        val SecretString: String?,
+        val SecretBinary: Base64Blob?,
+        val Description: String?,
+        val KmsKeyId: String?,
+        val Tags: Map<String, String>?
     ) {
-        val SecretBinary = secret.as1()
-        val SecretString = secret.as2()
+        constructor(Name: String,
+                    ClientRequestToken: UUID,
+                    SecretString: String,
+                    Description: String? = null,
+                    KmsKeyId: String? = null,
+                    Tags: Map<String, String>? = null) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
+
+        constructor(Name: String,
+                    ClientRequestToken: UUID,
+                    SecretBinary: Base64Blob,
+                    Description: String? = null,
+                    KmsKeyId: String? = null,
+                    Tags: Map<String, String>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
     }
 
     data class Response(
@@ -91,7 +102,7 @@ object ListSecrets {
         val RotationLambdaARN: ARN? = null,
         val RotationRules: RotationRules? = null,
         val SecretVersionsToStages: Map<String, List<String>> = mapOf(),
-        val Tags: Map<String, String> = mapOf()
+        val Tags: Map<String, String>? = mapOf()
     )
 
     data class Response(
@@ -102,14 +113,22 @@ object ListSecrets {
 
 
 object PutSecret {
-    class Request(
+    class Request private constructor(
         val SecretId: SecretId,
         val ClientRequestToken: UUID,
-        secret: Choice2<Base64Blob, String>,
-        val VersionStages: List<String>? = null
+        val SecretString: String?,
+        val SecretBinary: Base64Blob?,
+        val VersionStages: List<String>?
     ) {
-        val SecretBinary = secret.as1()
-        val SecretString = secret.as2()
+        constructor(SecretId: SecretId,
+                    ClientRequestToken: UUID,
+                    SecretString: String,
+                    VersionStages: List<String>? = null) : this(SecretId, ClientRequestToken, SecretString, null, VersionStages)
+
+        constructor(SecretId: SecretId,
+                    ClientRequestToken: UUID,
+                    SecretBinary: Base64Blob,
+                    VersionStages: List<String>? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, VersionStages)
     }
 
     data class Response(
@@ -121,15 +140,25 @@ object PutSecret {
 }
 
 object UpdateSecret {
-    class Request(
+    class Request private constructor(
         val SecretId: SecretId,
         val ClientRequestToken: UUID,
-        secret: Choice2<Base64Blob, String>,
-        val Description: String? = null,
-        val KmsKeyId: KmsKeyId? = null
+        val SecretString: String?,
+        val SecretBinary: Base64Blob?,
+        val Description: String?,
+        val KmsKeyId: String?
     ) {
-        val SecretBinary = secret.as1()
-        val SecretString = secret.as2()
+        constructor(SecretId: SecretId,
+                    ClientRequestToken: UUID,
+                    SecretString: String,
+                    Description: String? = null,
+                    KmsKeyId: String? = null) : this(SecretId, ClientRequestToken, SecretString, null, Description, KmsKeyId)
+
+        constructor(SecretId: SecretId,
+                    ClientRequestToken: UUID,
+                    SecretBinary: Base64Blob,
+                    Description: String? = null,
+                    KmsKeyId: String? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
     }
 
     data class Response(
@@ -138,4 +167,3 @@ object UpdateSecret {
         val VersionId: VersionId? = null
     )
 }
-

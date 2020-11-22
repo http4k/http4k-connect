@@ -1,4 +1,3 @@
-import org.http4k.connect.Choice2
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.secretsmanager.CreateSecret
@@ -14,7 +13,7 @@ fun main() {
     println(client.create(
         CreateSecret.Request("friendly name",
             UUID.randomUUID(),
-            Choice2._1(Base64Blob.encoded("hello"))))
+            Base64Blob.encoded("hello")))
     )
 
     println(client.get(GetSecret.Request(secretId)))

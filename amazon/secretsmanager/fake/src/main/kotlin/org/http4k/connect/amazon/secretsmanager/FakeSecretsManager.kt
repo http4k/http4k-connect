@@ -14,6 +14,7 @@ import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
+import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
@@ -30,16 +31,15 @@ class FakeSecretsManager(
     private val clock: Clock = Clock.systemDefaultZone(),
     private val random: Random = Random(1)
 ) : ChaosFake() {
+
     override val app = routes(
-        "/" bind routes(
-            POST to routes(
-                createSecret(),
-                deleteSecret(),
-                getSecret(),
-                listSecrets(),
-                putSecret(),
-                updateSecret()
-            )
+        "/" bind POST to routes(
+            createSecret(),
+            deleteSecret(),
+            getSecret(),
+            listSecrets(),
+            putSecret(),
+            updateSecret()
         )
     )
 
@@ -48,7 +48,7 @@ class FakeSecretsManager(
 
         val arn = randomARN(req.Name)
 
-        secrets[arn.toString()] = SecretValue(req.SecretString, req.SecretBinary)
+        secrets[keyFor(req.Name, arn)] = SecretValue(req.SecretString, req.SecretBinary)
 
         Response(OK)
             .with(Body.auto<CreateSecret.Response>().toLens()
@@ -60,11 +60,26 @@ class FakeSecretsManager(
     }
 
     private fun getSecret() = header("X-Amz-Target", "secretsmanager.GetSecretValue") bind {
-        Response(INTERNAL_SERVER_ERROR)
+        val req = Body.auto<GetSecret.Request>().toLens()(it)
+
+//        secrets.keySet(req.SecretId.value)
+//            .firstOrNull()
+//            ?: secrets.keySet(req.SecretId.value)
+
+//        Response(OK)
+//            .with(Body.auto<GetSecret.Response>().toLens()
+//                of GetSecret.Response())
+
+        Response(BAD_REQUEST).with(Body.auto<Any>().toLens()
+            of SecretsManagerError("ResourceNotFoundException", "Secrets Manager can't find the specified secret."))
     }
 
     private fun listSecrets() = header("X-Amz-Target", "secretsmanager.ListSecrets") bind {
-        Response(INTERNAL_SERVER_ERROR)
+        Response(OK)
+            .with(Body.auto<ListSecrets.Response>().toLens()
+                of ListSecrets.Response(secrets.keySet("").map {
+                ListSecrets.Secret(ARN(it.split("^")[1]), it.split("^")[0])
+            }))
     }
 
     private fun putSecret() = header("X-Amz-Target", "secretsmanager.PutSecretValue") bind {
@@ -81,14 +96,17 @@ class FakeSecretsManager(
         "secret", resourceId,
         AwsAccount(random.nextInt().toLong()))
 
+    private fun keyFor(name: String, arn: ARN) = "$name^$arn"
+
     /**
      * Convenience function to get SecretsManager client
      */
     fun client() = SecretsManager.Http(
         AwsCredentialScope("*", "s3"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
-
 }
+
+data class SecretsManagerError(val __type: String, val Message: String)
 
 fun main() {
     FakeSecretsManager().start()

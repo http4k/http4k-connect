@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
-import org.http4k.connect.Choice2
 import org.http4k.connect.amazon.AwsEnvironment
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.successValue
@@ -47,7 +46,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
             val lookupNothing = get(GetSecret.Request(SecretId(name))).successValue()
             assertThat(lookupNothing, absent())
 
-            val creation = create(CreateSecret.Request(name, UUID.randomUUID(), Choice2._2(secretValue))).successValue()
+            val creation = create(CreateSecret.Request(name, UUID.randomUUID(), secretValue)).successValue()
             assertThat(creation.Name, equalTo(name))
 
             val list = list(ListSecrets.Request()).successValue()
@@ -56,10 +55,10 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
             val lookupCreated = get(GetSecret.Request(SecretId(name))).successValue()
             assertThat(lookupCreated!!.SecretString, present(equalTo(secretValue)))
 
-            val updated = update(UpdateSecret.Request(SecretId(name), UUID.randomUUID(), Choice2._2(updatedValue))).successValue()
+            val updated = update(UpdateSecret.Request(SecretId(name), UUID.randomUUID(), updatedValue)).successValue()
             assertThat(updated!!.Name, present(equalTo(name)))
 
-            val putValue = put(PutSecret.Request(SecretId(name), UUID.randomUUID(), Choice2._2(finalValue))).successValue()
+            val putValue = put(PutSecret.Request(SecretId(name), UUID.randomUUID(), finalValue)).successValue()
             assertThat(putValue!!.Name, present(equalTo(name)))
 
             val lookupUpdated = get(GetSecret.Request(SecretId(name))).successValue()
