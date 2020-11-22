@@ -103,10 +103,10 @@ object ListSecrets {
 object UpdateSecret {
     class Request(
         val SecretId: SecretId,
+        val ClientRequestToken: UUID,
         secret: Choice2<Base64Blob, String>,
         val Description: String? = null,
-        val KmsKeyId: KmsKeyId? = null,
-        val ClientRequestToken: UUID? = null
+        val KmsKeyId: KmsKeyId? = null
     ) {
         val SecretBinary = secret.as1()
         val SecretString = secret.as2()
