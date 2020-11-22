@@ -8,8 +8,6 @@ import org.http4k.connect.amazon.AwsEnvironment
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.core.then
-import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -18,8 +16,7 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     abstract val aws: AwsEnvironment
 
     private val sm by lazy {
-        SecretsManager.Http(aws.scope, { aws.credentials },
-            PrintRequestAndResponse().then(http))
+        SecretsManager.Http(aws.scope, { aws.credentials }, http)
     }
 
     private val name = UUID.randomUUID().toString()
