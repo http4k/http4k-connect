@@ -27,16 +27,17 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     @BeforeEach
     fun cleanup() {
         setUp()
-        secretsManager.list(ListSecrets.Request())
-//        secretsManager.delete(DeleteSecret.Request(SecretId(name)))
+        secretsManager.list(ListSecrets.Request()).successValue().SecretList.forEach {
+                secretsManager.delete(DeleteSecret.Request(SecretId(it.ARN!!))).successValue()
+            }
     }
 
     @Test
     fun `secret lifecycle`() {
         val lookupNothing = secretsManager.lookup(GetSecret.Request(SecretId(name))).successValue()
         assertThat(lookupNothing, absent())
-//        val creation = secretsManager.create(CreateSecret.Request(name, UUID.randomUUID())).successValue()
-//        val lookupCreated = secretsManager.lookup(GetSecret.Request(SecretId(creation.ARN))).successValue()
-
+        val creation = secretsManager.create(CreateSecret.Request(name, UUID.randomUUID())).successValue()
+        val lookupCreated = secretsManager.lookup(GetSecret.Request(SecretId(creation.ARN))).successValue()
+        println(lookupCreated)
     }
 }
