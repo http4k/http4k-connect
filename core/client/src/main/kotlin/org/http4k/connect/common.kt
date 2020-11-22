@@ -6,4 +6,3 @@ import org.http4k.core.Uri
 data class RemoteFailure(val uri: Uri, val status: Status) {
     fun throwIt(): Nothing = throw Exception(toString())
 }
-

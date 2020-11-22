@@ -4,6 +4,9 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.Listing
+import org.http4k.connect.amazon.AwsEnvironment
+import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.BeforeEach
@@ -36,6 +39,7 @@ abstract class S3BucketContract(private val http: HttpHandler) {
             val newKey = BucketKey(UUID.randomUUID().toString())
 
             assertThat(create().successValue(), equalTo(Unit))
+
             assertThat(list().successValue(), equalTo(Listing.Empty))
             assertThat(get(key).successValue(), absent())
             assertThat(set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))

@@ -1,6 +1,7 @@
 package org.http4k.connect.google.analytics
 
 import dev.forkhandles.result4k.Result
+import dev.forkhandles.values.NonEmptyStringValue
 import org.http4k.connect.RemoteFailure
 
 interface GoogleAnalytics {
@@ -15,5 +16,5 @@ interface GoogleAnalytics {
     companion object
 }
 
-data class ClientId(val value: String)
-data class TrackingId(val value: String)
+class ClientId(value: String) : NonEmptyStringValue(value)
+class TrackingId(value: String) : NonEmptyStringValue(value)

@@ -6,12 +6,12 @@
     <MaxKeys>{{maxKeys}}</MaxKeys>
     <IsTruncated>false</IsTruncated>
     {{#each keys}}
-    <Contents>
-        <Key>{{key}}</Key>
-        <LastModified>{{modified}}</LastModified>
-        <ETag>0000000000000000000000000000</ETag>
-        <Size>{{size}}</Size>
-        <StorageClass>STANDARD</StorageClass>
-    </Contents>
+        <Contents>
+            <Key>{{key}}</Key>
+            <LastModified>{{modified}}</LastModified>
+            <ETag>0000000000000000000000000000</ETag>
+            <Size>{{size}}</Size>
+            <StorageClass>STANDARD</StorageClass>
+        </Contents>
     {{/each}}
 </ListBucketResult>

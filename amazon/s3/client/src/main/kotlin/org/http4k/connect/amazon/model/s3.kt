@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.s3
+package org.http4k.connect.amazon.model
 
 import org.xml.sax.InputSource
 import java.io.StringReader

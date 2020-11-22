@@ -1,6 +1,6 @@
 package org.http4k.connect.storage
 
-import org.http4k.connect.amazon.s3.BucketName
+import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.s3.FakeS3
 
 class S3StorageTest : StorageContract() {

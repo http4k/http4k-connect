@@ -7,6 +7,9 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.model.documentBuilderFactory
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
@@ -18,6 +21,8 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.io.InputStream
 import java.time.Clock
@@ -28,14 +33,16 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
                              rawHttp: HttpHandler = JavaHttpClient(),
                              clock: Clock = Clock.systemDefaultZone(),
                              payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
-    private val http =
-        ClientFilters.SetBaseUriFrom(Uri.of("https://$bucketName.s3.amazonaws.com/"))
-            .then(ClientFilters.SetXForwardedHost())
-            .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
-            .then(rawHttp)
+    private val http = SetBaseUriFrom(Uri.of("https://$bucketName.s3.${scope.region}.amazonaws.com/"))
+        .then(SetXForwardedHost())
+        .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
+        .then(rawHttp)
 
     override fun create() = Uri.of("/").let {
-        with(http(Request(PUT, it))) {
+        with(http(Request(PUT, it).body("""<?xml version="1.0" encoding="UTF-8"?>
+<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+   <LocationConstraint>${scope.region}</LocationConstraint>
+</CreateBucketConfiguration>"""))) {
             when {
                 status.successful -> Success(Unit)
                 status == CONFLICT -> Success(Unit)
@@ -76,7 +83,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     override operator fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
         with(http(Request(PUT, it).body(content))) {
             when {
-                status.successful -> Success(Unit)
+                status.successful || status.redirection -> Success(Unit)
                 else -> Failure(RemoteFailure(it, status))
             }
         }
@@ -93,7 +100,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
     }
 
     override fun list() = Uri.of("/").let {
-        with(http(Request(GET, it))) {
+        with(http(Request(GET, it).query("list-type", "2"))) {
             when {
                 status.successful -> {
                     val keys = documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")

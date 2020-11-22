@@ -1,11 +1,13 @@
 includeSystem("core")
-includeWithName("http4k-connect-bom", "bom")
+includeWithName("bom", "bom")
 includeStorage("jdbc")
 includeStorage("redis")
 includeStorage("s3")
 includeStorage("http")
 
+includeCommon("amazon-core", "amazon/core")
 includeSystem("amazon", "s3")
+includeSystem("amazon", "secretsmanager")
 includeSystem("example")
 includeSystem("google", "analytics")
 
@@ -19,6 +21,10 @@ fun includeSystem(owner: String, system: String) {
     val projectName = "http4k-connect-$owner-$system"
     includeWithName(projectName, "$owner/$system/client")
     includeWithName("$projectName-fake", "$owner/$system/fake")
+}
+
+fun includeCommon(projectName: String, file: String) {
+    includeWithName("http4k-connect-$projectName", file)
 }
 
 fun includeWithName(projectName: String, file: String) {

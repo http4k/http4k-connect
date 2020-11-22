@@ -3,10 +3,12 @@ package org.http4k.connect.amazon.s3
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.model.BucketName
 import java.io.InputStream
 
 /**
- * Interface for global S3 operations
+ * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
  */
 interface S3 {
     fun buckets(): Result<Listing<BucketName>, RemoteFailure>
