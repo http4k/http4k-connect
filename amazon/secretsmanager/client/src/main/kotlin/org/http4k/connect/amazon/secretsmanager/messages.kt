@@ -10,6 +10,11 @@ import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.model.VersionStage
 import java.util.UUID
 
+data class Tag(
+    val Key: String?,
+    val Value: String?
+)
+
 object CreateSecret {
     class Request private constructor(
         val Name: String,
@@ -18,21 +23,21 @@ object CreateSecret {
         val SecretBinary: Base64Blob?,
         val Description: String?,
         val KmsKeyId: String?,
-        val Tags: Map<String, String>?
+        val Tags: List<Tag>?
     ) {
         constructor(Name: String,
                     ClientRequestToken: UUID,
                     SecretString: String,
                     Description: String? = null,
                     KmsKeyId: String? = null,
-                    Tags: Map<String, String>? = null) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
+                    Tags: List<Tag>? = null) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
 
         constructor(Name: String,
                     ClientRequestToken: UUID,
                     SecretBinary: Base64Blob,
                     Description: String? = null,
                     KmsKeyId: String? = null,
-                    Tags: Map<String, String>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
+                    Tags: List<Tag>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
     }
 
     data class Response(
