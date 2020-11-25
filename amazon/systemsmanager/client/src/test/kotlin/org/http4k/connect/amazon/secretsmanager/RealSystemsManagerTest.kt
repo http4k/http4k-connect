@@ -5,7 +5,7 @@ import org.http4k.connect.amazon.configAwsEnvironment
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 
-class RealSecretsManagerTest : SystemsManagerContract(JavaHttpClient()) {
+class RealSystemsManagerTest : SystemsManagerContract(JavaHttpClient()) {
     override val aws get() = configAwsEnvironment("secretsmanager")
 
     @BeforeEach
