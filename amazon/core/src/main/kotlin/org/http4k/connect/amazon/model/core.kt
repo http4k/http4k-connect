@@ -22,7 +22,7 @@ class ARN private constructor(value: String) : StringValue(value) {
 }
 
 class AwsAccount private constructor(value: Long) : StringValue(value.toString().padStart(12, '0')) {
-    companion object : LongValueFactory<AwsAccount>(::AwsAccount, { it.toString().length == 12 })
+    companion object : LongValueFactory<AwsAccount>(::AwsAccount)
 }
 
 class AwsService private constructor(value: String) : StringValue(value) {
