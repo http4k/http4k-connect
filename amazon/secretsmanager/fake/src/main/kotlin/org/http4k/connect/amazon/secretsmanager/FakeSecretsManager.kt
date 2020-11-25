@@ -53,8 +53,8 @@ class FakeSecretsManager(
     private fun createSecret() = header("X-Amz-Target", "secretsmanager.CreateSecret") bind {
         val req = Body.auto<CreateSecret.Request>().toLens()(it)
 
-        val versionId = VersionId(randomUUID().toString())
-        val createdAt = Timestamp(clock.instant().toEpochMilli() / 1000)
+        val versionId = VersionId.of(randomUUID().toString())
+        val createdAt = Timestamp.of(clock.instant().toEpochMilli() / 1000)
         secrets[req.Name] = SecretValue(versionId,
             createdAt, createdAt,
             req.SecretString, req.SecretBinary)
@@ -73,7 +73,7 @@ class FakeSecretsManager(
                 secrets.remove(resourceId)
                 Response(OK)
                     .with(Body.auto<DeleteSecret.Response>().toLens()
-                        of DeleteSecret.Response(resourceId, resourceId.toArn(), Timestamp(0)))
+                        of DeleteSecret.Response(resourceId, resourceId.toArn(), Timestamp.of(0)))
             }
             ?: NOT_FOUND
     }
@@ -89,7 +89,7 @@ class FakeSecretsManager(
                     Response(OK)
                         .with(Body.auto<Any>().toLens() of GetSecret.Response(
                             resourceId.toArn(),
-                            Timestamp(0),
+                            Timestamp.of(0),
                             resourceId,
                             it.secretBinary,
                             it.secretString,
@@ -115,10 +115,10 @@ class FakeSecretsManager(
 
         secrets[resourceId]
             ?.let {
-                val versionId = VersionId(randomUUID().toString())
+                val versionId = VersionId.of(randomUUID().toString())
                 secrets[resourceId] = SecretValue(versionId,
                     it.createdAt,
-                    Timestamp(clock.instant().toEpochMilli() / 1000),
+                    Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
                 Response(OK)
@@ -134,10 +134,10 @@ class FakeSecretsManager(
 
         secrets[resourceId]
             ?.let {
-                val versionId = VersionId(randomUUID().toString())
+                val versionId = VersionId.of(randomUUID().toString())
                 secrets[resourceId] = SecretValue(versionId,
                     it.createdAt,
-                    Timestamp(clock.instant().toEpochMilli() / 1000),
+                    Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
                 Response(OK)
@@ -147,11 +147,11 @@ class FakeSecretsManager(
             ?: NOT_FOUND
     }
 
-    private fun String.toArn() = ARN(
-        Region("us-east-1"),
-        AwsService("secretsmanager"),
+    private fun String.toArn() = ARN.of(
+        Region.of("us-east-1"),
+        AwsService.of("secretsmanager"),
         "secret", this,
-        AwsAccount(0))
+        AwsAccount.of(0))
 
     /**
      * Convenience function to get SecretsManager client

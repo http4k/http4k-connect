@@ -1,7 +1,9 @@
 package org.http4k.connect.google.analytics
 
 import dev.forkhandles.result4k.Result
-import dev.forkhandles.values.NonEmptyStringValue
+import dev.forkhandles.values.StringValue
+import dev.forkhandles.values.StringValueFactory
+import dev.forkhandles.values.minLength
 import org.http4k.connect.RemoteFailure
 
 interface GoogleAnalytics {
@@ -16,5 +18,10 @@ interface GoogleAnalytics {
     companion object
 }
 
-class ClientId(value: String) : NonEmptyStringValue(value)
-class TrackingId(value: String) : NonEmptyStringValue(value)
+class ClientId private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<ClientId>(::ClientId, 1.minLength)
+}
+
+class TrackingId private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<TrackingId>(::TrackingId, 1.minLength)
+}

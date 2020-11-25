@@ -8,7 +8,7 @@ import java.util.UUID
 fun main() {
     val fakeSm = FakeSecretsManager()
     val client = fakeSm.client()
-    val secretId = SecretId("a-secret-id")
+    val secretId = SecretId.of("a-secret-id")
 
     println(client.create(
         CreateSecret.Request("friendly name",

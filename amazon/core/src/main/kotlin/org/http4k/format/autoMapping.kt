@@ -13,9 +13,9 @@ inline fun <reified V : Value<String>, T> AutoMappingConfiguration<T>.text(noinl
 inline fun <reified V : Value<Long>, T> AutoMappingConfiguration<T>.long(noinline fn: (Long) -> V) = long(BiDiMapping(fn) { it.value })
 
 fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
-    text(::ARN)
-    text(::AwsService)
-    text(::Base64Blob)
-    text(::Region)
-    long(::Timestamp)
+    text(ARN::of)
+    text(AwsService::of)
+    text(Base64Blob::of)
+    text(Region::of)
+    long(Timestamp::of)
 }

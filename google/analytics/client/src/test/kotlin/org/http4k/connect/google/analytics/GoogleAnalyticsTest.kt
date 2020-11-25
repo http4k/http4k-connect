@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalytics.Http(TrackingId("TEST-MEASUREMENT-ID"), testHttpClient)
-    private val analytics = ServerFilters.LogPageView(client) { ClientId("TEST-CLIENT-ID") }.then {
+    private val client = GoogleAnalytics.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
+    private val analytics = ServerFilters.LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
         when {
             it.uri.path.contains("fail") -> Response(BAD_REQUEST)
             it.uri.path.contains("informational") -> Response(CONTINUE)
