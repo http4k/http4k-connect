@@ -1,5 +1,5 @@
 includeSystem("core")
-includeWithName("bom", "bom")
+includeWithName("http4k-connect-bom", "bom")
 includeStorage("jdbc")
 includeStorage("redis")
 includeStorage("s3")
