@@ -1,18 +1,22 @@
 package org.http4k.connect.amazon.kms
 
 import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.CustomerMasterKeySpec
+import org.http4k.connect.amazon.model.EncryptionAlgorithm
 import org.http4k.connect.amazon.model.KeyMetadata
+import org.http4k.connect.amazon.model.KeyUsage
 import org.http4k.connect.amazon.model.KmsKeyId
+import org.http4k.connect.amazon.model.SigningAlgorithm
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 
 object CreateKey {
     data class Request(
         val BypassPolicyLockoutSafetyCheck: Boolean? = null,
-        val CustomerMasterKeySpec: String? = null,
+        val CustomerMasterKeySpec: CustomerMasterKeySpec? = null,
         val CustomKeyStoreId: String? = null,
         val Description: String? = null,
-        val KeyUsage: String? = null,
+        val KeyUsage: KeyUsage? = null,
         val Origin: String? = null,
         val Policy: String? = null,
         val Tags: List<Tag>? = null
@@ -30,19 +34,19 @@ object Decrypt {
     data class Request(
         val KeyId: KmsKeyId,
         val CiphertextBlob: Base64Blob,
-        val EncryptionAlgorithm: String? = null,
+        val EncryptionAlgorithm: EncryptionAlgorithm? = null,
         val EncryptionContext: Map<String, String>? = null,
         val GrantTokens: List<String>? = null
     )
 
-    data class Response(val KeyId: KmsKeyId, val Plaintext: Base64Blob, val EncryptionAlgorithm: String)
+    data class Response(val KeyId: KmsKeyId, val Plaintext: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
 }
 
 object Encrypt {
     data class Request(
         val KeyId: KmsKeyId,
         val Plaintext: Base64Blob,
-        val EncryptionAlgorithm: String? = null,
+        val EncryptionAlgorithm: EncryptionAlgorithm? = null,
         val EncryptionContext: Map<String, String>? = null,
         val GrantTokens: List<String>? = null
     )
@@ -58,11 +62,11 @@ object GetPublicKey {
 
     data class Response(
         val KeyId: KmsKeyId,
-        val CustomerMasterKeySpec: String,
-        val EncryptionAlgorithms: List<String>,
-        val KeyUsage: String,
+        val CustomerMasterKeySpec: CustomerMasterKeySpec,
+        val EncryptionAlgorithms: List<EncryptionAlgorithm>,
+        val KeyUsage: KeyUsage,
         val PublicKey: Base64Blob,
-        val SigningAlgorithms: List<String>
+        val SigningAlgorithms: List<SigningAlgorithm>
     )
 }
 
@@ -75,7 +79,7 @@ object Sign {
     data class Request(
         val KeyId: KmsKeyId,
         val Message: Base64Blob,
-        val SigningAlgorithm: String,
+        val SigningAlgorithm: SigningAlgorithm,
         val Request: List<String>? = null,
         val MessageType: String? = null
     )
@@ -83,7 +87,7 @@ object Sign {
     data class Response(
         val KeyId: KmsKeyId,
         val Signature: Base64Blob,
-        val SigningAlgorithm: String
+        val SigningAlgorithm: SigningAlgorithm
     )
 }
 
@@ -92,7 +96,7 @@ object Verify {
         val KeyId: String?,
         val Message: Base64Blob,
         val Signature: Base64Blob,
-        val SigningAlgorithm: String,
+        val SigningAlgorithm: SigningAlgorithm,
         val MessageType: String? = null,
         val GrantTokens: List<String>? = null
     )
@@ -100,6 +104,6 @@ object Verify {
     data class Response(
         val KeyId: KmsKeyId,
         val SignatureValid: Boolean,
-        val SigningAlgorithm: String
+        val SigningAlgorithm: SigningAlgorithm
     )
 }
