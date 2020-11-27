@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class KeyMetadata(
     val KeyId: KmsKeyId,
-    @JsonProperty("ARN") val ARN: String? = null,
+    @JsonProperty("ARN") val ARN: ARN? = null,
     val AWSAccountId: AwsAccount? = null,
     val CloudHsmClusterId: String? = null,
     val CreationDate: Timestamp? = null,

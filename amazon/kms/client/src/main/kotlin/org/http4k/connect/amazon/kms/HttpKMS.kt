@@ -23,4 +23,36 @@ fun KMS.Companion.Http(scope: AwsCredentialScope,
         payloadMode)
 
     private val req = KMSJackson.autoBody<Any>().toLens()
+
+    override fun createKey(request: CreateKey.Request): CreateKey.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun describe(request: DescribeKey.Request): DescribeKey.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun decrypt(request: Decrypt.Request): Decrypt.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun encrypt(request: Encrypt.Request): Encrypt.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPublicKey(request: GetPublicKey.Request): GetPublicKey.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun scheduleKeyDelete(request: ScheduleKeyDeletion.Request): ScheduleKeyDeletion.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun sign(request: Sign.Request): Sign.Response {
+        TODO("Not yet implemented")
+    }
+
+    override fun verify(request: Verify.Request): Verify.Response {
+        TODO("Not yet implemented")
+    }
 }
