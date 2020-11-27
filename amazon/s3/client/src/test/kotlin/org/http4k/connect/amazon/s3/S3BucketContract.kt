@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.Listing
-import org.http4k.connect.amazon.AwsEnvironment
+import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.successValue
@@ -13,8 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3BucketContract(private val http: HttpHandler) {
-    abstract val aws: AwsEnvironment
+abstract class S3BucketContract(http: HttpHandler): AwsContract(http) {
 
     private val bucket = BucketName(UUID.randomUUID().toString())
 
@@ -24,11 +23,8 @@ abstract class S3BucketContract(private val http: HttpHandler) {
 
     private val key = BucketKey(UUID.randomUUID().toString())
 
-    open fun setUp() {}
-
     @BeforeEach
-    fun cleanup() {
-        setUp()
+    fun deleteBucket() {
         s3Bucket.delete(key).successValue()
         s3Bucket.delete().successValue()
     }

@@ -4,16 +4,14 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
-import org.http4k.connect.amazon.AwsEnvironment
+import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class SecretsManagerContract(private val http: HttpHandler) {
-    abstract val aws: AwsEnvironment
+abstract class SecretsManagerContract(http: HttpHandler): AwsContract(http) {
 
     private val sm by lazy {
         SecretsManager.Http(aws.scope, { aws.credentials }, http)
@@ -23,13 +21,6 @@ abstract class SecretsManagerContract(private val http: HttpHandler) {
     private val secretValue = UUID.randomUUID().toString()
     private val updatedValue = UUID.randomUUID().toString()
     private val finalValue = UUID.randomUUID().toString()
-
-    open fun setUp() {}
-
-    @BeforeEach
-    fun cleanup() {
-        setUp()
-    }
 
     @Test
     fun `secret lifecycle`() {
