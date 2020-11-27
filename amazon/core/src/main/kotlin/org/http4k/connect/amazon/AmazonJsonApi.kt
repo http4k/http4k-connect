@@ -18,7 +18,7 @@ import org.http4k.filters.AmazonRegionalJsonStack
 import org.http4k.format.ConfigurableJackson
 import java.time.Clock
 
-class AmazonJsonApi(awsService: AwsService,
+class AmazonJsonApi(val awsService: AwsService,
                     scope: AwsCredentialScope,
                     credentialsProvider: () -> AwsCredentials,
                     val jackson: ConfigurableJackson,
@@ -34,7 +34,7 @@ class AmazonJsonApi(awsService: AwsService,
 
     val req = jackson.autoBody<Any>().toLens()
 
-    inline fun <Req : Any, reified Resp : Any> optional(awsService: AwsService, operation: String, request: Req) =
+    inline fun <Req : Any, reified Resp : Any> optional(operation: String, request: Req) =
         Uri.of("/").let {
             with(http(Request(Method.POST, it)
                 .header("X-Amz-Target", "$awsService.$operation")
@@ -47,7 +47,7 @@ class AmazonJsonApi(awsService: AwsService,
             }
         }
 
-    inline fun <Req : Any, reified Resp : Any> required(awsService: AwsService, operation: String, request: Req) =
+    inline fun <Req : Any, reified Resp : Any> required(operation: String, request: Req) =
         Uri.of("/").let {
             with(http(Request(Method.POST, it)
                 .header("X-Amz-Target", "$awsService.$operation")

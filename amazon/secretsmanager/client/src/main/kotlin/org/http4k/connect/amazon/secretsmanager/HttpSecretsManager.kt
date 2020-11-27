@@ -16,31 +16,23 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
     private val awsService = AwsService.of("secretsmanager")
 
-    private val api = AmazonJsonApi(
-        awsService,
-        scope,
-        credentialsProvider,
-        SecretsManagerJackson,
-        rawHttp,
-        clock,
-        payloadMode
-    )
+    private val api = AmazonJsonApi(awsService, scope, credentialsProvider, SecretsManagerJackson, rawHttp, clock, payloadMode)
 
     override fun create(request: CreateSecret.Request) =
-        api.required<CreateSecret.Request, CreateSecret.Response>(awsService, "CreateSecret", request)
+        api.required<CreateSecret.Request, CreateSecret.Response>("CreateSecret", request)
 
     override fun delete(request: DeleteSecret.Request) =
-        api.optional<DeleteSecret.Request, DeleteSecret.Response>(awsService, "DeleteSecret", request)
+        api.optional<DeleteSecret.Request, DeleteSecret.Response>("DeleteSecret", request)
 
     override fun get(request: GetSecret.Request) =
-        api.optional<GetSecret.Request, GetSecret.Response>(awsService, "GetSecretValue", request)
+        api.optional<GetSecret.Request, GetSecret.Response>("GetSecretValue", request)
 
     override fun list(request: ListSecrets.Request) =
-        api.required<ListSecrets.Request, ListSecrets.Response>(awsService, "ListSecrets", request)
+        api.required<ListSecrets.Request, ListSecrets.Response>("ListSecrets", request)
 
     override fun put(request: PutSecret.Request) =
-        api.optional<PutSecret.Request, PutSecret.Response>(awsService, "PutSecretValue", request)
+        api.optional<PutSecret.Request, PutSecret.Response>("PutSecretValue", request)
 
     override fun update(request: UpdateSecret.Request) =
-        api.optional<UpdateSecret.Request, UpdateSecret.Response>(awsService, "UpdateSecret", request)
+        api.optional<UpdateSecret.Request, UpdateSecret.Response>("UpdateSecret", request)
 }
