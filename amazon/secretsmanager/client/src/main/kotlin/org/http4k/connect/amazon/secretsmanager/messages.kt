@@ -5,15 +5,11 @@ import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.KmsKeyId
 import org.http4k.connect.amazon.model.SecretId
+import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.model.VersionStage
 import java.util.UUID
-
-data class Tag(
-    val Key: String?,
-    val Value: String?
-)
 
 object CreateSecret {
     class Request private constructor(

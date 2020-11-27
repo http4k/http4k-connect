@@ -1,12 +1,8 @@
 package org.http4k.connect.amazon.systemsmanager
 
 import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
-
-data class Tag(
-    val Key: String?,
-    val Value: String?
-)
 
 object DeleteParameter {
     data class Request(

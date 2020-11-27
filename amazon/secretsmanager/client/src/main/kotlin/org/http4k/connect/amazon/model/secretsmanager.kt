@@ -10,10 +10,6 @@ class SecretId private constructor(value: String) : StringValue(value) {
     }
 }
 
-class KmsKeyId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<KmsKeyId>(::KmsKeyId, 1.minLength)
-}
-
 class VersionId private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<VersionId>(::VersionId, 1.minLength)
 }

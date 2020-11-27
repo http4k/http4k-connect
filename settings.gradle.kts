@@ -6,6 +6,7 @@ includeStorage("s3")
 includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
+includeSystem("amazon", "kms")
 includeSystem("amazon", "s3")
 includeSystem("amazon", "secretsmanager")
 includeSystem("amazon", "systemsmanager")

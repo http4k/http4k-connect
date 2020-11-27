@@ -44,3 +44,12 @@ class Base64Blob private constructor(value: String) : StringValue(value) {
 class Region private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<Region>(::Region, "[a-z]+-[a-z]+-\\d".regex)
 }
+
+class KmsKeyId private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<KmsKeyId>(::KmsKeyId, 1.minLength)
+}
+
+data class Tag(
+    val Key: String,
+    val Value: String
+)
