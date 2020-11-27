@@ -14,9 +14,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
                                   rawHttp: HttpHandler = JavaHttpClient(),
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
-    private val awsService = AwsService.of("secretsmanager")
-
-    private val api = AmazonJsonApi(awsService, scope, credentialsProvider, SecretsManagerJackson, rawHttp, clock, payloadMode)
+    private val api = AmazonJsonApi(AwsService.of("secretsmanager"), scope, credentialsProvider, SecretsManagerJackson, rawHttp, clock, payloadMode)
 
     override fun create(request: CreateSecret.Request) =
         api.required<CreateSecret.Request, CreateSecret.Response>("CreateSecret", request)
