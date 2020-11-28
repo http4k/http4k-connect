@@ -35,7 +35,7 @@ class AmazonJsonApi(private val awsService: AwsService,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    fun <Req : Any, Resp : Any> operation(name: String, clazz: KClass<Resp>, request: Req, onBadRequest: (Uri, Response) -> Result<Resp?, RemoteFailure>) =
+    fun <Req : Any, Resp : Any> operation(name: String, clazz: KClass<Resp>, request: Req, onBadRequest: (Uri, Response) -> Result<Resp, RemoteFailure>) =
         Uri.of("/").let {
             with(http(Request(POST, it)
                 .header("X-Amz-Target", "$awsService.$name")
@@ -50,14 +50,8 @@ class AmazonJsonApi(private val awsService: AwsService,
         }
 }
 
-inline fun <Req : Any, reified Resp : Any> AmazonJsonApi.optional(operation: String, request: Req): Result<Resp?, RemoteFailure> = operation(operation, Resp::class, request, orNull())
-
-inline fun <Req : Any, reified Resp : Any> AmazonJsonApi.required(operation: String, request: Req): Result<Resp, RemoteFailure> =
-    when(val result: Result<Resp?, RemoteFailure> = operation(operation, Resp::class, request, orFailure())) {
-        is Success<Resp?> -> result.map { it!! }
+inline fun <Req : Any, reified Resp : Any> AmazonJsonApi.required(operation: String, request: Req): Result<Resp, RemoteFailure> = when(val result: Result<Resp, RemoteFailure> = operation(operation, Resp::class, request, { uri: Uri, resp: Response -> Failure(RemoteFailure(uri, resp.status)) })) {
+        is Success<Resp> -> result.map { it }
         is Failure<RemoteFailure> -> Failure(result.reason)
     }
 
-fun <Resp : Any> orNull() = { _: Uri, _: Resp -> Success(null) }
-
-fun orFailure() = { uri: Uri, resp: Response -> Failure(RemoteFailure(uri, resp.status)) }
