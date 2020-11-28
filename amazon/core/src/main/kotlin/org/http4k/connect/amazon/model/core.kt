@@ -4,6 +4,7 @@ import dev.forkhandles.values.LongValue
 import dev.forkhandles.values.LongValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
+import dev.forkhandles.values.and
 import dev.forkhandles.values.minLength
 import dev.forkhandles.values.minValue
 import dev.forkhandles.values.regex
@@ -11,7 +12,7 @@ import org.http4k.base64Decoded
 import org.http4k.base64Encode
 
 class ARN private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<ARN>(::ARN, 1.minLength) {
+    companion object : StringValueFactory<ARN>(::ARN, 1.minLength.and { it.startsWith("arn:aws:") }) {
         fun of(region: Region,
                awsService: AwsService,
                resourceType: String,
@@ -20,6 +21,10 @@ class ARN private constructor(value: String) : StringValue(value) {
             "arn:aws:$awsService:$region:$account:$resourceType:$resourceId")
     }
 }
+
+fun StringValue.toARN() = ARN.of(value)
+
+fun <T> StringValueFactory<T>.of(arn: ARN) = of(arn.value)
 
 class AwsAccount private constructor(value: String) : StringValue(value.padStart(12, '0')) {
     companion object : StringValueFactory<AwsAccount>(::AwsAccount, { it.all(Char::isDigit) })
@@ -46,7 +51,9 @@ class Region private constructor(value: String) : StringValue(value) {
 }
 
 class KmsKeyId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<KmsKeyId>(::KmsKeyId, 1.minLength)
+    companion object : StringValueFactory<KmsKeyId>(::KmsKeyId, 1.minLength) {
+        fun of(arn: ARN) = of(arn.value)
+    }
 }
 
 data class Tag(

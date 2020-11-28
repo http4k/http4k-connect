@@ -1,10 +1,8 @@
 package org.http4k.connect.amazon.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 data class KeyMetadata(
     val KeyId: KmsKeyId,
-    @JsonProperty("ARN") val ARN: ARN? = null,
+    val Arn: ARN? = null,
     val AWSAccountId: AwsAccount? = null,
     val CloudHsmClusterId: String? = null,
     val CreationDate: Timestamp? = null,

@@ -151,7 +151,7 @@ class FakeSecretsManager(
         Region.of("us-east-1"),
         AwsService.of("secretsmanager"),
         "secret", this,
-        AwsAccount.of(0))
+        AwsAccount.of("0"))
 
     /**
      * Convenience function to get SecretsManager client

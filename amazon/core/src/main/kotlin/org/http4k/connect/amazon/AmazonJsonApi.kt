@@ -3,7 +3,6 @@ package org.http4k.connect.amazon
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
-import dev.forkhandles.result4k.map
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
@@ -12,8 +11,6 @@ import org.http4k.connect.amazon.model.AwsService
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
-import org.http4k.core.Response
-import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
@@ -36,7 +33,7 @@ class AmazonJsonApi(private val awsService: AwsService,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    fun <Req : Any, Resp : Any> operation(name: String, clazz: KClass<Resp>, request: Req, onBadRequest: (Uri, Response) -> Result<Resp, RemoteFailure>) =
+    fun <Req : Any, Resp : Any> operation(name: String, clazz: KClass<Resp>, request: Req) =
         Uri.of("/").let {
             with(http(Request(POST, it)
                 .header("X-Amz-Target", "$httpAwsService.$name")
@@ -44,15 +41,14 @@ class AmazonJsonApi(private val awsService: AwsService,
                 .body(autoMarshallingJson.asFormatString(request)))) {
                 when {
                     status.successful -> Success(autoMarshallingJson.asA(bodyString(), clazz))
-                    status == BAD_REQUEST -> onBadRequest(it, this)
-                    else -> Failure(RemoteFailure(it, status))
+                    else -> Failure(RemoteFailure(it, status, bodyString()))
                 }
             }
         }
 }
 
-inline operator fun <Req : Any, reified Resp : Any> AmazonJsonApi.invoke(operation: String, request: Req): Result<Resp, RemoteFailure> = when(val result: Result<Resp, RemoteFailure> = operation(operation, Resp::class, request, { uri: Uri, resp: Response -> Failure(RemoteFailure(uri, resp.status)) })) {
-        is Success<Resp> -> result.map { it }
+inline operator fun <Req : Any, reified Resp : Any> AmazonJsonApi.invoke(operation: String, request: Req): Result<Resp, RemoteFailure> = when(val result: Result<Resp, RemoteFailure> = operation(operation, Resp::class, request)) {
+        is Success<Resp> -> result
         is Failure<RemoteFailure> -> Failure(result.reason)
     }
 
