@@ -12,14 +12,9 @@ import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.amazon.model.VersionId
-import org.http4k.connect.amazon.secretsmanager.SecretsManagerJackson.auto
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
-import org.http4k.core.Body
 import org.http4k.core.Method.POST
-import org.http4k.core.Response
-import org.http4k.core.Status.Companion.BAD_REQUEST
-import org.http4k.core.with
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import java.time.Clock
@@ -136,16 +131,10 @@ class FakeSecretsManager(
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 
-private val NOT_FOUND = Response(BAD_REQUEST)
-    .with(Body.auto<SecretsManagerError>().toLens()
-        of SecretsManagerError("ResourceNotFoundException", "Secrets Manager can't find the specified secret."))
-
 private fun SecretId.resourceId() = when {
     value.startsWith("arn") -> value.split(":").last()
     else -> value
 }
-
-data class SecretsManagerError(val __type: String, val Message: String)
 
 fun main() {
     FakeSecretsManager().start()
