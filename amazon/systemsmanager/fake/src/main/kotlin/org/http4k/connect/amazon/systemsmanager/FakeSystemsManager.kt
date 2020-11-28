@@ -4,7 +4,6 @@ import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.core.Method.GET
-import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.routing.bind
@@ -16,7 +15,7 @@ class FakeSystemsManager(
 ) : ChaosFake() {
 
     override val app = routes(
-        "/" bind GET to { req: Request -> Response(Status.OK) }
+        "/" bind GET to { Response(Status.OK) }
     )
 
     /**

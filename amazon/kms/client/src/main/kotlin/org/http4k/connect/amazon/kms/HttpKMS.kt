@@ -14,7 +14,7 @@ fun KMS.Companion.Http(scope: AwsCredentialScope,
                        rawHttp: HttpHandler = JavaHttpClient(),
                        clock: Clock = Clock.systemDefaultZone(),
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
-    private val api = AmazonJsonApi(AwsService.of("kms"), scope, credentialsProvider, KMSJackson, rawHttp, clock, payloadMode)
+    private val api = AmazonJsonApi(AwsService.of("kms"), KMSJackson, scope, credentialsProvider, rawHttp, clock, payloadMode)
 
     override fun createKey(request: CreateKey.Request): CreateKey.Response {
         TODO("Not yet implemented")

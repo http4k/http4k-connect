@@ -16,9 +16,7 @@ fun SystemsManager.Companion.Http(scope: AwsCredentialScope,
                                   rawHttp: HttpHandler = JavaHttpClient(),
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SystemsManager {
-    private val api = AmazonJsonApi(AwsService.of("ssm"), scope, credentialsProvider, SystemsManagerJackson, rawHttp, clock, payloadMode)
-
-    private val req = SystemsManagerJackson.autoBody<Any>().toLens()
+    private val api = AmazonJsonApi(AwsService.of("ssm"), SystemsManagerJackson, scope, credentialsProvider, rawHttp, clock, payloadMode)
 
     /**
      * POST / HTTP/1.1
