@@ -11,7 +11,6 @@ import org.http4k.connect.amazon.kms.GetPublicKey
 import org.http4k.connect.amazon.kms.Http
 import org.http4k.connect.amazon.kms.KMS
 import org.http4k.connect.amazon.kms.KMSJackson
-import org.http4k.connect.amazon.kms.KMSJackson.auto
 import org.http4k.connect.amazon.kms.ScheduleKeyDeletion
 import org.http4k.connect.amazon.kms.Sign
 import org.http4k.connect.amazon.kms.Verify
@@ -29,12 +28,10 @@ import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
-import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
-import org.http4k.core.with
 import org.http4k.routing.bind
 import org.http4k.routing.header
 import org.http4k.routing.routes
@@ -101,7 +98,8 @@ class FakeKMS(
 
     private fun encrypt() = route<Encrypt, Encrypt.Request> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Encrypt.Response(KmsKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT)
+            Encrypt.Response(KmsKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
+                ?: SYMMETRIC_DEFAULT)
         }
     }
 
@@ -111,55 +109,40 @@ class FakeKMS(
         }
     }
 
-    private fun scheduleKeyDeletion() = header("X-Amz-Target", "TrentService.ScheduleKeyDeletion") bind {
-        val req = Body.auto<ScheduleKeyDeletion.Request>().toLens()(it)
-
+    private fun scheduleKeyDeletion() = route<ScheduleKeyDeletion, ScheduleKeyDeletion.Request> { req ->
         keys[toArn(req.KeyId).value]?.let {
             keys[toArn(req.KeyId).value] = it.copy(deletion = Timestamp.of(MAX_VALUE))
-            Response(OK)
-                .with(Body.auto<ScheduleKeyDeletion.Response>().toLens()
-                    of ScheduleKeyDeletion.Response(KmsKeyId.of(it.arn), Timestamp.of(MAX_VALUE)))
-        } ?: Response(BAD_REQUEST)
-    }
-
-    private fun sign() = header("X-Amz-Target", "TrentService.Sign") bind {
-        val req = Body.auto<Sign.Request>().toLens()(it)
-
-        keys[toArn(req.KeyId).value]?.let {
-            Response(OK)
-                .with(Body.auto<Sign.Response>().toLens()
-                    of Sign.Response(KmsKeyId.of(it.arn),
-                    Base64Blob.encoded(req.SigningAlgorithm.name + req.Message.decoded()), req.SigningAlgorithm))
-        } ?: Response(BAD_REQUEST)
-    }
-
-    private fun verify() = header("X-Amz-Target", "TrentService.Verify") bind {
-        val req = Body.auto<Verify.Request>().toLens()(it)
-
-        keys[toArn(req.KeyId).value]?.let {
-            if (req.Signature.decoded().startsWith(req.SigningAlgorithm.name)) {
-                Response(OK)
-                    .with(Body.auto<Verify.Response>().toLens()
-                        of Verify.Response(KmsKeyId.of(it.arn), true, req.SigningAlgorithm))
-            } else {
-                Response(BAD_REQUEST)
-            }
-        } ?: Response(BAD_REQUEST)
-    }
-
-    private inline fun <reified Wrapper, reified Req : Any> route(crossinline fn: (Req) -> Any?) =
-        header("X-Amz-Target", "TrentService.${Wrapper::class.simpleName}") bind {
-            val req = KMSJackson.asA(it.bodyString(), Req::class)
-            fn(req)?.let {
-                Response(OK)
-                    .body(KMSJackson.asFormatString(it))
-            } ?: Response(BAD_REQUEST)
+            ScheduleKeyDeletion.Response(KmsKeyId.of(it.arn), Timestamp.of(MAX_VALUE))
         }
+    }
+
+    private fun sign() = route<Sign, Sign.Request> { req ->
+        keys[toArn(req.KeyId).value]?.let {
+            Sign.Response(KmsKeyId.of(it.arn),
+                Base64Blob.encoded(req.SigningAlgorithm.name + req.Message.decoded()), req.SigningAlgorithm)
+        }
+    }
+
+    private fun verify() = route<Verify, Verify.Request> { req ->
+        keys[toArn(req.KeyId).value]?.let {
+            when {
+                req.Signature.decoded().startsWith(req.SigningAlgorithm.name) ->
+                    Verify.Response(KmsKeyId.of(it.arn), true, req.SigningAlgorithm)
+                else -> null
+            }
+        }
+    }
 
     private fun toArn(keyId: KmsKeyId) = when {
         keyId.value.startsWith("arn") -> ARN.of(keyId.value)
         else -> ARN.of(Region.of("ldn-north-1"), AwsService.of("kms"), "key", keyId.value, AwsAccount.of("0"))
     }
+
+    private inline fun <reified Wrapper, reified Req : Any> route(crossinline fn: (Req) -> Any?) =
+        header("X-Amz-Target", "TrentService.${Wrapper::class.simpleName}") bind {
+            fn(KMSJackson.asA(it.bodyString(), Req::class))
+                ?.let { Response(OK).body(KMSJackson.asFormatString(it)) } ?: Response(BAD_REQUEST)
+        }
 
     /**
      * Convenience function to get SystemsManager client
