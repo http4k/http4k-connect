@@ -12,11 +12,11 @@ import org.http4k.connect.amazon.model.Timestamp
 
 object CreateKey {
     data class Request(
-        val BypassPolicyLockoutSafetyCheck: Boolean? = null,
         val CustomerMasterKeySpec: CustomerMasterKeySpec? = null,
+        val KeyUsage: KeyUsage? = null,
+        val BypassPolicyLockoutSafetyCheck: Boolean? = null,
         val CustomKeyStoreId: String? = null,
         val Description: String? = null,
-        val KeyUsage: KeyUsage? = null,
         val Origin: String? = null,
         val Policy: String? = null,
         val Tags: List<Tag>? = null
@@ -66,7 +66,7 @@ object GetPublicKey {
         val EncryptionAlgorithms: List<EncryptionAlgorithm>,
         val KeyUsage: KeyUsage,
         val PublicKey: Base64Blob,
-        val SigningAlgorithms: List<SigningAlgorithm>
+        val SigningAlgorithms: List<SigningAlgorithm>?
     )
 }
 
