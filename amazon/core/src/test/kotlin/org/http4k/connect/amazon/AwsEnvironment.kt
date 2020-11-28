@@ -21,7 +21,7 @@ fun configAwsEnvironment(service: AwsService): AwsEnvironment {
     val env = Environment.fromConfigFile(config) overrides
         Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
 
-    val region = EnvironmentKey.required("http4k-connect-test-user-region")(env)
+    val region = EnvironmentKey.required("profile-http4k-connect-test-user-region")(env)
     return AwsEnvironment(
         EnvironmentKey.composite {
             AwsCredentials(
