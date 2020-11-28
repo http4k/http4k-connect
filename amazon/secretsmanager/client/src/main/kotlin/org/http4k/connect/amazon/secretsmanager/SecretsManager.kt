@@ -11,7 +11,7 @@ interface SecretsManager {
     fun delete(request: DeleteSecret.Request): Result<DeleteSecret.Response, RemoteFailure>
     fun get(request: GetSecretValue.Request): Result<GetSecretValue.Response, RemoteFailure>
     fun list(request: ListSecrets.Request): Result<ListSecrets.Response, RemoteFailure>
-    fun put(request: PutSecret.Request): Result<PutSecret.Response, RemoteFailure>
+    fun put(request: PutSecretValue.Request): Result<PutSecretValue.Response, RemoteFailure>
     fun update(request: UpdateSecret.Request): Result<UpdateSecret.Response, RemoteFailure>
 
     companion object

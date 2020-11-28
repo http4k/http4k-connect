@@ -112,7 +112,7 @@ object ListSecrets {
 }
 
 
-object PutSecret {
+object PutSecretValue {
     class Request private constructor(
         val SecretId: SecretId,
         val ClientRequestToken: UUID,

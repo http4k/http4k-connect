@@ -42,7 +42,7 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
             val updated = update(UpdateSecret.Request(SecretId.of(name), UUID.randomUUID(), updatedValue)).successValue()
             assertThat(updated.Name, present(equalTo(name)))
 
-            val putValue = put(PutSecret.Request(SecretId.of(name), UUID.randomUUID(), finalValue)).successValue()
+            val putValue = put(PutSecretValue.Request(SecretId.of(name), UUID.randomUUID(), finalValue)).successValue()
             assertThat(putValue.Name, present(equalTo(name)))
 
             val lookupUpdated = get(GetSecretValue.Request(SecretId.of(name))).successValue()

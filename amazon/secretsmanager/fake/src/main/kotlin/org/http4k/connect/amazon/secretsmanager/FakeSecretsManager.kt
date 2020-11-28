@@ -19,10 +19,8 @@ import org.http4k.core.Body
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
-import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.routing.bind
-import org.http4k.routing.header
 import org.http4k.routing.routes
 import java.time.Clock
 import java.util.UUID.randomUUID
@@ -89,16 +87,27 @@ class FakeSecretsManager(
             }
     }
 
-    private fun listSecrets() = header("X-Amz-Target", "secretsmanager.ListSecrets") bind {
-        Response(OK)
-            .with(Body.auto<ListSecrets.Response>().toLens()
-                of ListSecrets.Response(secrets.keySet("").map {
-                ListSecrets.Secret(it.toArn(), it)
-            }))
+    private fun listSecrets() = api.route<ListSecrets, ListSecrets.Request> {
+        ListSecrets.Response(secrets.keySet("").map {
+            ListSecrets.Secret(it.toArn(), it)
+        })
     }
 
-    private fun putSecret() = header("X-Amz-Target", "secretsmanager.PutSecretValue") bind {
-        val req = Body.auto<PutSecret.Request>().toLens()(it)
+    private fun putSecret() = api.route<PutSecretValue, PutSecretValue.Request> { req ->
+        val resourceId = req.SecretId.resourceId()
+        secrets[resourceId]
+            ?.let {
+                val versionId = VersionId.of(randomUUID().toString())
+                secrets[resourceId] = SecretValue(versionId,
+                    it.createdAt,
+                    Timestamp.of(clock.instant().toEpochMilli() / 1000),
+                    req.SecretString, req.SecretBinary)
+
+                PutSecretValue.Response(resourceId.toArn(), resourceId, versionId)
+            }
+    }
+
+    private fun updateSecret() = api.route<UpdateSecret, UpdateSecret.Request> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets[resourceId]
@@ -109,30 +118,8 @@ class FakeSecretsManager(
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                Response(OK)
-                    .with(Body.auto<PutSecret.Response>().toLens()
-                        of PutSecret.Response(resourceId.toArn(), resourceId, versionId))
+                UpdateSecret.Response(resourceId.toArn(), resourceId, versionId)
             }
-            ?: NOT_FOUND
-    }
-
-    private fun updateSecret() = header("X-Amz-Target", "secretsmanager.UpdateSecret") bind {
-        val req = Body.auto<UpdateSecret.Request>().toLens()(it)
-        val resourceId = req.SecretId.resourceId()
-
-        secrets[resourceId]
-            ?.let {
-                val versionId = VersionId.of(randomUUID().toString())
-                secrets[resourceId] = SecretValue(versionId,
-                    it.createdAt,
-                    Timestamp.of(clock.instant().toEpochMilli() / 1000),
-                    req.SecretString, req.SecretBinary)
-
-                Response(OK)
-                    .with(Body.auto<UpdateSecret.Response>().toLens()
-                        of UpdateSecret.Response(resourceId.toArn(), resourceId, versionId))
-            }
-            ?: NOT_FOUND
     }
 
     private fun String.toArn() = ARN.of(

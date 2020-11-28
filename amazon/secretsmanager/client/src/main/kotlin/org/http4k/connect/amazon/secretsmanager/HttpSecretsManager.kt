@@ -31,7 +31,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
     override fun list(request: ListSecrets.Request): Result<ListSecrets.Response, RemoteFailure> =
         api("ListSecrets", request)
 
-    override fun put(request: PutSecret.Request): Result<PutSecret.Response, RemoteFailure> =
+    override fun put(request: PutSecretValue.Request): Result<PutSecretValue.Response, RemoteFailure> =
         api("PutSecretValue", request)
 
     override fun update(request: UpdateSecret.Request): Result<UpdateSecret.Response, RemoteFailure> =
