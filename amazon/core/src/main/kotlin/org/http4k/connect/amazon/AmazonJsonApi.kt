@@ -17,12 +17,12 @@ import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.Payload
-import org.http4k.format.AutoMarshallingJson
+import org.http4k.format.AutoMarshalling
 import java.time.Clock
 import kotlin.reflect.KClass
 
 class AmazonJsonApi(private val awsService: AwsService,
-                    private val autoMarshallingJson: AutoMarshallingJson,
+                    private val autoMarshalling: AutoMarshalling,
                     scope: AwsCredentialScope,
                     credentialsProvider: () -> AwsCredentials,
                     rawHttp: HttpHandler = JavaHttpClient(),
@@ -38,9 +38,9 @@ class AmazonJsonApi(private val awsService: AwsService,
             with(http(Request(POST, it)
                 .header("X-Amz-Target", "$httpAwsService.$name")
                 .replaceHeader("Content-Type", "application/x-amz-json-1.1")
-                .body(autoMarshallingJson.asFormatString(request)))) {
+                .body(autoMarshalling.asFormatString(request)))) {
                 when {
-                    status.successful -> Success(autoMarshallingJson.asA(bodyString(), clazz))
+                    status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
                     else -> Failure(RemoteFailure(it, status, bodyString()))
                 }
             }
