@@ -57,7 +57,7 @@ object DeleteSecret {
     )
 }
 
-object GetSecret {
+object GetSecretValue {
     data class Request(
         val SecretId: SecretId,
         val VersionId: VersionId? = null,

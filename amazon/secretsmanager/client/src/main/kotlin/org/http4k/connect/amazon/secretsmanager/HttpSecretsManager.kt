@@ -25,7 +25,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
     override fun delete(request: DeleteSecret.Request): Result<DeleteSecret.Response, RemoteFailure> =
         api("DeleteSecret", request)
 
-    override fun get(request: GetSecret.Request): Result<GetSecret.Response, RemoteFailure> =
+    override fun get(request: GetSecretValue.Request): Result<GetSecretValue.Response, RemoteFailure> =
         api("GetSecretValue", request)
 
     override fun list(request: ListSecrets.Request): Result<ListSecrets.Response, RemoteFailure> =

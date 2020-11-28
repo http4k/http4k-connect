@@ -71,25 +71,22 @@ class FakeSecretsManager(
             }
     }
 
-    private fun getSecret() = header("X-Amz-Target", "secretsmanager.GetSecretValue") bind {
-        val req = Body.auto<GetSecret.Request>().toLens()(it)
+    private fun getSecret() = api.route<GetSecretValue, GetSecretValue.Request> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets.keySet(resourceId).firstOrNull()
             ?.let { secrets[it] }
             ?.let {
-                Response(OK)
-                    .with(Body.auto<Any>().toLens() of GetSecret.Response(
-                        resourceId.toArn(),
-                        Timestamp.of(0),
-                        resourceId,
-                        it.secretBinary,
-                        it.secretString,
-                        it.versionId,
-                        emptyList()
-                    ))
+                GetSecretValue.Response(
+                    resourceId.toArn(),
+                    Timestamp.of(0),
+                    resourceId,
+                    it.secretBinary,
+                    it.secretString,
+                    it.versionId,
+                    emptyList()
+                )
             }
-            ?: NOT_FOUND
     }
 
     private fun listSecrets() = header("X-Amz-Target", "secretsmanager.ListSecrets") bind {

@@ -27,7 +27,7 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
     @Test
     fun `secret lifecycle`() {
         with(sm) {
-            val lookupNothing = get(GetSecret.Request(SecretId.of(name))).failureOrNull()
+            val lookupNothing = get(GetSecretValue.Request(SecretId.of(name))).failureOrNull()
             assertThat(lookupNothing?.status, equalTo(BAD_REQUEST))
 
             val creation = create(CreateSecret.Request(name, UUID.randomUUID(), secretValue)).successValue()
@@ -36,7 +36,7 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
             val list = list(ListSecrets.Request()).successValue()
             assertThat(list.SecretList.any { it.arn == creation.arn }, equalTo(true))
 
-            val lookupCreated = get(GetSecret.Request(SecretId.of(name))).successValue()
+            val lookupCreated = get(GetSecretValue.Request(SecretId.of(name))).successValue()
             assertThat(lookupCreated.SecretString, present(equalTo(secretValue)))
 
             val updated = update(UpdateSecret.Request(SecretId.of(name), UUID.randomUUID(), updatedValue)).successValue()
@@ -45,13 +45,13 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
             val putValue = put(PutSecret.Request(SecretId.of(name), UUID.randomUUID(), finalValue)).successValue()
             assertThat(putValue.Name, present(equalTo(name)))
 
-            val lookupUpdated = get(GetSecret.Request(SecretId.of(name))).successValue()
+            val lookupUpdated = get(GetSecretValue.Request(SecretId.of(name))).successValue()
             assertThat(lookupUpdated.SecretString, present(equalTo(finalValue)))
 
             val deleted = delete(DeleteSecret.Request(SecretId.of(name))).successValue()
             assertThat(deleted.arn, present(equalTo(updated.arn)))
 
-            val lookupDeleted = get(GetSecret.Request(SecretId.of(name))).failureOrNull()
+            val lookupDeleted = get(GetSecretValue.Request(SecretId.of(name))).failureOrNull()
             assertThat(lookupDeleted?.status, equalTo(BAD_REQUEST))
         }
     }

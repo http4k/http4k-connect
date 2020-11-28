@@ -2,7 +2,7 @@ import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.secretsmanager.CreateSecret
 import org.http4k.connect.amazon.secretsmanager.FakeSecretsManager
-import org.http4k.connect.amazon.secretsmanager.GetSecret
+import org.http4k.connect.amazon.secretsmanager.GetSecretValue
 import java.util.UUID
 
 fun main() {
@@ -16,5 +16,5 @@ fun main() {
             Base64Blob.encoded("hello")))
     )
 
-    println(client.get(GetSecret.Request(secretId)))
+    println(client.get(GetSecretValue.Request(secretId)))
 }
