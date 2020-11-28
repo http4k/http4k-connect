@@ -21,7 +21,6 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
-import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.header
 import org.http4k.routing.routes
@@ -62,41 +61,35 @@ class FakeSecretsManager(
         CreateSecret.Response(req.Name.toArn(), req.Name, versionId)
     }
 
-    private fun deleteSecret() = header("X-Amz-Target", "secretsmanager.DeleteSecret") bind {
-        val req = Body.auto<DeleteSecret.Request>().toLens()(it)
+    private fun deleteSecret() = api.route<DeleteSecret, DeleteSecret.Request> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets[resourceId]
             ?.let {
                 secrets.remove(resourceId)
-                Response(OK)
-                    .with(Body.auto<DeleteSecret.Response>().toLens()
-                        of DeleteSecret.Response(resourceId, resourceId.toArn(), Timestamp.of(0)))
+                DeleteSecret.Response(resourceId, resourceId.toArn(), Timestamp.of(0))
             }
-            ?: NOT_FOUND
     }
 
-    private fun getSecret(): RoutingHttpHandler {
-        return header("X-Amz-Target", "secretsmanager.GetSecretValue") bind {
-            val req = Body.auto<GetSecret.Request>().toLens()(it)
-            val resourceId = req.SecretId.resourceId()
+    private fun getSecret() = header("X-Amz-Target", "secretsmanager.GetSecretValue") bind {
+        val req = Body.auto<GetSecret.Request>().toLens()(it)
+        val resourceId = req.SecretId.resourceId()
 
-            secrets.keySet(resourceId).firstOrNull()
-                ?.let { secrets[it] }
-                ?.let {
-                    Response(OK)
-                        .with(Body.auto<Any>().toLens() of GetSecret.Response(
-                            resourceId.toArn(),
-                            Timestamp.of(0),
-                            resourceId,
-                            it.secretBinary,
-                            it.secretString,
-                            it.versionId,
-                            emptyList()
-                        ))
-                }
-                ?: NOT_FOUND
-        }
+        secrets.keySet(resourceId).firstOrNull()
+            ?.let { secrets[it] }
+            ?.let {
+                Response(OK)
+                    .with(Body.auto<Any>().toLens() of GetSecret.Response(
+                        resourceId.toArn(),
+                        Timestamp.of(0),
+                        resourceId,
+                        it.secretBinary,
+                        it.secretString,
+                        it.versionId,
+                        emptyList()
+                    ))
+            }
+            ?: NOT_FOUND
     }
 
     private fun listSecrets() = header("X-Amz-Target", "secretsmanager.ListSecrets") bind {
