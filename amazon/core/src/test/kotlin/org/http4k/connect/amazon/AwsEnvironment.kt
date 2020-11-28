@@ -20,12 +20,12 @@ fun configAwsEnvironment(service: String): AwsEnvironment {
     val env = Environment.fromConfigFile(config) overrides
         Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
 
-    val region = EnvironmentKey.required("default-region")(env)
+    val region = EnvironmentKey.required("http4k-connect-test-user-region")(env)
     return AwsEnvironment(
         EnvironmentKey.composite {
             AwsCredentials(
-                EnvironmentKey.required("default-aws-access-key-id")(it),
-                EnvironmentKey.required("default-aws-secret-access-key")(it)
+                EnvironmentKey.required("http4k-connect-test-user-aws-access-key-id")(it),
+                EnvironmentKey.required("http4k-connect-test-user-aws-secret-access-key")(it)
             )
         }(env),
         AwsCredentialScope(region, service)
