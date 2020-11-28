@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.kms.Encrypt
 import org.http4k.connect.amazon.kms.GetPublicKey
 import org.http4k.connect.amazon.kms.Http
 import org.http4k.connect.amazon.kms.KMS
+import org.http4k.connect.amazon.kms.KMSJackson
 import org.http4k.connect.amazon.kms.KMSJackson.auto
 import org.http4k.connect.amazon.kms.ScheduleKeyDeletion
 import org.http4k.connect.amazon.kms.Sign
@@ -75,17 +76,14 @@ class FakeKMS(
         )
     )
 
-    private fun createKey() = header("X-Amz-Target", "TrentService.CreateKey") bind {
-        val req = Body.auto<CreateKey.Request>().toLens()(it)
+    private fun createKey() = route<CreateKey, CreateKey.Request> {
         val keyId = KmsKeyId.of(UUID.randomUUID().toString())
-        val storedCMK = StoredCMK(keyId, toArn(keyId), req.KeyUsage ?: ENCRYPT_DECRYPT, req.CustomerMasterKeySpec
+        val storedCMK = StoredCMK(keyId, toArn(keyId), it.KeyUsage ?: ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
             ?: CustomerMasterKeySpec.SYMMETRIC_DEFAULT)
 
         keys[storedCMK.arn.value] = storedCMK
 
-        Response(OK)
-            .with(Body.auto<CreateKey.Response>().toLens()
-                of CreateKey.Response(KeyMetadata(storedCMK.keyId, storedCMK.arn, AwsAccount.of("0"), req.KeyUsage)))
+        CreateKey.Response(KeyMetadata(storedCMK.keyId, storedCMK.arn, AwsAccount.of("0"), it.KeyUsage))
     }
 
     private fun describeKey() = header("X-Amz-Target", "TrentService.DescribeKey") bind {
@@ -120,14 +118,10 @@ class FakeKMS(
         } ?: Response(BAD_REQUEST)
     }
 
-    private fun getPublicKey() = header("X-Amz-Target", "TrentService.GetPublicKey") bind {
-        val req = Body.auto<GetPublicKey.Request>().toLens()(it)
-
-        keys[toArn(req.KeyId).value]?.let {
-            Response(OK)
-                .with(Body.auto<GetPublicKey.Response>().toLens()
-                    of GetPublicKey.Response(KmsKeyId.of(it.arn), it.customerMasterKeySpec, emptyList(), it.keyUsage, publicKey, emptyList()))
-        } ?: Response(BAD_REQUEST)
+    private fun getPublicKey() = route<GetPublicKey, GetPublicKey.Request> {
+        keys[toArn(it.KeyId).value]?.let {
+            GetPublicKey.Response(KmsKeyId.of(it.arn), it.customerMasterKeySpec, emptyList(), it.keyUsage, publicKey, emptyList())
+        }
     }
 
     private fun scheduleKeyDeletion() = header("X-Amz-Target", "TrentService.ScheduleKeyDeletion") bind {
@@ -156,7 +150,7 @@ class FakeKMS(
         val req = Body.auto<Verify.Request>().toLens()(it)
 
         keys[toArn(req.KeyId).value]?.let {
-            if(req.Signature.decoded().startsWith(req.SigningAlgorithm.name)) {
+            if (req.Signature.decoded().startsWith(req.SigningAlgorithm.name)) {
                 Response(OK)
                     .with(Body.auto<Verify.Response>().toLens()
                         of Verify.Response(KmsKeyId.of(it.arn), true, req.SigningAlgorithm))
@@ -165,6 +159,15 @@ class FakeKMS(
             }
         } ?: Response(BAD_REQUEST)
     }
+
+    private inline fun <reified Wrapper, reified Req : Any> route(crossinline fn: (Req) -> Any?) =
+        header("X-Amz-Target", "TrentService.${Wrapper::class.simpleName}") bind {
+            val req = KMSJackson.asA(it.bodyString(), Req::class)
+            fn(req)?.let {
+                Response(OK)
+                    .body(KMSJackson.asFormatString(it))
+            } ?: Response(BAD_REQUEST)
+        }
 
     private fun toArn(keyId: KmsKeyId) = when {
         keyId.value.startsWith("arn") -> ARN.of(keyId.value)
