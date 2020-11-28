@@ -17,12 +17,12 @@ fun KMS.Companion.Http(scope: AwsCredentialScope,
                        rawHttp: HttpHandler = JavaHttpClient(),
                        clock: Clock = Clock.systemDefaultZone(),
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
-    private val api = AmazonJsonApi(AwsService.of("kms"), KMSJackson, scope, credentialsProvider, rawHttp, clock, payloadMode)
+    private val api = AmazonJsonApi(AwsService.of("kms"), KMSJackson, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("TrentService"))
 
-    override fun createKey(request: CreateKey.Request): Result<CreateKey.Response, RemoteFailure> =
+    override fun create(request: CreateKey.Request): Result<CreateKey.Response, RemoteFailure> =
         api("CreateKey", request)
 
-    override fun describeKey(request: DescribeKey.Request): Result<DescribeKey.Response, RemoteFailure> =
+    override fun describe(request: DescribeKey.Request): Result<DescribeKey.Response, RemoteFailure> =
         api("DescribeKey", request)
 
     override fun decrypt(request: Decrypt.Request): Result<Decrypt.Response, RemoteFailure> = api("Decrypt", request)
@@ -32,10 +32,10 @@ fun KMS.Companion.Http(scope: AwsCredentialScope,
     override fun getPublicKey(request: GetPublicKey.Request): Result<GetPublicKey.Response, RemoteFailure> =
         api("GetPublicKey", request)
 
-    override fun scheduleKeyDelete(request: ScheduleKeyDeletion.Request): Result<ScheduleKeyDeletion.Response, RemoteFailure> =
-        api("ScheduleKeyDelete", request)
+    override fun scheduleDeletion(request: ScheduleKeyDeletion.Request): Result<ScheduleKeyDeletion.Response, RemoteFailure> =
+        api("ScheduleKeyDeletion", request)
 
-    override fun sign(request: Sign.Request): Result<Sign.Response, RemoteFailure> = api("", request)
+    override fun sign(request: Sign.Request): Result<Sign.Response, RemoteFailure> = api("Sign", request)
 
-    override fun verify(request: Verify.Request): Result<Verify.Response, RemoteFailure> = api("", request)
+    override fun verify(request: Verify.Request): Result<Verify.Response, RemoteFailure> = api("Verify", request)
 }

@@ -93,7 +93,7 @@ object Sign {
 
 object Verify {
     data class Request(
-        val KeyId: String?,
+        val KeyId: KmsKeyId,
         val Message: Base64Blob,
         val Signature: Base64Blob,
         val SigningAlgorithm: SigningAlgorithm,

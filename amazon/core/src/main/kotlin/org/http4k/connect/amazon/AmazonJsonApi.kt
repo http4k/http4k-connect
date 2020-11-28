@@ -30,7 +30,8 @@ class AmazonJsonApi(private val awsService: AwsService,
                     credentialsProvider: () -> AwsCredentials,
                     rawHttp: HttpHandler = JavaHttpClient(),
                     clock: Clock = Clock.systemDefaultZone(),
-                    payloadMode: Payload.Mode = Payload.Mode.Signed) {
+                    payloadMode: Payload.Mode = Payload.Mode.Signed,
+                    private val httpAwsService: AwsService = awsService) {
     private val http = SetBaseUriFrom(Uri.of("https://$awsService.${scope.region}.amazonaws.com/"))
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
@@ -38,7 +39,7 @@ class AmazonJsonApi(private val awsService: AwsService,
     fun <Req : Any, Resp : Any> operation(name: String, clazz: KClass<Resp>, request: Req, onBadRequest: (Uri, Response) -> Result<Resp, RemoteFailure>) =
         Uri.of("/").let {
             with(http(Request(POST, it)
-                .header("X-Amz-Target", "$awsService.$name")
+                .header("X-Amz-Target", "$httpAwsService.$name")
                 .replaceHeader("Content-Type", "application/x-amz-json-1.1")
                 .body(autoMarshallingJson.asFormatString(request)))) {
                 when {

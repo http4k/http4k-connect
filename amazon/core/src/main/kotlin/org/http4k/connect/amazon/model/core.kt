@@ -21,8 +21,8 @@ class ARN private constructor(value: String) : StringValue(value) {
     }
 }
 
-class AwsAccount private constructor(value: Long) : StringValue(value.toString().padStart(12, '0')) {
-    companion object : LongValueFactory<AwsAccount>(::AwsAccount)
+class AwsAccount private constructor(value: String) : StringValue(value.padStart(12, '0')) {
+    companion object : StringValueFactory<AwsAccount>(::AwsAccount, { it.all(Char::isDigit) })
 }
 
 class AwsService private constructor(value: String) : StringValue(value) {
