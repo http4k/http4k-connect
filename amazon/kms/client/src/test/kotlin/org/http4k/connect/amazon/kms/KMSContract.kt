@@ -8,12 +8,12 @@ import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
-import org.http4k.filter.DebuggingFilters
+import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import org.junit.jupiter.api.Test
 
 abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms"), http) {
     private val kms by lazy {
-        KMS.Http(aws.scope, { aws.credentials }, DebuggingFilters.PrintRequestAndResponse().then(http))
+        KMS.Http(aws.scope, { aws.credentials }, PrintRequestAndResponse().then(http))
     }
 
     @Test

@@ -50,7 +50,7 @@ class AmazonJsonApi(private val awsService: AwsService,
         }
 }
 
-inline fun <Req : Any, reified Resp : Any> AmazonJsonApi.required(operation: String, request: Req): Result<Resp, RemoteFailure> = when(val result: Result<Resp, RemoteFailure> = operation(operation, Resp::class, request, { uri: Uri, resp: Response -> Failure(RemoteFailure(uri, resp.status)) })) {
+inline operator fun <Req : Any, reified Resp : Any> AmazonJsonApi.invoke(operation: String, request: Req): Result<Resp, RemoteFailure> = when(val result: Result<Resp, RemoteFailure> = operation(operation, Resp::class, request, { uri: Uri, resp: Response -> Failure(RemoteFailure(uri, resp.status)) })) {
         is Success<Resp> -> result.map { it }
         is Failure<RemoteFailure> -> Failure(result.reason)
     }

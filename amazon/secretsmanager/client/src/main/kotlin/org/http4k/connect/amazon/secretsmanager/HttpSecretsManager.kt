@@ -6,8 +6,8 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AmazonJsonApi
+import org.http4k.connect.amazon.invoke
 import org.http4k.connect.amazon.model.AwsService
-import org.http4k.connect.amazon.required
 import org.http4k.core.HttpHandler
 import org.http4k.filter.Payload
 import java.time.Clock
@@ -20,20 +20,20 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
     private val api = AmazonJsonApi(AwsService.of("secretsmanager"), SecretsManagerJackson, scope, credentialsProvider, rawHttp, clock, payloadMode)
 
     override fun create(request: CreateSecret.Request): Result<CreateSecret.Response, RemoteFailure> =
-        api.required("CreateSecret", request)
+        api("CreateSecret", request)
 
     override fun delete(request: DeleteSecret.Request): Result<DeleteSecret.Response, RemoteFailure> =
-        api.required("DeleteSecret", request)
+        api("DeleteSecret", request)
 
     override fun get(request: GetSecret.Request): Result<GetSecret.Response, RemoteFailure> =
-        api.required("GetSecretValue", request)
+        api("GetSecretValue", request)
 
     override fun list(request: ListSecrets.Request): Result<ListSecrets.Response, RemoteFailure> =
-        api.required("ListSecrets", request)
+        api("ListSecrets", request)
 
     override fun put(request: PutSecret.Request): Result<PutSecret.Response, RemoteFailure> =
-        api.required("PutSecretValue", request)
+        api("PutSecretValue", request)
 
     override fun update(request: UpdateSecret.Request): Result<UpdateSecret.Response, RemoteFailure> =
-        api.required("UpdateSecret", request)
+        api("UpdateSecret", request)
 }
