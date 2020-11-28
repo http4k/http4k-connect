@@ -86,36 +86,23 @@ class FakeKMS(
         CreateKey.Response(KeyMetadata(storedCMK.keyId, storedCMK.arn, AwsAccount.of("0"), it.KeyUsage))
     }
 
-    private fun describeKey() = header("X-Amz-Target", "TrentService.DescribeKey") bind {
-        val req = Body.auto<DescribeKey.Request>().toLens()(it)
-
+    private fun describeKey() = route<DescribeKey, DescribeKey.Request> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Response(OK)
-                .with(Body.auto<DescribeKey.Response>().toLens()
-                    of DescribeKey.Response(KeyMetadata(req.KeyId, it.arn, AwsAccount.of("0"), it.keyUsage)))
-        } ?: Response(BAD_REQUEST)
+            DescribeKey.Response(KeyMetadata(it.keyId, it.arn, AwsAccount.of("0"), it.keyUsage))
+        }
     }
 
-    private fun decrypt() = header("X-Amz-Target", "TrentService.Decrypt") bind {
-        val req = Body.auto<Decrypt.Request>().toLens()(it)
-        val plainText = Base64Blob.encoded(req.CiphertextBlob.decoded().reversed())
-
+    private fun decrypt() = route<Decrypt, Decrypt.Request> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Response(OK)
-                .with(Body.auto<Decrypt.Response>().toLens()
-                    of Decrypt.Response(KmsKeyId.of(it.arn), plainText, req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT))
-        } ?: Response(BAD_REQUEST)
+            val plainText = Base64Blob.encoded(req.CiphertextBlob.decoded().reversed())
+            Decrypt.Response(KmsKeyId.of(it.arn), plainText, req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT)
+        }
     }
 
-    private fun encrypt() = header("X-Amz-Target", "TrentService.Encrypt") bind {
-        val req = Body.auto<Encrypt.Request>().toLens()(it)
-        val encrypted = Base64Blob.encoded(req.Plaintext.decoded().reversed())
-
+    private fun encrypt() = route<Encrypt, Encrypt.Request> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Response(OK)
-                .with(Body.auto<Encrypt.Response>().toLens()
-                    of Encrypt.Response(KmsKeyId.of(it.arn), encrypted, req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT))
-        } ?: Response(BAD_REQUEST)
+            Encrypt.Response(KmsKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT)
+        }
     }
 
     private fun getPublicKey() = route<GetPublicKey, GetPublicKey.Request> {
