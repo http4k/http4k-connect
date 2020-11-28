@@ -5,13 +5,14 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class SecretsManagerContract(http: HttpHandler): AwsContract(http) {
+abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService.of("secretsmanager"), http) {
 
     private val sm by lazy {
         SecretsManager.Http(aws.scope, { aws.credentials }, http)
