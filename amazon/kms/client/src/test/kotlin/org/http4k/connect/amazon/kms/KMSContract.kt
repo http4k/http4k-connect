@@ -11,17 +11,16 @@ import org.http4k.connect.amazon.model.CustomerMasterKeySpec.RSA_3072
 import org.http4k.connect.amazon.model.EncryptionAlgorithm.RSAES_OAEP_SHA_256
 import org.http4k.connect.amazon.model.KeyUsage.ENCRYPT_DECRYPT
 import org.http4k.connect.amazon.model.KeyUsage.SIGN_VERIFY
+import org.http4k.connect.amazon.model.SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384
 import org.http4k.connect.amazon.model.SigningAlgorithm.RSASSA_PSS_SHA_256
 import org.http4k.connect.amazon.model.toARN
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.core.then
-import org.http4k.filter.DebuggingFilters
 import org.junit.jupiter.api.Test
 
 abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms"), http) {
     private val kms by lazy {
-        KMS.Http(aws.scope, { aws.credentials }, DebuggingFilters.PrintRequestAndResponse().then(http))
+        KMS.Http(aws.scope, { aws.credentials }, http)
     }
 
     @Test
@@ -66,8 +65,11 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
             val signed = sign(Sign.Request(keyId, plaintext, RSASSA_PSS_SHA_256)).successValue()
             assertThat(signed.SigningAlgorithm, equalTo(RSASSA_PSS_SHA_256))
 
-            val verification = verify(Verify.Request(keyId, plaintext, signed.Signature, RSASSA_PSS_SHA_256)).successValue()
+            val verification = verify(Verify.Request(keyId, signed.Signature, signed.Signature, RSASSA_PSS_SHA_256)).successValue()
             assertThat(verification.SignatureValid, equalTo(true))
+
+            val verificationFailure = verify(Verify.Request(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384)).successValue()
+            assertThat(verificationFailure.SignatureValid, equalTo(false))
 
             val deletion = scheduleDeletion(ScheduleKeyDeletion.Request(keyId)).successValue()
             assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))

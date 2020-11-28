@@ -39,7 +39,7 @@ class Timestamp private constructor(value: Long) : LongValue(value) {
 }
 
 class Base64Blob private constructor(value: String) : StringValue(value) {
-    fun decoded() = value.base64Decoded().toByteArray()
+    fun decoded() = value.base64Decoded()
 
     companion object : StringValueFactory<Base64Blob>(::Base64Blob, 1.minLength) {
         fun encoded(unencoded: String) = Base64Blob(unencoded.base64Encode())

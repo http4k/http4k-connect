@@ -51,7 +51,7 @@ object Encrypt {
         val GrantTokens: List<String>? = null
     )
 
-    data class Response(val KeyId: KmsKeyId, val CiphertextBlob: Base64Blob, val EncryptionAlgorithm: String)
+    data class Response(val KeyId: KmsKeyId, val CiphertextBlob: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
 }
 
 object GetPublicKey {
