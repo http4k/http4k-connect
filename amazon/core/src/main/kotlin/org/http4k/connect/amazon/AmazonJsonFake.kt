@@ -11,6 +11,10 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
     inline fun <reified Wrapper, reified Req : Any> route(crossinline fn: (Req) -> Any?) =
         header("X-Amz-Target", "${awsService}.${Wrapper::class.simpleName}") bind {
             fn(autoMarshalling.asA(it.bodyString(), Req::class))
-                ?.let { Response(Status.OK).body(autoMarshalling.asFormatString(it)) } ?: Response(Status.BAD_REQUEST)
+                ?.let { Response(Status.OK).body(autoMarshalling.asFormatString(it)) }
+                ?: Response(Status.BAD_REQUEST)
+                    .body(autoMarshalling.asFormatString(JsonError("ResourceNotFoundException", "$awsService can't find the specified secret.")))
         }
 }
+
+data class JsonError(val __type: String, val Message: String)

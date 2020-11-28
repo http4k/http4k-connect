@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.secretsmanager
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
+import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.AwsService
@@ -39,6 +40,8 @@ class FakeSecretsManager(
     private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
+    private val api = AmazonJsonFake(SecretsManagerJackson, AwsService.of("secretsmanager"))
+
     override val app = routes(
         "/" bind POST to routes(
             createSecret(),
@@ -50,18 +53,13 @@ class FakeSecretsManager(
         )
     )
 
-    private fun createSecret() = header("X-Amz-Target", "secretsmanager.CreateSecret") bind {
-        val req = Body.auto<CreateSecret.Request>().toLens()(it)
-
+    private fun createSecret() = api.route<CreateSecret, CreateSecret.Request> { req ->
         val versionId = VersionId.of(randomUUID().toString())
         val createdAt = Timestamp.of(clock.instant().toEpochMilli() / 1000)
         secrets[req.Name] = SecretValue(versionId,
             createdAt, createdAt,
             req.SecretString, req.SecretBinary)
-
-        Response(OK)
-            .with(Body.auto<CreateSecret.Response>().toLens()
-                of CreateSecret.Response(req.Name.toArn(), req.Name, versionId))
+        CreateSecret.Response(req.Name.toArn(), req.Name, versionId)
     }
 
     private fun deleteSecret() = header("X-Amz-Target", "secretsmanager.DeleteSecret") bind {
