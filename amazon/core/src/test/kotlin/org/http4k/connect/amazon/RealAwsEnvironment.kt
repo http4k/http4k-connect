@@ -4,7 +4,7 @@ import org.http4k.connect.amazon.model.AwsService
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 
-interface RealAwsTest {
+interface RealAwsEnvironment {
     val service: AwsService
     val aws: AwsEnvironment
 
