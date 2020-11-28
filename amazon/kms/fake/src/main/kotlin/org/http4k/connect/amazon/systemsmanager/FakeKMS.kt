@@ -156,11 +156,13 @@ class FakeKMS(
         val req = Body.auto<Verify.Request>().toLens()(it)
 
         keys[toArn(req.KeyId).value]?.let {
-            val valid = req.Message.decoded().startsWith(req.SigningAlgorithm.name)
-
-            Response(OK)
-                .with(Body.auto<Verify.Response>().toLens()
-                    of Verify.Response(KmsKeyId.of(it.arn), valid, req.SigningAlgorithm))
+            if(req.Signature.decoded().startsWith(req.SigningAlgorithm.name)) {
+                Response(OK)
+                    .with(Body.auto<Verify.Response>().toLens()
+                        of Verify.Response(KmsKeyId.of(it.arn), true, req.SigningAlgorithm))
+            } else {
+                Response(BAD_REQUEST)
+            }
         } ?: Response(BAD_REQUEST)
     }
 
