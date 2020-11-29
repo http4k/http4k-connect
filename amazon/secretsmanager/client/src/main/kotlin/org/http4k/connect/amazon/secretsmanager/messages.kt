@@ -5,6 +5,7 @@ import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.KmsKeyId
 import org.http4k.connect.amazon.model.SecretId
+import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.model.VersionStage
@@ -18,21 +19,21 @@ object CreateSecret {
         val SecretBinary: Base64Blob?,
         val Description: String?,
         val KmsKeyId: String?,
-        val Tags: Map<String, String>?
+        val Tags: List<Tag>?
     ) {
         constructor(Name: String,
                     ClientRequestToken: UUID,
                     SecretString: String,
                     Description: String? = null,
                     KmsKeyId: String? = null,
-                    Tags: Map<String, String>? = null) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
+                    Tags: List<Tag>? = null) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
 
         constructor(Name: String,
                     ClientRequestToken: UUID,
                     SecretBinary: Base64Blob,
                     Description: String? = null,
                     KmsKeyId: String? = null,
-                    Tags: Map<String, String>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
+                    Tags: List<Tag>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
     }
 
     data class Response(
@@ -56,7 +57,7 @@ object DeleteSecret {
     )
 }
 
-object GetSecret {
+object GetSecretValue {
     data class Request(
         val SecretId: SecretId,
         val VersionId: VersionId? = null,
@@ -111,7 +112,7 @@ object ListSecrets {
 }
 
 
-object PutSecret {
+object PutSecretValue {
     class Request private constructor(
         val SecretId: SecretId,
         val ClientRequestToken: UUID,

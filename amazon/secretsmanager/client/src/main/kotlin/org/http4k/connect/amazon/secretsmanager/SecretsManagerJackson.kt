@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.secretsmanager
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS
@@ -33,9 +32,3 @@ object SecretsManagerJackson : ConfigurableJackson(KotlinModule()
     .configure(USE_BIG_DECIMAL_FOR_FLOATS, true)
     .configure(USE_BIG_INTEGER_FOR_INTS, true)
 )
-
-data class Foo(@JsonProperty("ARN") val arn: String, val Sec: String, val a: String)
-
-fun main() {
-    println(SecretsManagerJackson.compact(SecretsManagerJackson.asJsonObject(Foo("", "", ""))))
-}

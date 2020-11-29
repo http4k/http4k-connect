@@ -5,13 +5,7 @@ import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.minLength
 
 class SecretId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<SecretId>(::SecretId, 1.minLength) {
-        fun of(arn: ARN) = of(arn.value)
-    }
-}
-
-class KmsKeyId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<KmsKeyId>(::KmsKeyId, 1.minLength)
+    companion object : StringValueFactory<SecretId>(::SecretId, 1.minLength)
 }
 
 class VersionId private constructor(value: String) : StringValue(value) {
