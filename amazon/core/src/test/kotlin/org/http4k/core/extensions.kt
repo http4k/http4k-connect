@@ -1,5 +1,5 @@
-import org.http4k.core.HttpHandler
-import org.http4k.core.then
+package org.http4k.core
+
 import org.http4k.filter.DebuggingFilters
 
 @Suppress("unused")
