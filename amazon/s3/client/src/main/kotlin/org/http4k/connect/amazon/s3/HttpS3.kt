@@ -34,17 +34,12 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    private fun AwsCredentialScope.clientFor(uri: Uri) = SetBaseUriFrom(uri)
-        .then(SetXForwardedHost())
-        .then(ClientFilters.AwsAuth(this, credentialsProvider, clock, payloadMode))
-        .then(rawHttp)
-
     override fun buckets() = Uri.of("/").let {
         with(http(Request(GET, it))) {
             when {
                 status.successful -> {
                     val buckets = documentBuilderFactory.parse(body.stream).getElementsByTagName("Name")
-                    val items = (0 until buckets.length).map { BucketName(buckets.item(it).textContent) }
+                    val items = (0 until buckets.length).map { BucketName.of(buckets.item(it).textContent) }
                     Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
                 }
                 else -> Failure(RemoteFailure(it, status))

@@ -16,13 +16,13 @@ import java.util.UUID
 
 abstract class S3BucketContract(http: HttpHandler): AwsContract(AwsService.of("s3"), http) {
 
-    private val bucket = BucketName(UUID.randomUUID().toString())
+    private val bucket = BucketName.of(UUID.randomUUID().toString())
 
     private val s3Bucket by lazy {
         S3.Bucket.Http(bucket, aws.scope, { aws.credentials }, http)
     }
 
-    private val key = BucketKey(UUID.randomUUID().toString())
+    private val key = BucketKey.of(UUID.randomUUID().toString())
 
     @BeforeEach
     fun deleteBucket() {
@@ -33,7 +33,7 @@ abstract class S3BucketContract(http: HttpHandler): AwsContract(AwsService.of("s
     @Test
     fun `bucket key lifecycle`() {
         with(s3Bucket) {
-            val newKey = BucketKey(UUID.randomUUID().toString())
+            val newKey = BucketKey.of(UUID.randomUUID().toString())
 
             assertThat(create().successValue(), equalTo(Unit))
 

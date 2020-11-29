@@ -16,7 +16,7 @@ import java.io.InputStream
  */
 inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
     override fun get(key: String): T? {
-        val value: T? = s3[BucketKey(key)]
+        val value: T? = s3[BucketKey.of(key)]
             .map<InputStream?, T?, RemoteFailure> {
                 it?.reader()?.readText()?.let { autoMarshalling.asA(it) }
             }
@@ -25,11 +25,11 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
     }
 
     override fun set(key: String, data: T) {
-        s3[BucketKey(key)] = autoMarshalling.asInputStream(data)
+        s3[BucketKey.of(key)] = autoMarshalling.asInputStream(data)
     }
 
     override fun remove(key: String) =
-        s3.delete(BucketKey(key))
+        s3.delete(BucketKey.of(key))
             .map { true }
             .recover { it.throwIt() }
 
@@ -42,7 +42,7 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
             is Failure -> result.reason.throwIt()
         }
 
-    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix).map { BucketKey(it) }) {
+    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix).map { BucketKey.of(it) }) {
         when {
             isEmpty() -> false
             else -> {

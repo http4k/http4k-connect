@@ -17,7 +17,7 @@ abstract class S3GlobalContract(http: HttpHandler): AwsContract(AwsService.of("s
         S3.Http(aws.scope, { aws.credentials }, http)
     }
 
-    private val bucket = BucketName(UUID.randomUUID().toString())
+    private val bucket = BucketName.of(UUID.randomUUID().toString())
 
     @BeforeEach
     fun deleteBucket() {

@@ -121,7 +121,7 @@ class FakeS3(
         ?: Response(NOT_FOUND)
 
     private fun listBuckets() = Response(OK)
-        .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName(it) }.toList().sortedBy { it.name }))
+        .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
 
     private fun deleteBucket(bucket: String) = Response(if (buckets.remove(bucket)) OK else NOT_FOUND)
 
@@ -131,7 +131,7 @@ class FakeS3(
 
     private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
         ?.let {
-            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey(key),
+            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey.of   (key),
                 Base64.getEncoder().encodeToString(bytes),
                 Instant.now(clock))
             Response(CREATED)
