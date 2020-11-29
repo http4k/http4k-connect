@@ -20,8 +20,7 @@ Although centered around usage in http4k-based projects, http4k-connect does not
 ## Rationale
 Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
 
-To install:
-
+## Installation
 ```groovy
 dependencies {
     // install the plaform...
@@ -38,7 +37,7 @@ dependencies {
 }
 ```
 
-Supported APIs and Fakes:
+## Supported APIs and Fakes:
 
 - AWS
     - [KMS](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-kms"` / `"org.http4k:http4k-connect-amazon-kms-fake"`
@@ -49,7 +48,7 @@ Supported APIs and Fakes:
     - [Analytics](./google/analytics) -> `"org.http4k:http4k-connect-google-analytics"` / `"org.http4k:http4k-connect-google-analytic-fake"`
 - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
-Supported Storage backends:
+## Supported Storage backends:
 
 - [In-Memory](./core/fake) (included with all Fakes)
 - [File-Based](./core/fake) (included with all Fakes)
