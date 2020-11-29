@@ -42,7 +42,7 @@ class FakeSystemsManager(
         parameters[req.Name]?.let {
             GetParameter.Response(GetParameter.Parameter(
                 ARN.of(Region.of("us-east-1"), AwsService.of("ssm"), "parameter", it.name, AwsAccount.of("0")),
-                it.name, "String", Timestamp.of(0), "", "", it.type, it.value, 1))
+                it.name, it.value, it.type, null, 1, Timestamp.of(0), null, null))
         }
     }
 

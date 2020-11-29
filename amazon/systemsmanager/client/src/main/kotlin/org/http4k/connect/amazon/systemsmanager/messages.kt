@@ -20,15 +20,15 @@ object GetParameter {
     )
 
     data class Parameter(
-        @JsonProperty("ARN") val arn: ARN,
-        val Name: String,
-        val DataType: String,
-        val LastModifiedDate: Timestamp,
-        val Selector: String,
-        val SourceResult: String,
-        val Type: ParameterType,
-        val Value: String,
-        val Version: Long
+        @JsonProperty("ARN") val arn: ARN?,
+        val Name: String?,
+        val Value: String?,
+        val Type: ParameterType?,
+        val DataType: String?,
+        val Version: Long?,
+        val LastModifiedDate: Timestamp?,
+        val Selector: String?,
+        val SourceResult: String?
     )
 
     data class Response(
