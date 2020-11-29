@@ -41,7 +41,7 @@ class FakeSystemsManager(
     private fun getParameter() = api.route<GetParameter, GetParameter.Request> { req ->
         parameters[req.Name]?.let {
             GetParameter.Response(GetParameter.Parameter(
-                ARN.of(Region.of(""), AwsService.of("ssm"), "parameter", it.name, AwsAccount.of("0")),
+                ARN.of(Region.of("us-east-1"), AwsService.of("ssm"), "parameter", it.name, AwsAccount.of("0")),
                 it.name, "String", Timestamp.of(0), "", "", it.type, it.value, 1))
         }
     }

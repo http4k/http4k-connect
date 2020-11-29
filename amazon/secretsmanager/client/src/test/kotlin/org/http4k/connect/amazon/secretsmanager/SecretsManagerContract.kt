@@ -34,7 +34,7 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
             assertThat(creation.Name, equalTo(name))
 
             val list = list(ListSecrets.Request()).successValue()
-            assertThat(list.SecretList.any { it.arn == creation.arn }, equalTo(true))
+            assertThat(list.SecretList.any { it.arn == creation.Arn }, equalTo(true))
 
             val lookupCreated = get(GetSecretValue.Request(SecretId.of(name))).successValue()
             assertThat(lookupCreated.SecretString, present(equalTo(secretValue)))
