@@ -30,14 +30,3 @@ function maven_publish() {
         fi
     fi
 }
-
-function ensure_release_commit() {
-    local CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
-
-    if [[ "$CHANGED_FILES" != *version.json* ]]; then
-        echo "Version did not change on this commit. Ignoring"
-        exit 0
-    fi
-}
-
-ensure_release_commit
