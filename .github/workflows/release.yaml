@@ -13,6 +13,8 @@ jobs:
       - name: Grab tag name
         uses: olegtarasov/get-tag@v2
         id: tagName
+      - name: Create release note
+        run: ./build-release-note.sh ${{ github.ref }} > NOTE.md
       - name: Create release
         uses: actions/create-release@v1
         env:
@@ -20,7 +22,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body: Release ${{ steps.tagName.outputs.tag }}
+          body_path: NOTE.md
           draft: false
           prerelease: false
       - uses: actions/setup-java@v1
