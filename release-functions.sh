@@ -26,7 +26,6 @@ function maven_publish() {
 
         if [[ ! "${RESULT}" =~ .*Successful.* ]]; then
             echo "Failed: ${RESULT}"
-            exit 1
         fi
     fi
 }
