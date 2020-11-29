@@ -107,7 +107,8 @@ class FakeKMS(
     private fun sign() = api.route<Sign, Sign.Request> { req ->
         keys[toArn(req.KeyId).value]?.let {
             Sign.Response(KmsKeyId.of(it.arn),
-                Base64Blob.encoded(req.SigningAlgorithm.name + req.Message.decoded()), req.SigningAlgorithm)
+                Base64Blob.encoded(req.SigningAlgorithm.name
+                    + req.Message.decoded().take(50)), req.SigningAlgorithm)
         }
     }
 
