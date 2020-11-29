@@ -37,7 +37,7 @@ object CreateSecret {
     }
 
     data class Response(
-        @JsonProperty("ARN") val Arn: ARN,
+        @JsonProperty("ARN") val arn: ARN,
         val Name: String,
         val VersionId: VersionId? = null
     )

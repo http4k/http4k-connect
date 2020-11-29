@@ -14,13 +14,12 @@ import org.http4k.connect.amazon.systemsmanager.SystemsManager
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST
-import org.http4k.core.debug
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class SystemsManagerContract(http: HttpHandler) : AwsContract(AwsService.of("ssm"), http) {
     private val secretsManager by lazy {
-        SystemsManager.Http(aws.scope, { aws.credentials }, http.debug())
+        SystemsManager.Http(aws.scope, { aws.credentials }, http)
     }
 
     @Test
