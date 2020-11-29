@@ -29,7 +29,7 @@ abstract class SystemsManagerContract(http: HttpHandler) : AwsContract(AwsServic
         val name = UUID.randomUUID().toString()
         with(secretsManager) {
             assertThat(get(GetParameter.Request(name)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
-            assertThat(put(PutParameter.Request(name, "value", ParameterType.String)).successValue().Version, equalTo(1L))
+            assertThat(put(PutParameter.Request(name, "value", ParameterType.String)).successValue().Version, equalTo(1))
             assertThat(put(PutParameter.Request(name, "value", ParameterType.String)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
             assertThat(get(GetParameter.Request(name)).successValue().Parameter.Value, equalTo("value"))
 
