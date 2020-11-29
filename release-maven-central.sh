@@ -2,6 +2,6 @@
 
 source ./release-functions.sh
 
-./gradlew -q listProjects | while read -r line; do
-    maven_publish "$line"
+for i in $(./listProjects.sh); do
+    maven_publish "$i"
 done
