@@ -17,4 +17,3 @@ changes with their rationale when appropriate:
 - **http4k-connect-storage-jdbc** : New storage module
 - **http4k-connect-storage-redis** : New storage module
 - **http4k-connect-storage-s3** : New storage module
-
