@@ -8,8 +8,8 @@ import org.http4k.connect.RemoteFailure
  */
 interface SystemsManager {
     fun put(request: PutParameter.Request): Result<PutParameter.Response, RemoteFailure>
-    fun get(request: GetParameter.Request): Result<GetParameter.Response?, RemoteFailure>
-    fun delete(request: DeleteParameter.Request): Result<DeleteParameter.Response?, RemoteFailure>
+    fun get(request: GetParameter.Request): Result<GetParameter.Response, RemoteFailure>
+    fun delete(request: DeleteParameter.Request): Result<Unit, RemoteFailure>
 
     companion object
 }
