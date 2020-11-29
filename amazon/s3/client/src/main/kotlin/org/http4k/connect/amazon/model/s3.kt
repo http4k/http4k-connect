@@ -1,15 +1,17 @@
 package org.http4k.connect.amazon.model
 
+import dev.forkhandles.values.StringValue
+import dev.forkhandles.values.StringValueFactory
 import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
-data class BucketName(val name: String) {
-    override fun toString() = name
+class BucketName private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<BucketName>(::BucketName, String::isNotEmpty)
 }
 
-data class BucketKey(val value: String) {
-    override fun toString() = value
+class BucketKey private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<BucketKey>(::BucketKey, String::isNotEmpty)
 }
 
 internal val documentBuilderFactory by lazy {
