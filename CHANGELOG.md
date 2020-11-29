@@ -3,7 +3,7 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate:
 
-### v1.0.1.0 (uncut)
+### v1.0.1.0
 - **http4k-connect-amazon-kms-fake** : Simplify signing.
 
 ### v1.0.0.0
