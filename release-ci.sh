@@ -9,4 +9,8 @@ NEW_VERSION=$1
 
 echo "Attempting to release $NEW_VERSION"
 
-./gradlew -PreleaseVersion="$NEW_VERSION" clean test :bintrayUpload
+./gradlew -PreleaseVersion="$NEW_VERSION" clean test assemble
+
+for i in $(./listProjects.sh); do
+    ./gradlew --stacktrace -PreleaseVersion="$NEW_VERSION" :$i:bintrayUpload
+done
