@@ -13,7 +13,7 @@ http4k-connect is a set of lightweight API libraries for connecting to popular t
 1. Take advantage of the simple and powerful SaaF model and APIs used in http4k.
 1. Plug everything together completely in-memory and take advantage of this powerful model.
 1. Have access to the underlying HTTP clients (and hence add metrics or logging).
-1, Run stateful Fake implementations of 3rd party systems locally or in test environments.
+1. Run stateful Fake implementations of 3rd party systems locally or in test environments.
 
 Although centered around usage in http4k-based projects, http4k-connect does not require this and the libraries are usable from any JVM application.
 
