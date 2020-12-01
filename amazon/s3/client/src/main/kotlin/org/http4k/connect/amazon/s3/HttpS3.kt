@@ -42,7 +42,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
                     val items = (0 until buckets.length).map { BucketName.of(buckets.item(it).textContent) }
                     Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
                 }
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(GET, it, status))
             }
         }
     }
@@ -54,7 +54,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
 </CreateBucketConfiguration>"""))) {
             when {
                 status.successful -> Success(Unit)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(PUT, it, status))
             }
         }
     }
@@ -64,7 +64,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(DELETE, it, status))
             }
         }
     }

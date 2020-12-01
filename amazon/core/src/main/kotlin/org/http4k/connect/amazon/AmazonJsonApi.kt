@@ -41,7 +41,7 @@ class AmazonJsonApi(private val awsService: AwsService,
                 .body(autoMarshalling.asFormatString(request)))) {
                 when {
                     status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
-                    else -> Failure(RemoteFailure(it, status, bodyString()))
+                    else -> Failure(RemoteFailure(POST, it, status, bodyString()))
                 }
             }
         }

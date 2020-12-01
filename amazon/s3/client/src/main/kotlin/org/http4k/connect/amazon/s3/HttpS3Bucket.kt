@@ -46,7 +46,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
             when {
                 status.successful -> Success(Unit)
                 status == CONFLICT -> Success(Unit)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(PUT, it, status))
             }
         }
     }
@@ -56,7 +56,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(DELETE, it, status))
             }
         }
     }
@@ -65,7 +65,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         with(http(Request(PUT, it).header("x-amz-copy-source", "$bucketName/$originalKey"))) {
             when {
                 status.successful -> Success(Unit)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(PUT, it, status))
             }
         }
     }
@@ -75,7 +75,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
             when {
                 status.successful -> Success(Unit)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(DELETE, it, status))
             }
         }
     }
@@ -84,7 +84,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         with(http(Request(PUT, it).body(content))) {
             when {
                 status.successful || status.redirection -> Success(Unit)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(PUT, it, status))
             }
         }
     }
@@ -94,7 +94,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
             when {
                 status.successful -> Success(body.stream)
                 status == NOT_FOUND -> Success(null)
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(GET, it, status))
             }
         }
     }
@@ -107,7 +107,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
                     val items = (0 until keys.length).map { BucketKey.of(keys.item(it).textContent) }
                     Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
                 }
-                else -> Failure(RemoteFailure(it, status))
+                else -> Failure(RemoteFailure(GET, it, status))
             }
         }
     }

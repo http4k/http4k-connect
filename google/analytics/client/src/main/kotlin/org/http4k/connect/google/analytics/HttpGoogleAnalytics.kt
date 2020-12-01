@@ -23,7 +23,7 @@ fun GoogleAnalytics.Companion.Http(trackingId: TrackingId,
                 .form(DOCUMENT_PATH, documentPath)
                 .form(DOCUMENT_HOST, documentHost)
             )) {
-                if (status.successful) Success(Unit) else Failure(RemoteFailure(it, status))
+                if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, it, status))
             }
         }
 }
