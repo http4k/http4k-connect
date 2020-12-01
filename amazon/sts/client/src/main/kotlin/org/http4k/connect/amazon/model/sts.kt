@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.model
 
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.Value
+import dev.forkhandles.values.regex
 import org.xml.sax.InputSource
 import java.io.StringReader
 import java.time.Instant
@@ -13,6 +14,10 @@ class SessionToken private constructor(value: String) : Value<String>(value) {
 
 class AccessKeyId private constructor(value: String) : Value<String>(value) {
     companion object : StringValueFactory<AccessKeyId>(::AccessKeyId)
+}
+
+class TokenCode private constructor(value: String) : Value<String>(value) {
+    companion object : StringValueFactory<TokenCode>(::TokenCode, "[\\d]{6}".regex)
 }
 
 class RoleId private constructor(value: String) : Value<String>(value) {

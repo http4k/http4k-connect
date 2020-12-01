@@ -1,4 +1,4 @@
-# Simple Token Service
+# Security Token Service
 
 The STS connector provides the following functionality:
 

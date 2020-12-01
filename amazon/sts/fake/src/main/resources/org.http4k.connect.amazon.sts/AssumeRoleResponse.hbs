@@ -1,0 +1,20 @@
+<AssumeRoleResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+    <AssumeRoleResult>
+        <AssumedRoleUser>
+            <Arn>{{arn}}</Arn>
+            <AssumedRoleId>{{roleId}}</AssumedRoleId>
+        </AssumedRoleUser>
+        <Credentials>
+            <AccessKeyId>{{accessKeyId}}</AccessKeyId>
+            <SecretAccessKey>{{secretAccessKey}}</SecretAccessKey>
+            <SessionToken>
+                {{sessionToken}}
+            </SessionToken>
+            <Expiration>{{expiration}}</Expiration>
+        </Credentials>
+        <PackedPolicySize>1</PackedPolicySize>
+    </AssumeRoleResult>
+    <ResponseMetadata>
+        <RequestId>11111111-1111-1111-1111-111111111111</RequestId>
+    </ResponseMetadata>
+</AssumeRoleResponse>

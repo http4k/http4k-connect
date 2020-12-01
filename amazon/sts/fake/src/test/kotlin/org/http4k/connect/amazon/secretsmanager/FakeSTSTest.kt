@@ -2,8 +2,8 @@ package org.http4k.connect.amazon.secretsmanager
 
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.amazon.sts.FakeSTS
-import org.http4k.connect.amazon.sts.StsContract
+import org.http4k.connect.amazon.sts.STSContract
 
-class FakeSTSTest : StsContract(FakeSTS()) {
+class FakeSTSTest : STSContract(FakeSTS()) {
     override val aws = fakeAwsEnvironment
 }

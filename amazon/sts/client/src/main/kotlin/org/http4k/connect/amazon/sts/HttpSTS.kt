@@ -5,9 +5,9 @@ import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
+import org.http4k.base64Encode
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AccessKeyId
 import org.http4k.connect.amazon.model.AssumeRoleResponse
 import org.http4k.connect.amazon.model.AssumeRoleResult
@@ -31,13 +31,17 @@ import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
+import java.util.UUID
 
-fun STS.Http(scope: AwsCredentialScope,
-             credentialsProvider: () -> AwsCredentials,
-             rawHttp: HttpHandler = JavaHttpClient(),
-             clock: Clock = Clock.systemDefaultZone(),
-             payloadMode: Payload.Mode = Payload.Mode.Signed) = object : STS {
+fun STS.Companion.Http(scope: AwsCredentialScope,
+                       credentialsProvider: () -> AwsCredentials,
+                       rawHttp: HttpHandler = JavaHttpClient(),
+                       clock: Clock = Clock.systemDefaultZone(),
+                       payloadMode: Payload.Mode = Payload.Mode.Signed,
+                       validity: Duration = Duration.ofHours(1)
+) = object : STS {
 
     private val http = SetBaseUriFrom(Uri.of("https://sts.${scope.region}.amazonaws.com/"))
         .then(SetXForwardedHost())
@@ -82,10 +86,13 @@ fun STS.Http(scope: AwsCredentialScope,
         }
 
         val credentials = Credentials(
-            SessionToken.of(""), AccessKeyId.of(""), SecretAccessKey.of(""), Instant.EPOCH)
-        val assumeRoleResult = AssumeRoleResult(1, AssumedRoleUser(ARN.of(""), RoleId.of("")), credentials)
+            SessionToken.of(UUID.randomUUID().toString().base64Encode()),
+            AccessKeyId.of("accessKeyId"), SecretAccessKey.of("secretAccessKey"),
+            Instant.now(clock) + validity)
+        val assumeRoleResult = AssumeRoleResult(1,
+            AssumedRoleUser(request.RoleArn, RoleId.of(request.RoleSessionName)), credentials)
 
-        return Success(AssumeRole.Response(AssumeRoleResponse(assumeRoleResult, ResponseMetadata(""))))
+        return Success(AssumeRole.Response(AssumeRoleResponse(assumeRoleResult, ResponseMetadata("111111111111"))))
     }
 }
 
