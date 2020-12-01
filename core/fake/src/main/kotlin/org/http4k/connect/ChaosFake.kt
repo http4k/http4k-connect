@@ -10,6 +10,7 @@ import org.http4k.core.Status
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.then
+import org.http4k.filter.ServerFilters.CatchAll
 import org.http4k.server.ServerConfig
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
@@ -31,6 +32,9 @@ abstract class ChaosFake : HttpHandler {
 
     override operator fun invoke(request: Request) = app.withChaosApi(chaosEngine).invoke(request)
     override operator fun invoke(request: Request) = chaosEngine.then(app)(request)
+    override operator fun invoke(request: Request) = chaosEngine
+        .then(CatchAll())
+        .then(app)(request)
 
     fun start(port: Int = this::class.defaultPort(),
               serverConfig: (Int) -> ServerConfig = ::SunHttp) =
