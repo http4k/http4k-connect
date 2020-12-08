@@ -7,3 +7,5 @@ import org.http4k.connect.amazon.configAwsEnvironment
 class RealSecretsManagerTest : SecretsManagerContract(JavaHttpClient()), RealAwsEnvironment {
     override val aws get() = configAwsEnvironment(service)
 }
+
+
