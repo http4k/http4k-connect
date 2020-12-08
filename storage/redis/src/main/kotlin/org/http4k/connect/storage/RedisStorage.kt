@@ -7,14 +7,14 @@ import io.lettuce.core.api.sync.RedisCommands
 import io.lettuce.core.codec.RedisCodec
 import org.http4k.core.Uri
 import org.http4k.format.AutoMarshalling
-import org.http4k.format.Jackson
+import org.http4k.format.Moshi
 import java.net.URI
 import java.util.concurrent.TimeUnit.HOURS
 
 /**
  * Connect to Redis using Automarshalling
  */
-inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, autoMarshalling: AutoMarshalling = Jackson) =
+inline fun <reified T : Any> Storage.Companion.Redis(uri: Uri, autoMarshalling: AutoMarshalling = Moshi) =
     Redis(uri, AutoRedisCodec<T>(autoMarshalling))
 
 /**

@@ -17,7 +17,7 @@ fun SystemsManager.Companion.Http(scope: AwsCredentialScope,
                                   rawHttp: HttpHandler = JavaHttpClient(),
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SystemsManager {
-    private val api = AmazonJsonApi(AwsService.of("ssm"), SystemsManagerJackson, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("AmazonSSM"))
+    private val api = AmazonJsonApi(AwsService.of("ssm"), SystemsManagerMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("AmazonSSM"))
 
     override fun put(request: PutParameter.Request): Result<PutParameter.Response, RemoteFailure> = api("PutParameter", request)
 

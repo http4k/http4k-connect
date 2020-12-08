@@ -14,7 +14,7 @@ import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.filter.ClientFilters
 import org.http4k.format.Jackson
-import org.http4k.format.Jackson.auto
+import org.http4k.format.Moshi.auto
 import java.time.Instant
 
 data class Package(val owner: String, val packageName: String)

@@ -17,7 +17,7 @@ fun KMS.Companion.Http(scope: AwsCredentialScope,
                        rawHttp: HttpHandler = JavaHttpClient(),
                        clock: Clock = Clock.systemDefaultZone(),
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
-    private val api = AmazonJsonApi(AwsService.of("kms"), KMSJackson, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("TrentService"))
+    private val api = AmazonJsonApi(AwsService.of("kms"), KMSMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("TrentService"))
 
     override fun create(request: CreateKey.Request): Result<CreateKey.Response, RemoteFailure> =
         api("CreateKey", request)

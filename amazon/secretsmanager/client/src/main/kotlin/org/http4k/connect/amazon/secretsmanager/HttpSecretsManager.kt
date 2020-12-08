@@ -17,7 +17,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
                                   rawHttp: HttpHandler = JavaHttpClient(),
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
-    private val api = AmazonJsonApi(AwsService.of("secretsmanager"), SecretsManagerJackson, scope, credentialsProvider, rawHttp, clock, payloadMode)
+    private val api = AmazonJsonApi(AwsService.of("secretsmanager"), SecretsManagerMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode)
 
     override fun create(request: CreateSecret.Request): Result<CreateSecret.Response, RemoteFailure> =
         api("CreateSecret", request)

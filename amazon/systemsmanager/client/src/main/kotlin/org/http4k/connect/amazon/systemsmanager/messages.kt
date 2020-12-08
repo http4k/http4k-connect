@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.systemsmanager
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.KmsKeyId
 import org.http4k.connect.amazon.model.ParameterType
@@ -20,7 +19,7 @@ object GetParameter {
     )
 
     data class Parameter(
-        @JsonProperty("ARN") val arn: ARN?,
+        val ARN: ARN?,
         val Name: String?,
         val Value: String?,
         val Type: ParameterType?,

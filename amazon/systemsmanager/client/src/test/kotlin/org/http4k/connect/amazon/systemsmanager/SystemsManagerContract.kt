@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.secretsmanager
+package org.http4k.connect.amazon.systemsmanager
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -6,11 +6,6 @@ import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.ParameterType
-import org.http4k.connect.amazon.systemsmanager.DeleteParameter
-import org.http4k.connect.amazon.systemsmanager.GetParameter
-import org.http4k.connect.amazon.systemsmanager.Http
-import org.http4k.connect.amazon.systemsmanager.PutParameter
-import org.http4k.connect.amazon.systemsmanager.SystemsManager
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST

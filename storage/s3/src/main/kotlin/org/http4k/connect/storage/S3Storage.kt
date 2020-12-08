@@ -8,13 +8,13 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.s3.S3
 import org.http4k.format.AutoMarshalling
-import org.http4k.format.Jackson
+import org.http4k.format.Moshi
 import java.io.InputStream
 
 /**
  * S3-backed storage implementation. Automatically marshals objects to and from string-value format.
  */
-inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
+inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling: AutoMarshalling = Moshi): Storage<T> = object : Storage<T> {
     override fun get(key: String): T? {
         val value: T? = s3[BucketKey.of(key)]
             .map<InputStream?, T?, RemoteFailure> {

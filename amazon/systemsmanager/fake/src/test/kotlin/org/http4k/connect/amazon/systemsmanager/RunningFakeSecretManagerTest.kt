@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.systemsmanager
 
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.fakeAwsEnvironment
-import org.http4k.connect.amazon.secretsmanager.SystemsManagerContract
 import org.http4k.connect.defaultPort
 import org.http4k.core.Uri
 import org.http4k.core.then

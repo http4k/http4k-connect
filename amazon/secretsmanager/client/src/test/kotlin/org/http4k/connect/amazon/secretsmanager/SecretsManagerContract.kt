@@ -34,7 +34,8 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
             assertThat(creation.Name, equalTo(name))
 
             val list = list(ListSecrets.Request()).successValue()
-            assertThat(list.SecretList.any { it.arn == creation.arn }, equalTo(true))
+            println(list)
+            assertThat(list.SecretList.any { it.ARN == creation.ARN }, equalTo(true))
 
             val lookupCreated = get(GetSecretValue.Request(SecretId.of(name))).successValue()
             assertThat(lookupCreated.SecretString, present(equalTo(secretValue)))
@@ -49,7 +50,7 @@ abstract class SecretsManagerContract(http: HttpHandler): AwsContract(AwsService
             assertThat(lookupUpdated.SecretString, present(equalTo(finalValue)))
 
             val deleted = delete(DeleteSecret.Request(SecretId.of(name))).successValue()
-            assertThat(deleted.arn, present(equalTo(updated.arn)))
+            assertThat(deleted.ARN, present(equalTo(updated.ARN)))
 
             val lookupDeleted = get(GetSecretValue.Request(SecretId.of(name))).failureOrNull()
             assertThat(lookupDeleted?.status, equalTo(BAD_REQUEST))
