@@ -38,7 +38,7 @@ class FakeKMS(
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : ChaosFake() {
 
-    private val api = AmazonJsonFake(KMSJackson, AwsService.of("TrentService"))
+    private val api = AmazonJsonFake(KMSMoshi, AwsService.of("TrentService"))
 
     private val publicKey by lazy {
         Base64Blob.encoded(this::class.java.classLoader.getResource("id_example.pub")!!.readText())

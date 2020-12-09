@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.secretsmanager
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.KmsKeyId
@@ -37,7 +36,7 @@ object CreateSecret {
     }
 
     data class Response(
-        @JsonProperty("ARN") val arn: ARN,
+        val ARN: ARN,
         val Name: String,
         val VersionId: VersionId? = null
     )
@@ -52,7 +51,7 @@ object DeleteSecret {
 
     data class Response(
         val Name: String,
-        @JsonProperty("ARN") val arn: ARN,
+        val ARN: ARN,
         val DeletionDate: Timestamp
     )
 }
@@ -65,7 +64,7 @@ object GetSecretValue {
     )
 
     data class Response(
-        @JsonProperty("ARN") val arn: ARN,
+        val ARN: ARN,
         val CreatedDate: Timestamp,
         val Name: String,
         val SecretBinary: Base64Blob?,
@@ -87,10 +86,10 @@ object ListSecrets {
         val Filters: List<Filters>? = null
     )
 
-    data class RotationRules(val AutomaticallyAfterDays: Number? = null)
+    data class RotationRules(val AutomaticallyAfterDays: Int? = null)
 
     data class Secret(
-        @JsonProperty("ARN") val arn: ARN? = null,
+        val ARN: ARN? = null,
         val Name: String? = null,
         val CreatedDate: Timestamp? = null,
         val DeletedDate: Timestamp? = null,
@@ -132,7 +131,7 @@ object PutSecretValue {
     }
 
     data class Response(
-        @JsonProperty("ARN") val arn: ARN,
+        val ARN: ARN,
         val Name: String,
         val VersionId: VersionId? = null,
         val VersionStages: List<String>? = null
@@ -162,7 +161,7 @@ object UpdateSecret {
     }
 
     data class Response(
-        @JsonProperty("ARN") val arn: ARN,
+        val ARN: ARN,
         val Name: String,
         val VersionId: VersionId? = null
     )

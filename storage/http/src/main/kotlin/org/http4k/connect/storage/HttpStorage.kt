@@ -1,16 +1,17 @@
 package org.http4k.connect.storage
 
+import org.http4k.core.Body
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.with
-import org.http4k.format.Jackson
+import org.http4k.format.Moshi.auto
 import org.http4k.lens.BiDiBodyLens
 
 inline fun <reified T : Any> Storage.Companion.Http(
     crossinline http: HttpHandler,
-    bodyLens: BiDiBodyLens<T> = Jackson.autoBody<T>().toLens()
+    bodyLens: BiDiBodyLens<T> = Body.auto<T>().toLens()
 ): Storage<T> = object : Storage<T> {
 
     override fun get(key: String): T? {

@@ -6,6 +6,7 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.cloudnative.env.fromConfigFile
 import org.http4k.connect.amazon.model.AwsService
+import org.http4k.lens.LensFailure
 import org.http4k.lens.composite
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.io.File
@@ -17,18 +18,23 @@ val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
 )
 
 fun configAwsEnvironment(service: AwsService): AwsEnvironment {
-    val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
-    val env = Environment.fromConfigFile(config) overrides
-        Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
+    try {
+        val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
+        val env = Environment.fromConfigFile(config) overrides
+            Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
 
-    val region = EnvironmentKey.required("profile-http4k-connect-test-user-region")(env)
-    return AwsEnvironment(
-        EnvironmentKey.composite {
-            AwsCredentials(
-                EnvironmentKey.required("http4k-connect-test-user-aws-access-key-id")(it),
-                EnvironmentKey.required("http4k-connect-test-user-aws-secret-access-key")(it)
-            )
-        }(env),
-        AwsCredentialScope(region, service.value)
-    )
+        val region = EnvironmentKey.required("profile-http4k-connect-test-user-region")(env)
+        return AwsEnvironment(
+            EnvironmentKey.composite {
+                AwsCredentials(
+                    EnvironmentKey.required("http4k-connect-test-user-aws-access-key-id")(it),
+                    EnvironmentKey.required("http4k-connect-test-user-aws-secret-access-key")(it)
+                )
+            }(env),
+            AwsCredentialScope(region, service.value)
+        )
+    } catch (e: LensFailure) {
+        assumeTrue(false, "no aws profile found")
+        throw e
+    }
 }

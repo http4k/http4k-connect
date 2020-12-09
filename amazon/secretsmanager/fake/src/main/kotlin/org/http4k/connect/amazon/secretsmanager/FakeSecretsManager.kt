@@ -32,7 +32,7 @@ class FakeSecretsManager(
     private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
-    private val api = AmazonJsonFake(SecretsManagerJackson, AwsService.of("secretsmanager"))
+    private val api = AmazonJsonFake(SecretsManagerMoshi, AwsService.of("secretsmanager"))
 
     override val app = routes(
         "/" bind POST to routes(

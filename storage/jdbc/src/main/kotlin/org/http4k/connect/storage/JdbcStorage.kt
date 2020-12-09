@@ -1,7 +1,7 @@
 package org.http4k.connect.storage
 
 import org.http4k.format.AutoMarshalling
-import org.http4k.format.Jackson
+import org.http4k.format.Moshi
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
@@ -22,7 +22,7 @@ import javax.sql.DataSource
 inline fun <reified T : Any> Storage.Companion.Jdbc(
     dataSource: DataSource,
     tableName: String = T::class.java.simpleName,
-    autoMarshalling: AutoMarshalling = Jackson): Storage<T> = object : Storage<T> {
+    autoMarshalling: AutoMarshalling = Moshi): Storage<T> = object : Storage<T> {
 
     private val db = Database.connect(dataSource)
 

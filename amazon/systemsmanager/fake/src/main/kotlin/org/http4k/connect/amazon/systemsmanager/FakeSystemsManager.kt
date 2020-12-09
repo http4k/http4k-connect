@@ -22,7 +22,7 @@ class FakeSystemsManager(
     private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
-    private val api = AmazonJsonFake(SystemsManagerJackson, AwsService.of("AmazonSSM"))
+    private val api = AmazonJsonFake(SystemsManagerMoshi, AwsService.of("AmazonSSM"))
 
     override val app = routes(
         deleteParameter(),

@@ -21,5 +21,5 @@ fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     text(Base64Blob::of)
     text(KmsKeyId::of)
     text(Region::of)
-    long(Timestamp::of)
+    double(BiDiMapping({ Timestamp.of(it.toLong()) }, { it.value.toDouble() }))
 }
