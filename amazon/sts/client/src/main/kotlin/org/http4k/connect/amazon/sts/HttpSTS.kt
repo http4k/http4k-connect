@@ -8,6 +8,7 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.base64Encode
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AccessKeyId
 import org.http4k.connect.amazon.model.AssumeRoleResponse
 import org.http4k.connect.amazon.model.AssumeRoleResult
@@ -96,7 +97,14 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
     }
 }
 
-private fun Response.parse() {
+private fun Response.parse(): AssumeRoleResponse {
     documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")
-    TODO("Not yet implemented")
+    return AssumeRoleResponse(
+        AssumeRoleResult(
+            1,
+            AssumedRoleUser(ARN.of(""), RoleId.of("")),
+            Credentials(SessionToken.of(""), AccessKeyId.of(""), SecretAccessKey.of(""), Instant.EPOCH)
+        ),
+        ResponseMetadata("")
+    )
 }
