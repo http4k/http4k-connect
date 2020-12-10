@@ -1,8 +1,8 @@
-package org.http4k.connect.amazon.sts
+package org.http4k.connect.amazon
 
 import org.http4k.template.ViewModel
 
-data class AssumeRoleResponse(
+data class AssumeRoleResponseView(
     val arn: String,
     val roleId: String,
     val accessKeyId: String,
