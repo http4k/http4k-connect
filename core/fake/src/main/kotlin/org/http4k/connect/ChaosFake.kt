@@ -3,10 +3,10 @@ package org.http4k.connect
 import org.http4k.chaos.Behaviour
 import org.http4k.chaos.ChaosBehaviours
 import org.http4k.chaos.ChaosEngine
+import org.http4k.chaos.withChaosApi
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.http4k.core.then
 import org.http4k.server.ServerConfig
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
@@ -26,7 +26,7 @@ abstract class ChaosFake : HttpHandler {
 
     fun returnStatus(status: Status) = misbehave(ChaosBehaviours.ReturnStatus(status))
 
-    override operator fun invoke(request: Request) = chaosEngine.then(app).invoke(request)
+    override operator fun invoke(request: Request) = app.withChaosApi(chaosEngine).invoke(request)
 
     fun start(port: Int = this::class.defaultPort(),
               serverConfig: (Int) -> ServerConfig = ::SunHttp) =
