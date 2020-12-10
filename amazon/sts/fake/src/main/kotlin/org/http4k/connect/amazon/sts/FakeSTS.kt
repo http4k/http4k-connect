@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.sts
 
 import org.http4k.base64Encode
 import org.http4k.connect.ChaosFake
-import org.http4k.connect.amazon.AssumeRoleResponseView
 import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.APPLICATION_XML
 import org.http4k.core.Method.POST
@@ -35,7 +34,7 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake(
         { r: Request -> r.form("Action") == "AssumeRole" }
             .asRouter() bind { req: Request ->
 
-            Response(OK).with(lens of AssumeRoleResponseView(
+            Response(OK).with(lens of AssumeRoleResponse(
                 req.form("RoleArn")!!,
                 req.form("RoleSessionName")!!,
                 "accessKeyId",
