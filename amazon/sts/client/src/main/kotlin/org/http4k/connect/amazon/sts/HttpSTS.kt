@@ -5,7 +5,6 @@ import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
-import org.http4k.base64Encode
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
@@ -14,6 +13,7 @@ import org.http4k.connect.amazon.model.AssumeRoleResponse
 import org.http4k.connect.amazon.model.AssumeRoleResult
 import org.http4k.connect.amazon.model.AssumedRoleUser
 import org.http4k.connect.amazon.model.Credentials
+import org.http4k.connect.amazon.model.Expiration
 import org.http4k.connect.amazon.model.ResponseMetadata
 import org.http4k.connect.amazon.model.RoleId
 import org.http4k.connect.amazon.model.SecretAccessKey
@@ -31,17 +31,14 @@ import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
+import org.w3c.dom.Document
 import java.time.Clock
-import java.time.Duration
-import java.time.Instant
-import java.util.UUID
 
 fun STS.Companion.Http(scope: AwsCredentialScope,
                        credentialsProvider: () -> AwsCredentials,
                        rawHttp: HttpHandler = JavaHttpClient(),
                        clock: Clock = Clock.systemDefaultZone(),
-                       payloadMode: Payload.Mode = Payload.Mode.Signed,
-                       validity: Duration = Duration.ofHours(1)
+                       payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : STS {
 
     private val http = SetBaseUriFrom(Uri.of("https://sts.${scope.region}.amazonaws.com/"))
@@ -69,7 +66,7 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
             "TransitiveTagKeys.member.${index}" to next
         }
 
-        val other: List<Pair<String, String>> = listOfNotNull(
+        val other = listOfNotNull(
             request.ExternalId?.let { "ExternalId" to it },
             request.Policy?.let { "Policy" to it },
             request.DurationSeconds?.let { "DurationSeconds" to it.seconds.toString() },
@@ -81,30 +78,28 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
                 acc.form(it.first, it.second)
             })
 
-        when {
-            response.status.successful -> response.parse()
+        return when {
+            response.status.successful -> Success(response.parse())
             else -> Failure(RemoteFailure(POST, uri, response.status))
         }
-
-        val credentials = Credentials(
-            SessionToken.of(UUID.randomUUID().toString().base64Encode()),
-            AccessKeyId.of("accessKeyId"), SecretAccessKey.of("secretAccessKey"),
-            Instant.now(clock) + validity)
-        val assumeRoleResult = AssumeRoleResult(1,
-            AssumedRoleUser(request.RoleArn, RoleId.of(request.RoleSessionName)), credentials)
-
-        return Success(AssumeRole.Response(AssumeRoleResponse(assumeRoleResult, ResponseMetadata("111111111111"))))
     }
 }
 
-private fun Response.parse(): AssumeRoleResponse {
-    documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")
-    return AssumeRoleResponse(
-        AssumeRoleResult(
-            1,
-            AssumedRoleUser(ARN.of(""), RoleId.of("")),
-            Credentials(SessionToken.of(""), AccessKeyId.of(""), SecretAccessKey.of(""), Instant.EPOCH)
-        ),
-        ResponseMetadata("")
-    )
-}
+private fun Response.parse() = AssumeRole.Response(
+    with(documentBuilderFactory.parse(body.stream)) {
+        AssumeRoleResponse(
+            AssumeRoleResult(
+                text("PackedPolicySize").toInt(),
+                AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
+                Credentials(
+                    SessionToken.of(text("SessionToken")),
+                    AccessKeyId.of(text("AccessKeyId")),
+                    SecretAccessKey.of(text("SecretAccessKey")),
+                    Expiration.parse(text("Expiration")))
+            ),
+            ResponseMetadata("")
+        )
+    }
+)
+
+private fun Document.text(name: String) = getElementsByTagName(name).item(0).textContent.trim()

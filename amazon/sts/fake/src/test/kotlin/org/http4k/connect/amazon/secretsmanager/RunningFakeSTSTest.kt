@@ -19,7 +19,7 @@ class RunningFakeSTSTest : STSContract(
     private lateinit var server: Http4kServer
 
     override fun setUp() {
-        server = FakeSTS().start()
+        server = FakeSTS(clock).start()
     }
 
     @AfterEach

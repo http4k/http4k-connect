@@ -22,4 +22,3 @@ object AssumeRole {
 
     data class Response(val AssumeRoleResponse: AssumeRoleResponse)
 }
-

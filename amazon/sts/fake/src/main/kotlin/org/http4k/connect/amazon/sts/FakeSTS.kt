@@ -17,8 +17,8 @@ import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
 import java.time.Duration
-import java.time.Instant
-import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID.randomUUID
 
 class FakeSTS(private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake() {
@@ -40,8 +40,8 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake(
                 "accessKeyId",
                 "secretAccessKey",
                 randomUUID().toString().base64Encode(),
-                ISO_ZONED_DATE_TIME.format(
-                    Instant.now(clock).atZone(clock.zone) + Duration.ofHours(1))
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ").format(
+                    ZonedDateTime.now(clock) + Duration.ofHours(1))
             ))
         }
 }
