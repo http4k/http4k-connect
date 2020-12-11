@@ -17,12 +17,14 @@ import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
 import java.time.Duration
+import java.time.Duration.ofHours
+import java.time.Duration.ofSeconds
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID.randomUUID
 
 class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
-              private val defaultSessionValidity: Duration = Duration.ofHours(1)
+              private val defaultSessionValidity: Duration = ofHours(1)
 ) : ChaosFake() {
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
@@ -36,7 +38,7 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
         .asRouter() bind { req: Request ->
         val duration = req.form("DurationSeconds")
             ?.toLong()
-            ?.let { Duration.ofSeconds(it) }
+            ?.let(::ofSeconds)
             ?: defaultSessionValidity
         Response(OK).with(lens of AssumeRoleResponse(
             req.form("RoleArn")!!,
