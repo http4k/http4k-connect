@@ -19,9 +19,9 @@ fun SystemsManager.Companion.Http(scope: AwsCredentialScope,
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SystemsManager {
     private val api = AmazonJsonApi(AwsService.of("ssm"), SystemsManagerMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("AmazonSSM"))
 
-    override fun put(request: PutParameterRequest): Result<PutParameterResponse, RemoteFailure> = api("PutParameter", request)
+    override operator fun invoke(request: PutParameterRequest): Result<PutParameterResponse, RemoteFailure> = api("PutParameter", request)
 
-    override fun get(request: GetParameterRequest): Result<GetParameterResponse, RemoteFailure> = api("GetParameter", request)
+    override operator fun invoke(request: GetParameterRequest): Result<GetParameterResponse, RemoteFailure> = api("GetParameter", request)
 
-    override fun delete(request: DeleteParameterRequest): Result<Unit, RemoteFailure> = api("DeleteParameter", request)
+    override operator fun invoke(request: DeleteParameterRequest): Result<Unit, RemoteFailure> = api("DeleteParameter", request)
 }

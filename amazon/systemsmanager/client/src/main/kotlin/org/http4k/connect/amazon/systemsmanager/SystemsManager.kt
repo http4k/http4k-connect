@@ -7,9 +7,9 @@ import org.http4k.connect.RemoteFailure
  * Docs: https://docs.aws.amazon.com/systems-manager/latest/APIReference/Welcome.html
  */
 interface SystemsManager {
-    fun put(request: PutParameterRequest): Result<PutParameterResponse, RemoteFailure>
-    fun get(request: GetParameterRequest): Result<GetParameterResponse, RemoteFailure>
-    fun delete(request: DeleteParameterRequest): Result<Unit, RemoteFailure>
+    operator fun invoke(request: PutParameterRequest): Result<PutParameterResponse, RemoteFailure>
+    operator fun invoke(request: GetParameterRequest): Result<GetParameterResponse, RemoteFailure>
+    operator fun invoke(request: DeleteParameterRequest): Result<Unit, RemoteFailure>
 
     companion object
 }
