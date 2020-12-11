@@ -9,10 +9,10 @@ fun main() {
     val fakeKms = FakeKMS()
     val client = fakeKms.client()
 
-    val key = client.create(CreateKeyRequest()).valueOrNull()!!
-    val encrypted = client.encrypt(EncryptRequest(KeyId = key.KeyMetadata.KeyId, Base64Blob.encoded("hello"))).valueOrNull()!!
+    val key = client(CreateKeyRequest()).valueOrNull()!!
+    val encrypted = client(EncryptRequest(KeyId = key.KeyMetadata.KeyId, Base64Blob.encoded("hello"))).valueOrNull()!!
     println(encrypted.CiphertextBlob.decoded())
-    val decrypted = client.decrypt(DecryptRequest(KeyId = key.KeyMetadata.KeyId, encrypted.CiphertextBlob)).valueOrNull()!!
+    val decrypted = client(DecryptRequest(KeyId = key.KeyMetadata.KeyId, encrypted.CiphertextBlob)).valueOrNull()!!
     println(decrypted.Plaintext.decoded())
 
 }

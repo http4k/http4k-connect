@@ -7,12 +7,12 @@ import org.http4k.connect.RemoteFailure
  * Docs: https://docs.aws.amazon.com/secretsmanager/latest/apireference/Welcome.html
  */
 interface SecretsManager {
-    fun create(request: CreateSecretRequest): Result<CreateSecretResponse, RemoteFailure>
-    fun delete(request: DeleteSecretRequest): Result<DeleteSecretResponse, RemoteFailure>
-    fun get(request: GetSecretValueRequest): Result<GetSecretValueResponse, RemoteFailure>
-    fun list(request: ListSecretsRequest): Result<ListSecretsResponse, RemoteFailure>
-    fun put(request: PutSecretValueRequest): Result<PutSecretValueResponse, RemoteFailure>
-    fun update(request: UpdateSecretRequest): Result<UpdateSecretResponse, RemoteFailure>
+    operator fun invoke(request: CreateSecretRequest): Result<CreateSecretResponse, RemoteFailure>
+    operator fun invoke(request: DeleteSecretRequest): Result<DeleteSecretResponse, RemoteFailure>
+    operator fun invoke(request: GetSecretValueRequest): Result<GetSecretValueResponse, RemoteFailure>
+    operator fun invoke(request: ListSecretsRequest): Result<ListSecretsResponse, RemoteFailure>
+    operator fun invoke(request: PutSecretValueRequest): Result<PutSecretValueResponse, RemoteFailure>
+    operator fun invoke(request: UpdateSecretRequest): Result<UpdateSecretResponse, RemoteFailure>
 
     companion object
 }

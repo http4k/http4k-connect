@@ -10,11 +10,11 @@ fun main() {
     val client = fakeSm.client()
     val secretId = SecretId.of("a-secret-id")
 
-    println(client.create(
+    println(client(
         CreateSecretRequest("friendly name",
             UUID.randomUUID(),
             Base64Blob.encoded("hello")))
     )
 
-    println(client.get(GetSecretValueRequest(secretId)))
+    println(client(GetSecretValueRequest(secretId)))
 }

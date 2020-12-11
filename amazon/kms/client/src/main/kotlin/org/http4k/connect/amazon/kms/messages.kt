@@ -24,6 +24,7 @@ data class CreateKeyRequest(
 data class CreateKeyResponse(val KeyMetadata: KeyMetadata)
 
 data class DescribeKeyRequest(val KeyId: KmsKeyId, val GrantTokens: List<String>? = null)
+
 data class DescribeKeyResponse(val KeyMetadata: KeyMetadata)
 
 data class DecryptRequest(

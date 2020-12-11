@@ -7,14 +7,14 @@ import org.http4k.connect.RemoteFailure
  * Docs: https://docs.aws.amazon.com/kms/latest/APIReference/Welcome.html
  */
 interface KMS {
-    fun create(request: CreateKeyRequest): Result<CreateKeyResponse, RemoteFailure>
-    fun describe(request: DescribeKeyRequest): Result<DescribeKeyResponse, RemoteFailure>
-    fun decrypt(request: DecryptRequest): Result<DecryptResponse, RemoteFailure>
-    fun encrypt(request: EncryptRequest): Result<EncryptResponse, RemoteFailure>
-    fun getPublicKey(request: GetPublicKeyRequest): Result<GetPublicKeyResponse, RemoteFailure>
-    fun scheduleDeletion(request: ScheduleKeyDeletionRequest): Result<ScheduleKeyDeletionResponse, RemoteFailure>
-    fun sign(request: SignRequest): Result<SignResponse, RemoteFailure>
-    fun verify(request: VerifyRequest): Result<VerifyResponse, RemoteFailure>
+    operator fun invoke(request: CreateKeyRequest): Result<CreateKeyResponse, RemoteFailure>
+    operator fun invoke(request: DescribeKeyRequest): Result<DescribeKeyResponse, RemoteFailure>
+    operator fun invoke(request: DecryptRequest): Result<DecryptResponse, RemoteFailure>
+    operator fun invoke(request: EncryptRequest): Result<EncryptResponse, RemoteFailure>
+    operator fun invoke(request: GetPublicKeyRequest): Result<GetPublicKeyResponse, RemoteFailure>
+    operator fun invoke(request: ScheduleKeyDeletionRequest): Result<ScheduleKeyDeletionResponse, RemoteFailure>
+    operator fun invoke(request: SignRequest): Result<SignResponse, RemoteFailure>
+    operator fun invoke(request: VerifyRequest): Result<VerifyResponse, RemoteFailure>
 
     companion object
 }
