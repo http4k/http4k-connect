@@ -6,6 +6,6 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 
 fun Example.Companion.Http(httpHandler: HttpHandler) = object : Example {
-    override fun echo(input: String) =
-        Success(httpHandler(Request(Method.GET, "echo").body(input)).bodyString())
+    override operator fun invoke(request: EchoRequest) =
+        Success(EchoResponse(httpHandler(Request(Method.GET, "echo").body(request.value)).bodyString()))
 }
