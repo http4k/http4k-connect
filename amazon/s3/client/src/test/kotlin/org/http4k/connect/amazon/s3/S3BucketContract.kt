@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3BucketContract(http: HttpHandler): AwsContract(AwsService.of("s3"), http) {
+abstract class S3BucketContract(http: HttpHandler) : AwsContract(AwsService.of("s3"), http) {
 
     private val bucket = BucketName.of(UUID.randomUUID().toString())
 
@@ -26,33 +26,31 @@ abstract class S3BucketContract(http: HttpHandler): AwsContract(AwsService.of("s
 
     @BeforeEach
     fun deleteBucket() {
-        s3Bucket.delete(key).successValue()
-        s3Bucket.delete().successValue()
+        s3Bucket(DeleteKeyRequest(key)).successValue()
+        s3Bucket(DeleteRequest()).successValue()
     }
 
     @Test
     fun `bucket key lifecycle`() {
-        with(s3Bucket) {
-            val newKey = BucketKey.of(UUID.randomUUID().toString())
+        val newKey = BucketKey.of(UUID.randomUUID().toString())
 
-            assertThat(create().successValue(), equalTo(Unit))
+        assertThat(s3Bucket(CreateRequest()).successValue(), equalTo(Unit))
 
-            assertThat(list().successValue(), equalTo(Listing.Empty))
-            assertThat(get(key).successValue(), absent())
-            assertThat(set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
-            assertThat(String(get(key).successValue()!!.readBytes()), equalTo("hello"))
-            assertThat(list().successValue(), equalTo(Listing.Unpaged(listOf(key))))
-            assertThat(set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
-            assertThat(String(get(key).successValue()!!.readBytes()), equalTo("there"))
+        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Empty))
+        assertThat(s3Bucket[key].successValue(), absent())
+        assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
+        assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
+        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Unpaged(listOf(key))))
+        assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
+        assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
-            assertThat(copy(key, newKey).successValue(), equalTo(Unit))
-            assertThat(String(get(newKey).successValue()!!.readBytes()), equalTo("there"))
-            assertThat(list().successValue(), equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value })))
-            assertThat(delete(newKey).successValue(), equalTo(Unit))
-            assertThat(delete(key).successValue(), equalTo(Unit))
-            assertThat(get(key).successValue(), equalTo(null))
-            assertThat(list().successValue(), equalTo(Listing.Empty))
-            assertThat(delete().successValue(), equalTo(Unit))
-        }
+        assertThat(s3Bucket(CopyKeyRequest(key, newKey)).successValue(), equalTo(Unit))
+        assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
+        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value })))
+        assertThat(s3Bucket(DeleteKeyRequest(newKey)).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(DeleteKeyRequest(key)).successValue(), equalTo(Unit))
+        assertThat(s3Bucket[key].successValue(), equalTo(null))
+        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Empty))
+        assertThat(s3Bucket(DeleteRequest()).successValue(), equalTo(Unit))
     }
 }

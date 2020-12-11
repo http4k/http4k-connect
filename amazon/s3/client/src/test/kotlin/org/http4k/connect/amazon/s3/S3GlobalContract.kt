@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3GlobalContract(http: HttpHandler): AwsContract(AwsService.of("s3"), http) {
+abstract class S3GlobalContract(http: HttpHandler) : AwsContract(AwsService.of("s3"), http) {
     private val s3 by lazy {
         S3.Http(aws.scope, { aws.credentials }, http)
     }
@@ -21,18 +21,16 @@ abstract class S3GlobalContract(http: HttpHandler): AwsContract(AwsService.of("s
 
     @BeforeEach
     fun deleteBucket() {
-        s3.delete(bucket).successValue()
+        s3(DeleteBucketRequest(bucket)).successValue()
     }
 
     @Test
     fun `bucket lifecycle`() {
-        with(s3) {
-            assertThat(buckets().successValue().contains(bucket), equalTo(false))
-            assertThat(create(bucket), equalTo(Success(Unit)))
-            assertThat(buckets().successValue().contains(bucket), equalTo(true))
-            assertThat(delete(bucket), equalTo(Success(Unit)))
-            assertThat(buckets().successValue().contains(bucket), equalTo(false))
-        }
+        assertThat(s3(ListBucketsRequest()).successValue().contains(bucket), equalTo(false))
+        assertThat(s3(CreateBucketRequest(bucket)), equalTo(Success(Unit)))
+        assertThat(s3(ListBucketsRequest()).successValue().contains(bucket), equalTo(true))
+        assertThat(s3(DeleteBucketRequest(bucket)), equalTo(Success(Unit)))
+        assertThat(s3(ListBucketsRequest()).successValue().contains(bucket), equalTo(false))
     }
 }
 

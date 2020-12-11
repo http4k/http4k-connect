@@ -6,6 +6,8 @@ import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.s3.DeleteKeyRequest
+import org.http4k.connect.amazon.s3.ListKeysRequest
 import org.http4k.connect.amazon.s3.S3
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
@@ -29,12 +31,12 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
     }
 
     override fun remove(key: String) =
-        s3.delete(BucketKey.of(key))
+        s3(DeleteKeyRequest(BucketKey.of(key)))
             .map { true }
             .recover { it.throwIt() }
 
     override fun keySet(keyPrefix: String) =
-        when (val result = s3.list()) {
+        when (val result = s3(ListKeysRequest())) {
             is Success -> result.value
                 .filter { it.value.startsWith(keyPrefix) }
                 .map { it.value }
@@ -46,7 +48,7 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3.Bucket, autoMarshalling
         when {
             isEmpty() -> false
             else -> {
-                forEach { s3.delete(it) }
+                forEach { s3(DeleteKeyRequest(it)) }
                 true
             }
         }

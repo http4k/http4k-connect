@@ -24,7 +24,6 @@ import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
-import java.io.InputStream
 import java.time.Clock
 
 fun S3.Bucket.Companion.Http(bucketName: BucketName,
@@ -38,7 +37,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override fun create() = Uri.of("/").let {
+    override operator fun invoke(request: CreateRequest) = Uri.of("/").let {
         with(http(Request(PUT, it).body("""<?xml version="1.0" encoding="UTF-8"?>
 <CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
    <LocationConstraint>${scope.region}</LocationConstraint>
@@ -51,7 +50,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun delete() = Uri.of("/").let {
+    override operator fun invoke(request: DeleteRequest) = Uri.of("/").let {
         with(http(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
@@ -61,8 +60,8 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun copy(originalKey: BucketKey, newKey: BucketKey) = Uri.of("/$newKey").let {
-        with(http(Request(PUT, it).header("x-amz-copy-source", "$bucketName/$originalKey"))) {
+    override operator fun invoke(request: CopyKeyRequest) = Uri.of("/${request.destination}").let {
+        with(http(Request(PUT, it).header("x-amz-copy-source", "$bucketName/${request.source}"))) {
             when {
                 status.successful -> Success(Unit)
                 else -> Failure(RemoteFailure(PUT, it, status))
@@ -70,7 +69,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun delete(key: BucketKey) = Uri.of("/$key").let {
+    override operator fun invoke(request: DeleteKeyRequest) = Uri.of("/${request.key}").let {
         with(http(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
@@ -80,8 +79,8 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override operator fun set(key: BucketKey, content: InputStream) = Uri.of("/$key").let {
-        with(http(Request(PUT, it).body(content))) {
+    override operator fun invoke(request: PutKeyRequest) = Uri.of("/${request.key}").let {
+        with(http(Request(PUT, it).body(request.content))) {
             when {
                 status.successful || status.redirection -> Success(Unit)
                 else -> Failure(RemoteFailure(PUT, it, status))
@@ -89,7 +88,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override operator fun get(key: BucketKey) = Uri.of("/$key").let {
+    override operator fun invoke(request: GetKeyRequest) = Uri.of("/${request.key}").let {
         with(http(Request(GET, it))) {
             when {
                 status.successful -> Success(body.stream)
@@ -99,7 +98,7 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         }
     }
 
-    override fun list() = Uri.of("/").let {
+    override operator fun invoke(request: ListKeysRequest) = Uri.of("/").let {
         with(http(Request(GET, it).query("list-type", "2"))) {
             when {
                 status.successful -> {

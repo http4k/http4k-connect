@@ -34,7 +34,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override fun buckets() = Uri.of("/").let {
+    override operator fun invoke(request: ListBucketsRequest) = Uri.of("/").let {
         with(http(Request(GET, it))) {
             when {
                 status.successful -> {
@@ -47,7 +47,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
         }
     }
 
-    override fun create(bucketName: BucketName) = Uri.of("/$bucketName").let {
+    override operator fun invoke(request: CreateBucketRequest) = Uri.of("/${request.bucketName}").let {
         with(http(Request(PUT, it).body("""<?xml version="1.0" encoding="UTF-8"?>
 <CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
    <LocationConstraint>${scope.region}</LocationConstraint>
@@ -59,7 +59,7 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
         }
     }
 
-    override fun delete(bucketName: BucketName) = Uri.of("/$bucketName").let {
+    override operator fun invoke(request: DeleteBucketRequest) = Uri.of("/${request.bucketName}").let {
         with(http(Request(DELETE, it))) {
             when {
                 status.successful -> Success(Unit)
