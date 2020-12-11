@@ -21,14 +21,14 @@ abstract class SystemsManagerContract(http: HttpHandler) : AwsContract(AwsServic
     fun `parameter lifecycle`() {
         val name = UUID.randomUUID().toString()
         with(secretsManager) {
-            assertThat(get(GetParameter.Request(name)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
-            assertThat(put(PutParameter.Request(name, "value", ParameterType.String)).successValue().Version, equalTo(1))
-            assertThat(put(PutParameter.Request(name, "value", ParameterType.String)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
-            assertThat(get(GetParameter.Request(name)).successValue().Parameter.Value, equalTo("value"))
+            assertThat(get(GetParameterRequest(name)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
+            assertThat(put(PutParameterRequest(name, "value", ParameterType.String)).successValue().Version, equalTo(1))
+            assertThat(put(PutParameterRequest(name, "value", ParameterType.String)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
+            assertThat(get(GetParameterRequest(name)).successValue().Parameter.Value, equalTo("value"))
 
-            delete(DeleteParameter.Request(name)).successValue()
+            delete(DeleteParameterRequest(name)).successValue()
 
-            assertThat(delete(DeleteParameter.Request(name)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
+            assertThat(delete(DeleteParameterRequest(name)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
         }
     }
 

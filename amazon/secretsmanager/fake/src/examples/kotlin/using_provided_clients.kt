@@ -1,8 +1,8 @@
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
-import org.http4k.connect.amazon.secretsmanager.CreateSecret
+import org.http4k.connect.amazon.secretsmanager.CreateSecretRequest
 import org.http4k.connect.amazon.secretsmanager.FakeSecretsManager
-import org.http4k.connect.amazon.secretsmanager.GetSecretValue
+import org.http4k.connect.amazon.secretsmanager.GetSecretValueRequest
 import java.util.UUID
 
 fun main() {
@@ -11,10 +11,10 @@ fun main() {
     val secretId = SecretId.of("a-secret-id")
 
     println(client.create(
-        CreateSecret.Request("friendly name",
+        CreateSecretRequest("friendly name",
             UUID.randomUUID(),
             Base64Blob.encoded("hello")))
     )
 
-    println(client.get(GetSecretValue.Request(secretId)))
+    println(client.get(GetSecretValueRequest(secretId)))
 }

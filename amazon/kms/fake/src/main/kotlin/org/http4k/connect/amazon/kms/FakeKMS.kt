@@ -61,62 +61,62 @@ class FakeKMS(
         )
     )
 
-    private fun createKey() = api.route<CreateKey, CreateKey.Request> {
+    private fun createKey() = api.route<CreateKeyRequest> {
         val keyId = KmsKeyId.of(UUID.randomUUID().toString())
         val storedCMK = StoredCMK(keyId, toArn(keyId), it.KeyUsage ?: ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
             ?: CustomerMasterKeySpec.SYMMETRIC_DEFAULT)
 
         keys[storedCMK.arn.value] = storedCMK
 
-        CreateKey.Response(KeyMetadata(storedCMK.keyId, storedCMK.arn, AwsAccount.of("0"), it.KeyUsage))
+        CreateKeyResponse(KeyMetadata(storedCMK.keyId, storedCMK.arn, AwsAccount.of("0"), it.KeyUsage))
     }
 
-    private fun describeKey() = api.route<DescribeKey, DescribeKey.Request> { req ->
+    private fun describeKey() = api.route<DescribeKeyRequest> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            DescribeKey.Response(KeyMetadata(it.keyId, it.arn, AwsAccount.of("0"), it.keyUsage))
+            DescribeKeyResponse(KeyMetadata(it.keyId, it.arn, AwsAccount.of("0"), it.keyUsage))
         }
     }
 
-    private fun decrypt() = api.route<Decrypt, Decrypt.Request> { req ->
+    private fun decrypt() = api.route<DecryptRequest> { req ->
         keys[toArn(req.KeyId).value]?.let {
             val plainText = Base64Blob.encoded(req.CiphertextBlob.decoded().reversed())
-            Decrypt.Response(KmsKeyId.of(it.arn), plainText, req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT)
+            DecryptResponse(KmsKeyId.of(it.arn), plainText, req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT)
         }
     }
 
-    private fun encrypt() = api.route<Encrypt, Encrypt.Request> { req ->
+    private fun encrypt() = api.route<EncryptRequest> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Encrypt.Response(KmsKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
+            EncryptResponse(KmsKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
                 ?: SYMMETRIC_DEFAULT)
         }
     }
 
-    private fun getPublicKey() = api.route<GetPublicKey, GetPublicKey.Request> {
+    private fun getPublicKey() = api.route<GetPublicKeyRequest> {
         keys[toArn(it.KeyId).value]?.let {
-            GetPublicKey.Response(KmsKeyId.of(it.arn), it.customerMasterKeySpec, emptyList(), it.keyUsage, publicKey, emptyList())
+            GetPublicKeyResponse(KmsKeyId.of(it.arn), it.customerMasterKeySpec, emptyList(), it.keyUsage, publicKey, emptyList())
         }
     }
 
-    private fun scheduleKeyDeletion() = api.route<ScheduleKeyDeletion, ScheduleKeyDeletion.Request> { req ->
+    private fun scheduleKeyDeletion() = api.route<ScheduleKeyDeletionRequest> { req ->
         keys[toArn(req.KeyId).value]?.let {
             keys[toArn(req.KeyId).value] = it.copy(deletion = Timestamp.of(MAX_VALUE))
-            ScheduleKeyDeletion.Response(KmsKeyId.of(it.arn), Timestamp.of(MAX_VALUE))
+            ScheduleKeyDeletionResponse(KmsKeyId.of(it.arn), Timestamp.of(MAX_VALUE))
         }
     }
 
-    private fun sign() = api.route<Sign, Sign.Request> { req ->
+    private fun sign() = api.route<SignRequest> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Sign.Response(KmsKeyId.of(it.arn),
+            SignResponse(KmsKeyId.of(it.arn),
                 Base64Blob.encoded(req.SigningAlgorithm.name
                     + req.Message.decoded().take(50)), req.SigningAlgorithm)
         }
     }
 
-    private fun verify() = api.route<Verify, Verify.Request> { req ->
+    private fun verify() = api.route<VerifyRequest> { req ->
         keys[toArn(req.KeyId).value]?.let {
             when {
                 req.Signature.decoded().startsWith(req.SigningAlgorithm.name) ->
-                    Verify.Response(KmsKeyId.of(it.arn), true, req.SigningAlgorithm)
+                    VerifyResponse(KmsKeyId.of(it.arn), true, req.SigningAlgorithm)
                 else -> null
             }
         }

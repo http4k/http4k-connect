@@ -45,32 +45,32 @@ class FakeSecretsManager(
         )
     )
 
-    private fun createSecret() = api.route<CreateSecret, CreateSecret.Request> { req ->
+    private fun createSecret() = api.route<CreateSecretRequest> { req ->
         val versionId = VersionId.of(randomUUID().toString())
         val createdAt = Timestamp.of(clock.instant().toEpochMilli() / 1000)
         secrets[req.Name] = SecretValue(versionId,
             createdAt, createdAt,
             req.SecretString, req.SecretBinary)
-        CreateSecret.Response(req.Name.toArn(), req.Name, versionId)
+        CreateSecretResponse(req.Name.toArn(), req.Name, versionId)
     }
 
-    private fun deleteSecret() = api.route<DeleteSecret, DeleteSecret.Request> { req ->
+    private fun deleteSecret() = api.route<DeleteSecretRequest> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets[resourceId]
             ?.let {
                 secrets.remove(resourceId)
-                DeleteSecret.Response(resourceId, resourceId.toArn(), Timestamp.of(0))
+                DeleteSecretResponse(resourceId, resourceId.toArn(), Timestamp.of(0))
             }
     }
 
-    private fun getSecret() = api.route<GetSecretValue, GetSecretValue.Request> { req ->
+    private fun getSecret() = api.route<GetSecretValueRequest> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets.keySet(resourceId).firstOrNull()
             ?.let { secrets[it] }
             ?.let {
-                GetSecretValue.Response(
+                GetSecretValueResponse(
                     resourceId.toArn(),
                     Timestamp.of(0),
                     resourceId,
@@ -82,13 +82,13 @@ class FakeSecretsManager(
             }
     }
 
-    private fun listSecrets() = api.route<ListSecrets, ListSecrets.Request> {
-        ListSecrets.Response(secrets.keySet("").map {
-            ListSecrets.Secret(it.toArn(), it)
+    private fun listSecrets() = api.route<ListSecretsRequest> {
+        ListSecretsResponse(secrets.keySet("").map {
+            Secret(it.toArn(), it)
         })
     }
 
-    private fun putSecret() = api.route<PutSecretValue, PutSecretValue.Request> { req ->
+    private fun putSecret() = api.route<PutSecretValueRequest> { req ->
         val resourceId = req.SecretId.resourceId()
         secrets[resourceId]
             ?.let {
@@ -98,11 +98,11 @@ class FakeSecretsManager(
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                PutSecretValue.Response(resourceId.toArn(), resourceId, versionId)
+                PutSecretValueResponse(resourceId.toArn(), resourceId, versionId)
             }
     }
 
-    private fun updateSecret() = api.route<UpdateSecret, UpdateSecret.Request> { req ->
+    private fun updateSecret() = api.route<UpdateSecretRequest> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets[resourceId]
@@ -113,7 +113,7 @@ class FakeSecretsManager(
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                UpdateSecret.Response(resourceId.toArn(), resourceId, versionId)
+                UpdateSecretResponse(resourceId.toArn(), resourceId, versionId)
             }
     }
 

@@ -7,7 +7,7 @@ import org.http4k.connect.RemoteFailure
  * Docs: https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html
  */
 interface STS {
-    fun assumeRole(request: AssumeRole.Request): Result<AssumeRole.Response, RemoteFailure>
+    operator fun invoke(request: AssumeRoleRequest): Result<AssumeRoleResponse, RemoteFailure>
 
     companion object
 }

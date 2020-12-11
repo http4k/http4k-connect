@@ -15,10 +15,10 @@ import org.http4k.connect.storage.Storage
 import org.http4k.routing.routes
 import java.time.Clock
 
-data class Parameter(val name: String, val value: String, val type: ParameterType)
+data class StoredParameter(val name: String, val value: String, val type: ParameterType)
 
 class FakeSystemsManager(
-    private val parameters: Storage<Parameter> = Storage.InMemory(),
+    private val parameters: Storage<StoredParameter> = Storage.InMemory(),
     private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
@@ -30,7 +30,7 @@ class FakeSystemsManager(
         putParameter()
     )
 
-    private fun deleteParameter() = api.route<DeleteParameter, DeleteParameter.Request> { req ->
+    private fun deleteParameter() = api.route<DeleteParameterRequest> { req ->
         parameters[req.Name]?.let {
             parameters.remove(req.Name)
             Unit
@@ -38,19 +38,19 @@ class FakeSystemsManager(
     }
 
 
-    private fun getParameter() = api.route<GetParameter, GetParameter.Request> { req ->
+    private fun getParameter() = api.route<GetParameterRequest> { req ->
         parameters[req.Name]?.let {
-            GetParameter.Response(GetParameter.Parameter(
+            GetParameterResponse(Parameter(
                 ARN.of(Region.of("us-east-1"), AwsService.of("ssm"), "parameter", it.name, AwsAccount.of("0")),
                 it.name, it.value, it.type, null, 1, Timestamp.of(0), null, null))
         }
     }
 
-    private fun putParameter() = api.route<PutParameter, PutParameter.Request> { req ->
+    private fun putParameter() = api.route<PutParameterRequest> { req ->
         when {
             parameters[req.Name] == null -> {
-                parameters[req.Name] = Parameter(req.Name, req.Value, req.Type)
-                PutParameter.Response("Standard", 1)
+                parameters[req.Name] = StoredParameter(req.Name, req.Value, req.Type)
+                PutParameterResponse("Standard", 1)
             }
             else -> null
         }

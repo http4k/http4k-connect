@@ -9,7 +9,6 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AccessKeyId
-import org.http4k.connect.amazon.model.AssumeRoleResponse
 import org.http4k.connect.amazon.model.AssumeRoleResult
 import org.http4k.connect.amazon.model.AssumedRoleUser
 import org.http4k.connect.amazon.model.Credentials
@@ -36,6 +35,7 @@ import org.http4k.filter.Payload
 import org.http4k.lens.Header.CONTENT_TYPE
 import org.w3c.dom.Document
 import java.time.Clock
+import org.http4k.connect.amazon.model.AssumeRoleResponse as AssumeRoleResponseInner
 
 fun STS.Companion.Http(scope: AwsCredentialScope,
                        credentialsProvider: () -> AwsCredentials,
@@ -49,8 +49,7 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override fun assumeRole(request: AssumeRole.Request): Result<AssumeRole.Response, RemoteFailure> {
-
+    override operator fun invoke(request: AssumeRoleRequest): Result<AssumeRoleResponse, RemoteFailure> {
         val base = listOf(
             "Action" to "AssumeRole",
             "RoleSessionName" to request.RoleSessionName,
@@ -89,9 +88,9 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
     }
 }
 
-private fun Response.parse() = AssumeRole.Response(
+private fun Response.parse() = AssumeRoleResponse(
     with(documentBuilderFactory.parse(body.stream)) {
-        AssumeRoleResponse(
+        AssumeRoleResponseInner(
             AssumeRoleResult(
                 text("PackedPolicySize").toInt(),
                 AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),

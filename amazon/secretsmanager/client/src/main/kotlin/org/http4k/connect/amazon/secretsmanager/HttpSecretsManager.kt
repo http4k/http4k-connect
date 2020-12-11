@@ -19,21 +19,21 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
     private val api = AmazonJsonApi(AwsService.of("secretsmanager"), SecretsManagerMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode)
 
-    override fun create(request: CreateSecret.Request): Result<CreateSecret.Response, RemoteFailure> =
+    override fun create(request: CreateSecretRequest): Result<CreateSecretResponse, RemoteFailure> =
         api("CreateSecret", request)
 
-    override fun delete(request: DeleteSecret.Request): Result<DeleteSecret.Response, RemoteFailure> =
+    override fun delete(request: DeleteSecretRequest): Result<DeleteSecretResponse, RemoteFailure> =
         api("DeleteSecret", request)
 
-    override fun get(request: GetSecretValue.Request): Result<GetSecretValue.Response, RemoteFailure> =
+    override fun get(request: GetSecretValueRequest): Result<GetSecretValueResponse, RemoteFailure> =
         api("GetSecretValue", request)
 
-    override fun list(request: ListSecrets.Request): Result<ListSecrets.Response, RemoteFailure> =
+    override fun list(request: ListSecretsRequest): Result<ListSecretsResponse, RemoteFailure> =
         api("ListSecrets", request)
 
-    override fun put(request: PutSecretValue.Request): Result<PutSecretValue.Response, RemoteFailure> =
+    override fun put(request: PutSecretValueRequest): Result<PutSecretValueResponse, RemoteFailure> =
         api("PutSecretValue", request)
 
-    override fun update(request: UpdateSecret.Request): Result<UpdateSecret.Response, RemoteFailure> =
+    override fun update(request: UpdateSecretRequest): Result<UpdateSecretResponse, RemoteFailure> =
         api("UpdateSecret", request)
 }
