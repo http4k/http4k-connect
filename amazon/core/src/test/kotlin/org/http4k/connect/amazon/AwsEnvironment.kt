@@ -34,7 +34,7 @@ fun configAwsEnvironment(service: AwsService): AwsEnvironment {
             AwsCredentialScope(region, service.value)
         )
     } catch (e: LensFailure) {
-        assumeTrue(false, "no aws profile found")
+        assumeTrue(false, "no aws profile found (${e.failures.map { it.meta.name }.joinToString(",")}})")
         throw e
     }
 }
