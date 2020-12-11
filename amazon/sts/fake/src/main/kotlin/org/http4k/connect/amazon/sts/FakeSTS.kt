@@ -21,7 +21,9 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID.randomUUID
 
-class FakeSTS(private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake() {
+class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
+              private val defaultSessionValidity: Duration = Duration.ofHours(1)
+) : ChaosFake() {
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
     override val app = routes(
@@ -30,20 +32,22 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake(
         )
     )
 
-    private fun assumeRole() =
-        { r: Request -> r.form("Action") == "AssumeRole" }
-            .asRouter() bind { req: Request ->
-
-            Response(OK).with(lens of AssumeRoleResponse(
-                req.form("RoleArn")!!,
-                req.form("RoleSessionName")!!,
-                "accessKeyId",
-                "secretAccessKey",
-                randomUUID().toString().base64Encode(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ").format(
-                    ZonedDateTime.now(clock) + Duration.ofHours(1))
-            ))
-        }
+    private fun assumeRole() = { r: Request -> r.form("Action") == "AssumeRole" }
+        .asRouter() bind { req: Request ->
+        val duration = req.form("DurationSeconds")
+            ?.toLong()
+            ?.let { Duration.ofSeconds(it) }
+            ?: defaultSessionValidity
+        Response(OK).with(lens of AssumeRoleResponse(
+            req.form("RoleArn")!!,
+            req.form("RoleSessionName")!!,
+            "accessKeyId",
+            "secretAccessKey",
+            randomUUID().toString().base64Encode(),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ").format(
+                ZonedDateTime.now(clock) + duration)
+        ))
+    }
 }
 
 fun main() {
