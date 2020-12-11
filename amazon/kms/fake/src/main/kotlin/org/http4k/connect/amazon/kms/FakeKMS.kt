@@ -128,7 +128,7 @@ class FakeKMS(
     }
 
     /**
-     * Convenience function to get SystemsManager client
+     * Convenience function to get a KMS client
      */
     fun client() = KMS.Http(
         AwsCredentialScope("*", "kms"),

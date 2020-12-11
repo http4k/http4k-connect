@@ -1,5 +1,7 @@
 package org.http4k.connect.amazon.sts
 
+import org.http4k.aws.AwsCredentialScope
+import org.http4k.aws.AwsCredentials
 import org.http4k.base64Encode
 import org.http4k.connect.ChaosFake
 import org.http4k.core.Body
@@ -50,6 +52,13 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
                 ZonedDateTime.now(clock) + duration)
         ))
     }
+
+    /**
+     * Convenience function to get a STS client
+     */
+    fun client() = STS.Http(
+        AwsCredentialScope("*", "sts"),
+        { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 
 fun main() {
