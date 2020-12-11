@@ -19,6 +19,7 @@ import org.http4k.connect.amazon.model.RoleId
 import org.http4k.connect.amazon.model.SecretAccessKey
 import org.http4k.connect.amazon.model.SessionToken
 import org.http4k.connect.amazon.model.documentBuilderFactory
+import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -26,11 +27,13 @@ import org.http4k.core.Response
 import org.http4k.core.Uri
 import org.http4k.core.body.form
 import org.http4k.core.then
+import org.http4k.core.with
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
+import org.http4k.lens.Header.CONTENT_TYPE
 import org.w3c.dom.Document
 import java.time.Clock
 
@@ -41,7 +44,7 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
                        payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : STS {
 
-    private val http = SetBaseUriFrom(Uri.of("https://sts.${scope.region}.amazonaws.com/"))
+    private val http = SetBaseUriFrom(Uri.of("https://sts.${scope.region}.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
@@ -51,7 +54,8 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
         val base = listOf(
             "Action" to "AssumeRole",
             "RoleSessionName" to request.RoleSessionName,
-            "RoleArn" to request.RoleArn.value
+            "RoleArn" to request.RoleArn.value,
+            "Version" to "2011-06-15"
         )
 
         val policies = request.PolicyArns?.mapIndexed { index, next ->
@@ -72,15 +76,15 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
             request.DurationSeconds?.let { "DurationSeconds" to it.seconds.toString() },
         )
 
-        val uri = Uri.of("/")
         val response = http(listOfNotNull(base, policies, tags, transitiveTags, other)
-            .flatten().fold(Request(POST, uri)) { acc, it ->
+            .flatten().fold(Request(POST, Uri.of(""))
+                .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)) { acc, it ->
                 acc.form(it.first, it.second)
             })
 
         return when {
             response.status.successful -> Success(response.parse())
-            else -> Failure(RemoteFailure(POST, uri, response.status))
+            else -> Failure(RemoteFailure(POST, Uri.of(""), response.status))
         }
     }
 }
