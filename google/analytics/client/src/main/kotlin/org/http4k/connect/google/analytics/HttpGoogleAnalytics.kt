@@ -12,16 +12,16 @@ import org.http4k.core.body.form
 
 fun GoogleAnalytics.Companion.Http(trackingId: TrackingId,
                                    http: HttpHandler = JavaHttpClient()) = object : GoogleAnalytics {
-    override fun pageView(userAgent: String, clientId: ClientId, documentTitle: String, documentPath: String, documentHost: String) =
+    override operator fun invoke(request: PageViewRequest) =
         Uri.of("/collect").let {
             with(http(Request(POST, it)
-                .header("User-Agent", userAgent)
+                .header("User-Agent", request.userAgent)
                 .form(VERSION, "1")
                 .form(MEASUREMENT_ID, trackingId.value)
-                .form(CLIENT_ID, clientId.value)
-                .form(DOCUMENT_TITLE, documentTitle)
-                .form(DOCUMENT_PATH, documentPath)
-                .form(DOCUMENT_HOST, documentHost)
+                .form(CLIENT_ID, request.clientId.value)
+                .form(DOCUMENT_TITLE, request.documentTitle)
+                .form(DOCUMENT_PATH, request.documentPath)
+                .form(DOCUMENT_HOST, request.documentHost)
             )) {
                 if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, it, status))
             }
