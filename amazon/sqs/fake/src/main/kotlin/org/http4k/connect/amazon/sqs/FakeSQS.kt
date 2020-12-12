@@ -17,7 +17,7 @@ class FakeSQS(private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake(
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
     override val app = routes(
-        "/" bind POST to { req: Request -> Response(Status.OK) })
+        "/" bind POST to { _: Request -> Response(Status.OK) })
 }
 
 fun main() {

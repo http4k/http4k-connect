@@ -44,7 +44,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(AwsService.of("
         assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
         assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
-        assertThat(s3Bucket(CopyKey(key, newKey)).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(CopyKey(bucket, key, newKey)).successValue(), equalTo(Unit))
         assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
         assertThat(s3Bucket(ListKeys()).successValue(), equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value })))
         assertThat(s3Bucket(DeleteKey(newKey)).successValue(), equalTo(Unit))
