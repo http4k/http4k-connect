@@ -30,7 +30,7 @@ class FakeSystemsManager(
         putParameter()
     )
 
-    private fun deleteParameter() = api.route<DeleteParameterRequest> { req ->
+    private fun deleteParameter() = api.route<DeleteParameter> { req ->
         parameters[req.Name]?.let {
             parameters.remove(req.Name)
             Unit
@@ -38,19 +38,19 @@ class FakeSystemsManager(
     }
 
 
-    private fun getParameter() = api.route<GetParameterRequest> { req ->
+    private fun getParameter() = api.route<GetParameter> { req ->
         parameters[req.Name]?.let {
-            GetParameterResponse(Parameter(
+            ParameterValue(Parameter(
                 ARN.of(Region.of("us-east-1"), AwsService.of("ssm"), "parameter", it.name, AwsAccount.of("0")),
                 it.name, it.value, it.type, null, 1, Timestamp.of(0), null, null))
         }
     }
 
-    private fun putParameter() = api.route<PutParameterRequest> { req ->
+    private fun putParameter() = api.route<PutParameter> { req ->
         when {
             parameters[req.Name] == null -> {
                 parameters[req.Name] = StoredParameter(req.Name, req.Value, req.Type)
-                PutParameterResponse("Standard", 1)
+                PutParameterResult("Standard", 1)
             }
             else -> null
         }

@@ -19,23 +19,23 @@ fun KMS.Companion.Http(scope: AwsCredentialScope,
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
     private val api = AmazonJsonApi(AwsService.of("kms"), KMSMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode, AwsService.of("TrentService"))
 
-    override operator fun invoke(request: CreateKeyRequest): Result<CreateKeyResponse, RemoteFailure> =
+    override operator fun invoke(request: CreateKey): Result<KeyCreated, RemoteFailure> =
         api("CreateKey", request)
 
-    override operator fun invoke(request: DescribeKeyRequest): Result<DescribeKeyResponse, RemoteFailure> =
+    override operator fun invoke(request: DescribeKey): Result<KeyDescription, RemoteFailure> =
         api("DescribeKey", request)
 
-    override operator fun invoke(request: DecryptRequest): Result<DecryptResponse, RemoteFailure> = api("Decrypt", request)
+    override operator fun invoke(request: Decrypt): Result<Decrypted, RemoteFailure> = api("Decrypt", request)
 
-    override operator fun invoke(request: EncryptRequest): Result<EncryptResponse, RemoteFailure> = api("Encrypt", request)
+    override operator fun invoke(request: Encrypt): Result<Encrypted, RemoteFailure> = api("Encrypt", request)
 
-    override operator fun invoke(request: GetPublicKeyRequest): Result<GetPublicKeyResponse, RemoteFailure> =
+    override operator fun invoke(request: GetPublicKey): Result<PublicKey, RemoteFailure> =
         api("GetPublicKey", request)
 
-    override operator fun invoke(request: ScheduleKeyDeletionRequest): Result<ScheduleKeyDeletionResponse, RemoteFailure> =
+    override operator fun invoke(request: ScheduleKeyDeletion): Result<KeyDeletionSchedule, RemoteFailure> =
         api("ScheduleKeyDeletion", request)
 
-    override operator fun invoke(request: SignRequest): Result<SignResponse, RemoteFailure> = api("Sign", request)
+    override operator fun invoke(request: Sign): Result<Signed, RemoteFailure> = api("Sign", request)
 
-    override operator fun invoke(request: VerifyRequest): Result<VerifyResponse, RemoteFailure> = api("Verify", request)
+    override operator fun invoke(request: Verify): Result<VerifyResult, RemoteFailure> = api("Verify", request)
 }

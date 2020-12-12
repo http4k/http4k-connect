@@ -27,34 +27,34 @@ abstract class SecretsManagerContract(http: HttpHandler) : AwsContract(AwsServic
     @Test
     fun `secret lifecycle`() {
         try {
-            val lookupNothing = sm(GetSecretValueRequest(SecretId.of(name))).failureOrNull()
+            val lookupNothing = sm(GetSecretValue(SecretId.of(name))).failureOrNull()
             assertThat(lookupNothing?.status, equalTo(BAD_REQUEST))
 
-            val creation = sm(CreateSecretRequest(name, UUID.randomUUID(), secretValue)).successValue()
+            val creation = sm(CreateSecret(name, UUID.randomUUID(), secretValue)).successValue()
             assertThat(creation.Name, equalTo(name))
 
-            val list = sm(ListSecretsRequest()).successValue()
+            val list = sm(ListSecrets()).successValue()
             assertThat(list.SecretList.any { it.ARN == creation.ARN }, equalTo(true))
 
-            val lookupCreated = sm(GetSecretValueRequest(SecretId.of(name))).successValue()
+            val lookupCreated = sm(GetSecretValue(SecretId.of(name))).successValue()
             assertThat(lookupCreated.SecretString, present(equalTo(secretValue)))
 
-            val updated = sm(UpdateSecretRequest(SecretId.of(name), UUID.randomUUID(), updatedValue)).successValue()
+            val updated = sm(UpdateSecret(SecretId.of(name), UUID.randomUUID(), updatedValue)).successValue()
             assertThat(updated.Name, present(equalTo(name)))
 
-            val putValue = sm(PutSecretValueRequest(SecretId.of(name), UUID.randomUUID(), finalValue)).successValue()
+            val putValue = sm(PutSecretValue(SecretId.of(name), UUID.randomUUID(), finalValue)).successValue()
             assertThat(putValue.Name, present(equalTo(name)))
 
-            val lookupUpdated = sm(GetSecretValueRequest(SecretId.of(name))).successValue()
+            val lookupUpdated = sm(GetSecretValue(SecretId.of(name))).successValue()
             assertThat(lookupUpdated.SecretString, present(equalTo(finalValue)))
 
-            val deleted = sm(DeleteSecretRequest(SecretId.of(name))).successValue()
+            val deleted = sm(DeleteSecret(SecretId.of(name))).successValue()
             assertThat(deleted.ARN, present(equalTo(updated.ARN)))
 
-            val lookupDeleted = sm(GetSecretValueRequest(SecretId.of(name))).failureOrNull()
+            val lookupDeleted = sm(GetSecretValue(SecretId.of(name))).failureOrNull()
             assertThat(lookupDeleted?.status, equalTo(BAD_REQUEST))
         } finally {
-            sm(DeleteSecretRequest(SecretId.of(name)))
+            sm(DeleteSecret(SecretId.of(name)))
         }
     }
 }

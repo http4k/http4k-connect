@@ -26,31 +26,31 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(AwsService.of("
 
     @BeforeEach
     fun deleteBucket() {
-        s3Bucket(DeleteKeyRequest(key)).successValue()
-        s3Bucket(DeleteRequest()).successValue()
+        s3Bucket(DeleteKey(key)).successValue()
+        s3Bucket(Delete()).successValue()
     }
 
     @Test
     fun `bucket key lifecycle`() {
         val newKey = BucketKey.of(UUID.randomUUID().toString())
 
-        assertThat(s3Bucket(CreateRequest()).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(Create()).successValue(), equalTo(Unit))
 
-        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Empty))
+        assertThat(s3Bucket(ListKeys()).successValue(), equalTo(Listing.Empty))
         assertThat(s3Bucket[key].successValue(), absent())
         assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
         assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
-        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Unpaged(listOf(key))))
+        assertThat(s3Bucket(ListKeys()).successValue(), equalTo(Listing.Unpaged(listOf(key))))
         assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
         assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
-        assertThat(s3Bucket(CopyKeyRequest(key, newKey)).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(CopyKey(key, newKey)).successValue(), equalTo(Unit))
         assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
-        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value })))
-        assertThat(s3Bucket(DeleteKeyRequest(newKey)).successValue(), equalTo(Unit))
-        assertThat(s3Bucket(DeleteKeyRequest(key)).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(ListKeys()).successValue(), equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value })))
+        assertThat(s3Bucket(DeleteKey(newKey)).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(DeleteKey(key)).successValue(), equalTo(Unit))
         assertThat(s3Bucket[key].successValue(), equalTo(null))
-        assertThat(s3Bucket(ListKeysRequest()).successValue(), equalTo(Listing.Empty))
-        assertThat(s3Bucket(DeleteRequest()).successValue(), equalTo(Unit))
+        assertThat(s3Bucket(ListKeys()).successValue(), equalTo(Listing.Empty))
+        assertThat(s3Bucket(Delete()).successValue(), equalTo(Unit))
     }
 }

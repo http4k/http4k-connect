@@ -21,16 +21,16 @@ abstract class S3GlobalContract(http: HttpHandler) : AwsContract(AwsService.of("
 
     @BeforeEach
     fun deleteBucket() {
-        s3(DeleteBucketRequest(bucket)).successValue()
+        s3(DeleteBucket(bucket)).successValue()
     }
 
     @Test
     fun `bucket lifecycle`() {
-        assertThat(s3(ListBucketsRequest()).successValue().contains(bucket), equalTo(false))
-        assertThat(s3(CreateBucketRequest(bucket)), equalTo(Success(Unit)))
-        assertThat(s3(ListBucketsRequest()).successValue().contains(bucket), equalTo(true))
-        assertThat(s3(DeleteBucketRequest(bucket)), equalTo(Success(Unit)))
-        assertThat(s3(ListBucketsRequest()).successValue().contains(bucket), equalTo(false))
+        assertThat(s3(ListBuckets()).successValue().contains(bucket), equalTo(false))
+        assertThat(s3(CreateBucket(bucket)), equalTo(Success(Unit)))
+        assertThat(s3(ListBuckets()).successValue().contains(bucket), equalTo(true))
+        assertThat(s3(DeleteBucket(bucket)), equalTo(Success(Unit)))
+        assertThat(s3(ListBuckets()).successValue().contains(bucket), equalTo(false))
     }
 }
 

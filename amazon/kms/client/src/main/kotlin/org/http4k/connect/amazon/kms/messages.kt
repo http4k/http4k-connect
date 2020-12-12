@@ -10,7 +10,7 @@ import org.http4k.connect.amazon.model.SigningAlgorithm
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 
-data class CreateKeyRequest(
+data class CreateKey(
     val CustomerMasterKeySpec: CustomerMasterKeySpec? = null,
     val KeyUsage: KeyUsage? = null,
     val BypassPolicyLockoutSafetyCheck: Boolean? = null,
@@ -21,13 +21,13 @@ data class CreateKeyRequest(
     val Tags: List<Tag>? = null
 )
 
-data class CreateKeyResponse(val KeyMetadata: KeyMetadata)
+data class KeyCreated(val KeyMetadata: KeyMetadata)
 
-data class DescribeKeyRequest(val KeyId: KmsKeyId, val GrantTokens: List<String>? = null)
+data class DescribeKey(val KeyId: KmsKeyId, val GrantTokens: List<String>? = null)
 
-data class DescribeKeyResponse(val KeyMetadata: KeyMetadata)
+data class KeyDescription(val KeyMetadata: KeyMetadata)
 
-data class DecryptRequest(
+data class Decrypt(
     val KeyId: KmsKeyId,
     val CiphertextBlob: Base64Blob,
     val EncryptionAlgorithm: EncryptionAlgorithm? = null,
@@ -35,9 +35,9 @@ data class DecryptRequest(
     val GrantTokens: List<String>? = null
 )
 
-data class DecryptResponse(val KeyId: KmsKeyId, val Plaintext: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
+data class Decrypted(val KeyId: KmsKeyId, val Plaintext: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
 
-data class EncryptRequest(
+data class Encrypt(
     val KeyId: KmsKeyId,
     val Plaintext: Base64Blob,
     val EncryptionAlgorithm: EncryptionAlgorithm? = null,
@@ -45,14 +45,14 @@ data class EncryptRequest(
     val GrantTokens: List<String>? = null
 )
 
-data class EncryptResponse(val KeyId: KmsKeyId, val CiphertextBlob: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
+data class Encrypted(val KeyId: KmsKeyId, val CiphertextBlob: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
 
-data class GetPublicKeyRequest(
+data class GetPublicKey(
     val KeyId: KmsKeyId,
     val GrantTokens: List<String>? = null
 )
 
-data class GetPublicKeyResponse(
+data class PublicKey(
     val KeyId: KmsKeyId,
     val CustomerMasterKeySpec: CustomerMasterKeySpec,
     val EncryptionAlgorithms: List<EncryptionAlgorithm>,
@@ -61,10 +61,10 @@ data class GetPublicKeyResponse(
     val SigningAlgorithms: List<SigningAlgorithm>?
 )
 
-data class ScheduleKeyDeletionRequest(val KeyId: KmsKeyId, val PendingWindowInDays: Int? = null)
-data class ScheduleKeyDeletionResponse(val KeyId: KmsKeyId, val DeletionDate: Timestamp)
+data class ScheduleKeyDeletion(val KeyId: KmsKeyId, val PendingWindowInDays: Int? = null)
+data class KeyDeletionSchedule(val KeyId: KmsKeyId, val DeletionDate: Timestamp)
 
-data class SignRequest(
+data class Sign(
     val KeyId: KmsKeyId,
     val Message: Base64Blob,
     val SigningAlgorithm: SigningAlgorithm,
@@ -72,13 +72,13 @@ data class SignRequest(
     val MessageType: String? = null
 )
 
-data class SignResponse(
+data class Signed(
     val KeyId: KmsKeyId,
     val Signature: Base64Blob,
     val SigningAlgorithm: SigningAlgorithm
 )
 
-data class VerifyRequest(
+data class Verify(
     val KeyId: KmsKeyId,
     val Message: Base64Blob,
     val Signature: Base64Blob,
@@ -87,7 +87,7 @@ data class VerifyRequest(
     val GrantTokens: List<String>? = null
 )
 
-data class VerifyResponse(
+data class VerifyResult(
     val KeyId: KmsKeyId,
     val SignatureValid: Boolean,
     val SigningAlgorithm: SigningAlgorithm

@@ -12,7 +12,7 @@ import org.http4k.core.body.form
 
 fun GoogleAnalytics.Companion.Http(trackingId: TrackingId,
                                    http: HttpHandler = JavaHttpClient()) = object : GoogleAnalytics {
-    override operator fun invoke(request: PageViewRequest) =
+    override operator fun invoke(request: PageView) =
         Uri.of("/collect").let {
             with(http(Request(POST, it)
                 .header("User-Agent", request.userAgent)

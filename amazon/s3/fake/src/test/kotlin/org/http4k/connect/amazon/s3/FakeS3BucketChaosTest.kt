@@ -5,5 +5,5 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 
 class FakeS3BucketChaosTest : FakeSystemContract(FakeS3()) {
-    override val anyValidRequest = Request(GET, "/")
+    override val anyValid = Request(GET, "/")
 }

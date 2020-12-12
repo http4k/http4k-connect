@@ -6,5 +6,5 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 
 class FakeGoogleAnalyticsChaosTest : FakeSystemContract(FakeGoogleAnalytics()) {
-    override val anyValidRequest = Request(Method.POST, "/collect")
+    override val anyValid = Request(Method.POST, "/collect")
 }

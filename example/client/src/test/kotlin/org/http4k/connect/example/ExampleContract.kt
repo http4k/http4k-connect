@@ -11,6 +11,6 @@ interface ExampleContract {
 
     @Test
     fun `can echo`() {
-        assertThat(Example.Http(http)(EchoRequest("hello")), equalTo(Success(EchoResponse("hello"))))
+        assertThat(Example.Http(http)(Echo("hello")), equalTo(Success(Echoed("hello"))))
     }
 }

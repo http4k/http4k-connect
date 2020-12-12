@@ -1,12 +1,12 @@
 import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.systemsmanager.FakeSystemsManager
-import org.http4k.connect.amazon.systemsmanager.GetParameterRequest
-import org.http4k.connect.amazon.systemsmanager.PutParameterRequest
+import org.http4k.connect.amazon.systemsmanager.GetParameter
+import org.http4k.connect.amazon.systemsmanager.PutParameter
 
 fun main() {
     val fakeSsm = FakeSystemsManager()
     val client = fakeSsm.client()
 
-    println(client(PutParameterRequest("name", "value", ParameterType.String)))
-    println(client(GetParameterRequest("name")))
+    println(client(PutParameter("name", "value", ParameterType.String)))
+    println(client(GetParameter("name")))
 }

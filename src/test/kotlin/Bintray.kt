@@ -19,16 +19,15 @@ import java.time.Instant
 
 data class Package(val owner: String, val packageName: String)
 
-data class UploadsRequest(val pkg: Package)
-data class RepoRequest(val owner: String)
-data class OrgRequest(val owner: String)
-data class PackageRequest(val pkg: Package)
+data class Uploads(val pkg: Package)
+data class Repo(val owner: String)
+data class Org(val owner: String)
 
 interface Bintray {
-    operator fun invoke(request: UploadsRequest): Result<String, Status>
-    operator fun invoke(request: RepoRequest): Result<String, Status>
-    operator fun invoke(request: OrgRequest): Result<String, Status>
-    operator fun invoke(request: PackageRequest): Result<String, Status>
+    operator fun invoke(request: Uploads): Result<String, Status>
+    operator fun invoke(request: Repo): Result<String, Status>
+    operator fun invoke(request: Org): Result<String, Status>
+    operator fun invoke(request: Package): Result<String, Status>
 
     companion object
 }
@@ -40,7 +39,7 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         .then(ClientFilters.BasicAuth(credentials))
         .then(httpHandler)
 
-    override operator fun invoke(request: UploadsRequest): Result<String, Status> {
+    override operator fun invoke(request: Uploads): Result<String, Status> {
         val result = http(Request(POST, "/packages/${request.pkg.owner}/maven/${request.pkg.packageName}/stats/time_range_downloads"))
             .with(Body.auto<Downloads>().toLens() of Downloads(Instant.now(), Instant.now()))
 
@@ -50,7 +49,7 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         }
     }
 
-    override operator fun invoke(request: RepoRequest): Result<String, Status> {
+    override operator fun invoke(request: Repo): Result<String, Status> {
         val result = http(Request(GET, "/repos/${request.owner}/maven"))
 
         return when {
@@ -59,7 +58,7 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         }
     }
 
-    override operator fun invoke(request: OrgRequest): Result<String, Status> {
+    override operator fun invoke(request: Org): Result<String, Status> {
         val result = http(Request(GET, "/orgs/${request.owner}"))
 
         return when {
@@ -68,8 +67,8 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         }
     }
 
-    override operator fun invoke(request: PackageRequest): Result<String, Status> {
-        val result = http(Request(GET, "/packages/${request.pkg.owner}/maven/${request.pkg.packageName}"))
+    override operator fun invoke(request: Package): Result<String, Status> {
+        val result = http(Request(GET, "/packages/${request.owner}/maven/${request.packageName}"))
 
         return when {
             result.status.successful -> Success(Jackson.prettify(result.bodyString()))

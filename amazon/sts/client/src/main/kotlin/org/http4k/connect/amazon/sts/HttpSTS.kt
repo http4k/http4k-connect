@@ -49,7 +49,7 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override operator fun invoke(request: AssumeRoleRequest): Result<AssumeRoleResponse, RemoteFailure> {
+    override operator fun invoke(request: AssumeRole): Result<AssumedRole, RemoteFailure> {
         val base = listOf(
             "Action" to "AssumeRole",
             "RoleSessionName" to request.RoleSessionName,
@@ -88,7 +88,7 @@ fun STS.Companion.Http(scope: AwsCredentialScope,
     }
 }
 
-private fun Response.parse() = AssumeRoleResponse(
+private fun Response.parse() = AssumedRole(
     with(documentBuilderFactory.parse(body.stream)) {
         AssumeRoleResponseInner(
             AssumeRoleResult(

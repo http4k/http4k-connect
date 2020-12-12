@@ -21,7 +21,7 @@ abstract class STSContract(http: HttpHandler) : AwsContract(AwsService.of("sts")
 
     @Test
     fun `assume role`() {
-        val result = sts(AssumeRoleRequest(
+        val result = sts(AssumeRole(
             ARN.of("arn:aws:iam::169766454405:role/ROLETEST"),
             UUID.randomUUID().toString(),
             DurationSeconds = Duration.ofHours(1)

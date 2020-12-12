@@ -36,7 +36,7 @@ fun SQS.Companion.Http(scope: AwsCredentialScope,
 
     //            .body("""Action=SendMessage&Version=2012-11-05&MessageBody=asd""")
 
-    override fun invoke(request: SendMessageRequest): Result<Unit, RemoteFailure> {
+    override fun invoke(request: SendMessage): Result<Unit, RemoteFailure> {
         val base = listOf(
             "Action" to "SendMessage",
             "MessageBody" to request.payload,

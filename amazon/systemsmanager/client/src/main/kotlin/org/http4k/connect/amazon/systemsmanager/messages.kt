@@ -6,11 +6,11 @@ import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 
-data class DeleteParameterRequest(
+data class DeleteParameter(
     val Name: String
 )
 
-data class GetParameterRequest(
+data class GetParameter(
     val Name: String,
     val WithDecryption: Boolean? = null,
 )
@@ -27,11 +27,11 @@ data class Parameter(
     val SourceResult: String?
 )
 
-data class GetParameterResponse(
+data class ParameterValue(
     val Parameter: Parameter
 )
 
-data class PutParameterRequest(
+data class PutParameter(
     val Name: String,
     val Value: String,
     val Type: ParameterType,
@@ -45,7 +45,7 @@ data class PutParameterRequest(
     val Tier: String? = null
 )
 
-data class PutParameterResponse(
+data class PutParameterResult(
     val Tier: String,
     val Version: Int
 )

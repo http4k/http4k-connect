@@ -6,7 +6,7 @@ import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.minLength
 import org.http4k.connect.RemoteFailure
 
-data class PageViewRequest(
+data class PageView(
     val userAgent: String,
     val clientId: ClientId,
     val documentTitle: String,
@@ -15,7 +15,7 @@ data class PageViewRequest(
 )
 
 interface GoogleAnalytics {
-    operator fun invoke(request: PageViewRequest): Result<Unit, RemoteFailure>
+    operator fun invoke(request: PageView): Result<Unit, RemoteFailure>
 
     companion object
 }

@@ -29,24 +29,24 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
     fun `encrypt-decrypt key lifecycle`() {
         val plaintext = Base64Blob.encoded("hello there")
 
-        val creation = kms(CreateKeyRequest(RSA_3072, ENCRYPT_DECRYPT)).successValue()
+        val creation = kms(CreateKey(RSA_3072, ENCRYPT_DECRYPT)).successValue()
         val keyId = creation.KeyMetadata.KeyId
         assertThat(keyId, present())
 
-        val describe = kms(DescribeKeyRequest(keyId)).successValue()
+        val describe = kms(DescribeKey(keyId)).successValue()
         assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 
-        val encrypt = kms(EncryptRequest(keyId, plaintext, RSAES_OAEP_SHA_256)).successValue()
+        val encrypt = kms(Encrypt(keyId, plaintext, RSAES_OAEP_SHA_256)).successValue()
         assertThat(encrypt.KeyId.toARN().value, endsWith(keyId.value))
 
-        val decrypt = kms(DecryptRequest(keyId, encrypt.CiphertextBlob, RSAES_OAEP_SHA_256)).successValue()
+        val decrypt = kms(Decrypt(keyId, encrypt.CiphertextBlob, RSAES_OAEP_SHA_256)).successValue()
         assertThat(decrypt.KeyId.toARN().value, endsWith(keyId.value))
         assertThat(decrypt.Plaintext, equalTo(plaintext))
 
-        val publicKey = kms(GetPublicKeyRequest(keyId)).successValue()
+        val publicKey = kms(GetPublicKey(keyId)).successValue()
         assertThat(publicKey.KeyId.toARN().value, endsWith(keyId.value))
 
-        val deletion = kms(ScheduleKeyDeletionRequest(keyId)).successValue()
+        val deletion = kms(ScheduleKeyDeletion(keyId)).successValue()
         assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))
     }
 
@@ -54,23 +54,23 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
     fun `sign-verify key lifecycle`() {
         val plaintext = Base64Blob.encoded("hello there")
 
-        val creation = kms(CreateKeyRequest(RSA_3072, SIGN_VERIFY)).successValue()
+        val creation = kms(CreateKey(RSA_3072, SIGN_VERIFY)).successValue()
         val keyId = creation.KeyMetadata.KeyId
         assertThat(keyId, present())
 
-        val describe = kms(DescribeKeyRequest(keyId)).successValue()
+        val describe = kms(DescribeKey(keyId)).successValue()
         assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 
-        val signed = kms(SignRequest(keyId, plaintext, RSASSA_PSS_SHA_256)).successValue()
+        val signed = kms(Sign(keyId, plaintext, RSASSA_PSS_SHA_256)).successValue()
         assertThat(signed.SigningAlgorithm, equalTo(RSASSA_PSS_SHA_256))
 
-        val verification = kms(VerifyRequest(keyId, plaintext, signed.Signature, RSASSA_PSS_SHA_256)).successValue()
+        val verification = kms(Verify(keyId, plaintext, signed.Signature, RSASSA_PSS_SHA_256)).successValue()
         assertThat(verification.SignatureValid, equalTo(true))
 
-        val verificationFailure = kms(VerifyRequest(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384)).failureOrNull()
+        val verificationFailure = kms(Verify(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384)).failureOrNull()
         assertThat(verificationFailure!!.status, equalTo(BAD_REQUEST))
 
-        val deletion = kms(ScheduleKeyDeletionRequest(keyId)).successValue()
+        val deletion = kms(ScheduleKeyDeletion(keyId)).successValue()
         assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))
     }
 }

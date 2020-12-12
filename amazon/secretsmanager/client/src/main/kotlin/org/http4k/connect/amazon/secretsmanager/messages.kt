@@ -10,7 +10,7 @@ import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.model.VersionStage
 import java.util.UUID
 
-class CreateSecretRequest private constructor(
+class CreateSecret private constructor(
     val Name: String,
     val ClientRequestToken: UUID,
     val SecretString: String?,
@@ -34,32 +34,32 @@ class CreateSecretRequest private constructor(
                 Tags: List<Tag>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
 }
 
-data class CreateSecretResponse(
+data class CreatedSecret(
     val ARN: ARN,
     val Name: String,
     val VersionId: VersionId? = null
 )
 
-data class DeleteSecretRequest(
+data class DeleteSecret(
     val SecretId: SecretId,
     val ForceDeleteWithoutRecovery: Boolean = false,
     val RecoveryWindowInDays: Int? = null
 )
 
-data class DeleteSecretResponse(
+data class DeletedSecret(
     val Name: String,
     val ARN: ARN,
     val DeletionDate: Timestamp
 )
 
 
-data class GetSecretValueRequest(
+data class GetSecretValue(
     val SecretId: SecretId,
     val VersionId: VersionId? = null,
     val VersionStage: VersionStage? = null
 )
 
-data class GetSecretValueResponse(
+data class SecretValue(
     val ARN: ARN,
     val CreatedDate: Timestamp,
     val Name: String,
@@ -73,7 +73,7 @@ data class Filters(val Key: String, val Values: List<String>)
 
 enum class SortOrder { asc, desc }
 
-data class ListSecretsRequest(
+data class ListSecrets(
     val MaxResults: Int? = null,
     val NextToken: String? = null,
     val SortOrder: SortOrder? = null,
@@ -98,12 +98,12 @@ data class Secret(
     val RotationRules: RotationRules? = null
 )
 
-data class ListSecretsResponse(
+data class Secrets(
     val SecretList: List<Secret>,
     val NextToken: String? = null
 )
 
-class PutSecretValueRequest private constructor(
+class PutSecretValue private constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,
     val SecretString: String?,
@@ -121,14 +121,14 @@ class PutSecretValueRequest private constructor(
                 VersionStages: List<String>? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, VersionStages)
 }
 
-data class PutSecretValueResponse(
+data class UpdatedSecretValue(
     val ARN: ARN,
     val Name: String,
     val VersionId: VersionId? = null,
     val VersionStages: List<String>? = null
 )
 
-class UpdateSecretRequest private constructor(
+class UpdateSecret private constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,
     val SecretString: String?,
@@ -149,7 +149,7 @@ class UpdateSecretRequest private constructor(
                 KmsKeyId: String? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
 }
 
-data class UpdateSecretResponse(
+data class UpdatedSecret(
     val ARN: ARN,
     val Name: String,
     val VersionId: VersionId? = null

@@ -6,7 +6,7 @@ import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TokenCode
 import java.time.Duration
 
-data class AssumeRoleRequest(
+data class AssumeRole(
     val RoleArn: ARN,
     val RoleSessionName: String,
     val TokenCode: TokenCode? = null,
@@ -19,4 +19,4 @@ data class AssumeRoleRequest(
     val TransitiveTagKeys: List<String>? = null
 )
 
-data class AssumeRoleResponse(val AssumeRoleResponse: AssumeRoleResponse)
+data class AssumedRole(val AssumeRoleResponse: AssumeRoleResponse)

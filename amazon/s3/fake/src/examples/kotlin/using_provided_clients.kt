@@ -9,10 +9,10 @@ fun main() {
     val s3BucketClient = fakeS3.s3BucketClient(BucketName.of("foobar"))
     val s3Client = fakeS3.s3Client()
 
-    println(s3BucketClient(CreateRequest()))
-    println(s3Client(ListBucketsRequest()))
+    println(s3BucketClient(Create()))
+    println(s3Client(ListBuckets()))
 
     println(s3BucketClient.set(BucketKey.of("content"), "hellothere".byteInputStream()))
-    println(s3BucketClient(ListKeysRequest()))
+    println(s3BucketClient(ListKeys()))
     println(s3BucketClient[BucketKey.of("content")].map { it!!.bufferedReader().readText() })
 }

@@ -2,7 +2,7 @@ package org.http4k.filter
 
 import org.http4k.connect.google.analytics.ClientId
 import org.http4k.connect.google.analytics.GoogleAnalytics
-import org.http4k.connect.google.analytics.PageViewRequest
+import org.http4k.connect.google.analytics.PageView
 import org.http4k.core.Filter
 import org.http4k.core.Request
 import org.http4k.routing.RoutedRequest
@@ -22,7 +22,7 @@ fun ServerFilters.LogPageView(analytics: GoogleAnalytics,
                     else -> request.uri.path
                 }
                 val userAgent = it.header("User-Agent") ?: DEFAULT_USER_AGENT
-                analytics(PageViewRequest(userAgent, clientId(request), path, path, host))
+                analytics(PageView(userAgent, clientId(request), path, path, host))
             }
         }
     }
