@@ -8,6 +8,7 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.Payload
 import java.time.Clock
 
@@ -17,7 +18,7 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
 
-    private val http = ClientFilters.SetBaseUriFrom(Uri.of("https://secretsmanager.${scope.region}.amazonaws.com"))
+    private val http = SetBaseUriFrom(Uri.of("https://secretsmanager.${scope.region}.amazonaws.com"))
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 

@@ -8,12 +8,12 @@ import org.http4k.connect.amazon.model.Timestamp
 
 data class DeleteParameter(
     val Name: String
-)
+): SystemsManagerAction<Unit>(Unit::class)
 
 data class GetParameter(
     val Name: String,
     val WithDecryption: Boolean? = null,
-)
+): SystemsManagerAction<ParameterValue>(ParameterValue::class)
 
 data class Parameter(
     val ARN: ARN?,
@@ -43,7 +43,7 @@ data class PutParameter(
     val Policies: List<String>? = null,
     val Tags: List<Tag>? = null,
     val Tier: String? = null
-)
+) : SystemsManagerAction<PutParameterResult>(PutParameterResult::class)
 
 data class PutParameterResult(
     val Tier: String,
