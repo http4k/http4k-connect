@@ -1,14 +1,13 @@
 package org.http4k.connect.amazon.secretsmanager
 
-import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.AmazonJsonApi
-import org.http4k.connect.amazon.invoke
-import org.http4k.connect.amazon.model.AwsService
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
+import org.http4k.core.then
+import org.http4k.filter.AwsAuth
+import org.http4k.filter.ClientFilters
 import org.http4k.filter.Payload
 import java.time.Clock
 
@@ -17,23 +16,10 @@ fun SecretsManager.Companion.Http(scope: AwsCredentialScope,
                                   rawHttp: HttpHandler = JavaHttpClient(),
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
-    private val api = AmazonJsonApi(AwsService.of("secretsmanager"), SecretsManagerMoshi, scope, credentialsProvider, rawHttp, clock, payloadMode)
 
-    override operator fun invoke(request: CreateSecret): Result<CreatedSecret, RemoteFailure> =
-        api("CreateSecret", request)
+    private val http = ClientFilters.SetBaseUriFrom(Uri.of("https://secretsmanager.${scope.region}.amazonaws.com"))
+        .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
+        .then(rawHttp)
 
-    override operator fun invoke(request: DeleteSecret): Result<DeletedSecret, RemoteFailure> =
-        api("DeleteSecret", request)
-
-    override operator fun invoke(request: GetSecretValue): Result<SecretValue, RemoteFailure> =
-        api("GetSecretValue", request)
-
-    override operator fun invoke(request: ListSecrets): Result<Secrets, RemoteFailure> =
-        api("ListSecrets", request)
-
-    override operator fun invoke(request: PutSecretValue): Result<UpdatedSecretValue, RemoteFailure> =
-        api("PutSecretValue", request)
-
-    override operator fun invoke(request: UpdateSecret): Result<UpdatedSecret, RemoteFailure> =
-        api("UpdateSecret", request)
+    override fun <R : Any> invoke(request: SecretsManagerAction<R>) = request.toResult(http(request.toRequest()))
 }

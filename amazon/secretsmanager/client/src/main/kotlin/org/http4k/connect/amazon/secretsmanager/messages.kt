@@ -18,7 +18,7 @@ class CreateSecret private constructor(
     val Description: String?,
     val KmsKeyId: String?,
     val Tags: List<Tag>?
-) {
+) : SecretsManagerAction<CreatedSecret>(CreatedSecret::class) {
     constructor(Name: String,
                 ClientRequestToken: UUID,
                 SecretString: String,
@@ -44,7 +44,7 @@ data class DeleteSecret(
     val SecretId: SecretId,
     val ForceDeleteWithoutRecovery: Boolean = false,
     val RecoveryWindowInDays: Int? = null
-)
+) : SecretsManagerAction<DeletedSecret>(DeletedSecret::class)
 
 data class DeletedSecret(
     val Name: String,
@@ -52,12 +52,11 @@ data class DeletedSecret(
     val DeletionDate: Timestamp
 )
 
-
 data class GetSecretValue(
     val SecretId: SecretId,
     val VersionId: VersionId? = null,
     val VersionStage: VersionStage? = null
-)
+) : SecretsManagerAction<SecretValue>(SecretValue::class)
 
 data class SecretValue(
     val ARN: ARN,
@@ -78,7 +77,7 @@ data class ListSecrets(
     val NextToken: String? = null,
     val SortOrder: SortOrder? = null,
     val Filters: List<Filters>? = null
-)
+) : SecretsManagerAction<Secrets>(Secrets::class)
 
 data class RotationRules(val AutomaticallyAfterDays: Int? = null)
 
@@ -109,7 +108,7 @@ class PutSecretValue private constructor(
     val SecretString: String?,
     val SecretBinary: Base64Blob?,
     val VersionStages: List<String>?
-) {
+) : SecretsManagerAction<UpdatedSecretValue>(UpdatedSecretValue::class) {
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretString: String,
@@ -135,7 +134,7 @@ class UpdateSecret private constructor(
     val SecretBinary: Base64Blob?,
     val Description: String?,
     val KmsKeyId: String?
-) {
+): SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretString: String,

@@ -2,18 +2,17 @@ package org.http4k.connect.amazon.secretsmanager
 
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.AmazonJsonAction
+import org.http4k.connect.amazon.model.AwsService
+import kotlin.reflect.KClass
 
 /**
  * Docs: https://docs.aws.amazon.com/secretsmanager/latest/apireference/Welcome.html
  */
+abstract class SecretsManagerAction<R : Any>(clazz: KClass<R>) : AmazonJsonAction<R>(AwsService.of("secretsmanager"), clazz, SecretsManagerMoshi)
+
 interface SecretsManager {
-    operator fun invoke(request: CreateSecret): Result<CreatedSecret, RemoteFailure>
-    operator fun invoke(request: DeleteSecret): Result<DeletedSecret, RemoteFailure>
-    operator fun invoke(request: GetSecretValue): Result<SecretValue, RemoteFailure>
-    operator fun invoke(request: ListSecrets): Result<Secrets, RemoteFailure>
-    operator fun invoke(request: PutSecretValue): Result<UpdatedSecretValue, RemoteFailure>
-    operator fun invoke(request: UpdateSecret): Result<UpdatedSecret, RemoteFailure>
+    operator fun <R : Any> invoke(request: SecretsManagerAction<R>): Result<R, RemoteFailure>
 
     companion object
 }
-
