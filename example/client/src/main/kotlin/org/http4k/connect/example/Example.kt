@@ -4,7 +4,7 @@ import dev.forkhandles.result4k.Result
 import org.http4k.connect.RemoteFailure
 
 interface Example {
-    operator fun invoke(request: Echo): Result<Echoed, RemoteFailure>
+    operator fun <R> invoke(request: ExampleAction<R>): Result<R, RemoteFailure>
 
     companion object
 }
