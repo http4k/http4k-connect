@@ -28,7 +28,6 @@ abstract class STSContract(http: HttpHandler) : AwsContract(AwsService.of("sts")
         ))
 
         assertTrue(result.successValue()
-            .AssumeRoleResponse.AssumeRoleResult
             .Credentials.Expiration.value.isAfter(ZonedDateTime.now(clock)))
     }
 }

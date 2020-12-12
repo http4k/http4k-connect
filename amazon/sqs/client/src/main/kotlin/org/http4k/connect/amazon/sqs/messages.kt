@@ -11,8 +11,9 @@ import org.http4k.core.Uri
 import org.http4k.core.body.form
 import org.http4k.core.with
 import org.http4k.lens.Header.CONTENT_TYPE
+import org.w3c.dom.Document
 
-data class SendMessage(val payload: String) : SQSAction<Unit> {
+data class SendMessage(val payload: String) : SQSAction<SentMessage> {
     override fun toRequest(): Request {
         val base = listOf(
             "Action" to "SendMessage",
@@ -30,10 +31,25 @@ data class SendMessage(val payload: String) : SQSAction<Unit> {
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(Unit)
+            status.successful -> Success(SentMessage.from(response))
             else -> Failure(RemoteFailure(POST, uri(), status))
         }
     }
 
     private fun uri() = Uri.of("")
 }
+
+data class SentMessage(
+    val MD5OfMessageBody: String,
+    val MD5OfMessageAttributes: String,
+    val MessageId: String
+) {
+    companion object {
+        fun from(response: Response) =
+            with(documentBuilderFactory.parse(response.body.stream)) {
+                SentMessage(text("MD5OfMessageBody"), text("MD5OfMessageAttributes"), text("MessageId"))
+            }
+    }
+}
+
+private fun Document.text(name: String) = getElementsByTagName(name).item(0).textContent.trim()

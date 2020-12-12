@@ -5,18 +5,14 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AccessKeyId
-import org.http4k.connect.amazon.model.AssumeRoleResponse
-import org.http4k.connect.amazon.model.AssumeRoleResult
 import org.http4k.connect.amazon.model.AssumedRoleUser
 import org.http4k.connect.amazon.model.Credentials
 import org.http4k.connect.amazon.model.Expiration
-import org.http4k.connect.amazon.model.ResponseMetadata
 import org.http4k.connect.amazon.model.RoleId
 import org.http4k.connect.amazon.model.SecretAccessKey
 import org.http4k.connect.amazon.model.SessionToken
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TokenCode
-import org.http4k.connect.amazon.model.documentBuilderFactory
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -80,24 +76,24 @@ data class AssumeRole(
     }
 }
 
-data class AssumedRole(val AssumeRoleResponse: AssumeRoleResponse) {
+data class AssumedRole(val PackedPolicySize: Int,
+                       val AssumedRoleUser: AssumedRoleUser,
+                       val Credentials: Credentials
+) {
     companion object {
-        fun from(response: Response) = AssumedRole(
+        fun from(response: Response) =
             with(documentBuilderFactory.parse(response.body.stream)) {
-                AssumeRoleResponse(
-                    AssumeRoleResult(
-                        text("PackedPolicySize").toInt(),
-                        AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
-                        Credentials(
-                            SessionToken.of(text("SessionToken")),
-                            AccessKeyId.of(text("AccessKeyId")),
-                            SecretAccessKey.of(text("SecretAccessKey")),
-                            Expiration.parse(text("Expiration")))
-                    ),
-                    ResponseMetadata("")
+                AssumedRole(
+                    text("PackedPolicySize").toInt(),
+                    AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
+                    Credentials(
+                        SessionToken.of(text("SessionToken")),
+                        AccessKeyId.of(text("AccessKeyId")),
+                        SecretAccessKey.of(text("SecretAccessKey")),
+                        Expiration.parse(text("Expiration"))
+                    )
                 )
             }
-        )
     }
 }
 
