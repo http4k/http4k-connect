@@ -19,11 +19,12 @@ data class CreateKey(
     val Origin: String? = null,
     val Policy: String? = null,
     val Tags: List<Tag>? = null
-)
+) : KMSAction<KeyCreated>(KeyCreated::class)
 
 data class KeyCreated(val KeyMetadata: KeyMetadata)
 
 data class DescribeKey(val KeyId: KmsKeyId, val GrantTokens: List<String>? = null)
+    : KMSAction<KeyDescription>(KeyDescription::class)
 
 data class KeyDescription(val KeyMetadata: KeyMetadata)
 
@@ -33,7 +34,8 @@ data class Decrypt(
     val EncryptionAlgorithm: EncryptionAlgorithm? = null,
     val EncryptionContext: Map<String, String>? = null,
     val GrantTokens: List<String>? = null
-)
+) : KMSAction<Decrypted>(Decrypted::class)
+
 
 data class Decrypted(val KeyId: KmsKeyId, val Plaintext: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
 
@@ -43,14 +45,14 @@ data class Encrypt(
     val EncryptionAlgorithm: EncryptionAlgorithm? = null,
     val EncryptionContext: Map<String, String>? = null,
     val GrantTokens: List<String>? = null
-)
+) : KMSAction<Encrypted>(Encrypted::class)
 
 data class Encrypted(val KeyId: KmsKeyId, val CiphertextBlob: Base64Blob, val EncryptionAlgorithm: EncryptionAlgorithm)
 
 data class GetPublicKey(
     val KeyId: KmsKeyId,
     val GrantTokens: List<String>? = null
-)
+) : KMSAction<PublicKey>(PublicKey::class)
 
 data class PublicKey(
     val KeyId: KmsKeyId,
@@ -62,6 +64,8 @@ data class PublicKey(
 )
 
 data class ScheduleKeyDeletion(val KeyId: KmsKeyId, val PendingWindowInDays: Int? = null)
+    : KMSAction<KeyDeletionSchedule>(KeyDeletionSchedule::class)
+
 data class KeyDeletionSchedule(val KeyId: KmsKeyId, val DeletionDate: Timestamp)
 
 data class Sign(
@@ -70,7 +74,7 @@ data class Sign(
     val SigningAlgorithm: SigningAlgorithm,
     val Request: List<String>? = null,
     val MessageType: String? = null
-)
+) : KMSAction<Signed>(Signed::class)
 
 data class Signed(
     val KeyId: KmsKeyId,
@@ -85,7 +89,7 @@ data class Verify(
     val SigningAlgorithm: SigningAlgorithm,
     val MessageType: String? = null,
     val GrantTokens: List<String>? = null
-)
+) : KMSAction<VerifyResult>(VerifyResult::class)
 
 data class VerifyResult(
     val KeyId: KmsKeyId,

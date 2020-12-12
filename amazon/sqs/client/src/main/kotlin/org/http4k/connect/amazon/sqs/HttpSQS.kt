@@ -29,7 +29,7 @@ fun SQS.Companion.Http(scope: AwsCredentialScope,
                        clock: Clock = Clock.systemDefaultZone(),
                        payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : SQS {
-    private val http = SetBaseUriFrom(Uri.of("https://sqs.${scope.region}.amazonaws.com/"))
+    private val http = SetBaseUriFrom(Uri.of("https://sqs.${scope.region}.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)

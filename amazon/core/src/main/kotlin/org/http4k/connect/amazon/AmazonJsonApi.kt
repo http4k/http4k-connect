@@ -29,7 +29,7 @@ class AmazonJsonApi(private val awsService: AwsService,
                     clock: Clock = Clock.systemDefaultZone(),
                     payloadMode: Payload.Mode = Payload.Mode.Signed,
                     private val httpAwsService: AwsService = awsService) {
-    private val http = SetBaseUriFrom(Uri.of("https://$awsService.${scope.region}.amazonaws.com/"))
+    private val http = SetBaseUriFrom(Uri.of("https://$awsService.${scope.region}.amazonaws.com"))
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 

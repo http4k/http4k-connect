@@ -32,14 +32,14 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
                              rawHttp: HttpHandler = JavaHttpClient(),
                              clock: Clock = Clock.systemDefaultZone(),
                              payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
-    private val http = SetBaseUriFrom(Uri.of("https://$bucketName.s3.${scope.region}.amazonaws.com/"))
+    private val http = SetBaseUriFrom(Uri.of("https://$bucketName.s3.${scope.region}.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
     override operator fun invoke(request: Create) = Uri.of("/").let {
         with(http(Request(PUT, it).body("""<?xml version="1.0" encoding="UTF-8"?>
-<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+<CreateBucketConfiguration xmlns="http://s3.amazonaws.comdoc/2006-03-01/">
    <LocationConstraint>${scope.region}</LocationConstraint>
 </CreateBucketConfiguration>"""))) {
             when {
