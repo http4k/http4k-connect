@@ -11,7 +11,7 @@ interface ExampleAction<R> : Action<R>
 data class Echo(val value: String) : ExampleAction<Echoed> {
     override fun toRequest() = Request(GET, "echo").body(value)
 
-    override fun toResult(r: Response) = Success(Echoed(r.bodyString()))
+    override fun toResult(response: Response) = Success(Echoed(response.bodyString()))
 }
 
 data class Echoed(val value: String)
