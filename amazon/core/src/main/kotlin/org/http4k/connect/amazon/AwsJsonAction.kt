@@ -12,7 +12,7 @@ import org.http4k.core.Uri
 import org.http4k.format.AutoMarshalling
 import kotlin.reflect.KClass
 
-abstract class AmazonJsonAction<R : Any>(
+abstract class AwsJsonAction<R : Any>(
     private val service: AwsService,
     private val clazz: KClass<R>,
     private val autoMarshalling: AutoMarshalling) : Action<R> {

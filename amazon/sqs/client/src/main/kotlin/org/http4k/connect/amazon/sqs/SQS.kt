@@ -6,6 +6,7 @@ import org.http4k.connect.RemoteFailure
 /**
  * Docs: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
  */
+
 interface SQS {
     operator fun invoke(request: SendMessage): Result<Unit, RemoteFailure>
 
