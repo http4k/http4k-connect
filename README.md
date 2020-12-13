@@ -31,11 +31,12 @@ Example usage:
 ```kotlin
 // the generic interface
 interface Example {
- operator fun <R : Any> invoke(request: ExampleAction<R>): Result<R, RemoteFailure>}
+   operator fun <R : Any> invoke(request: ExampleAction<R>): Result<R, RemoteFailure>
+}
 
 // constructing and using the clients
 val example = Example.Http(httpHandler)
-val echoed: Echoed = example(Echo("hello world"))
+val echoed: Result<Echoed, RemoteFailure> = example(Echo("hello world"))
 ```
 
 ### System Fake Modules (http4k-<vendor>-<system>-fake.jar)
