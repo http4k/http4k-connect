@@ -1,3 +1,5 @@
+include(":plugin")
+
 includeWithName("http4k-connect-bom", "bom")
 includeSystem("core")
 includeStorage("jdbc")

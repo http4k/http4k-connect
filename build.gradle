@@ -20,9 +20,11 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 
     apply plugin: "kotlin"
+    apply plugin: "kotlin-kapt"
     apply plugin: "jacoco"
     apply plugin: 'org.jetbrains.dokka'
     apply plugin: "com.github.kt3k.coveralls"
@@ -64,8 +66,11 @@ allprojects {
             }
         } else if (project.name == "http4k-connect-bom") {
             // bom - no code
+        } else if (project.name == "plugin") {
+            api project(":http4k-connect-core")
         } else if (project.name != "http4k-connect-core") {
             dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
+            kapt project(":plugin")
             api project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         }
