@@ -1,8 +1,8 @@
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
-import org.http4k.connect.amazon.secretsmanager.CreateSecret
 import org.http4k.connect.amazon.secretsmanager.FakeSecretsManager
-import org.http4k.connect.amazon.secretsmanager.GetSecretValue
+import org.http4k.connect.amazon.secretsmanager.action.CreateSecret
+import org.http4k.connect.amazon.secretsmanager.action.GetSecretValue
 import java.util.UUID
 
 fun main() {

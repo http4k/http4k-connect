@@ -6,6 +6,8 @@ import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.ParameterType
+import org.http4k.connect.amazon.systemsmanager.action.DeleteParameter
+import org.http4k.connect.amazon.systemsmanager.action.GetParameter
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST

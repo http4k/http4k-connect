@@ -13,15 +13,32 @@ import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
 /**
- * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
+ * Available actions:
+ *  CreateBucket
+ *  DeleteBucket
+ *  ListBuckets
  */
 interface S3Action<R> : Action<R>
 
+/**
+ * Available actions:
+ *  CopyKey
+ *  Create (bucket)
+ *  CreateKey
+ *  Delete (bucket)
+ *  DeleteKey
+ *  GetKey
+ *  ListKeys
+ *  PutKey
+ */
 interface S3BucketAction<R> {
     fun toRequest(region: Region): Request
     fun toResult(response: Response): Result<R, RemoteFailure>
 }
 
+/**
+  * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
+ */
 interface S3 {
     operator fun <R> invoke(request: S3Action<R>): Result<R, RemoteFailure>
 

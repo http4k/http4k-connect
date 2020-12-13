@@ -7,6 +7,12 @@ import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.SecretId
+import org.http4k.connect.amazon.secretsmanager.action.CreateSecret
+import org.http4k.connect.amazon.secretsmanager.action.DeleteSecret
+import org.http4k.connect.amazon.secretsmanager.action.GetSecretValue
+import org.http4k.connect.amazon.secretsmanager.action.ListSecrets
+import org.http4k.connect.amazon.secretsmanager.action.PutSecretValue
+import org.http4k.connect.amazon.secretsmanager.action.UpdateSecret
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST

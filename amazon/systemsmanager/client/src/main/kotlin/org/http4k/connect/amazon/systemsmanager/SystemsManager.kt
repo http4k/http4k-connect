@@ -2,15 +2,11 @@ package org.http4k.connect.amazon.systemsmanager
 
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.AwsJsonAction
-import org.http4k.connect.amazon.model.AwsService
-import kotlin.reflect.KClass
+import org.http4k.connect.amazon.systemsmanager.action.SystemsManagerAction
 
 /**
  * Docs: https://docs.aws.amazon.com/systems-manager/latest/APIReference/Welcome.html
  */
-abstract class SystemsManagerAction<R : Any>(clazz: KClass<R>) : AwsJsonAction<R>(AwsService.of("AmazonSSM"), clazz, SystemsManagerMoshi)
-
 interface SystemsManager {
     operator fun <R : Any> invoke(request: SystemsManagerAction<R>): Result<R, RemoteFailure>
 

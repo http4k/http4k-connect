@@ -18,7 +18,23 @@ http4k-connect is a set of lightweight API libraries for connecting to popular t
 Although centered around usage in http4k-based projects, http4k-connect does not require this and the libraries are usable from any JVM application.
 
 ## Rationale
-Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
+Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lighterweight versions of popular APIs covering standard use-cases.
+
+## Concepts
+
+### System Client Modules (http4k-<vendor>-<system>.jar)
+Each system client is modelled as a single function with arity 1 (that is it takes only a single parameter) returning a [Result4k](https://github.com/fork-handles/forkhandles/tree/trunk/result4k) Success/Failure monad type), which is known as an `Action`. The Client is responsible for managing the overall protocol with the remote system.
+
+```kotlin
+interface S3 {
+    operator fun <R> invoke(request: S3Action<R>): Result<R, RemoteFailure>
+}
+```
+
+Action classes are responsible for constructing the HTTP requests and unmarshalling their responses into the http4k-connect types. 
+
+### System Fake Modules (http4k-<vendor>-<system>-fake.jar)
+
 
 ## Installation
 ```groovy

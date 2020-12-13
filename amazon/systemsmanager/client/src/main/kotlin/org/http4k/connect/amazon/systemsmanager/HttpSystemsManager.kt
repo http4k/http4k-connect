@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.systemsmanager
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.systemsmanager.action.SystemsManagerAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then
