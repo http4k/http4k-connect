@@ -1,12 +1,9 @@
-package org.http4k.connect.example
+package org.http4k.connect.example.action
 
 import dev.forkhandles.result4k.Success
-import org.http4k.connect.Action
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
-
-interface ExampleAction<R> : Action<R>
 
 data class Echo(val value: String) : ExampleAction<Echoed> {
     override fun toRequest() = Request(GET, "echo").body(value)
@@ -15,4 +12,3 @@ data class Echo(val value: String) : ExampleAction<Echoed> {
 }
 
 data class Echoed(val value: String)
-
