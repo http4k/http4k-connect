@@ -25,21 +25,37 @@ Although convenient, many client libraries introduce many heavyweight dependenci
 ### System Client Modules (http4k-<vendor>-<system>.jar)
 Each system client is modelled as a single function with arity 1 (that is it takes only a single parameter) returning a [Result4k](https://github.com/fork-handles/forkhandles/tree/trunk/result4k) Success/Failure monad type), which is known as an `Action`. The Client is responsible for managing the overall protocol with the remote system.
 
+Action classes are responsible for constructing the HTTP requests and unmarshalling their responses into the http4k-connect types. There are lots of common actions built-in, but you can provide your own by simply implementing the relevant Action interface.
+
+Example usage:
 ```kotlin
-interface S3 {
-    operator fun <R> invoke(request: S3Action<R>): Result<R, RemoteFailure>
-}
+// the generic interface
+interface Example {
+ operator fun <R : Any> invoke(request: ExampleAction<R>): Result<R, RemoteFailure>}
+
+// constructing and using the clients
+val example = Example.Http(httpHandler)
+val echoed: Echoed = example(Echo("hello world"))
 ```
 
-Action classes are responsible for constructing the HTTP requests and unmarshalling their responses into the http4k-connect types. 
-
 ### System Fake Modules (http4k-<vendor>-<system>-fake.jar)
+Each module comes with it's own Fake system which implements the remote HTTP interface. In like with the `Server as a Function` concept, this Fake class implements `HttpHandler` and:
+ 
+ 1. Can be used in in-memory tests as a swap-out replacement for an HTTP client
+ 2. Can be started and bound to a HTTP port - each Fake has it's own unique port
+ 3. Can be deployed into test environments as a replacement for the real thing.
+ 4. Can be used to simulate Chaotic behaviour using the built in OpenApi interface (see http://localhost:<port>/chaos)
 
+Start the Fake with:
+```
+FakeExample().start()
+> Started FakeExample on 22375
+```
 
 ## Installation
 ```groovy
 dependencies {
-    // install the plaform...
+    // install the platform...
     implementation platform("org.http4k:http4k-connect-bom:2.1.0.0")
 
     // ...then choose a client
@@ -73,19 +89,5 @@ dependencies {
 - [Redis](./storage/redis) -> `"org.http4k:http4k-connect-storage-redis"`
 - [S3](./storage/s3) -> `"org.http4k:http4k-connect-storage-s3"`
 
-
-## Using the Clients and the Fakes
-
-### Client
-
-```kotlin
-Example.Http(httpHandler)
-```
-
-### Default Fake port: 22375
-
-```
-FakeExample().start()
-```
 
 ## Want to add a new system or Storage backend? Read the [guide](CONTRIBUTING.md).
