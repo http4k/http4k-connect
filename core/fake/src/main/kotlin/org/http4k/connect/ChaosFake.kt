@@ -1,12 +1,15 @@
 package org.http4k.connect
 
 import org.http4k.chaos.Behaviour
-import org.http4k.chaos.ChaosBehaviours
+import org.http4k.chaos.ChaosBehaviours.ReturnStatus
 import org.http4k.chaos.ChaosEngine
 import org.http4k.chaos.withChaosApi
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Status
+import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
+import org.http4k.core.then
+import org.http4k.filter.ServerFilters.CatchAll
 import org.http4k.server.ServerConfig
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
@@ -22,11 +25,13 @@ abstract class ChaosFake : HttpHandler {
 
     fun behave() = chaosEngine.disable()
 
-    fun misbehave(behaviour: Behaviour = ChaosBehaviours.ReturnStatus(Status.INTERNAL_SERVER_ERROR)) = chaosEngine.enable(behaviour)
+    fun misbehave(behaviour: Behaviour = ReturnStatus(INTERNAL_SERVER_ERROR)) = chaosEngine.enable(behaviour)
 
-    fun returnStatus(status: Status) = misbehave(ChaosBehaviours.ReturnStatus(status))
+    fun returnStatus(status: Status) = misbehave(ReturnStatus(status))
 
-    override operator fun invoke(request: Request) = app.withChaosApi(chaosEngine).invoke(request)
+    override operator fun invoke(request: Request) = chaosEngine
+        .then(CatchAll())
+        .then(app.withChaosApi(chaosEngine))(request)
 
     fun start(port: Int = this::class.defaultPort(),
               serverConfig: (Int) -> ServerConfig = ::SunHttp) =

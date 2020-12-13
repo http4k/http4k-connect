@@ -7,6 +7,6 @@ fun main() {
     val fakeSsm = FakeSystemsManager()
     val client = fakeSsm.client()
 
-    println(client.put(PutParameter.Request("name", "value", ParameterType.String)))
-    println(client.get(GetParameter.Request("name")))
+    println(client(PutParameter("name", "value", ParameterType.String)))
+    println(client(GetParameter("name")))
 }

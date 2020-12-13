@@ -15,7 +15,7 @@ import org.http4k.hamkrest.hasStatus
 import org.junit.jupiter.api.Test
 
 abstract class FakeSystemContract(private val fake: ChaosFake) {
-    protected abstract val anyValidRequest: Request
+    protected abstract val anyValid: Request
 
     @Test
     fun `can serve the Chaos API`() {
@@ -25,11 +25,11 @@ abstract class FakeSystemContract(private val fake: ChaosFake) {
 
     @Test
     fun `returns error when told to misbehave`() {
-        val originalStatus = fake(anyValidRequest).status
+        val originalStatus = fake(anyValid).status
         fake.returnStatus(I_M_A_TEAPOT)
-        assertThat(fake(anyValidRequest), hasStatus(I_M_A_TEAPOT))
+        assertThat(fake(anyValid), hasStatus(I_M_A_TEAPOT))
         fake.behave()
-        assertThat(fake(anyValidRequest), hasStatus(originalStatus))
+        assertThat(fake(anyValid), hasStatus(originalStatus))
     }
 
     @Test

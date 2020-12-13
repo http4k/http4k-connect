@@ -5,6 +5,7 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
@@ -25,7 +26,7 @@ import org.http4k.routing.routes
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
-import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.Base64
 
 /**
@@ -133,7 +134,7 @@ class FakeS3(
         ?.let {
             bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey.of   (key),
                 Base64.getEncoder().encodeToString(bytes),
-                Instant.now(clock))
+                ZonedDateTime.now(clock))
             Response(CREATED)
         }
         ?: Response(NOT_FOUND)
@@ -153,14 +154,14 @@ class FakeS3(
      * Convenience function to get an S3 client for global operations
      */
     fun s3Client() = S3.Http(
-        AwsCredentialScope("*", "s3"),
+        AwsCredentialScope("us-east-1", "s3"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 
     /**
      * Convenience function to get an S3 client for bucket operations
      */
-    fun s3BucketClient(name: BucketName) = S3.Bucket.Http(name,
-        AwsCredentialScope("*", "s3"),
+    fun s3BucketClient(name: BucketName, region: Region) = S3.Bucket.Http(name,
+        AwsCredentialScope(region.value, "s3"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 

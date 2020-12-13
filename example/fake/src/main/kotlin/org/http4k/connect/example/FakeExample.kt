@@ -13,6 +13,8 @@ class FakeExample(private val echos: Storage<String> = Storage.InMemory()) : Cha
         echos[UUID.randomUUID().toString()] = req.bodyString()
         Response(OK).body(req.body)
     }
+
+    fun client() = Example.Http(app)
 }
 
 fun main() {

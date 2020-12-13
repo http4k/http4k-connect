@@ -1,35 +1,37 @@
 package org.http4k.connect.amazon.s3
 
 import dev.forkhandles.result4k.Result
-import org.http4k.connect.Listing
+import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketKey
-import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.model.Region
+import org.http4k.core.Request
+import org.http4k.core.Response
+import org.xml.sax.InputSource
 import java.io.InputStream
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
 
 /**
  * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
  */
+interface S3Action<R> : Action<R>
+
+interface S3BucketAction<R> {
+    fun toRequest(region: Region): Request
+    fun toResult(response: Response): Result<R, RemoteFailure>
+}
+
 interface S3 {
-    fun buckets(): Result<Listing<BucketName>, RemoteFailure>
-    fun create(bucketName: BucketName): Result<Unit, RemoteFailure>
-    fun delete(bucketName: BucketName): Result<Unit?, RemoteFailure>
+    operator fun <R> invoke(request: S3Action<R>): Result<R, RemoteFailure>
 
     /**
      * Interface for bucket-specific S3 operations
      */
     interface Bucket {
-        fun create(): Result<Unit, RemoteFailure>
-        fun delete(): Result<Unit?, RemoteFailure>
-        fun delete(key: BucketKey): Result<Unit?, RemoteFailure>
-        operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure>
-        operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure>
-        fun copy(originalKey: BucketKey, newKey: BucketKey): Result<Unit, RemoteFailure>
-
-        /**
-         * List items in a bucket. Note that the S3 API maxes out at 1000 items.
-         */
-        fun list(): Result<Listing<BucketKey>, RemoteFailure>
+        operator fun <R> invoke(request: S3BucketAction<R>): Result<R, RemoteFailure>
+        operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure> = this(GetKey(key))
+        operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure> = this(PutKey(key, content))
 
         companion object
     }
@@ -37,3 +39,8 @@ interface S3 {
     companion object
 }
 
+internal val documentBuilderFactory by lazy {
+    DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder()
+        .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
+}

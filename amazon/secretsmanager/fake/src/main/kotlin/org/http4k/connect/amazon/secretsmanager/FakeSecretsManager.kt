@@ -20,7 +20,7 @@ import org.http4k.routing.routes
 import java.time.Clock
 import java.util.UUID.randomUUID
 
-data class SecretValue(
+data class StoredSecretValue(
     val versionId: VersionId,
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
@@ -28,7 +28,7 @@ data class SecretValue(
     val secretBinary: Base64Blob? = null)
 
 class FakeSecretsManager(
-    private val secrets: Storage<SecretValue> = Storage.InMemory(),
+    private val secrets: Storage<StoredSecretValue> = Storage.InMemory(),
     private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
@@ -45,32 +45,32 @@ class FakeSecretsManager(
         )
     )
 
-    private fun createSecret() = api.route<CreateSecret, CreateSecret.Request> { req ->
+    private fun createSecret() = api.route<CreateSecret> { req ->
         val versionId = VersionId.of(randomUUID().toString())
         val createdAt = Timestamp.of(clock.instant().toEpochMilli() / 1000)
-        secrets[req.Name] = SecretValue(versionId,
+        secrets[req.Name] = StoredSecretValue(versionId,
             createdAt, createdAt,
             req.SecretString, req.SecretBinary)
-        CreateSecret.Response(req.Name.toArn(), req.Name, versionId)
+        CreatedSecret(req.Name.toArn(), req.Name, versionId)
     }
 
-    private fun deleteSecret() = api.route<DeleteSecret, DeleteSecret.Request> { req ->
+    private fun deleteSecret() = api.route<DeleteSecret> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets[resourceId]
             ?.let {
                 secrets.remove(resourceId)
-                DeleteSecret.Response(resourceId, resourceId.toArn(), Timestamp.of(0))
+                DeletedSecret(resourceId, resourceId.toArn(), Timestamp.of(0))
             }
     }
 
-    private fun getSecret() = api.route<GetSecretValue, GetSecretValue.Request> { req ->
+    private fun getSecret() = api.route<GetSecretValue> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets.keySet(resourceId).firstOrNull()
             ?.let { secrets[it] }
             ?.let {
-                GetSecretValue.Response(
+                SecretValue(
                     resourceId.toArn(),
                     Timestamp.of(0),
                     resourceId,
@@ -82,38 +82,38 @@ class FakeSecretsManager(
             }
     }
 
-    private fun listSecrets() = api.route<ListSecrets, ListSecrets.Request> {
-        ListSecrets.Response(secrets.keySet("").map {
-            ListSecrets.Secret(it.toArn(), it)
+    private fun listSecrets() = api.route<ListSecrets> {
+        Secrets(secrets.keySet("").map {
+            Secret(it.toArn(), it)
         })
     }
 
-    private fun putSecret() = api.route<PutSecretValue, PutSecretValue.Request> { req ->
+    private fun putSecret() = api.route<PutSecretValue> { req ->
         val resourceId = req.SecretId.resourceId()
         secrets[resourceId]
             ?.let {
                 val versionId = VersionId.of(randomUUID().toString())
-                secrets[resourceId] = SecretValue(versionId,
+                secrets[resourceId] = StoredSecretValue(versionId,
                     it.createdAt,
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                PutSecretValue.Response(resourceId.toArn(), resourceId, versionId)
+                UpdatedSecretValue(resourceId.toArn(), resourceId, versionId)
             }
     }
 
-    private fun updateSecret() = api.route<UpdateSecret, UpdateSecret.Request> { req ->
+    private fun updateSecret() = api.route<UpdateSecret> { req ->
         val resourceId = req.SecretId.resourceId()
 
         secrets[resourceId]
             ?.let {
                 val versionId = VersionId.of(randomUUID().toString())
-                secrets[resourceId] = SecretValue(versionId,
+                secrets[resourceId] = StoredSecretValue(versionId,
                     it.createdAt,
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                UpdateSecret.Response(resourceId.toArn(), resourceId, versionId)
+                UpdatedSecret(resourceId.toArn(), resourceId, versionId)
             }
     }
 

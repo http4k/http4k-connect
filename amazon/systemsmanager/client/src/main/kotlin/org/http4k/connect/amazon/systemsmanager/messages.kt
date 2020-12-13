@@ -6,52 +6,46 @@ import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 
-object DeleteParameter {
-    data class Request(
-        val Name: String
-    )
-}
+data class DeleteParameter(
+    val Name: String
+): SystemsManagerAction<Unit>(Unit::class)
 
-object GetParameter {
-    data class Request(
-        val Name: String,
-        val WithDecryption: Boolean? = null,
-    )
+data class GetParameter(
+    val Name: String,
+    val WithDecryption: Boolean? = null,
+): SystemsManagerAction<ParameterValue>(ParameterValue::class)
 
-    data class Parameter(
-        val ARN: ARN?,
-        val Name: String?,
-        val Value: String?,
-        val Type: ParameterType?,
-        val DataType: String?,
-        val Version: Long?,
-        val LastModifiedDate: Timestamp?,
-        val Selector: String?,
-        val SourceResult: String?
-    )
+data class Parameter(
+    val ARN: ARN?,
+    val Name: String?,
+    val Value: String?,
+    val Type: ParameterType?,
+    val DataType: String?,
+    val Version: Long?,
+    val LastModifiedDate: Timestamp?,
+    val Selector: String?,
+    val SourceResult: String?
+)
 
-    data class Response(
-        val Parameter: Parameter
-    )
-}
+data class ParameterValue(
+    val Parameter: Parameter
+)
 
-object PutParameter {
-    data class Request(
-        val Name: String,
-        val Value: String,
-        val Type: ParameterType,
-        val KeyId: KmsKeyId? = null,
-        val Overwrite: Boolean? = null,
-        val AllowedPattern: String? = null,
-        val DataType: String? = null,
-        val Description: String? = null,
-        val Policies: List<String>? = null,
-        val Tags: List<Tag>? = null,
-        val Tier: String? = null
-    )
+data class PutParameter(
+    val Name: String,
+    val Value: String,
+    val Type: ParameterType,
+    val KeyId: KmsKeyId? = null,
+    val Overwrite: Boolean? = null,
+    val AllowedPattern: String? = null,
+    val DataType: String? = null,
+    val Description: String? = null,
+    val Policies: List<String>? = null,
+    val Tags: List<Tag>? = null,
+    val Tier: String? = null
+) : SystemsManagerAction<PutParameterResult>(PutParameterResult::class)
 
-    data class Response(
-        val Tier: String,
-        val Version: Int
-    )
-}
+data class PutParameterResult(
+    val Tier: String,
+    val Version: Int
+)

@@ -27,7 +27,7 @@ fun StringValue.toARN() = ARN.of(value)
 fun <T> StringValueFactory<T>.of(arn: ARN) = of(arn.value)
 
 class AwsAccount private constructor(value: String) : StringValue(value.padStart(12, '0')) {
-    companion object : StringValueFactory<AwsAccount>(::AwsAccount, { it.all(Char::isDigit) })
+    companion object : StringValueFactory<AwsAccount>(::AwsAccount, 1.minLength.and { it.all(Char::isDigit) })
 }
 
 class AwsService private constructor(value: String) : StringValue(value) {

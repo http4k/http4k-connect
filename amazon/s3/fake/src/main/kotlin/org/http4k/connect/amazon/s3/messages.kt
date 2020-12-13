@@ -3,13 +3,13 @@ package org.http4k.connect.amazon.s3
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.template.ViewModel
-import java.time.Instant
+import java.time.ZonedDateTime
 
 data class ListAllMyBuckets(val buckets: List<BucketName>) : ViewModel
 
 data class BucketKeyContent(val key: BucketKey,
                             val content: String,
-                            val modified: Instant) {
+                            val modified: ZonedDateTime) {
     val size = content.length
 }
 

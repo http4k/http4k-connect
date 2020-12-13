@@ -5,5 +5,5 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 
 class FakeExampleChaosTest : FakeSystemContract(FakeExample()) {
-    override val anyValidRequest = Request(Method.POST, "/")
+    override val anyValid = Request(Method.POST, "/")
 }

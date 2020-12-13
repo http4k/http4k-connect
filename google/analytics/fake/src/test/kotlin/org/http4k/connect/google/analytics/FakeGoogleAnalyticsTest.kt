@@ -12,7 +12,7 @@ class FakeGoogleAnalyticsTest {
     @Test
     fun `can log page view`() {
         assertThat(
-            analytics.pageView("some-user-agent", ClientId.of("SOME_CLIENT_ID"), "title", "/doc/path", "www.http4k.org"),
+            analytics(PageView("some-user-agent", ClientId.of("SOME_CLIENT_ID"), "title", "/doc/path", "www.http4k.org")),
             equalTo(Success(Unit)))
     }
 }

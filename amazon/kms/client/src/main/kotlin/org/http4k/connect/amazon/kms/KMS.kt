@@ -2,20 +2,17 @@ package org.http4k.connect.amazon.kms
 
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.AwsJsonAction
+import org.http4k.connect.amazon.model.AwsService
+import kotlin.reflect.KClass
 
 /**
  * Docs: https://docs.aws.amazon.com/kms/latest/APIReference/Welcome.html
  */
+abstract class KMSAction<R : Any>(clazz: KClass<R>) : AwsJsonAction<R>(AwsService.of("TrentService"), clazz, KMSMoshi)
+
 interface KMS {
-    fun create(request: CreateKey.Request): Result<CreateKey.Response, RemoteFailure>
-    fun describe(request: DescribeKey.Request): Result<DescribeKey.Response, RemoteFailure>
-    fun decrypt(request: Decrypt.Request): Result<Decrypt.Response, RemoteFailure>
-    fun encrypt(request: Encrypt.Request): Result<Encrypt.Response, RemoteFailure>
-    fun getPublicKey(request: GetPublicKey.Request): Result<GetPublicKey.Response, RemoteFailure>
-    fun scheduleDeletion(request: ScheduleKeyDeletion.Request): Result<ScheduleKeyDeletion.Response, RemoteFailure>
-    fun sign(request: Sign.Request): Result<Sign.Response, RemoteFailure>
-    fun verify(request: Verify.Request): Result<Verify.Response, RemoteFailure>
+    operator fun <R : Any> invoke(request: KMSAction<R>): Result<R, RemoteFailure>
 
     companion object
 }
-
