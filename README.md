@@ -22,7 +22,7 @@ Although convenient, many client libraries introduce many heavyweight dependenci
 
 ## Concepts
 
-### System Client Modules (http4k-<vendor>-<system>.jar)
+### System Client Modules: http4k-{vendor}-{system}.jar
 Each system client is modelled as a single function with arity 1 (that is it takes only a single parameter) returning a [Result4k](https://github.com/fork-handles/forkhandles/tree/trunk/result4k) Success/Failure monad type), which is known as an `Action`. The Client is responsible for managing the overall protocol with the remote system.
 
 Action classes are responsible for constructing the HTTP requests and unmarshalling their responses into the http4k-connect types. There are lots of common actions built-in, but you can provide your own by simply implementing the relevant Action interface.
@@ -39,7 +39,7 @@ val example = Example.Http(httpHandler)
 val echoed: Result<Echoed, RemoteFailure> = example(Echo("hello world"))
 ```
 
-### System Fake Modules (http4k-{vendor}-{system}-fake.jar)
+### System Fake Modules: http4k-{vendor}-{system}-fake.jar
 Each module comes with it's own Fake system which implements the remote HTTP interface. In like with the `Server as a Function` concept, this Fake class implements `HttpHandler` and:
  
  1. Can be used in in-memory tests as a swap-out replacement for an HTTP client
