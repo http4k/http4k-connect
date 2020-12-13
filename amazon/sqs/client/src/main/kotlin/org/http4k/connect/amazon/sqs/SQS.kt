@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.sqs
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
+import org.w3c.dom.Document
 import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
@@ -23,3 +24,5 @@ internal val documentBuilderFactory by lazy {
         .newDocumentBuilder()
         .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
 }
+
+internal fun Document.text(name: String) = getElementsByTagName(name).item(0).textContent.trim()

@@ -26,7 +26,7 @@ import org.http4k.routing.routes
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
-import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.Base64
 
 /**
@@ -134,7 +134,7 @@ class FakeS3(
         ?.let {
             bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey.of   (key),
                 Base64.getEncoder().encodeToString(bytes),
-                Instant.now(clock))
+                ZonedDateTime.now(clock))
             Response(CREATED)
         }
         ?: Response(NOT_FOUND)
