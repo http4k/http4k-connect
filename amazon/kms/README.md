@@ -1,9 +1,15 @@
 # KMS
 
-The KMS connector provides the following functionality:
-- CRUD KMS Keys + get public key
-- Sign/Verify
-- Encrypt/Decrypt
+The KMS connector provides the following Actions:
+
+     *  CreateKey
+     *  DescribeKey
+     *  Decrypt
+     *  Encrypt
+     *  GetPublicKey
+     *  ScheduleKeyDeletion
+     *  Sign
+     *  Verify
 
 The client APIs utilise the `http4k-aws` module for request signing, which means no dependencies on the incredibly fat Amazon-SDK JARs. This means this integration is perfect for running Serverless Lambdas where binary size is a performance factor.
 

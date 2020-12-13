@@ -1,14 +1,12 @@
-Example
-====
+# Example Service
 
-### Client
+The Example connector provides the following Actions:
 
-```kotlin
-Example.Companion.Http(...)
-```
+     *  Echo
 
 ### Default Fake port: 22375
 
+To start:
 ```
 FakeExample().start()
 ```

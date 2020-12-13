@@ -1,8 +1,22 @@
 # S3
 
 The S3 connector consists of 2 interfaces:
-- `S3` for global operations - creating/deleting/listing buckets
-- `S3.Bucket` for bucket level operations - CRUD key contents + list keys
+- `S3` for global operations, providing the following Actions:
+
+     *  CreateBucket
+     *  DeleteBucket
+     *  ListBuckets
+
+- `S3.Bucket` for bucket level operations, providing the following Actions:
+
+     *  CopyKey
+     *  Create (bucket)
+     *  CreateKey
+     *  Delete (bucket)
+     *  DeleteKey
+     *  GetKey
+     *  ListKeys
+     *  PutKey
 
 The client APIs utilise the `http4k-aws` module for request signing, which means no dependencies on the incredibly fat Amazon-SDK JARs. This means this integration is perfect for running Serverless Lambdas where binary size is a performance factor.
 

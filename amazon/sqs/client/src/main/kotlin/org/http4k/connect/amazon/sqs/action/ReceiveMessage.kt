@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.sqs
+package org.http4k.connect.amazon.sqs.action
 
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.RemoteFailure
