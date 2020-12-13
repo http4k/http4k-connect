@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.sts
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsService
+import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Assertions.assertTrue

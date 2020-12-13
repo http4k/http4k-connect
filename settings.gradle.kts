@@ -39,3 +39,10 @@ fun includeWithName(projectName: String, file: String) {
 fun includeStorage(name: String) {
     includeWithName("http4k-connect-storage-$name", "storage/$name")
 }
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+    }
+}
