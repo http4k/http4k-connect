@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.secretsmanager.action
 
 import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.KmsKeyId
+import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.Timestamp
 
 data class ListSecrets(
@@ -23,7 +23,7 @@ data class Secret(
     val CreatedDate: Timestamp? = null,
     val DeletedDate: Timestamp? = null,
     val Description: String? = null,
-    val KmsKeyId: KmsKeyId? = null,
+    val KmsKeyId: KMSKeyId? = null,
     val LastAccessedDate: Timestamp? = null,
     val LastChangedDate: Timestamp? = null,
     val LastRotatedDate: Timestamp? = null,

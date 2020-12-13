@@ -1,11 +1,11 @@
 package org.http4k.connect.amazon.kms.action
 
 import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.KmsKeyId
+import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.SigningAlgorithm
 
 data class Verify(
-    val KeyId: KmsKeyId,
+    val KeyId: KMSKeyId,
     val Message: Base64Blob,
     val Signature: Base64Blob,
     val SigningAlgorithm: SigningAlgorithm,
@@ -14,7 +14,7 @@ data class Verify(
 ) : KMSAction<VerifyResult>(VerifyResult::class)
 
 data class VerifyResult(
-    val KeyId: KmsKeyId,
+    val KeyId: KMSKeyId,
     val SignatureValid: Boolean,
     val SigningAlgorithm: SigningAlgorithm
 )

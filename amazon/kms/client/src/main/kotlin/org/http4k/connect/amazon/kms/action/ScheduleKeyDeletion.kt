@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.kms.action
 
-import org.http4k.connect.amazon.model.KmsKeyId
+import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.Timestamp
 
-data class ScheduleKeyDeletion(val KeyId: KmsKeyId, val PendingWindowInDays: Int? = null)
+data class ScheduleKeyDeletion(val KeyId: KMSKeyId, val PendingWindowInDays: Int? = null)
     : KMSAction<KeyDeletionSchedule>(KeyDeletionSchedule::class)
 
-data class KeyDeletionSchedule(val KeyId: KmsKeyId, val DeletionDate: Timestamp)
+data class KeyDeletionSchedule(val KeyId: KMSKeyId, val DeletionDate: Timestamp)

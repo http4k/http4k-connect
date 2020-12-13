@@ -1,6 +1,6 @@
 package org.http4k.connect.amazon.systemsmanager.action
 
-import org.http4k.connect.amazon.model.KmsKeyId
+import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Tag
 
@@ -8,7 +8,7 @@ data class PutParameter(
     val Name: String,
     val Value: String,
     val Type: ParameterType,
-    val KeyId: KmsKeyId? = null,
+    val KeyId: KMSKeyId? = null,
     val Overwrite: Boolean? = null,
     val AllowedPattern: String? = null,
     val DataType: String? = null,

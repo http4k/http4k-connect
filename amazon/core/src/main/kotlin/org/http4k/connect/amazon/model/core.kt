@@ -50,8 +50,8 @@ class Region private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<Region>(::Region, "[a-z]+-[a-z]+-\\d".regex)
 }
 
-class KmsKeyId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<KmsKeyId>(::KmsKeyId, 1.minLength) {
+class KMSKeyId private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<KMSKeyId>(::KMSKeyId, 1.minLength) {
         fun of(arn: ARN) = of(arn.value)
     }
 }

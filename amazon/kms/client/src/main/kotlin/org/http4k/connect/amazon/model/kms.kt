@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.model
 
 data class KeyMetadata(
-    val KeyId: KmsKeyId,
+    val KeyId: KMSKeyId,
     val Arn: ARN? = null,
     val AWSAccountId: AwsAccount? = null,
     val KeyUsage: KeyUsage? = null,
