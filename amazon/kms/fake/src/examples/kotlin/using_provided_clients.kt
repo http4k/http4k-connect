@@ -1,8 +1,8 @@
 import dev.forkhandles.result4k.valueOrNull
-import org.http4k.connect.amazon.kms.CreateKey
-import org.http4k.connect.amazon.kms.Decrypt
-import org.http4k.connect.amazon.kms.Encrypt
 import org.http4k.connect.amazon.kms.FakeKMS
+import org.http4k.connect.amazon.kms.action.CreateKey
+import org.http4k.connect.amazon.kms.action.Decrypt
+import org.http4k.connect.amazon.kms.action.Encrypt
 import org.http4k.connect.amazon.model.Base64Blob
 
 fun main() {

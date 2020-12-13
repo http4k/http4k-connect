@@ -11,6 +11,10 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Docs: https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html
  */
 interface STS {
+    /**
+     * Available actions:
+     *  AssumeRole
+     */
     operator fun <R> invoke(request: STSAction<R>): Result<R, RemoteFailure>
 
     companion object

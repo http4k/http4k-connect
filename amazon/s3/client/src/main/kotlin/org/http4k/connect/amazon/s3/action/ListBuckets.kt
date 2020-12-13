@@ -1,10 +1,11 @@
-package org.http4k.connect.amazon.s3
+package org.http4k.connect.amazon.s3.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.s3.documentBuilderFactory
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response

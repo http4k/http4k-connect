@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.kms
+package org.http4k.connect.amazon.kms.action
 
 import org.http4k.connect.amazon.model.KeyMetadata
 import org.http4k.connect.amazon.model.KmsKeyId

@@ -6,9 +6,9 @@ import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketKey
-import org.http4k.connect.amazon.s3.DeleteKey
-import org.http4k.connect.amazon.s3.ListKeys
 import org.http4k.connect.amazon.s3.S3
+import org.http4k.connect.amazon.s3.action.DeleteKey
+import org.http4k.connect.amazon.s3.action.ListKeys
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
 import java.io.InputStream

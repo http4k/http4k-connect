@@ -6,6 +6,14 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.kms.action.CreateKey
+import org.http4k.connect.amazon.kms.action.Decrypt
+import org.http4k.connect.amazon.kms.action.DescribeKey
+import org.http4k.connect.amazon.kms.action.Encrypt
+import org.http4k.connect.amazon.kms.action.GetPublicKey
+import org.http4k.connect.amazon.kms.action.ScheduleKeyDeletion
+import org.http4k.connect.amazon.kms.action.Sign
+import org.http4k.connect.amazon.kms.action.Verify
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.CustomerMasterKeySpec.RSA_3072

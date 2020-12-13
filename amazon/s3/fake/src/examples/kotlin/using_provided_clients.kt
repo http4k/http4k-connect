@@ -4,6 +4,9 @@ import dev.forkhandles.result4k.map
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.s3.action.Create
+import org.http4k.connect.amazon.s3.action.ListBuckets
+import org.http4k.connect.amazon.s3.action.ListKeys
 
 fun main() {
     val fakeS3 = FakeS3()

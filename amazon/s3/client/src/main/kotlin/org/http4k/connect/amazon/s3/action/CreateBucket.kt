@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.s3
+package org.http4k.connect.amazon.s3.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success

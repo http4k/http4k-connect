@@ -8,6 +8,11 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.s3.action.CopyKey
+import org.http4k.connect.amazon.s3.action.Create
+import org.http4k.connect.amazon.s3.action.Delete
+import org.http4k.connect.amazon.s3.action.DeleteKey
+import org.http4k.connect.amazon.s3.action.ListKeys
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.BeforeEach

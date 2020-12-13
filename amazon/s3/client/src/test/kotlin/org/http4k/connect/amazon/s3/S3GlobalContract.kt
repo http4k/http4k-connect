@@ -7,6 +7,9 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.s3.action.CreateBucket
+import org.http4k.connect.amazon.s3.action.DeleteBucket
+import org.http4k.connect.amazon.s3.action.ListBuckets
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.BeforeEach

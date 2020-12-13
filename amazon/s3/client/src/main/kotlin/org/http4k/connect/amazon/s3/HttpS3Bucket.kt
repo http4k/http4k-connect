@@ -5,6 +5,7 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

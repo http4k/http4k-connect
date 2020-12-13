@@ -2,8 +2,8 @@ package org.http4k.connect.storage
 
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.s3.Create
 import org.http4k.connect.amazon.s3.FakeS3
+import org.http4k.connect.amazon.s3.action.Create
 
 class S3StorageTest : StorageContract() {
     override val storage: Storage<AnEntity> by lazy {
