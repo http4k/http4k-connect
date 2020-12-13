@@ -14,6 +14,7 @@ import org.http4k.connect.amazon.model.SessionToken
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TokenCode
 import org.http4k.connect.amazon.sts.action.STSAction
+import org.http4k.connect.amazon.sts.action.documentBuilderFactory
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Method.POST
 import org.http4k.core.Request

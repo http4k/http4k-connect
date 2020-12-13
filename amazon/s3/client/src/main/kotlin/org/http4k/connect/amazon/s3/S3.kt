@@ -7,13 +7,10 @@ import org.http4k.connect.amazon.s3.action.GetKey
 import org.http4k.connect.amazon.s3.action.PutKey
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.connect.amazon.s3.action.S3BucketAction
-import org.xml.sax.InputSource
 import java.io.InputStream
-import java.io.StringReader
-import javax.xml.parsers.DocumentBuilderFactory
 
 /**
-  * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
+ * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
  */
 interface S3 {
     /**
@@ -48,10 +45,4 @@ interface S3 {
     }
 
     companion object
-}
-
-internal val documentBuilderFactory by lazy {
-    DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder()
-        .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
 }

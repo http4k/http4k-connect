@@ -132,7 +132,7 @@ class FakeS3(
 
     private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
         ?.let {
-            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey.of   (key),
+            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey.of(key),
                 Base64.getEncoder().encodeToString(bytes),
                 ZonedDateTime.now(clock))
             Response(CREATED)

@@ -1,8 +1,8 @@
 package org.http4k.filter
 
-import org.http4k.connect.google.analytics.ClientId
 import org.http4k.connect.google.analytics.GoogleAnalytics
-import org.http4k.connect.google.analytics.PageView
+import org.http4k.connect.google.analytics.action.PageView
+import org.http4k.connect.google.model.ClientId
 import org.http4k.core.Filter
 import org.http4k.core.Request
 import org.http4k.routing.RoutedRequest

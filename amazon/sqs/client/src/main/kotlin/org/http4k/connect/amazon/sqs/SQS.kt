@@ -8,11 +8,11 @@ import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
+interface SQSAction<R> : Action<R>
+
 /**
  * Docs: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/Welcome.html
  */
-interface SQSAction<R> : Action<R>
-
 interface SQS {
     operator fun <R> invoke(request: SQSAction<R>): Result<R, RemoteFailure>
 

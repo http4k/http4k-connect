@@ -13,7 +13,7 @@ class UpdateSecret private constructor(
     val SecretBinary: Base64Blob?,
     val Description: String?,
     val KmsKeyId: String?
-): SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
+) : SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretString: String,

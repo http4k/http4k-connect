@@ -11,7 +11,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
 
-data class CopyKey(val sourceBucket: BucketName, val source: BucketKey, val destination: BucketKey): S3BucketAction<Unit> {
+data class CopyKey(val sourceBucket: BucketName, val source: BucketKey, val destination: BucketKey) : S3BucketAction<Unit> {
     override fun toRequest(region: Region) = Request(PUT, uri()
     ).header("x-amz-copy-source", "$sourceBucket/${source}")
 

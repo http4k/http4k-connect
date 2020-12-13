@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.model.Timestamp
 data class GetParameter(
     val Name: String,
     val WithDecryption: Boolean? = null,
-): SystemsManagerAction<ParameterValue>(ParameterValue::class)
+) : SystemsManagerAction<ParameterValue>(ParameterValue::class)
 
 data class Parameter(
     val ARN: ARN?,
