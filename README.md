@@ -39,7 +39,7 @@ val example = Example.Http(httpHandler)
 val echoed: Result<Echoed, RemoteFailure> = example(Echo("hello world"))
 ```
 
-### System Fake Modules (http4k-<vendor>-<system>-fake.jar)
+### System Fake Modules (http4k-{vendor}-{system}-fake.jar)
 Each module comes with it's own Fake system which implements the remote HTTP interface. In like with the `Server as a Function` concept, this Fake class implements `HttpHandler` and:
  
  1. Can be used in in-memory tests as a swap-out replacement for an HTTP client
