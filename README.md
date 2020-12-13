@@ -40,7 +40,7 @@ Action classes are responsible for constructing the HTTP requests and unmarshall
 ```groovy
 dependencies {
     // install the plaform...
-    implementation platform("org.http4k:http4k-connect-bom:2.0.2.1")
+    implementation platform("org.http4k:http4k-connect-bom:2.1.0.0")
 
     // ...then choose a client
     implementation "org.http4k:http4k-connect-amazon-s3"
