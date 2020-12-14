@@ -1,11 +1,10 @@
 package org.http4k.connect.plugin
 
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
-import org.yanex.takenoko.PrettyPrinter
-import org.yanex.takenoko.PrettyPrinterConfiguration
-import org.yanex.takenoko.getterExpression
-import org.yanex.takenoko.kotlinFile
-import org.yanex.takenoko.receiverType
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -13,7 +12,6 @@ import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
 import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic.Kind.ERROR
 
@@ -22,6 +20,7 @@ import javax.tools.Diagnostic.Kind.ERROR
 @SupportedOptions(Http4kConnectAdapterGenerator.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class Http4kConnectAdapterGenerator : AbstractProcessor() {
 
+    @OptIn(KotlinPoetMetadataPreview::class)
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         val annotatedElements = roundEnv.getElementsAnnotatedWith(Http4kConnectAdapter::class.java)
         if (annotatedElements.isEmpty()) return false
@@ -31,32 +30,26 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
             return false
         }
 
-        val generatedKtFile = kotlinFile("test.generated") {
-            for (element in annotatedElements) {
-                val typeElement = element.toTypeElementOrNull() ?: continue
+        return roundEnv.annotated<Http4kConnectAdapter>()
+            .filterIsInstance<TypeElement>()
+            .firstOrNull()
+            ?.toImmutableKmClass()
+            ?.let { adapter ->
+                roundEnv.annotated<Http4kConnectAction>()
+                    .filterIsInstance<TypeElement>()
+                    .map { it.toImmutableKmClass() }
+                    .forEach {
+                        println(it)
+                    }
 
-                property("simpleClassName") {
-                    receiverType(typeElement.qualifiedName.toString())
-                    getterExpression("this::class.java.simpleName")
-                }
+                FileSpec.builder(
+                    adapter.name.substringBeforeLast("/").replace('/', '.'),
+                    adapter.name.substringAfterLast('/').toLowerCase() + "Extensions").build()
+                    .writeTo(File(kaptKotlinGeneratedDir))
+
+                true
             }
-        }
-
-        File(kaptKotlinGeneratedDir, "testGenerated.kt").apply {
-            parentFile.mkdirs()
-            writeText(generatedKtFile.accept(PrettyPrinter(PrettyPrinterConfiguration())))
-        }
-
-        return true
-    }
-
-    private fun Element.toTypeElementOrNull(): TypeElement? {
-        if (this !is TypeElement) {
-            processingEnv.messager.printMessage(ERROR, "Invalid element type, class expected", this)
-            return null
-        }
-
-        return this
+            ?: false
     }
 
     companion object {
@@ -64,3 +57,7 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
     }
 
 }
+
+private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
+    rootElements.filter { it.getAnnotation(T::class.java) != null }
+

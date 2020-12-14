@@ -1,3 +1,4 @@
 dependencies {
-    implementation("com.github.yanex:takenoko:0.1")
+    implementation("com.squareup:kotlinpoet:1.7.2")
+    implementation("com.squareup:kotlinpoet-metadata:1.7.2")
 }
