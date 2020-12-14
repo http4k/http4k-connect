@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
+import org.http4k.connect.plugin.Http4kConnectAdapterGenerator.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -17,7 +18,7 @@ import javax.tools.Diagnostic.Kind.ERROR
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("org.http4k.connect.Http4kConnectAdapter")
-@SupportedOptions(Http4kConnectAdapterGenerator.KAPT_KOTLIN_GENERATED_OPTION_NAME)
+@SupportedOptions(KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class Http4kConnectAdapterGenerator : AbstractProcessor() {
 
     @OptIn(KotlinPoetMetadataPreview::class)
