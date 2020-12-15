@@ -53,9 +53,7 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
 
         roundEnv.annotated<Http4kConnectAction>()
             .filterIsInstance<TypeElement>()
-            .forEach {
-                fileBuilder.addFunction(actionFunction(it.toImmutableKmClass()))
-            }
+            .forEach { fileBuilder.addFunction(actionFunction(it.toImmutableKmClass())) }
 
         fileBuilder.build().writeTo(File(outputDir()!!))
     }
