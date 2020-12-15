@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.sqs.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.core.ContentType
 import org.http4k.core.Method
@@ -12,6 +13,7 @@ import org.http4k.core.body.form
 import org.http4k.core.with
 import org.http4k.lens.Header
 
+@Http4kConnectAction
 data class SendMessage(val payload: String) : SQSAction<SentMessage> {
     override fun toRequest(): Request {
         val base = listOf(

@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
@@ -53,7 +54,8 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
 
         roundEnv.annotated<Http4kConnectAction>()
             .filterIsInstance<TypeElement>()
-            .forEach { fileBuilder.addFunction(actionFunction(it.toImmutableKmClass())) }
+            .flatMap { actionFunction(it.toImmutableKmClass()) }
+            .forEach(fileBuilder::addFunction)
 
         fileBuilder.build().writeTo(File(outputDir()!!))
     }
@@ -63,7 +65,6 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
     }
-
 }
 
 private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
@@ -71,16 +72,26 @@ private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
 
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): FunSpec {
+private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec> {
     val message = it.supertypes.first().arguments.first().type!!.classifier as KmClassifier.Class
     val (actionPkg, actionClazz) = it.explodeName()
 
-    return FunSpec.builder(actionClazz.decapitalize())
-        .receiver(name.asClassName())
-        .addCode(CodeBlock.of("return TODO()"))
-        .returns(Result::class.asTypeName()
-            .parameterizedBy(listOf(message.name.asClassName(), RemoteFailure::class.asTypeName())))
-        .build()
+    val actionClassName = it.name.asClassName()
+
+    return it.constructors.map {
+        val baseFunction = FunSpec.builder(actionClazz.decapitalize())
+            .receiver(name.asClassName())
+            .addCode(CodeBlock.of("return this(%T(${it.valueParameters.joinToString(", ") { it.name }}))", actionClassName))
+            .returns(Result::class.asTypeName()
+                .parameterizedBy(listOf(message.name.asClassName(), RemoteFailure::class.asTypeName())))
+
+        it.valueParameters.forEach {
+            baseFunction.addParameter(
+                ParameterSpec(it.name, (it.type!!.classifier as KmClassifier.Class).name.asClassName())
+            )
+        }
+        baseFunction.build()
+    }
 }
 
 @KotlinPoetMetadataPreview

@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.sts.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AccessKeyId
@@ -24,6 +25,7 @@ import org.http4k.lens.Header.CONTENT_TYPE
 import org.w3c.dom.Document
 import java.time.Duration
 
+@Http4kConnectAction
 data class AssumeRole(
     val RoleArn: ARN,
     val RoleSessionName: String,

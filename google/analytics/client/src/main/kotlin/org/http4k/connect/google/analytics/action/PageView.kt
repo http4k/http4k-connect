@@ -2,6 +2,7 @@ package org.http4k.connect.google.analytics.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.google.model.ClientId
 import org.http4k.connect.google.model.TrackingId
@@ -11,6 +12,7 @@ import org.http4k.core.Response
 import org.http4k.core.Uri
 import org.http4k.core.body.form
 
+@Http4kConnectAction
 data class PageView(
     val userAgent: String,
     val clientId: ClientId,
