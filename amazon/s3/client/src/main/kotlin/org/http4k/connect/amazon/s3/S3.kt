@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.s3
 
 import dev.forkhandles.result4k.Result
-import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.s3.action.GetKey
@@ -13,7 +12,6 @@ import java.io.InputStream
 /**
  * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
  */
-@Http4kConnectAdapter
 interface S3 {
     /**
      * Available actions:
@@ -26,7 +24,6 @@ interface S3 {
     /**
      * Interface for bucket-specific S3 operations
      */
-    @Http4kConnectAdapter
     interface Bucket {
         /**
          * Available actions:

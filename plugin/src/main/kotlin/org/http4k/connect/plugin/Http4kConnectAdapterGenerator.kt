@@ -6,9 +6,12 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isPrivate
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import dev.forkhandles.result4k.Result
 import kotlinx.metadata.KmClassifier
@@ -73,25 +76,37 @@ private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec> {
-    val message = it.supertypes.first().arguments.first().type!!.classifier as KmClassifier.Class
+    val message = it.supertypes.first().arguments.first().type!!.generifiedType()
     val (actionPkg, actionClazz) = it.explodeName()
 
     val actionClassName = it.name.asClassName()
 
-    return it.constructors.map {
-        val baseFunction = FunSpec.builder(actionClazz.decapitalize())
-            .receiver(name.asClassName())
-            .addCode(CodeBlock.of("return this(%T(${it.valueParameters.joinToString(", ") { it.name.decapitalize() }}))", actionClassName))
-            .returns(Result::class.asTypeName()
-                .parameterizedBy(listOf(message.name.asClassName(), RemoteFailure::class.asTypeName())))
+    return it.constructors
+        .filterNot { it.isPrivate }
+        .map {
+            val baseFunction = FunSpec.builder(actionClazz.decapitalize())
+                .receiver(name.asClassName())
+                .addCode(CodeBlock.of("return this(%T(${it.valueParameters.joinToString(", ") { it.name.decapitalize() }}))", actionClassName))
+                .returns(Result::class.asTypeName()
+                    .parameterizedBy(listOf(message, RemoteFailure::class.asTypeName())))
 
-        it.valueParameters.forEach {
-            baseFunction.addParameter(
-                ParameterSpec(it.name.decapitalize() , (it.type!!.classifier as KmClassifier.Class).name.asClassName())
-            )
+            it.valueParameters.forEach {
+                baseFunction.addParameter(
+                    ParameterSpec(it.name.decapitalize(), it.type!!.generifiedType())
+                )
+            }
+            baseFunction.build()
         }
-        baseFunction.build()
+}
+
+@KotlinPoetMetadataPreview
+private fun ImmutableKmType.generifiedType(): TypeName {
+    val clazz = classifier as KmClassifier.Class
+    return when {
+        arguments.isEmpty() -> clazz.name.asClassName()
+        else -> clazz.name.asClassName().parameterizedBy(arguments.map { it.type!!.generifiedType() }).also { println(it) }
     }
+
 }
 
 @KotlinPoetMetadataPreview
