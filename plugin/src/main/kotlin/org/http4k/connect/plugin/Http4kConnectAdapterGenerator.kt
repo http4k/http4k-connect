@@ -81,13 +81,13 @@ private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec>
     return it.constructors.map {
         val baseFunction = FunSpec.builder(actionClazz.decapitalize())
             .receiver(name.asClassName())
-            .addCode(CodeBlock.of("return this(%T(${it.valueParameters.joinToString(", ") { it.name }}))", actionClassName))
+            .addCode(CodeBlock.of("return this(%T(${it.valueParameters.joinToString(", ") { it.name.decapitalize() }}))", actionClassName))
             .returns(Result::class.asTypeName()
                 .parameterizedBy(listOf(message.name.asClassName(), RemoteFailure::class.asTypeName())))
 
         it.valueParameters.forEach {
             baseFunction.addParameter(
-                ParameterSpec(it.name, (it.type!!.classifier as KmClassifier.Class).name.asClassName())
+                ParameterSpec(it.name.decapitalize() , (it.type!!.classifier as KmClassifier.Class).name.asClassName())
             )
         }
         baseFunction.build()
