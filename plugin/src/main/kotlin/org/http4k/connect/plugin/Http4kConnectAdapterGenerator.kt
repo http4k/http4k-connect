@@ -49,15 +49,12 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
     private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment) {
         val (packageName, className) = explodeName()
 
-        val fileBuilder = FileSpec.builder(
-            packageName,
-            className.toLowerCase() + "Extensions")
+        val fileBuilder = FileSpec.builder(packageName, className.toLowerCase() + "Extensions")
 
         roundEnv.annotated<Http4kConnectAction>()
             .filterIsInstance<TypeElement>()
-            .map { it.toImmutableKmClass() }
             .forEach {
-                fileBuilder.addFunction(funSpec(it))
+                fileBuilder.addFunction(actionFunction(it.toImmutableKmClass()))
             }
 
         fileBuilder.build().writeTo(File(outputDir()!!))
@@ -76,7 +73,7 @@ private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
 
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmClass.funSpec(it: ImmutableKmClass): FunSpec {
+private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): FunSpec {
     val message = it.supertypes.first().arguments.first().type!!.classifier as KmClassifier.Class
     val (actionPkg, actionClazz) = it.explodeName()
 
