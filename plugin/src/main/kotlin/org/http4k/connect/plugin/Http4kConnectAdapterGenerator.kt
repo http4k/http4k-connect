@@ -1,13 +1,19 @@
 package org.http4k.connect.plugin
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import dev.forkhandles.result4k.Result
+import kotlinx.metadata.KmClassifier
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.plugin.Http4kConnectAdapterGenerator.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
@@ -43,7 +49,6 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
     private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment) {
         val (packageName, className) = explodeName()
 
-
         val fileBuilder = FileSpec.builder(
             packageName,
             className.toLowerCase() + "Extensions")
@@ -52,19 +57,10 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
             .filterIsInstance<TypeElement>()
             .map { it.toImmutableKmClass() }
             .forEach {
-                val (actionPkg, actionClazz) = it.explodeName()
-                fileBuilder.addFunction(FunSpec.builder(actionClazz.decapitalize())
-                    .receiver(ClassName.bestGuess(name.replace('/', '.')))
-                    .build())
+                fileBuilder.addFunction(funSpec(it))
             }
 
         fileBuilder.build().writeTo(File(outputDir()!!))
-    }
-
-    private fun ImmutableKmClass.explodeName(): Pair<String, String> {
-        val packageName = name.substringBeforeLast("/").replace('/', '.')
-        val className = name.substringAfterLast('/')
-        return packageName to className
     }
 
     private fun outputDir() = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
@@ -77,4 +73,25 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
 
 private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
     rootElements.filter { it.getAnnotation(T::class.java) != null }
+
+
+@KotlinPoetMetadataPreview
+private fun ImmutableKmClass.funSpec(it: ImmutableKmClass): FunSpec {
+    val message = it.supertypes.first().arguments.first().type!!.classifier as KmClassifier.Class
+    val (actionPkg, actionClazz) = it.explodeName()
+
+    return FunSpec.builder(actionClazz.decapitalize())
+        .receiver(name.asClassName())
+        .addCode(CodeBlock.of("return TODO()"))
+        .returns(Result::class.asTypeName()
+            .parameterizedBy(listOf(message.name.asClassName(), RemoteFailure::class.asTypeName())))
+        .build()
+}
+
+@KotlinPoetMetadataPreview
+private fun ImmutableKmClass.explodeName() = name.pkg() to name.substringAfterLast('/')
+
+private fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
+private fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
+private fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
 
