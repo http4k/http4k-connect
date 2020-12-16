@@ -11,6 +11,7 @@ import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrivate
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import dev.forkhandles.result4k.Result
@@ -91,9 +92,9 @@ private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec>
                     .parameterizedBy(listOf(message, RemoteFailure::class.asTypeName())))
 
             it.valueParameters.forEach {
-                baseFunction.addParameter(
-                    ParameterSpec(it.name.decapitalize(), it.type!!.generifiedType())
-                )
+                val base = ParameterSpec.builder(it.name.decapitalize(), it.type!!.generifiedType())
+                if (it.type!!.isNullable) base.defaultValue(CodeBlock.of("null"))
+                baseFunction.addParameter(base.build())
             }
             baseFunction.build()
         }
@@ -101,10 +102,10 @@ private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec>
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmType.generifiedType(): TypeName {
-    val clazz = classifier as KmClassifier.Class
+    val base = (classifier as KmClassifier.Class).name.asClassName()
     return when {
-        arguments.isEmpty() -> clazz.name.asClassName()
-        else -> clazz.name.asClassName().parameterizedBy(arguments.map { it.type!!.generifiedType() }).also { println(it) }
+        arguments.isEmpty() -> base.copy(nullable = isNullable)
+        else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable).also { println(it) }
     }
 
 }
