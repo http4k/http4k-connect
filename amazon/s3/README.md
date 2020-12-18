@@ -10,9 +10,7 @@ The S3 connector consists of 2 interfaces:
 - `S3.Bucket` for bucket level operations, providing the following Actions:
 
      *  CopyKey
-     *  Create (bucket)
      *  CreateKey
-     *  Delete (bucket)
      *  DeleteKey
      *  GetKey
      *  ListKeys
