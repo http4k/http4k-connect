@@ -4,7 +4,6 @@ import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.model.BucketName
-import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -27,5 +26,5 @@ fun S3.Bucket.Companion.Http(bucketName: BucketName,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override fun <R> invoke(request: S3BucketAction<R>) = request.toResult(http(request.toRequest(Region.of(scope.region))))
+    override fun <R> invoke(request: S3BucketAction<R>) = request.toResult(http(request.toRequest()))
 }
