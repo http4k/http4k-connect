@@ -10,10 +10,6 @@ import org.http4k.connect.amazon.sts.action.STSAction
  */
 @Http4kConnectAdapter
 interface STS {
-    /**
-     * Available actions:
-     *  AssumeRole
-     */
     operator fun <R> invoke(request: STSAction<R>): Result<R, RemoteFailure>
 
     companion object

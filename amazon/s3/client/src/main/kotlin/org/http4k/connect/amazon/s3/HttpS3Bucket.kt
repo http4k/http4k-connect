@@ -15,12 +15,12 @@ import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
 
-fun S3.Bucket.Companion.Http(bucketName: BucketName,
+fun S3Bucket.Companion.Http(bucketName: BucketName,
                              scope: AwsCredentialScope,
                              credentialsProvider: () -> AwsCredentials,
                              rawHttp: HttpHandler = JavaHttpClient(),
                              clock: Clock = Clock.systemDefaultZone(),
-                             payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3.Bucket {
+                             payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3Bucket {
     private val http = SetBaseUriFrom(Uri.of("https://$bucketName.s3.${scope.region}.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))

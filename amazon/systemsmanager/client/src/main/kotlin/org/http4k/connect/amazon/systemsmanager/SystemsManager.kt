@@ -10,12 +10,6 @@ import org.http4k.connect.amazon.systemsmanager.action.SystemsManagerAction
  */
 @Http4kConnectAdapter
 interface SystemsManager {
-    /**
-     * Available actions:
-     *  DeleteParameter
-     *  GetParameter
-     *  PutParameter
-     */
     operator fun <R : Any> invoke(request: SystemsManagerAction<R>): Result<R, RemoteFailure>
 
     companion object

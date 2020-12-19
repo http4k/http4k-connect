@@ -7,10 +7,6 @@ import org.http4k.connect.google.analytics.action.GoogleAnalyticsAction
 
 @Http4kConnectAdapter
 interface GoogleAnalytics {
-    /**
-     * Available actions:
-     *  PageView
-     */
     operator fun <R> invoke(request: GoogleAnalyticsAction<R>): Result<R, RemoteFailure>
 
     companion object

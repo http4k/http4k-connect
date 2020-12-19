@@ -15,7 +15,7 @@ import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrivate
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import dev.forkhandles.result4k.Result
-import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmClassifier.Class
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
@@ -44,9 +44,9 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
 
         roundEnv.annotated<Http4kConnectAdapter>()
             .filterIsInstance<TypeElement>()
-            .firstOrNull()
-            ?.toImmutableKmClass()
-            ?.generateActionExtensionsFor(roundEnv)
+            .forEach {
+                it.toImmutableKmClass().generateActionExtensionsFor(roundEnv)
+            }
 
         return true
     }
@@ -54,11 +54,16 @@ class Http4kConnectAdapterGenerator : AbstractProcessor() {
     private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment) {
         val (packageName, className) = explodeName()
 
+        val actionType = functions.find { it.name == "invoke" }!!.valueParameters.first()
         val fileBuilder = FileSpec.builder(packageName, className.toLowerCase() + "Extensions")
 
         roundEnv.annotated<Http4kConnectAction>()
             .filterIsInstance<TypeElement>()
-            .flatMap { actionFunction(it.toImmutableKmClass()) }
+            .map { it.toImmutableKmClass() }
+            .filter {
+                it.supertypes.map { it.classifier }.contains(actionType.type?.classifier)
+            }
+            .flatMap { generateActionFunction(it) }
             .forEach(fileBuilder::addFunction)
 
         fileBuilder.build().writeTo(File(outputDir()!!))
@@ -76,9 +81,9 @@ private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
 
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec> {
+private fun ImmutableKmClass.generateActionFunction(it: ImmutableKmClass): List<FunSpec> {
     val message = it.supertypes.first().arguments.first().type!!.generifiedType()
-    val (actionPkg, actionClazz) = it.explodeName()
+    val (_, actionClazz) = it.explodeName()
 
     val actionClassName = it.name.asClassName()
 
@@ -102,12 +107,11 @@ private fun ImmutableKmClass.actionFunction(it: ImmutableKmClass): List<FunSpec>
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmType.generifiedType(): TypeName {
-    val base = (classifier as KmClassifier.Class).name.asClassName()
+    val base = (classifier as Class).name.asClassName()
     return when {
         arguments.isEmpty() -> base.copy(nullable = isNullable)
         else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable).also { println(it) }
     }
-
 }
 
 @KotlinPoetMetadataPreview

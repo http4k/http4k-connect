@@ -10,12 +10,6 @@ import org.http4k.connect.amazon.sqs.action.SQSAction
  */
 @Http4kConnectAdapter
 interface SQS {
-
-    /**
-     * Available actions:
-     *  ReceiveMessage
-     *  SendMessage
-     */
     operator fun <R> invoke(request: SQSAction<R>): Result<R, RemoteFailure>
 
     companion object

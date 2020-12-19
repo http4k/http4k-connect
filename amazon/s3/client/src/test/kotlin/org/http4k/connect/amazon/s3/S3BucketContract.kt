@@ -25,7 +25,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(AwsService.of("
     private val bucket = BucketName.of(UUID.randomUUID().toString())
 
     private val s3Bucket by lazy {
-        S3.Bucket.Http(bucket, aws.scope, { aws.credentials }, http)
+        S3Bucket.Http(bucket, aws.scope, { aws.credentials }, http)
     }
 
     private val s3 by lazy {

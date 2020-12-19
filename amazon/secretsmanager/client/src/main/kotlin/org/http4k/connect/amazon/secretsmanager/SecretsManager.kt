@@ -10,15 +10,6 @@ import org.http4k.connect.amazon.secretsmanager.action.SecretsManagerAction
  */
 @Http4kConnectAdapter
 interface SecretsManager {
-    /**
-     * Available actions:
-     *  CreateSecret
-     *  DeleteSecret
-     *  GetSecretValue
-     *  ListSecrets
-     *  PutSecretValue
-     *  UpdateSecret
-     */
     operator fun <R : Any> invoke(request: SecretsManagerAction<R>): Result<R, RemoteFailure>
 
     companion object

@@ -11,17 +11,6 @@ import org.http4k.connect.amazon.kms.action.KMSAction
 
 @Http4kConnectAdapter
 interface KMS {
-    /**
-     * Available actions:
-     *  CreateKey
-     *  DescribeKey
-     *  Decrypt
-     *  Encrypt
-     *  GetPublicKey
-     *  ScheduleKeyDeletion
-     *  Sign
-     *  Verify
-     */
     operator fun <R : Any> invoke(request: KMSAction<R>): Result<R, RemoteFailure>
 
     companion object
