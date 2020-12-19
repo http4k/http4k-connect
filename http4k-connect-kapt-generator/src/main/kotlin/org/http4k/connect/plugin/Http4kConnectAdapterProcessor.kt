@@ -1,6 +1,5 @@
 package org.http4k.connect.plugin
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -13,7 +12,6 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrivate
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import dev.forkhandles.result4k.Result
 import kotlinx.metadata.KmClassifier.Class
 import org.http4k.connect.Http4kConnectAction
@@ -36,35 +34,30 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
 
     override fun generate(annotations: Set<TypeElement>, roundEnv: RoundEnvironment, outputDir: File): Boolean {
         roundEnv.annotated<Http4kConnectAdapter>()
-            .filterIsInstance<TypeElement>()
-            .forEach { it.toImmutableKmClass().generateActionExtensionsFor(roundEnv, outputDir) }
-
+            .map { it.generateActionExtensionsFor(roundEnv) }
+            .forEach { it.writeTo(outputDir) }
         return true
     }
 
-    private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment, outputDir: File) {
+    private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment): FileSpec {
         val (packageName, className) = explodeName()
 
         val actionType = functions.find { it.name == "invoke" }!!.valueParameters.first()
-        val fileBuilder = FileSpec.builder(packageName, className.toLowerCase() + "Extensions")
 
-        roundEnv.annotated<Http4kConnectAction>()
-            .filterIsInstance<TypeElement>()
-            .map { it.toImmutableKmClass() }
-            .filter {
-                it.supertypes.map { it.classifier }.contains(actionType.type?.classifier)
-            }
-            .flatMap { generateActionFunction(it) }
-            .forEach(fileBuilder::addFunction)
+        val functions = roundEnv.annotated<Http4kConnectAction>()
+            .filter { it.supertypes.map { it.classifier }.contains(actionType.type?.classifier) }
+            .flatMap(::generateActionFunctions)
 
-        fileBuilder.build().writeTo(outputDir)
+        return FileSpec.builder(packageName, className.toLowerCase() + "Extensions")
+            .apply { functions.forEach(::addFunction) }
+            .build()
     }
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmClass.generateActionFunction(it: ImmutableKmClass): List<FunSpec> {
+private fun ImmutableKmClass.generateActionFunctions(it: ImmutableKmClass): List<FunSpec> {
     val message = it.supertypes.first().arguments.first().type!!.generifiedType()
-    val (_, actionClazz) = it.explodeName()
+    val actionClazz = it.name.name()
 
     val actionClassName = it.name.asClassName()
 
@@ -94,11 +87,4 @@ private fun ImmutableKmType.generifiedType(): TypeName {
         else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable)
     }
 }
-
-@KotlinPoetMetadataPreview
-private fun ImmutableKmClass.explodeName() = name.pkg() to name.substringAfterLast('/')
-
-private fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
-private fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
-private fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
 

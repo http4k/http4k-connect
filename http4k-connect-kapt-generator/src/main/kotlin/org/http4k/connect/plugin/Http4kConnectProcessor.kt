@@ -1,6 +1,9 @@
 package org.http4k.connect.plugin
 
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -26,5 +29,17 @@ abstract class Http4kConnectProcessor : AbstractProcessor() {
     }
 }
 
+@KotlinPoetMetadataPreview
 internal inline fun <reified T : Annotation> RoundEnvironment.annotated() =
     rootElements.filter { it.getAnnotation(T::class.java) != null }
+        .filterIsInstance<TypeElement>()
+        .map { it.toImmutableKmClass()}
+
+
+@KotlinPoetMetadataPreview
+internal fun ImmutableKmClass.explodeName() = name.pkg() to name.name()
+
+internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
+internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
+internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
+
