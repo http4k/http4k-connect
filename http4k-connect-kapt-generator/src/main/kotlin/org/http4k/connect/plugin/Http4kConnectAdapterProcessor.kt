@@ -61,9 +61,6 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
     }
 }
 
-private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
-    rootElements.filter { it.getAnnotation(T::class.java) != null }
-
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.generateActionFunction(it: ImmutableKmClass): List<FunSpec> {
     val message = it.supertypes.first().arguments.first().type!!.generifiedType()

@@ -1,1 +1,2 @@
 org.http4k.connect.plugin.Http4kConnectAdapterProcessor
+org.http4k.connect.plugin.Http4kConnectActionProcessor

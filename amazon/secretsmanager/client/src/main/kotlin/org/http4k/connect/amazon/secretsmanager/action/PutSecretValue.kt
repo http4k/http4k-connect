@@ -6,7 +6,7 @@ import org.http4k.connect.amazon.model.SecretId
 import java.util.UUID
 
 @Http4kConnectAction
-class PutSecretValue private constructor(
+class PutSecretValue internal constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,
     val SecretString: String?,

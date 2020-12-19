@@ -25,3 +25,6 @@ abstract class Http4kConnectProcessor : AbstractProcessor() {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
     }
 }
+
+internal inline fun <reified T : Annotation> RoundEnvironment.annotated() =
+    rootElements.filter { it.getAnnotation(T::class.java) != null }

@@ -8,7 +8,7 @@ import org.http4k.connect.amazon.model.VersionId
 import java.util.UUID
 
 @Http4kConnectAction
-class CreateSecret private constructor(
+class CreateSecret internal constructor(
     val Name: String,
     val ClientRequestToken: UUID,
     val SecretString: String?,
