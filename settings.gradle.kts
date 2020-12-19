@@ -1,4 +1,4 @@
-include(":http4k-kapt-generator")
+include(":http4k-connect-kapt-generator")
 
 includeWithName("http4k-connect-bom", "bom")
 includeSystem("core")
