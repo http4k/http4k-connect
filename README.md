@@ -32,6 +32,7 @@ Action classes are responsible for constructing the HTTP requests and unmarshall
 interface Example {
    operator fun <R : Any> invoke(request: ExampleAction<R>): Result<R, RemoteFailure>
 }
+
 // System-specific action
 interface ExampleAction<R> : Action<R>
 
