@@ -19,7 +19,7 @@ import kotlinx.metadata.KmClassifier.Class
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.plugin.Http4kConnectAdapterGenerator.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
+import org.http4k.connect.plugin.Http4kConnectAdapterExtensionsGenerator.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -34,7 +34,7 @@ import javax.tools.Diagnostic.Kind.ERROR
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("org.http4k.connect.Http4kConnectAdapter")
 @SupportedOptions(KAPT_KOTLIN_GENERATED_OPTION_NAME)
-class Http4kConnectAdapterGenerator : AbstractProcessor() {
+class Http4kConnectAdapterExtensionsGenerator : AbstractProcessor() {
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         outputDir() ?: run {
