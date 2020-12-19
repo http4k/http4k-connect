@@ -110,7 +110,7 @@ private fun ImmutableKmType.generifiedType(): TypeName {
     val base = (classifier as Class).name.asClassName()
     return when {
         arguments.isEmpty() -> base.copy(nullable = isNullable)
-        else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable).also { println(it) }
+        else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable)
     }
 }
 

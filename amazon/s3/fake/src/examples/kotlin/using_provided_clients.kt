@@ -4,9 +4,6 @@ import dev.forkhandles.result4k.map
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.s3.action.CreateBucket
-import org.http4k.connect.amazon.s3.action.ListBuckets
-import org.http4k.connect.amazon.s3.action.ListKeys
 
 fun main() {
     val fakeS3 = FakeS3()
@@ -15,10 +12,10 @@ fun main() {
     val s3BucketClient = fakeS3.s3BucketClient(name, region)
     val s3Client = fakeS3.s3Client()
 
-    println(s3Client(CreateBucket(name, region)))
-    println(s3Client(ListBuckets()))
+    println(s3Client.createBucket(name, region))
+    println(s3Client.listBuckets())
 
     println(s3BucketClient.set(BucketKey.of("content"), "hellothere".byteInputStream()))
-    println(s3BucketClient(ListKeys()))
+    println(s3BucketClient.listKeys())
     println(s3BucketClient[BucketKey.of("content")].map { it!!.bufferedReader().readText() })
 }

@@ -43,6 +43,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(AwsService.of("
 
     @Test
     fun `bucket key lifecycle`() {
+        Thread.sleep(10000)
         val newKey = BucketKey.of(UUID.randomUUID().toString())
 
         assertThat(s3Bucket(ListKeys()).successValue(), equalTo(Listing.Empty))
