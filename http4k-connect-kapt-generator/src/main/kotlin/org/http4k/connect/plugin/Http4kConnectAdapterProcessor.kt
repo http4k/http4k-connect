@@ -19,39 +19,30 @@ import kotlinx.metadata.KmClassifier.Class
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.plugin.Http4kConnectAdapterExtensionsGenerator.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
+import org.http4k.connect.plugin.Http4kConnectProcessor.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
 import java.io.File
-import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
 import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import javax.tools.Diagnostic.Kind.ERROR
 
 @KotlinPoetMetadataPreview
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("org.http4k.connect.Http4kConnectAdapter")
 @SupportedOptions(KAPT_KOTLIN_GENERATED_OPTION_NAME)
-class Http4kConnectAdapterExtensionsGenerator : AbstractProcessor() {
+class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
 
-    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
-        outputDir() ?: run {
-            processingEnv.messager.printMessage(ERROR, "Can't find the target directory for generated Kotlin files.")
-            return false
-        }
-
+    override fun generate(annotations: Set<TypeElement>, roundEnv: RoundEnvironment, outputDir: File): Boolean {
         roundEnv.annotated<Http4kConnectAdapter>()
             .filterIsInstance<TypeElement>()
-            .forEach {
-                it.toImmutableKmClass().generateActionExtensionsFor(roundEnv)
-            }
+            .forEach { it.toImmutableKmClass().generateActionExtensionsFor(roundEnv, outputDir) }
 
         return true
     }
 
-    private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment) {
+    private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment, outputDir: File) {
         val (packageName, className) = explodeName()
 
         val actionType = functions.find { it.name == "invoke" }!!.valueParameters.first()
@@ -66,19 +57,12 @@ class Http4kConnectAdapterExtensionsGenerator : AbstractProcessor() {
             .flatMap { generateActionFunction(it) }
             .forEach(fileBuilder::addFunction)
 
-        fileBuilder.build().writeTo(File(outputDir()!!))
-    }
-
-    private fun outputDir() = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
-
-    companion object {
-        const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
+        fileBuilder.build().writeTo(outputDir)
     }
 }
 
 private inline fun <reified T : Annotation> RoundEnvironment.annotated() =
     rootElements.filter { it.getAnnotation(T::class.java) != null }
-
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.generateActionFunction(it: ImmutableKmClass): List<FunSpec> {
