@@ -1,9 +1,11 @@
 package org.http4k.connect.amazon.secretsmanager.action
 
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
 import java.util.UUID
 
+@Http4kConnectAction
 class PutSecretValue private constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,

@@ -1,5 +1,6 @@
 package org.http4k.connect.amazon.kms.action
 
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.CustomerMasterKeySpec
 import org.http4k.connect.amazon.model.EncryptionAlgorithm
@@ -7,6 +8,7 @@ import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.KeyUsage
 import org.http4k.connect.amazon.model.SigningAlgorithm
 
+@Http4kConnectAction
 data class GetPublicKey(
     val KeyId: KMSKeyId,
     val GrantTokens: List<String>? = null

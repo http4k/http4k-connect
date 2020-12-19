@@ -1,9 +1,11 @@
 package org.http4k.connect.amazon.secretsmanager.action
 
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.Timestamp
 
+@Http4kConnectAction
 data class ListSecrets(
     val MaxResults: Int? = null,
     val NextToken: String? = null,

@@ -1,3 +1,5 @@
+include(":http4k-kapt-generator")
+
 includeWithName("http4k-connect-bom", "bom")
 includeSystem("core")
 includeStorage("jdbc")

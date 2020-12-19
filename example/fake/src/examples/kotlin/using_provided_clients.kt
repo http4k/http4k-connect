@@ -1,8 +1,8 @@
 import org.http4k.connect.example.FakeExample
-import org.http4k.connect.example.action.Echo
+import org.http4k.connect.example.echo
 
 fun main() {
     val fakeExample = FakeExample()
 
-    fakeExample.client()(Echo("hello"))
+    fakeExample.client().echo("hello")
 }

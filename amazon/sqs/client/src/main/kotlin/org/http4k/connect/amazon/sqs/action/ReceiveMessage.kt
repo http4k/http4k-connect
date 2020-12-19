@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.sqs.action
 
 import dev.forkhandles.result4k.Result
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
@@ -14,6 +15,7 @@ import org.http4k.core.with
 import org.http4k.lens.Header.CONTENT_TYPE
 import java.time.ZonedDateTime
 
+@Http4kConnectAction
 data class ReceiveMessage(
     val accountId: AwsAccount,
     val queueName: QueueName,

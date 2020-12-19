@@ -1,9 +1,11 @@
 package org.http4k.connect.amazon.systemsmanager.action
 
+import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Tag
 
+@Http4kConnectAction
 data class PutParameter(
     val Name: String,
     val Value: String,
