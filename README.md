@@ -40,7 +40,7 @@ interface ExampleAction<R> : Action<R>
 data class Echo(val value: String) : ExampleAction<Echoed>
 data class Echoed(val value: String)
 
-// traditional function helpers
+// Traditional function helpers
 fun Example.echo(value: String): Result<Echoed, RemoteFailure> = this(Echo(value))
 ```
 
