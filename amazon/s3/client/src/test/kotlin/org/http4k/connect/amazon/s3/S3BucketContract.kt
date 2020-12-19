@@ -16,7 +16,6 @@ import org.http4k.connect.amazon.s3.action.DeleteKey
 import org.http4k.connect.amazon.s3.action.ListKeys
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -37,14 +36,9 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(AwsService.of("
 
     @BeforeEach
     fun recreate() {
-        s3(DeleteBucket(bucket))
-        s3(CreateBucket(bucket, Region.of(aws.scope.region)))
-    }
-
-    @AfterEach
-    fun deleteBucket() {
         s3Bucket(DeleteKey(key)).successValue()
         s3(DeleteBucket(bucket))
+        s3(CreateBucket(bucket, Region.of(aws.scope.region))).successValue()
     }
 
     @Test
