@@ -29,6 +29,7 @@ val EncryptionContext = mapOf(randomString to randomString)
 
 class KMSMoshiTest : SystemMoshiContract(KMSMoshi,
     CreateKey(SYMMETRIC_DEFAULT, ENCRYPT_DECRYPT, true, randomString, randomString, randomString, randomString, listOf(Tag(randomString, randomString))),
+//    KeyCreated(KeyMetadata(KeyId, ARN.of(randomString), AwsAccount.of(randomString), ENCRYPT_DECRYPT, listOf(RSAES_OAEP_SHA_256)), listOf(RSASSA_PSS_SHA_256))
     Decrypt(KeyId, Blob, RSAES_OAEP_SHA_256, EncryptionContext, GrantTokens),
     DescribeKey(KeyId, GrantTokens),
     Encrypt(KeyId, Blob, RSAES_OAEP_SHA_256, EncryptionContext, GrantTokens),

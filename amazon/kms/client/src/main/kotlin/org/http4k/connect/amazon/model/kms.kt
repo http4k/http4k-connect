@@ -1,5 +1,8 @@
 package org.http4k.connect.amazon.model
 
+import se.ansman.kotshi.JsonSerializable
+
+@JsonSerializable
 data class KeyMetadata(
     val KeyId: KMSKeyId,
     val Arn: ARN? = null,
