@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.secretsmanager
 
 import com.squareup.moshi.Moshi
-import org.http4k.connect.ActionAdapterFactory
 import org.http4k.connect.adapter
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.VersionId
@@ -21,6 +20,7 @@ import org.http4k.connect.amazon.secretsmanager.action.KotshiSecretsJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdateSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdatedSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdatedSecretValueJsonAdapter
+import org.http4k.format.AwsActionAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.text
@@ -38,7 +38,7 @@ object SecretsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
     .done()
 )
 
-object SecretsManagerAdapterFactory : ActionAdapterFactory(
+object SecretsManagerAdapterFactory : AwsActionAdapterFactory(
     adapter(::KotshiCreatedSecretJsonAdapter),
     adapter(::KotshiCreateSecretJsonAdapter),
     adapter(::KotshiDeletedSecretJsonAdapter),

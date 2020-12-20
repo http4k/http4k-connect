@@ -1,8 +1,8 @@
 package org.http4k.connect.amazon.kms
 
 import com.squareup.moshi.Moshi
-import org.http4k.connect.ActionAdapterFactory
 import org.http4k.connect.adapter
+import org.http4k.connect.amazon.kms.action.KotshiCreateKeyJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiDecryptJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiDecryptedJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiDescribeKeyJsonAdapter
@@ -18,6 +18,7 @@ import org.http4k.connect.amazon.kms.action.KotshiSignJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiSignedJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiVerifyJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiVerifyResultJsonAdapter
+import org.http4k.format.AwsActionAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
@@ -31,7 +32,8 @@ object KMSMoshi : ConfigurableMoshi(Moshi.Builder()
     .done()
 )
 
-object KMSAdapterFactory : ActionAdapterFactory(
+object KMSAdapterFactory : AwsActionAdapterFactory(
+    adapter(::KotshiCreateKeyJsonAdapter),
     adapter(::KotshiDecryptedJsonAdapter),
     adapter(::KotshiDecryptJsonAdapter),
     adapter(::KotshiDescribeKeyJsonAdapter),

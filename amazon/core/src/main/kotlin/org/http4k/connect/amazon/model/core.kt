@@ -10,6 +10,7 @@ import dev.forkhandles.values.minValue
 import dev.forkhandles.values.regex
 import org.http4k.base64Decoded
 import org.http4k.base64Encode
+import se.ansman.kotshi.JsonSerializable
 
 class ARN private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<ARN>(::ARN, 1.minLength.and { it.startsWith("arn:aws:") }) {
@@ -56,6 +57,7 @@ class KMSKeyId private constructor(value: String) : StringValue(value) {
     }
 }
 
+@JsonSerializable
 data class Tag(
     val Key: String,
     val Value: String

@@ -11,14 +11,13 @@ annotation class Http4kConnectAdapter
 @Target(AnnotationTarget.CLASS)
 annotation class Http4kConnectAction
 
-abstract class ActionAdapterFactory(vararg typesToAdapters: Pair<Class<*>, (Moshi) -> JsonAdapter<*>>) : JsonAdapter.Factory {
-    private val mappings: Map<Class<*>, (Moshi) -> JsonAdapter<*>> = typesToAdapters.toMap()
+abstract class ActionAdapterFactory(vararg typesToAdapters: Pair<String, (Moshi) -> JsonAdapter<*>>) : JsonAdapter.Factory {
+    private val mappings = typesToAdapters.toMap()
 
-    override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi) =
-        if (annotations.isNotEmpty()) null
-        else
-            mappings[Types.getRawType(type)]?.let { it(moshi) }
+    override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi) = when {
+        annotations.isNotEmpty() -> null
+        else -> mappings[Types.getRawType(type).typeName]?.let { it(moshi) }
+    }
 }
 
-inline fun <reified T : JsonAdapter<*>> adapter(noinline fn: (Moshi) -> T) =
-    T::class.java to fn
+inline fun <reified T : JsonAdapter<K>, reified K> adapter(noinline fn: (Moshi) -> T) = K::class.java.name to fn
