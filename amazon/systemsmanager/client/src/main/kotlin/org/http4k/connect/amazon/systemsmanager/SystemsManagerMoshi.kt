@@ -1,28 +1,32 @@
 package org.http4k.connect.amazon.systemsmanager
 
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
+import org.http4k.connect.adapter
+import org.http4k.connect.amazon.systemsmanager.action.KotshiDeleteParameterJsonAdapter
+import org.http4k.connect.amazon.systemsmanager.action.KotshiGetParameterJsonAdapter
+import org.http4k.connect.amazon.systemsmanager.action.KotshiParameterJsonAdapter
+import org.http4k.connect.amazon.systemsmanager.action.KotshiParameterValueJsonAdapter
+import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterJsonAdapter
+import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterResultJsonAdapter
+import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
 object SystemsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(Unit::class.java, UnitAdapter)
+    .add(SystemsManagerJsonAdapterFactory)
     .asConfigurable()
     .withStandardMappings()
     .withAwsCoreMappings()
     .done()
 )
 
-private object UnitAdapter : JsonAdapter<Unit>() {
-    override fun fromJson(reader: JsonReader) {
-        reader.readJsonValue(); Unit
-    }
-
-    override fun toJson(writer: JsonWriter, value: Unit?) {
-        value?.let { writer.beginObject().endObject() } ?: writer.nullValue()
-    }
-}
+object SystemsManagerJsonAdapterFactory : AwsJsonAdapterFactory(
+    adapter { KotshiDeleteParameterJsonAdapter() },
+    adapter { KotshiGetParameterJsonAdapter() },
+    adapter(::KotshiParameterJsonAdapter),
+    adapter(::KotshiParameterValueJsonAdapter),
+    adapter(::KotshiPutParameterJsonAdapter),
+    adapter { KotshiPutParameterResultJsonAdapter() }
+)

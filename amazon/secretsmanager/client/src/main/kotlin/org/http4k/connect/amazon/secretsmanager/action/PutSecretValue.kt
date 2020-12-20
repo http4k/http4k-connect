@@ -3,23 +3,26 @@ package org.http4k.connect.amazon.secretsmanager.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
+import org.http4k.connect.amazon.model.VersionStage
+import se.ansman.kotshi.JsonSerializable
 import java.util.UUID
 
 @Http4kConnectAction
-class PutSecretValue private constructor(
+@JsonSerializable
+data class PutSecretValue internal constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,
     val SecretString: String?,
     val SecretBinary: Base64Blob?,
-    val VersionStages: List<String>?
+    val VersionStages: List<VersionStage>?
 ) : SecretsManagerAction<UpdatedSecretValue>(UpdatedSecretValue::class) {
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretString: String,
-                VersionStages: List<String>? = null) : this(SecretId, ClientRequestToken, SecretString, null, VersionStages)
+                VersionStages: List<VersionStage>? = null) : this(SecretId, ClientRequestToken, SecretString, null, VersionStages)
 
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretBinary: Base64Blob,
-                VersionStages: List<String>? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, VersionStages)
+                VersionStages: List<VersionStage>? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, VersionStages)
 }

@@ -5,8 +5,10 @@ import org.http4k.connect.amazon.model.CustomerMasterKeySpec
 import org.http4k.connect.amazon.model.KeyMetadata
 import org.http4k.connect.amazon.model.KeyUsage
 import org.http4k.connect.amazon.model.Tag
+import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class CreateKey(
     val CustomerMasterKeySpec: CustomerMasterKeySpec? = null,
     val KeyUsage: KeyUsage? = null,
@@ -18,4 +20,5 @@ data class CreateKey(
     val Tags: List<Tag>? = null
 ) : KMSAction<KeyCreated>(KeyCreated::class)
 
+@JsonSerializable
 data class KeyCreated(val KeyMetadata: KeyMetadata)

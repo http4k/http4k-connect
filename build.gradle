@@ -70,7 +70,6 @@ allprojects {
             api project(":http4k-connect-core")
         } else if (project.name != "http4k-connect-core") {
             dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
-            kapt project(":http4k-connect-kapt-generator")
             api project(":http4k-connect-core")
             testImplementation project(path: ":http4k-connect-core-fake", configuration: "testArtifacts")
         }

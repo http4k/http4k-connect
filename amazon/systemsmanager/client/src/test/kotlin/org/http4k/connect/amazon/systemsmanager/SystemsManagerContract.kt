@@ -32,5 +32,4 @@ abstract class SystemsManagerContract(http: HttpHandler) : AwsContract(AwsServic
 
         assertThat(secretsManager(DeleteParameter(name)).failureOrNull()!!.status, equalTo(BAD_REQUEST))
     }
-
 }
