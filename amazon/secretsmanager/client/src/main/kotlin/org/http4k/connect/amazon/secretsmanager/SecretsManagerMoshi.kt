@@ -9,7 +9,7 @@ import org.http4k.connect.amazon.secretsmanager.action.KotshiCreateSecretJsonAda
 import org.http4k.connect.amazon.secretsmanager.action.KotshiCreatedSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiDeleteSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiDeletedSecretJsonAdapter
-import org.http4k.connect.amazon.secretsmanager.action.KotshiFiltersJsonAdapter
+import org.http4k.connect.amazon.secretsmanager.action.KotshiFilterJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiGetSecretValueJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiListSecretsJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiPutSecretValueJsonAdapter
@@ -20,6 +20,7 @@ import org.http4k.connect.amazon.secretsmanager.action.KotshiSecretsJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdateSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdatedSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdatedSecretValueJsonAdapter
+import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.AwsActionAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
@@ -32,18 +33,22 @@ object SecretsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
     .asConfigurable()
     .withStandardMappings()
     .withAwsCoreMappings()
-    .text(SecretId::of)
-    .text(VersionId::of)
-    .text(VersionStage::of)
+    .withSecretsManagerMappings()
     .done()
 )
+
+fun <T> AutoMappingConfiguration<T>.withSecretsManagerMappings() = apply {
+    text(SecretId::of)
+    text(VersionId::of)
+    text(VersionStage::of)
+}
 
 object SecretsManagerAdapterFactory : AwsActionAdapterFactory(
     adapter(::KotshiCreatedSecretJsonAdapter),
     adapter(::KotshiCreateSecretJsonAdapter),
     adapter(::KotshiDeletedSecretJsonAdapter),
     adapter(::KotshiDeleteSecretJsonAdapter),
-    adapter(::KotshiFiltersJsonAdapter),
+    adapter(::KotshiFilterJsonAdapter),
     adapter(::KotshiGetSecretValueJsonAdapter),
     adapter(::KotshiListSecretsJsonAdapter),
     adapter(::KotshiPutSecretValueJsonAdapter),
