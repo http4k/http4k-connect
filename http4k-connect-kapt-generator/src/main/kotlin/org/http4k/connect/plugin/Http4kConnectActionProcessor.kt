@@ -1,13 +1,13 @@
 package org.http4k.connect.plugin
 
-import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonWriter
@@ -42,12 +42,12 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
                 val fileBuilder = FileSpec.builder(packageName,
                     className.toLowerCase() + "Adapter")
 
-                val actionType = it.name.asClassName()
                 val type = TypeSpec.classBuilder(className + "Adapter")
                     .superclass(
-                        Http4kConnectMoshiAdapter::class.asClassName().parameterizedBy(actionType))
-                    .addFunction(fromJsonFields(actionType))
-                    .addFunction(fromObject(actionType))
+                        className<Http4kConnectMoshiAdapter<*>>()
+                            .parameterizedBy(it.name.asClassName()))
+                    .addFunction(fromJsonFields(it))
+                    .addFunction(fromObject(it))
                     .build()
 
                 fileBuilder.addType(type)
@@ -58,20 +58,24 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
         return true
     }
 
-    private fun fromObject(actionType: ClassName) = FunSpec.builder("fromObject").addModifiers(OVERRIDE)
-        .addParameter(ParameterSpec.builder("writer", JsonWriter::class.asClassName()).build())
-        .addParameter(ParameterSpec.builder("value", actionType).build())
+    private fun fromObject(actionType: ImmutableKmClass) = FunSpec.builder("fromObject").addModifiers(OVERRIDE)
+        .addParameter(ParameterSpec.builder("writer", className<JsonWriter>()).build())
+        .addParameter(ParameterSpec.builder("value", actionType.name.asClassName()).build())
         .build()
 
-    private fun fromJsonFields(actionType: ClassName) = FunSpec.builder("fromJsonFields")
+    private fun fromJsonFields(actionType: ImmutableKmClass) = FunSpec.builder("fromJsonFields")
         .addModifiers(OVERRIDE)
         .addParameter(
-            ParameterSpec.builder("fields", Map::class.asClassName().parameterizedBy(
-                String::class.asClassName(),
-                Any::class.asClassName()
-            )).build())
-        .returns(actionType)
+            ParameterSpec.builder("fields",
+                className<Map<*, *>>()
+                    .parameterizedBy(className<String>(), className<Any>())
+            ).build())
+        .addCode(buildFromJsonFieldsBody())
+        .returns(actionType.name.asClassName())
         .build()
+
+
+    private fun buildFromJsonFieldsBody() = CodeBlock.of("return TODO()")
 }
 
 class Messag2JsonAdapter1(moshi: Moshi) : Http4kConnectMoshiAdapter<Message>() {

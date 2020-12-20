@@ -1,6 +1,7 @@
 package org.http4k.connect.plugin
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
@@ -43,3 +44,4 @@ internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace
 internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
 internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
 
+internal inline fun <reified T> className() = T::class.asClassName()
