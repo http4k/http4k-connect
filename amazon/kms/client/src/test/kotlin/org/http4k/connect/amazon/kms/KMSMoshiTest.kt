@@ -1,6 +1,6 @@
 package org.http4k.connect.amazon.kms
 
-import org.http4k.connect.SystemMoshiTest
+import org.http4k.connect.SystemMoshiContract
 import org.http4k.connect.amazon.kms.action.CreateKey
 import org.http4k.connect.amazon.kms.action.Decrypt
 import org.http4k.connect.amazon.kms.action.DescribeKey
@@ -27,7 +27,7 @@ val GrantTokens = listOf(randomString)
 
 val EncryptionContext = mapOf(randomString to randomString)
 
-class KMSMoshiTest : SystemMoshiTest(KMSMoshi,
+class KMSMoshiTest : SystemMoshiContract(KMSMoshi,
     CreateKey(SYMMETRIC_DEFAULT, ENCRYPT_DECRYPT, true, randomString, randomString, randomString, randomString, listOf(Tag(randomString, randomString))),
     Decrypt(KeyId, Blob, RSAES_OAEP_SHA_256, EncryptionContext, GrantTokens),
     DescribeKey(KeyId, GrantTokens),
