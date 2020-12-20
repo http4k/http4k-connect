@@ -28,9 +28,9 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
                 val (packageName, className) = it.explodeName()
 
                 val fileBuilder = FileSpec.builder(packageName,
-                    className.toLowerCase() + "Extensions")
+                    className.toLowerCase() + "Adapter")
 
-                fileBuilder
+                fileBuilder.build().writeTo(outputDir)
                 println(it)
             }
         return true
