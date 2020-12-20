@@ -51,10 +51,13 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
                         .build())
                     .addProperties(it.constructors[0].valueParameters.map {
                         val fieldType = it.type!!.generifiedType().copy(nullable = false)
+                        val codeBlock = CodeBlock.of("moshi.adapter($fieldType::class.java)")
+
+                        println(it.type!!.generifiedType())
                         PropertySpec.builder(it.name,
                             className<JsonAdapter<*>>()
                                 .parameterizedBy(fieldType), PRIVATE)
-                            .initializer(CodeBlock.of("moshi.adapter($fieldType::class.java)"))
+                            .initializer(codeBlock)
                             .build()
                     })
                     .addFunction(fromJsonFields(it))
@@ -64,6 +67,7 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
                 fileBuilder.addType(type)
                 fileBuilder.build().writeTo(outputDir)
             }
+
         return true
     }
 
@@ -86,20 +90,19 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
 
     private fun buildFromJsonFieldsBody(actionType: ImmutableKmClass): CodeBlock {
         val content = actionType.constructors.first().valueParameters.map {
-            val operator = if(it.type!!.isNullable) "?" else "!!"
-            "fields[\"${it.name}\"]${operator}.let(${it.name}::fromJsonValue)" +
-             if(it.type!!.isNullable) "" else "!!"
+            val operator = if(it.type!!.isNullable) "" else "!!"
+            "fields[\"${it.name}\"]?.let(${it.name}::fromJsonValue)$operator"
         }.joinToString(",\n")
-        return CodeBlock.of("return %T($content)", actionType.name.asClassName())
+        return CodeBlock.of("return %T(\n$content\n)", actionType.name.asClassName())
     }
 }
 
 class Messag2JsonAdapter1(moshi: Moshi) : Http4kConnectMoshiAdapter<Message>() {
-    private val description = moshi.adapter(String::class.java)
+    private val description: JsonAdapter<List<String>> = TODO()
 
     override fun fromJsonFields(fields: Map<String, Any>) =
         Message(
-            fields["Description"]?.let(description::fromJsonValue)
+            fields["Description"]?.let(description::fromJsonValue)!!
         )
 
     override fun fromObject(writer: JsonWriter, it: Message) {
@@ -117,4 +120,4 @@ object KMSMoshiAdapterFactory : JsonAdapter.Factory {
         }
 }
 
-data class Message(val Description: String?)
+data class Message(val Description: List<String>)
