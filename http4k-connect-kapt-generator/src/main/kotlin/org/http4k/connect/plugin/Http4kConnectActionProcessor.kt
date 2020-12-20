@@ -36,8 +36,6 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
     override fun generate(annotations: Set<TypeElement>,
                           roundEnv: RoundEnvironment,
                           outputDir: File): Boolean {
-        println("HELLO!" + annotations)
-
         roundEnv.annotated<Http4kConnectAction>()
             .forEach {
                 val (packageName, className) = it.explodeName()
@@ -89,7 +87,8 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
     private fun buildFromJsonFieldsBody(actionType: ImmutableKmClass): CodeBlock {
         val content = actionType.constructors.first().valueParameters.map {
             val operator = if(it.type!!.isNullable) "?" else "!!"
-            "fields[\"${it.name}\"]${operator}.let(${it.name}::fromJsonValue)"
+            "fields[\"${it.name}\"]${operator}.let(${it.name}::fromJsonValue)" +
+             if(it.type!!.isNullable) "" else "!!"
         }.joinToString(",\n")
         return CodeBlock.of("return %T($content)", actionType.name.asClassName())
     }
