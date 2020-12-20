@@ -5,9 +5,10 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 
 abstract class Http4kConnectMoshiAdapter<T> : JsonAdapter<T>() {
-    override fun fromJson(reader: JsonReader): T = fromJsonFields(reader.readJsonValue() as Map<*, *>)
+    @Suppress("UNCHECKED_CAST")
+    override fun fromJson(reader: JsonReader): T = fromJsonFields(reader.readJsonValue() as Map<String, Any>)
 
-    protected abstract fun fromJsonFields(fields: Map<*, *>): T
+    protected abstract fun fromJsonFields(fields: Map<String, Any>): T
 
     protected abstract fun fromObject(writer: JsonWriter, it: T)
 
