@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.kms
+package org.http4k.connect
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
