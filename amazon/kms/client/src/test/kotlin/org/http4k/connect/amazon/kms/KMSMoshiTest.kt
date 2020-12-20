@@ -30,6 +30,7 @@ import org.http4k.connect.amazon.model.SigningAlgorithm.RSASSA_PSS_SHA_256
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.randomString
+import java.lang.Integer.MAX_VALUE
 
 val Blob = Base64Blob.encoded(randomString)
 
@@ -41,7 +42,9 @@ val EncryptionContext = mapOf(randomString to randomString)
 
 val KeyUsage = ENCRYPT_DECRYPT
 val CreationDate = Timestamp.of(0)
-val KeyMetadata = KeyMetadata(KeyId, ARN.of(randomString), AwsAccount.of(randomString), KeyUsage,
+val Arn = ARN.of("arn:aws:$randomString")
+
+val KeyMetadata = KeyMetadata(KeyId, Arn, AwsAccount.of(MAX_VALUE.toString()), KeyUsage,
     listOf(RSAES_OAEP_SHA_256), listOf(RSASSA_PSS_SHA_256), SYMMETRIC_DEFAULT, true, CreationDate)
 
 class KMSMoshiTest : SystemMoshiContract(KMSMoshi,
