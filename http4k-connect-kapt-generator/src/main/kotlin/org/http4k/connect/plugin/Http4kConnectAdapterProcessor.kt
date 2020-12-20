@@ -5,15 +5,12 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrivate
 import dev.forkhandles.result4k.Result
-import kotlinx.metadata.KmClassifier.Class
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
@@ -78,13 +75,3 @@ private fun ImmutableKmClass.generateActionFunctions(it: ImmutableKmClass): List
             baseFunction.build()
         }
 }
-
-@KotlinPoetMetadataPreview
-private fun ImmutableKmType.generifiedType(): TypeName {
-    val base = (classifier as Class).name.asClassName()
-    return when {
-        arguments.isEmpty() -> base.copy(nullable = isNullable)
-        else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable)
-    }
-}
-

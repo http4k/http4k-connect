@@ -4,8 +4,10 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
+import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -39,21 +41,29 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
             .forEach {
                 val (packageName, className) = it.explodeName()
 
-                val fileBuilder = FileSpec.builder(packageName,
-                    className.toLowerCase() + "Adapter")
+                val fileBuilder = FileSpec.builder(packageName, className + "Adapter")
 
                 val type = TypeSpec.classBuilder(className + "Adapter")
                     .superclass(
                         className<Http4kConnectMoshiAdapter<*>>()
-                            .parameterizedBy(it.name.asClassName()))
+                            .parameterizedBy(it.poetClassName()))
+                    .primaryConstructor(FunSpec.constructorBuilder()
+                        .addParameter(ParameterSpec("moshi", className<Moshi>()))
+                        .build())
+                    .addProperties(it.constructors[0].valueParameters.map {
+                        val fieldType = it.type!!.generifiedType().copy(nullable = false)
+                        PropertySpec.builder(it.name,
+                            className<JsonAdapter<*>>()
+                                .parameterizedBy(fieldType), PRIVATE)
+                            .initializer(CodeBlock.of("moshi.adapter($fieldType::class.java)"))
+                            .build()
+                    })
                     .addFunction(fromJsonFields(it))
                     .addFunction(fromObject(it))
                     .build()
 
                 fileBuilder.addType(type)
-
                 fileBuilder.build().writeTo(outputDir)
-                println(it)
             }
         return true
     }
@@ -70,12 +80,17 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
                 className<Map<*, *>>()
                     .parameterizedBy(className<String>(), className<Any>())
             ).build())
-        .addCode(buildFromJsonFieldsBody())
+        .addCode(buildFromJsonFieldsBody(actionType))
         .returns(actionType.name.asClassName())
         .build()
 
 
-    private fun buildFromJsonFieldsBody() = CodeBlock.of("return TODO()")
+    private fun buildFromJsonFieldsBody(actionType: ImmutableKmClass): CodeBlock {
+        val content = actionType.constructors.first().valueParameters.map {
+            "fields[\"${it.name}\"]?.let(${it.name}::fromJsonValue)"
+        }.joinToString(",\n")
+        return CodeBlock.of("return %T($content)", actionType.name.asClassName())
+    }
 }
 
 class Messag2JsonAdapter1(moshi: Moshi) : Http4kConnectMoshiAdapter<Message>() {
