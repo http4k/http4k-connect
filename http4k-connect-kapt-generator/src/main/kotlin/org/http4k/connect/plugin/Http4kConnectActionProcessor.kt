@@ -11,6 +11,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
@@ -87,7 +88,8 @@ class Http4kConnectActionProcessor : Http4kConnectProcessor() {
 
     private fun buildFromJsonFieldsBody(actionType: ImmutableKmClass): CodeBlock {
         val content = actionType.constructors.first().valueParameters.map {
-            "fields[\"${it.name}\"]?.let(${it.name}::fromJsonValue)"
+            val operator = if(it.type!!.isNullable) "?" else "!!"
+            "fields[\"${it.name}\"]${operator}.let(${it.name}::fromJsonValue)"
         }.joinToString(",\n")
         return CodeBlock.of("return %T($content)", actionType.name.asClassName())
     }
