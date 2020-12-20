@@ -7,14 +7,17 @@ import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.model.VersionStage
+import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class GetSecretValue(
     val SecretId: SecretId,
     val VersionId: VersionId? = null,
     val VersionStage: VersionStage? = null
 ) : SecretsManagerAction<SecretValue>(SecretValue::class)
 
+@JsonSerializable
 data class SecretValue(
     val ARN: ARN,
     val CreatedDate: Timestamp,

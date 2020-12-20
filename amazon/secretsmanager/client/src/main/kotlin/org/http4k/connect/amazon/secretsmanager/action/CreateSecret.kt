@@ -5,10 +5,12 @@ import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.VersionId
+import se.ansman.kotshi.JsonSerializable
 import java.util.UUID
 
 @Http4kConnectAction
-class CreateSecret internal constructor(
+@JsonSerializable
+data class CreateSecret internal constructor(
     val Name: String,
     val ClientRequestToken: UUID,
     val SecretString: String?,
@@ -32,6 +34,7 @@ class CreateSecret internal constructor(
                 Tags: List<Tag>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
 }
 
+@JsonSerializable
 data class CreatedSecret(
     val ARN: ARN,
     val Name: String,

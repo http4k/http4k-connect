@@ -5,10 +5,12 @@ import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.VersionId
+import se.ansman.kotshi.JsonSerializable
 import java.util.UUID
 
 @Http4kConnectAction
-class UpdateSecret internal constructor(
+@JsonSerializable
+data class UpdateSecret internal constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,
     val SecretString: String?,
@@ -29,6 +31,7 @@ class UpdateSecret internal constructor(
                 KmsKeyId: String? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
 }
 
+@JsonSerializable
 data class UpdatedSecretValue(
     val ARN: ARN,
     val Name: String,
@@ -36,6 +39,7 @@ data class UpdatedSecretValue(
     val VersionStages: List<String>? = null
 )
 
+@JsonSerializable
 data class UpdatedSecret(
     val ARN: ARN,
     val Name: String,

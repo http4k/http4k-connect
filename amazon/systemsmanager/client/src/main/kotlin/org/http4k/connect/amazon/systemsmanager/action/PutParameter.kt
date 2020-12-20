@@ -4,8 +4,10 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Tag
+import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class PutParameter(
     val Name: String,
     val Value: String,
@@ -20,6 +22,7 @@ data class PutParameter(
     val Tier: String? = null
 ) : SystemsManagerAction<PutParameterResult>(PutParameterResult::class)
 
+@JsonSerializable
 data class PutParameterResult(
     val Tier: String,
     val Version: Int
