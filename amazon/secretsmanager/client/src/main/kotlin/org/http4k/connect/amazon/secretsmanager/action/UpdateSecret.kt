@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.secretsmanager.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.KMSKeyId
 import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.VersionId
 import se.ansman.kotshi.JsonSerializable
@@ -16,19 +17,19 @@ data class UpdateSecret internal constructor(
     val SecretString: String?,
     val SecretBinary: Base64Blob?,
     val Description: String?,
-    val KmsKeyId: String?
+    val KmsKeyId: KMSKeyId?
 ) : SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretString: String,
                 Description: String? = null,
-                KmsKeyId: String? = null) : this(SecretId, ClientRequestToken, SecretString, null, Description, KmsKeyId)
+                KmsKeyId: KMSKeyId? = null) : this(SecretId, ClientRequestToken, SecretString, null, Description, KmsKeyId)
 
     constructor(SecretId: SecretId,
                 ClientRequestToken: UUID,
                 SecretBinary: Base64Blob,
                 Description: String? = null,
-                KmsKeyId: String? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
+                KmsKeyId: KMSKeyId? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
 }
 
 @JsonSerializable

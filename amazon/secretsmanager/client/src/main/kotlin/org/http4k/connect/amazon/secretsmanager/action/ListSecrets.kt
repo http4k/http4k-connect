@@ -12,11 +12,11 @@ data class ListSecrets(
     val MaxResults: Int? = null,
     val NextToken: String? = null,
     val SortOrder: SortOrder? = null,
-    val Filters: List<Filters>? = null
+    val Filters: List<Filter>? = null
 ) : SecretsManagerAction<Secrets>(Secrets::class)
 
 @JsonSerializable
-data class Filters(val Key: String, val Values: List<String>)
+data class Filter(val Key: String, val Values: List<String>)
 
 enum class SortOrder { asc, desc }
 
