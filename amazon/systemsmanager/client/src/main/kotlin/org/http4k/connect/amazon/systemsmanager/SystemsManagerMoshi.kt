@@ -8,21 +8,21 @@ import org.http4k.connect.amazon.systemsmanager.action.KotshiParameterJsonAdapte
 import org.http4k.connect.amazon.systemsmanager.action.KotshiParameterValueJsonAdapter
 import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterJsonAdapter
 import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterResultJsonAdapter
-import org.http4k.format.AwsActionAdapterFactory
+import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
 object SystemsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(SystemsManagerAdapterFactory)
+    .add(SystemsManagerJsonAdapterFactory)
     .asConfigurable()
     .withStandardMappings()
     .withAwsCoreMappings()
     .done()
 )
 
-object SystemsManagerAdapterFactory : AwsActionAdapterFactory(
+object SystemsManagerJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter { KotshiDeleteParameterJsonAdapter() },
     adapter { KotshiGetParameterJsonAdapter() },
     adapter(::KotshiParameterJsonAdapter),

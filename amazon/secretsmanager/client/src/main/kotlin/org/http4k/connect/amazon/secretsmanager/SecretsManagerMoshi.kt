@@ -21,7 +21,7 @@ import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdateSecretJsonAda
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdatedSecretJsonAdapter
 import org.http4k.connect.amazon.secretsmanager.action.KotshiUpdatedSecretValueJsonAdapter
 import org.http4k.format.AutoMappingConfiguration
-import org.http4k.format.AwsActionAdapterFactory
+import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.text
@@ -29,7 +29,7 @@ import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
 object SecretsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(SecretsManagerAdapterFactory)
+    .add(SecretsManagerJsonAdapterFactory)
     .asConfigurable()
     .withStandardMappings()
     .withAwsCoreMappings()
@@ -43,7 +43,7 @@ fun <T> AutoMappingConfiguration<T>.withSecretsManagerMappings() = apply {
     text(VersionStage::of)
 }
 
-object SecretsManagerAdapterFactory : AwsActionAdapterFactory(
+object SecretsManagerJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiCreatedSecretJsonAdapter),
     adapter(::KotshiCreateSecretJsonAdapter),
     adapter(::KotshiDeletedSecretJsonAdapter),

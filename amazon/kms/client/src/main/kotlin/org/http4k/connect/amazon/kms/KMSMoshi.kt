@@ -18,21 +18,21 @@ import org.http4k.connect.amazon.kms.action.KotshiSignJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiSignedJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiVerifyJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiVerifyResultJsonAdapter
-import org.http4k.format.AwsActionAdapterFactory
+import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
 object KMSMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(KMSAdapterFactory)
+    .add(KMSJsonAdapterFactory)
     .asConfigurable()
     .withStandardMappings()
     .withAwsCoreMappings()
     .done()
 )
 
-object KMSAdapterFactory : AwsActionAdapterFactory(
+object KMSJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiCreateKeyJsonAdapter),
     adapter(::KotshiDecryptedJsonAdapter),
     adapter(::KotshiDecryptJsonAdapter),
