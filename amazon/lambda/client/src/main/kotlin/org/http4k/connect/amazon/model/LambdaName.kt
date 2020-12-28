@@ -4,6 +4,6 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.minLength
 
-class LambdaName(value: String) : StringValue(value) {
-    companion object : StringValueFactory<LambdaName>(::LambdaName, 1.minLength)
+class FunctionName(value: String) : StringValue(value) {
+    companion object : StringValueFactory<FunctionName>(::FunctionName, 1.minLength)
 }

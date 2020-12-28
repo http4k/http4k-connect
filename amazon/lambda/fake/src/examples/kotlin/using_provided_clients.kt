@@ -1,7 +1,7 @@
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.lambda.FakeLambda
-import org.http4k.connect.amazon.lambda.invokeFunction
-import org.http4k.connect.amazon.model.LambdaName
+import org.http4k.connect.amazon.lambda.action.invokeFunction
+import org.http4k.connect.amazon.model.FunctionName
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -12,7 +12,7 @@ data class Req(val value: String)
 data class Resp(val value: String)
 
 fun main() {
-    val deployedLambda = LambdaName("http4kLambda")
+    val deployedLambda = FunctionName("http4kLambda")
 
     val fakeLambda = FakeLambda(
         deployedLambda to { req: Request ->
@@ -25,6 +25,6 @@ fun main() {
     val client = fakeLambda.client()
 
     JavaHttpClient()(Request(GET, "http://whatever")).bodyString()
-    println(client.invokeFunction<Req, Resp>(deployedLambda, Req("hello")))
+    println(client.invokeFunction<Resp>(deployedLambda, Req("hello")))
 }
 

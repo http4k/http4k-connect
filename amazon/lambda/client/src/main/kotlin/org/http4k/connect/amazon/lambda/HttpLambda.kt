@@ -3,7 +3,7 @@ package org.http4k.connect.amazon.lambda
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.lambda.action.InvokeFunction
+import org.http4k.connect.amazon.lambda.action.LambdaAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then
@@ -25,6 +25,6 @@ fun Lambda.Companion.Http(scope: AwsCredentialScope,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override fun <REQ : Any, RESP : Any>
-        invoke(request: InvokeFunction<REQ, RESP>) = request.toResult(http(request.toRequest()))
+    override fun <RESP : Any>
+        invoke(request: LambdaAction<RESP>) = request.toResult(http(request.toRequest()))
 }
