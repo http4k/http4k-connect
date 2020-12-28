@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate:
 
+### v2.3.1.0
+- **http4k-connect-lambda* : New module. Support for invoking AWS Lambda functions and a FakeLambda runtime to run/deploy them into.
+
 ### v2.3.0.0
 - **http4k-connect-** : Use Kotshi generated adapters instead of Kotlin Reflection, allowing removal of large Kotlin Reflection JAR. Note that the Kotlin-reflect dependency must be explicitly excluded due to transitivity in your projects.
 
