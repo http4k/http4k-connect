@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Result
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.lambda.action.InvokeFunction
 import org.http4k.connect.amazon.model.LambdaName
+import org.http4k.format.Moshi
 
 /**
  * Docs: https://docs.aws.amazon.com/lambda/latest/dg/welcome.html
@@ -15,5 +16,5 @@ interface Lambda {
 }
 
 inline fun <reified REQ : Any, reified RESP : Any> Lambda.invokeFunction(
-    name: LambdaName, req: REQ): Result<RESP, RemoteFailure> = this(InvokeFunction(name, req))
+    name: LambdaName, req: REQ): Result<RESP, RemoteFailure> = this(InvokeFunction(name, req, autoMarshalling = Moshi))
 
