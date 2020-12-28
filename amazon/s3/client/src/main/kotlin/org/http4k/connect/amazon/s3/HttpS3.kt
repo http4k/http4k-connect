@@ -24,5 +24,5 @@ fun S3.Companion.Http(scope: AwsCredentialScope,
         .then(ClientFilters.AwsAuth(scope, credentialsProvider, clock, payloadMode))
         .then(rawHttp)
 
-    override operator fun <R> invoke(request: S3Action<R>) = request.toResult(http(request.toRequest()))
+   override fun <R> invoke(request: S3Action<R>) = request.toResult(http(request.toRequest()))
 }

@@ -89,6 +89,7 @@ dependencies {
 
 - AWS
     - [KMS](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-kms"` / `"org.http4k:http4k-connect-amazon-kms-fake"`
+    - [Lambda](./amazon/lambda) -> `"org.http4k:http4k-connect-amazon-lambda"` / `"org.http4k:http4k-connect-amazon-lambda-fake"`
     - [S3](./amazon/s3) -> `"org.http4k:http4k-connect-amazon-s3"` / `"org.http4k:http4k-connect-amazon-s3-fake"`
     - [STS](./amazon/sts) -> `"org.http4k:http4k-connect-amazon-sts"` / `"org.http4k:http4k-connect-amazon-sts-fake"`
     - [SecretsManager](./amazon/secretsmanager) -> `"org.http4k:http4k-connect-amazon-secretsmanager"` / `"org.http4k:http4k-connect-amazon-secretsmanager-fake"`
