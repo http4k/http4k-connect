@@ -29,7 +29,7 @@ abstract class ChaosFake : HttpHandler {
 
     fun returnStatus(status: Status) = misbehave(ReturnStatus(status))
 
-    override operator fun invoke(request: Request) = chaosEngine
+   override fun invoke(request: Request) = chaosEngine
         .then(CatchAll())
         .then(app.withChaosApi(chaosEngine))(request)
 
