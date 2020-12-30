@@ -8,10 +8,9 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 interface SQSAction<R> : Action<R>
 
-internal val documentBuilderFactory by lazy {
+internal fun documentBuilderFactory() =
     DocumentBuilderFactory.newInstance()
         .newDocumentBuilder()
         .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
-}
 
 internal fun Document.text(name: String) = getElementsByTagName(name).item(0).textContent.trim()

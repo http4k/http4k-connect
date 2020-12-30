@@ -47,7 +47,7 @@ data class SentMessage(
 ) {
     companion object {
         fun from(response: Response) =
-            with(documentBuilderFactory.parse(response.body.stream)) {
+            with(documentBuilderFactory().parse(response.body.stream)) {
                 SentMessage(text("MD5OfMessageBody"), text("MD5OfMessageAttributes"), text("MessageId"))
             }
     }

@@ -7,8 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 interface S3Action<R> : Action<R>
 
-internal val documentBuilderFactory by lazy {
+internal fun documentBuilderFactory() =
     DocumentBuilderFactory.newInstance()
         .newDocumentBuilder()
         .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
-}

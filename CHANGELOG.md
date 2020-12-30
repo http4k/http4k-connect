@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate:
 
+### v2.3.1.1
+- **http4k-connect-** : Fix #11 thread safety of DocumentBuilderFactory.
+
 ### v2.3.1.0
 - **http4k-connect-lambda* : New module. Support for invoking AWS Lambda functions and a FakeLambda runtime to run/deploy them into.
 

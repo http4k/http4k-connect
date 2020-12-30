@@ -21,7 +21,7 @@ class ListKeys : S3BucketAction<Listing<BucketKey>> {
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> {
-                val keys = documentBuilderFactory.parse(body.stream).getElementsByTagName("Key")
+                val keys = documentBuilderFactory().parse(body.stream).getElementsByTagName("Key")
                 val items = (0 until keys.length).map { BucketKey.of(keys.item(it).textContent) }
                 Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
             }

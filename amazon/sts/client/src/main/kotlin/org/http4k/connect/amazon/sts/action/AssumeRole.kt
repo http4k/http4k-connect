@@ -84,7 +84,7 @@ data class AssumedRole(val PackedPolicySize: Int,
 ) {
     companion object {
         fun from(response: Response) =
-            with(documentBuilderFactory.parse(response.body.stream)) {
+            with(documentBuilderFactory().parse(response.body.stream)) {
                 AssumedRole(
                     text("PackedPolicySize").toInt(),
                     AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
