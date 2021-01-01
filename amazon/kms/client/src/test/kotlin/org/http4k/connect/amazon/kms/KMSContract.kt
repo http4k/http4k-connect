@@ -46,7 +46,7 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
         val publicKey = kms.getPublicKey(keyId).successValue()
         assertThat(publicKey.KeyId.toARN().value, endsWith(keyId.value))
 
-        val deletion = kms.scheduleKeyDeletion(keyId).successValue()
+        val deletion = kms.scheduleKeyDeletion(keyId, 7).successValue()
         assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))
     }
 
@@ -70,7 +70,7 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
         val verificationFailure = kms.verify(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384).failureOrNull()
         assertThat(verificationFailure!!.status, equalTo(BAD_REQUEST))
 
-        val deletion = kms.scheduleKeyDeletion(keyId).successValue()
+        val deletion = kms.scheduleKeyDeletion(keyId, 7).successValue()
         assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))
     }
 }

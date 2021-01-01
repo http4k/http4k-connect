@@ -12,6 +12,9 @@ import org.http4k.connect.amazon.kms.action.KotshiGetPublicKeyJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiKeyCreatedJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiKeyDeletionScheduleJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiKeyDescriptionJsonAdapter
+import org.http4k.connect.amazon.kms.action.KotshiKeyEntryJsonAdapter
+import org.http4k.connect.amazon.kms.action.KotshiKeyListJsonAdapter
+import org.http4k.connect.amazon.kms.action.KotshiListKeysJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiPublicKeyJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiScheduleKeyDeletionJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiSignJsonAdapter
@@ -44,7 +47,10 @@ object KMSJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiKeyCreatedJsonAdapter),
     adapter(::KotshiKeyDeletionScheduleJsonAdapter),
     adapter(::KotshiKeyDescriptionJsonAdapter),
+    adapter(::KotshiKeyEntryJsonAdapter),
     adapter(::KotshiKeyMetadataJsonAdapter),
+    adapter { KotshiListKeysJsonAdapter() },
+    adapter(::KotshiKeyListJsonAdapter),
     adapter(::KotshiPublicKeyJsonAdapter),
     adapter(::KotshiScheduleKeyDeletionJsonAdapter),
     adapter(::KotshiSignedJsonAdapter),

@@ -7,6 +7,7 @@ The KMS connector provides the following Actions:
      *  Decrypt
      *  Encrypt
      *  GetPublicKey
+     *  ListKeys
      *  ScheduleKeyDeletion
      *  Sign
      *  Verify
