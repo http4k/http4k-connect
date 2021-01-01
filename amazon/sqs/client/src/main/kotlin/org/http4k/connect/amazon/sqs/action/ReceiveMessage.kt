@@ -1,47 +1,37 @@
 package org.http4k.connect.amazon.sqs.action
 
-import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
-import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Method
-import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
-import org.http4k.core.body.form
-import org.http4k.core.with
-import org.http4k.lens.Header.CONTENT_TYPE
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-data class ReceiveMessage(
-    val accountId: AwsAccount,
-    val queueName: QueueName,
-    val MaxNumberOfMessages: Int,
-    val VisibilityTimeout: Int,
-    val AttributeName: String,
-    val Expires: ZonedDateTime
-) : SQSAction<List<Message>> {
-    override fun toRequest(): Request {
-        val base = listOf(
-            "Action" to "SendMessage",
-            "Version" to "2012-11-05"
-        )
-
-        val listOf = base + listOf<Pair<String, String>>()
-
-        return listOf.fold(Request(Method.POST, Uri.of("/$accountId/$queueName"))
-            .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)) { acc, it ->
-            acc.form(it.first, it.second)
+class ReceiveMessage(
+    private val accountId: AwsAccount,
+    private val queueName: QueueName,
+    private val maxNumberOfMessages: Int,
+    private val visibilityTimeout: Int,
+    private val attributeName: String,
+    expires: ZonedDateTime? = null
+) : SQSAction<List<Message>>(
+    "SendMessage",
+    expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
+) {
+    override fun toResult(response: Response) = with(response) {
+        when {
+            status.successful -> Success(emptyList<Message>())
+            else -> Failure(RemoteFailure(Method.POST, uri(), status))
         }
     }
 
-    override fun toResult(response: Response): Result<List<Message>, RemoteFailure> {
-        TODO("Not yet implemented")
-    }
-
+    override fun uri() = Uri.of("/${accountId.value}/${queueName.value}")
 }
 
 data class Message(val payload: String)
