@@ -6,14 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.kms.action.CreateKey
-import org.http4k.connect.amazon.kms.action.Decrypt
-import org.http4k.connect.amazon.kms.action.DescribeKey
-import org.http4k.connect.amazon.kms.action.Encrypt
-import org.http4k.connect.amazon.kms.action.GetPublicKey
-import org.http4k.connect.amazon.kms.action.ScheduleKeyDeletion
-import org.http4k.connect.amazon.kms.action.Sign
-import org.http4k.connect.amazon.kms.action.Verify
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.CustomerMasterKeySpec.RSA_3072
@@ -37,24 +29,24 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
     fun `encrypt-decrypt key lifecycle`() {
         val plaintext = Base64Blob.encoded("hello there")
 
-        val creation = kms(CreateKey(RSA_3072, ENCRYPT_DECRYPT)).successValue()
+        val creation = kms.createKey(RSA_3072, ENCRYPT_DECRYPT).successValue()
         val keyId = creation.KeyMetadata.KeyId
         assertThat(keyId, present())
 
-        val describe = kms(DescribeKey(keyId)).successValue()
+        val describe = kms.describeKey(keyId).successValue()
         assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 
-        val encrypt = kms(Encrypt(keyId, plaintext, RSAES_OAEP_SHA_256)).successValue()
+        val encrypt = kms.encrypt(keyId, plaintext, RSAES_OAEP_SHA_256).successValue()
         assertThat(encrypt.KeyId.toARN().value, endsWith(keyId.value))
 
-        val decrypt = kms(Decrypt(keyId, encrypt.CiphertextBlob, RSAES_OAEP_SHA_256)).successValue()
+        val decrypt = kms.decrypt(keyId, encrypt.CiphertextBlob, RSAES_OAEP_SHA_256).successValue()
         assertThat(decrypt.KeyId.toARN().value, endsWith(keyId.value))
         assertThat(decrypt.Plaintext, equalTo(plaintext))
 
-        val publicKey = kms(GetPublicKey(keyId)).successValue()
+        val publicKey = kms.getPublicKey(keyId).successValue()
         assertThat(publicKey.KeyId.toARN().value, endsWith(keyId.value))
 
-        val deletion = kms(ScheduleKeyDeletion(keyId)).successValue()
+        val deletion = kms.scheduleKeyDeletion(keyId).successValue()
         assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))
     }
 
@@ -62,23 +54,23 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms")
     fun `sign-verify key lifecycle`() {
         val plaintext = Base64Blob.encoded("hello there")
 
-        val creation = kms(CreateKey(RSA_3072, SIGN_VERIFY)).successValue()
+        val creation = kms.createKey(RSA_3072, SIGN_VERIFY).successValue()
         val keyId = creation.KeyMetadata.KeyId
         assertThat(keyId, present())
 
-        val describe = kms(DescribeKey(keyId)).successValue()
+        val describe = kms.describeKey(keyId).successValue()
         assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 
-        val signed = kms(Sign(keyId, plaintext, RSASSA_PSS_SHA_256)).successValue()
+        val signed = kms.sign(keyId, plaintext, RSASSA_PSS_SHA_256).successValue()
         assertThat(signed.SigningAlgorithm, equalTo(RSASSA_PSS_SHA_256))
 
-        val verification = kms(Verify(keyId, plaintext, signed.Signature, RSASSA_PSS_SHA_256)).successValue()
+        val verification = kms.verify(keyId, plaintext, signed.Signature, RSASSA_PSS_SHA_256).successValue()
         assertThat(verification.SignatureValid, equalTo(true))
 
-        val verificationFailure = kms(Verify(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384)).failureOrNull()
+        val verificationFailure = kms.verify(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384).failureOrNull()
         assertThat(verificationFailure!!.status, equalTo(BAD_REQUEST))
 
-        val deletion = kms(ScheduleKeyDeletion(keyId)).successValue()
+        val deletion = kms.scheduleKeyDeletion(keyId).successValue()
         assertThat(deletion.KeyId.toARN().value, endsWith(keyId.value))
     }
 }

@@ -7,9 +7,7 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.s3.action.CreateBucket
 import org.http4k.connect.amazon.s3.action.DeleteBucket
-import org.http4k.connect.amazon.s3.action.ListBuckets
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.BeforeEach
@@ -30,11 +28,11 @@ abstract class S3GlobalContract(http: HttpHandler) : AwsContract(AwsService.of("
 
     @Test
     fun `bucket lifecycle`() {
-        assertThat(s3(ListBuckets()).successValue().contains(bucket), equalTo(false))
-        assertThat(s3(CreateBucket(bucket, Region.of(aws.scope.region))), equalTo(Success(Unit)))
-        assertThat(s3(ListBuckets()).successValue().contains(bucket), equalTo(true))
-        assertThat(s3(DeleteBucket(bucket)), equalTo(Success(Unit)))
-        assertThat(s3(ListBuckets()).successValue().contains(bucket), equalTo(false))
+        assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
+        assertThat(s3.createBucket(bucket, Region.of(aws.scope.region)), equalTo(Success(Unit)))
+        assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(true))
+        assertThat(s3.deleteBucket(bucket), equalTo(Success(Unit)))
+        assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
     }
 }
 
