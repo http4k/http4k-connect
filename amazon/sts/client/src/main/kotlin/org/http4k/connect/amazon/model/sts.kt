@@ -7,7 +7,6 @@ import dev.forkhandles.values.ZonedDateTimeValueFactory
 import dev.forkhandles.values.minLength
 import dev.forkhandles.values.regex
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 class SessionToken private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<SessionToken>(::SessionToken, 1.minLength)
@@ -30,7 +29,7 @@ class SecretAccessKey private constructor(value: String) : StringValue(value) {
 }
 
 class Expiration private constructor(value: ZonedDateTime) : ZonedDateTimeValue(value) {
-    companion object : ZonedDateTimeValueFactory<Expiration>(::Expiration, formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"))
+    companion object : ZonedDateTimeValueFactory<Expiration>(::Expiration)
 }
 
 data class AssumedRoleUser(val Arn: ARN, val AssumedRoleId: RoleId)

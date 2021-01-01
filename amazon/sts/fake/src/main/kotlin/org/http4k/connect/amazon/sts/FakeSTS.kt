@@ -22,7 +22,7 @@ import java.time.Duration
 import java.time.Duration.ofHours
 import java.time.Duration.ofSeconds
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 import java.util.UUID.randomUUID
 
 class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
@@ -48,8 +48,7 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
             "accessKeyId",
             "secretAccessKey",
             randomUUID().toString().base64Encode(),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ").format(
-                ZonedDateTime.now(clock) + duration)
+            ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
         ))
     }
 

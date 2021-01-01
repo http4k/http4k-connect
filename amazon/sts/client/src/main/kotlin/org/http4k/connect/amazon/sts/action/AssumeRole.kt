@@ -78,15 +78,13 @@ data class AssumeRole(
     }
 }
 
-data class AssumedRole(val PackedPolicySize: Int,
-                       val AssumedRoleUser: AssumedRoleUser,
+data class AssumedRole(val AssumedRoleUser: AssumedRoleUser,
                        val Credentials: Credentials
 ) {
     companion object {
         fun from(response: Response) =
             with(documentBuilderFactory().parse(response.body.stream)) {
                 AssumedRole(
-                    text("PackedPolicySize").toInt(),
                     AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
                     Credentials(
                         SessionToken.of(text("SessionToken")),
