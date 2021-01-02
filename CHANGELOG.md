@@ -3,11 +3,16 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate:
 
+### v2.3.2.0
+- **http4k-connect-amazon-sqs* : New module.
+- **http4k-connect-amazon-sqs-fake* : New module. See README for limitations of FakeSQS.
+
 ### v2.3.1.1
 - **http4k-connect-** : Fix #11 thread safety of DocumentBuilderFactory.
 
 ### v2.3.1.0
-- **http4k-connect-lambda* : New module. Support for invoking AWS Lambda functions and a FakeLambda runtime to run/deploy them into.
+- **http4k-connect-amazon-lambda* : New module. Support for invoking AWS Lambda functions.
+- **http4k-connect-amazon-lambda-fake* : New module. Includes FakeLambda runtime to run/deploy named HttpHandlers into.
 
 ### v2.3.0.0
 - **http4k-connect-** : Use Kotshi generated adapters instead of Kotlin Reflection, allowing removal of large Kotlin Reflection JAR. Note that the Kotlin-reflect dependency must be explicitly excluded due to transitivity in your projects.
