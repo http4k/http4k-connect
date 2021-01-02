@@ -4,6 +4,7 @@ import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.AwsAccount
+import org.http4k.connect.amazon.model.ReceiptHandle
 import org.http4k.connect.amazon.model.SQSMessage
 import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.storage.InMemory
@@ -38,6 +39,7 @@ class FakeSQS(
     override val app = routes(
         "/{account}/{queueName}" bind POST to routes(
             deleteQueue(),
+            deleteMessage(),
             sendMessage(),
             receiveMessage()
         ),
@@ -73,7 +75,8 @@ class FakeSQS(
         queues[queueName]?.let {
             val message = req.form("MessageBody")!!
             val messageId = SQSMessageId.of(queueName + "/" + UUID.randomUUID())
-            queues[queueName] = it + SQSMessage(messageId, message, message.md5(), mapOf())
+            val receiptHandle = ReceiptHandle.of(queueName + "/" + UUID.randomUUID())
+            queues[queueName] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, mapOf())
             Response(OK).with(lens of SendMessageResponse(message, messageId))
         } ?: Response(BAD_REQUEST)
     }
@@ -82,6 +85,16 @@ class FakeSQS(
         .asRouter() bind { req: Request ->
         val queue = queues[req.path("queueName")!!]
         queue?.let { Response(OK).with(lens of ReceiveMessageResponse(it)) } ?: Response(BAD_REQUEST)
+    }
+
+    private fun deleteMessage() = { r: Request -> r.form("Action") == "DeleteMessage" }
+        .asRouter() bind { req: Request ->
+        val queueName = req.path("queueName")!!
+        val receiptHandle = ReceiptHandle.of(req.form("ReceiptHandle")!!)
+        queues[queueName]?.let {
+            queues[queueName] = it.filterNot { it.receiptHandle == receiptHandle }
+            Response(OK).with(lens of DeleteMessageResponse)
+        } ?: Response(BAD_REQUEST)
     }
 
     /**

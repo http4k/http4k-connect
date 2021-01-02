@@ -12,9 +12,14 @@ class SQSMessageId private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<SQSMessageId>(::SQSMessageId, 1.minLength)
 }
 
+class ReceiptHandle private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<ReceiptHandle>(::ReceiptHandle, 1.minLength)
+}
+
 data class SQSMessage(
     val messageId: SQSMessageId,
     val body: String,
     val md5OfBody: String,
+    val receiptHandle: ReceiptHandle,
     val attributes: Map<String, String>
 )

@@ -8,7 +8,6 @@ import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -17,7 +16,7 @@ import java.util.UUID
 abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs"), http) {
 
     private val sqs by lazy {
-        SQS.Http(aws.scope, { aws.credentials }, http.debug())
+        SQS.Http(aws.scope, { aws.credentials }, http)
     }
 
     private val queueName = QueueName.of(UUID.randomUUID().toString())
@@ -36,9 +35,13 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs")
                 val id = sendMessage(accountId, queueName, "hello world", expires)
                     .successValue().MessageId
 
-                val received = receiveMessage(accountId, queueName).successValue()
-                assertThat(received.first().messageId, equalTo(id))
-                assertThat(received.first().body, equalTo("hello world"))
+                val received = receiveMessage(accountId, queueName).successValue().first()
+                assertThat(received.messageId, equalTo(id))
+                assertThat(received.body, equalTo("hello world"))
+
+                deleteMessage(accountId, queueName, received.receiptHandle).successValue()
+
+                assertThat(receiveMessage(accountId, queueName).successValue().size, equalTo(0))
             } finally {
                 deleteQueue(accountId, queueName, expires).successValue()
             }

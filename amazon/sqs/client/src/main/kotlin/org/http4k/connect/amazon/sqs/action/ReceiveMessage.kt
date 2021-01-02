@@ -6,6 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
+import org.http4k.connect.amazon.model.ReceiptHandle
 import org.http4k.connect.amazon.model.SQSMessage
 import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.core.Method.POST
@@ -40,6 +41,7 @@ class ReceiveMessage(
                                 SQSMessageId.of(text("MessageId")),
                                 text("Body"),
                                 text("MD5OfBody"),
+                                ReceiptHandle.of(text("ReceiptHandle")),
                                 it.children("Attributes")
                                     .map { it.firstChild("Name").textContent to it.firstChild("Value").textContent }
                                     .toMap()
