@@ -7,8 +7,7 @@
 ![.github/workflows/release.yaml](https://github.com/http4k/http4k-connect/workflows/.github/workflows/release.yaml/badge.svg)
 ![http://kotlinlang.org](https://img.shields.io/badge/kotlin-1.4-blue.svg)
 
-http4k-connect is a set of lightweight API libraries for connecting to popular third-party services using http4k compatible APIs, along with Fake implementations for usage during testing and Storage implementations. These all utilise the uniform `Server as a Function` 
-`HttpHandler` interface exposed by [http4k](https://http4k.org), so you can:
+http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services using [http4k](https://http4k.org) compatible APIs, along with Fake implementations for usage during local testing. These are all underpinned by a variation on the uniform [Server as a Function](https://monkey.org/~marius/funsrv.pdf) model powered by the `HttpHandler` interface exposed by [http4k](https://http4k.org), so you can:
  
 1. Take advantage of the simple and powerful SaaF model and APIs used in http4k.
 1. Plug everything together completely in-memory and take advantage of this powerful model.
@@ -18,11 +17,11 @@ http4k-connect is a set of lightweight API libraries for connecting to popular t
 Although centered around usage in http4k-based projects, http4k-connect does not require this and the libraries are usable from any JVM application.
 
 ## Rationale
-Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lighterweight versions of popular APIs covering standard use-cases.
+Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
 
 ## Concepts
 
-### System Client Modules: http4k-{vendor}-{system}.jar
+### System Client Modules (named: http4k-{vendor}-{system})
 Each system client is modelled as a single function with arity 1 (that is it takes only a single parameter) returning a [Result4k](https://github.com/fork-handles/forkhandles/tree/trunk/result4k) Success/Failure monad type), which is known as an `Action`. The Client is responsible for managing the overall protocol with the remote system. There are also a set of extension methods generated to provide a more traditional function-based version of the same interface.
 
 Action classes are responsible for constructing the HTTP requests and unmarshalling their responses into the http4k-connect types. There are lots of common actions built-in, but you can provide your own by simply implementing the relevant Action interface.
@@ -54,7 +53,7 @@ val echoed: Result<Echoed, RemoteFailure> = example(Echo("hello world"))
 val alsoEchoed: Result<Echoed, RemoteFailure> = example.echo("hello world")
 ```
 
-### System Fake Modules: http4k-{vendor}-{system}-fake.jar
+### System Fake Modules (named http4k-{vendor}-{system}-fake)
 Each module comes with it's own Fake system which implements the remote HTTP interface. In like with the `Server as a Function` concept, this Fake class implements `HttpHandler` and:
  
  1. Can be used in in-memory tests as a swap-out replacement for an HTTP client
@@ -98,13 +97,12 @@ dependencies {
     - [Analytics](./google/analytics) -> `"org.http4k:http4k-connect-google-analytics"` / `"org.http4k:http4k-connect-google-analytic-fake"`
 - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
-## Supported Storage backends:
+## Supported Storage backends (named http4k-connect-storage-{technology}>)
 
 - [In-Memory](./core/fake) (included with all Fakes)
 - [File-Based](./core/fake) (included with all Fakes)
-- [JDBC](./storage/jdbc) -> `"org.http4k:http4k-connect-storage-jdbc"`
-- [Redis](./storage/redis) -> `"org.http4k:http4k-connect-storage-redis"`
-- [S3](./storage/s3) -> `"org.http4k:http4k-connect-storage-s3"`
-
+- [JDBC](./storage/jdbc) -> `org.http4k:http4k-connect-storage-jdbc`
+- [Redis](./storage/redis) -> `org.http4k:http4k-connect-storage-redis`
+- [S3](./storage/s3) -> `org.http4k:http4k-connect-storage-s3"`
 
 ## Want to add a new system or Storage backend? Read the [guide](CONTRIBUTING.md).
