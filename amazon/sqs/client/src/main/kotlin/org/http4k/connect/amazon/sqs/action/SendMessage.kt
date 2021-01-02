@@ -34,13 +34,13 @@ class SendMessage(private val accountId: AwsAccount,
 
 data class SentMessage(
     val MD5OfMessageBody: String,
-    val MD5OfMessageAttributes: String,
-    val MessageId: SQSMessageId
+    val MessageId: SQSMessageId,
+    val MD5OfMessageAttributes: String?
 ) {
     companion object {
         fun from(response: Response) =
             with(documentBuilderFactory().parse(response.body.stream)) {
-                SentMessage(text("MD5OfMessageBody"), text("MD5OfMessageAttributes"), SQSMessageId.of(text("MessageId")))
+                SentMessage(text("MD5OfMessageBody"), SQSMessageId.of(text("MessageId")), textOptional("MD5OfMessageAttributes"))
             }
     }
 }

@@ -32,7 +32,9 @@ internal fun documentBuilderFactory() =
         .newDocumentBuilder()
         .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
 
-internal fun Document.text(name: String) = getElementsByTagName(name).item(0).textContent.trim()
+internal fun Document.text(name: String) = textOptional(name)!!
+
+internal fun Document.textOptional(name: String) = getElementsByTagName(name).item(0)?.textContent?.trim()
 
 internal fun NodeList.sequenceOfNodes(onlyChildrenNamed: String? = null): Sequence<Node> {
     var i = 0
