@@ -80,12 +80,8 @@ class FakeSQS(
 
     private fun receiveMessage() = { r: Request -> r.form("Action") == "ReceiveMessage" }
         .asRouter() bind { req: Request ->
-        val queueName = req.path("queueName")!!
-
-        val queue = queues[queueName]
-        queue?.let {
-            Response(OK).with(lens of ReceiveMessageResponse(it))
-        } ?: Response(BAD_REQUEST)
+        val queue = queues[req.path("queueName")!!]
+        queue?.let { Response(OK).with(lens of ReceiveMessageResponse(it)) } ?: Response(BAD_REQUEST)
     }
 
     /**
