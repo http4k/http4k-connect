@@ -31,7 +31,10 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs")
             val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
 
             try {
-                sendMessage(accountId, queueName, "hello world", expires)
+                val id = sendMessage(accountId, queueName, "hello world", expires)
+                    .successValue().MessageId
+
+                val received = receiveMessage(accountId, queueName).successValue()
             } finally {
                 deleteQueue(accountId, queueName, expires).successValue()
             }

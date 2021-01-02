@@ -1,18 +1,21 @@
 package org.http4k.connect.amazon.sqs
 
+import org.http4k.connect.amazon.model.SQSMessage
+import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.core.Uri
 import org.http4k.template.ViewModel
 import java.math.BigInteger
 import java.security.MessageDigest
-import java.util.UUID
 
 data class CreateQueueResponse(val url: Uri) : ViewModel
 
+data class ReceiveMessageResponse(val messages: List<SQSMessage>) : ViewModel
+
 data class SendMessageResponse(
-    val message: String,
-    val messageId: String = UUID.randomUUID().toString()
+    val body: String,
+    val messageId: SQSMessageId
 ) : ViewModel {
-    val md5OfMessageBody = message.md5()
+    val md5OfMessageBody = body.md5()
     val md5OfMessageAttributes = md5OfMessageBody
 }
 

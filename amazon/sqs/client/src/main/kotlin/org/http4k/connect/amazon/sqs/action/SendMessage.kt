@@ -6,6 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
+import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.core.Method
 import org.http4k.core.Response
 import org.http4k.core.Uri
@@ -34,12 +35,12 @@ class SendMessage(private val accountId: AwsAccount,
 data class SentMessage(
     val MD5OfMessageBody: String,
     val MD5OfMessageAttributes: String,
-    val MessageId: String
+    val MessageId: SQSMessageId
 ) {
     companion object {
         fun from(response: Response) =
             with(documentBuilderFactory().parse(response.body.stream)) {
-                SentMessage(text("MD5OfMessageBody"), text("MD5OfMessageAttributes"), text("MessageId"))
+                SentMessage(text("MD5OfMessageBody"), text("MD5OfMessageAttributes"), SQSMessageId.of(text("MessageId")))
             }
     }
 }

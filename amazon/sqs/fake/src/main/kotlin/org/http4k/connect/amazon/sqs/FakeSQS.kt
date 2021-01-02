@@ -4,6 +4,8 @@ import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.AwsAccount
+import org.http4k.connect.amazon.model.SQSMessage
+import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
@@ -24,9 +26,10 @@ import org.http4k.routing.routes
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
+import java.util.UUID
 
 class FakeSQS(
-    private val queues: Storage<List<String>> = Storage.InMemory(),
+    private val queues: Storage<List<SQSMessage>> = Storage.InMemory(),
     private val clock: Clock = Clock.systemDefaultZone(),
     private val awsAccount: AwsAccount = AwsAccount.of("1234567890")
 ) : ChaosFake() {
@@ -35,7 +38,8 @@ class FakeSQS(
     override val app = routes(
         "/{account}/{queueName}" bind POST to routes(
             deleteQueue(),
-            sendMessage()
+            sendMessage(),
+            receiveMessage()
         ),
         "/" bind POST to routes(
             createQueue(),
@@ -66,11 +70,21 @@ class FakeSQS(
         .asRouter() bind { req: Request ->
         val queueName = req.path("queueName")!!
 
+        queues[queueName]?.let {
+            val message = req.form("MessageBody")!!
+            val messageId = SQSMessageId.of(queueName + "/" + UUID.randomUUID())
+            queues[queueName] = it + SQSMessage(messageId, message, message.md5(), mapOf())
+            Response(OK).with(lens of SendMessageResponse(message, messageId))
+        } ?: Response(BAD_REQUEST)
+    }
+
+    private fun receiveMessage() = { r: Request -> r.form("Action") == "ReceiveMessage" }
+        .asRouter() bind { req: Request ->
+        val queueName = req.path("queueName")!!
+
         val queue = queues[queueName]
         queue?.let {
-            val message = req.form("MessageBody")!!
-            queues[queueName] = queue + message
-            Response(OK).with(lens of SendMessageResponse(message))
+            Response(OK).with(lens of ReceiveMessageResponse(it))
         } ?: Response(BAD_REQUEST)
     }
 
