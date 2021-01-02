@@ -26,20 +26,38 @@ import java.time.ZonedDateTime
 class STSCredentialsProviderTest {
 
     private val sts = mockk<STS>()
+    private val now = Instant.now()
+    private val requestProvider: () -> AssumeRole = { AssumeRole(arn, "Session") }
+    private val clock = TestClock(now)
+
+    private val provider = STSCredentialsProvider(sts, clock, requestProvider, Duration.ofSeconds(60))
 
     @Test
     fun `gets credentials first time only`() {
-        val now = Instant.now()
-        val firstCreds = credentialsExpiringAt(now.plusSeconds(100), 1)
-
+        val firstCreds = credentialsExpiringAt(now.plusSeconds(61), 1)
         every { sts.invoke(any<AssumeRole>()) } returns assumedRole(firstCreds)
-
-        val provider = STSCredentialsProvider(sts, Clock.fixed(now, ZoneId.of("UTC")), requestProvider, Duration.ofSeconds(60))
 
         assertThat(provider(), equalTo(firstCreds.toHttp4k()))
         assertThat(provider(), equalTo(firstCreds.toHttp4k()))
 
         verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
+    }
+
+    @Test
+    fun `gets credentials when expired time only`() {
+        val firstCreds = credentialsExpiringAt(now.plusSeconds(61), 1)
+        every { sts.invoke(any<AssumeRole>()) } returns assumedRole(firstCreds)
+
+        assertThat(provider(), equalTo(firstCreds.toHttp4k()))
+
+        clock.time = now.plusSeconds(2)
+
+        val secondCreds = credentialsExpiringAt(now.plusSeconds(61), 2)
+        every { sts.invoke(any<AssumeRole>()) } returns assumedRole(secondCreds)
+
+        assertThat(provider(), equalTo(secondCreds.toHttp4k()))
+
+        verify(exactly = 2) { sts.invoke(any<AssumeRole>()) }
     }
 
     private fun assumedRole(credentials: Credentials) = Success(
@@ -52,7 +70,13 @@ class STSCredentialsProviderTest {
         Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC")))
     )
 
-    private val requestProvider: () -> AssumeRole = { AssumeRole(arn, "Session") }
-
     private val arn = ARN.of("arn:aws:foobar")
+}
+
+class TestClock(var time: Instant) : Clock() {
+    override fun getZone(): ZoneId = TODO("Not yet implemented")
+
+    override fun withZone(zone: ZoneId?): Clock = TODO("Not yet implemented")
+
+    override fun instant(): Instant = time
 }

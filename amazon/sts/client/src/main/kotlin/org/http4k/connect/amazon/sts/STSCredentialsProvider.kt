@@ -27,23 +27,15 @@ class STSCredentialsProvider(private val sts: STS,
     private fun refresh() =
         synchronized(credentials) {
             val current = credentials.get()
-            println(current)
             when {
-                current != null && !current.expiresWithin(gracePeriod) -> {
-                    println("USING")
-                    current
-                }
-                else -> {
-                    println("GETTING")
-                    when (val refresh = sts(assumeRole())) {
-                        is Success<AssumedRole> -> {
-                            val newCreds = refresh.value.Credentials
-                            credentials.set(newCreds)
-                            println(newCreds)
-                            newCreds
-                        }
-                        is Failure<RemoteFailure> -> refresh.reason.throwIt()
+                current != null && !current.expiresWithin(gracePeriod) -> current
+                else -> when (val refresh = sts(assumeRole())) {
+                    is Success<AssumedRole> -> {
+                        val newCreds = refresh.value.Credentials
+                        credentials.set(newCreds)
+                        newCreds
                     }
+                    is Failure<RemoteFailure> -> refresh.reason.throwIt()
                 }
             }
         }
