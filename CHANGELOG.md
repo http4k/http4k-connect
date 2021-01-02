@@ -6,6 +6,7 @@ changes with their rationale when appropriate:
 ### v2.3.2.0
 - **http4k-connect-amazon-sqs* : New module.
 - **http4k-connect-amazon-sqs-fake* : New module. See README for limitations of FakeSQS.
+- **http4k-connect-amazon-sts* : Added STSCredentialsProvider to refresh credentials when required.
 
 ### v2.3.1.1
 - **http4k-connect-** : Fix #11 thread safety of DocumentBuilderFactory.
