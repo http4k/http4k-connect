@@ -1,8 +1,7 @@
 package org.http4k.connect.amazon.sts
 
 import org.http4k.connect.amazon.fakeAwsEnvironment
-import java.time.Clock
 
-class FakeSTSTest : STSContract(FakeSTS(Clock.systemDefaultZone())) {
+class FakeSTSTest : STSContract(FakeSTS()) {
     override val aws = fakeAwsEnvironment
 }

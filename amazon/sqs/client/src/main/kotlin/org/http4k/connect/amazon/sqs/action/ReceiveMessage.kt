@@ -1,47 +1,56 @@
 package org.http4k.connect.amazon.sqs.action
 
-import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
-import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
-import org.http4k.core.Method
-import org.http4k.core.Request
+import org.http4k.connect.amazon.model.ReceiptHandle
+import org.http4k.connect.amazon.model.SQSMessage
+import org.http4k.connect.amazon.model.SQSMessageId
+import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Uri
-import org.http4k.core.body.form
-import org.http4k.core.with
-import org.http4k.lens.Header.CONTENT_TYPE
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-data class ReceiveMessage(
-    val accountId: AwsAccount,
-    val queueName: QueueName,
-    val MaxNumberOfMessages: Int,
-    val VisibilityTimeout: Int,
-    val AttributeName: String,
-    val Expires: ZonedDateTime
-) : SQSAction<List<Message>> {
-    override fun toRequest(): Request {
-        val base = listOf(
-            "Action" to "SendMessage",
-            "Version" to "2012-11-05"
-        )
-
-        val listOf = base + listOf<Pair<String, String>>()
-
-        return listOf.fold(Request(Method.POST, Uri.of("/$accountId/$queueName"))
-            .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)) { acc, it ->
-            acc.form(it.first, it.second)
+class ReceiveMessage(
+    private val accountId: AwsAccount,
+    private val queueName: QueueName,
+    maxNumberOfMessages: Int? = null,
+    visibilityTimeout: Int? = null,
+    attributeName: String? = null,
+    expires: ZonedDateTime? = null
+) : SQSAction<List<SQSMessage>>(
+    "ReceiveMessage",
+    maxNumberOfMessages?.let { "MaxNumberOfMessages" to it.toString() },
+    visibilityTimeout?.let { "VisibilityTimeout" to it.toString() },
+    attributeName?.let { "AttributeName" to it },
+    expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
+) {
+    override fun toResult(response: Response) = with(response) {
+        when {
+            status.successful -> Success(
+                with(documentBuilderFactory().parse(response.body.stream)) {
+                    getElementsByTagName("Message")
+                        .sequenceOfNodes()
+                        .map {
+                            SQSMessage(
+                                SQSMessageId.of(text("MessageId")),
+                                text("Body"),
+                                text("MD5OfBody"),
+                                ReceiptHandle.of(text("ReceiptHandle")),
+                                it.children("Attributes")
+                                    .map { it.firstChild("Name").textContent to it.firstChild("Value").textContent }
+                                    .toMap()
+                            )
+                        }.toList()
+                })
+            else -> Failure(RemoteFailure(POST, uri(), status))
         }
     }
 
-    override fun toResult(response: Response): Result<List<Message>, RemoteFailure> {
-        TODO("Not yet implemented")
-    }
-
+    override fun uri() = Uri.of("/${accountId.value}/${queueName.value}")
 }
-
-data class Message(val payload: String)

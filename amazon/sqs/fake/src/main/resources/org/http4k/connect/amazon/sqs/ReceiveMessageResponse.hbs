@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ReceiveMessageResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+    <ReceiveMessageResult>
+        {{#each messages}}
+            <Message>
+                <MessageId>{{messageId}}</MessageId>
+                <ReceiptHandle>{{receiptHandle}}</ReceiptHandle>
+                <MD5OfBody>{{md5OfBody}}</MD5OfBody>
+                <Body>{{body}}</Body>
+                {{#each attributes}}
+                <Attribute>
+                    <Name>{{@key}}</Name>
+                    <Value>{{this}}</Value>
+                </Attribute>
+                {{/each}}
+            </Message>
+        {{/each}}
+    </ReceiveMessageResult>
+    <ResponseMetadata>
+        <RequestId>11111111-1111-1111-1111-111111111111</RequestId>
+    </ResponseMetadata>
+</ReceiveMessageResponse>

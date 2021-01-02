@@ -4,32 +4,51 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.core.ContentType
+import org.http4k.connect.amazon.model.AwsAccount
+import org.http4k.connect.amazon.model.QueueName
+import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.core.Method
-import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
-import org.http4k.core.body.form
-import org.http4k.core.with
-import org.http4k.lens.Header
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-data class SendMessage(val payload: String) : SQSAction<SentMessage> {
-    override fun toRequest(): Request {
-        val base = listOf(
-            "Action" to "SendMessage",
-            "MessageBody" to payload,
-            "Version" to "2012-11-05"
-        )
-
-        val listOf = base + listOf<Pair<String, String>>()
-
-        return listOf.fold(Request(Method.POST, uri())
-            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_FORM_URLENCODED)) { acc, it ->
-            acc.form(it.first, it.second)
-        }
-    }
-
+class SendMessage(private val accountId: AwsAccount,
+                  private val queueName: QueueName,
+                  payload: String,
+                  delaySeconds: Int? = null,
+                  deduplicationId: String? = null,
+                  messageGroupId: String? = null,
+                  expires: ZonedDateTime? = null,
+                  attributes: List<MessageAttribute>? = null,
+                  systemAttributes: List<MessageAttribute>? = null
+) : SQSAction<SentMessage>(
+    "SendMessage",
+    *(
+        (attributes ?: emptyList())
+            .flatMapIndexed { i, it ->
+                listOf(
+                    "MessageAttribute.${i + 1}.Name" to it.name,
+                    "MessageAttribute.${i + 1}.Type" to it.type,
+                    "MessageAttribute.${i + 1}.Value" to it.value
+                )
+            } +
+            (systemAttributes ?: emptyList())
+                .flatMapIndexed { i, it ->
+                    listOf(
+                        "MessageSystemAttribute.${i + 1}.Name" to it.name,
+                        "MessageSystemAttribute.${i + 1}.Type" to it.type,
+                        "MessageSystemAttribute.${i + 1}.Value" to it.value
+                    )
+                } +
+            ("MessageBody" to payload) +
+            expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) } +
+            delaySeconds?.let { "DelaySeconds" to it.toString() } +
+            deduplicationId?.let { "MessageDeduplicationId" to it } +
+            messageGroupId?.let { "MessageGroupId" to it }
+        ).toTypedArray()
+) {
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SentMessage.from(response))
@@ -37,18 +56,20 @@ data class SendMessage(val payload: String) : SQSAction<SentMessage> {
         }
     }
 
-    private fun uri() = Uri.of("")
+    override fun uri() = Uri.of("/${accountId.value}/${queueName.value}")
 }
+
+data class MessageAttribute(val name: String, val value: String, val type: String)
 
 data class SentMessage(
     val MD5OfMessageBody: String,
-    val MD5OfMessageAttributes: String,
-    val MessageId: String
+    val MessageId: SQSMessageId,
+    val MD5OfMessageAttributes: String?
 ) {
     companion object {
         fun from(response: Response) =
             with(documentBuilderFactory().parse(response.body.stream)) {
-                SentMessage(text("MD5OfMessageBody"), text("MD5OfMessageAttributes"), text("MessageId"))
+                SentMessage(text("MD5OfMessageBody"), SQSMessageId.of(text("MessageId")), textOptional("MD5OfMessageAttributes"))
             }
     }
 }
