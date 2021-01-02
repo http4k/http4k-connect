@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.secretsmanager
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.AmazonJsonFake
@@ -140,7 +139,7 @@ class FakeSecretsManager(
      * Convenience function to get SecretsManager client
      */
     fun client() = SecretsManager.Http(
-        AwsCredentialScope("*", "s3"),
+        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 

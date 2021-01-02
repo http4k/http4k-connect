@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.sqs
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.ReceiptHandle
+import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.SQSMessage
 import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.storage.InMemory
@@ -99,7 +99,7 @@ class FakeSQS(
      * Convenience function to get a SQS client
      */
     fun client() = SQS.Http(
-        AwsCredentialScope("*", "sqs"),
+        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 

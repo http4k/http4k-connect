@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.systemsmanager
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.AmazonJsonFake
@@ -67,7 +66,7 @@ class FakeSystemsManager(
      * Convenience function to get SystemsManager client
      */
     fun client() = SystemsManager.Http(
-        AwsCredentialScope("*", "ssm"),
+        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 

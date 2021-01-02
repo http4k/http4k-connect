@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
@@ -13,10 +12,10 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs"), http) {
+abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
 
     private val sqs by lazy {
-        SQS.Http(aws.scope, { aws.credentials }, http)
+        SQS.Http(aws.region, { aws.credentials }, http)
     }
 
     private val queueName = QueueName.of(UUID.randomUUID().toString())

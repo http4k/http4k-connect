@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.lambda
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.FunctionName
+import org.http4k.connect.amazon.model.Region
 import org.http4k.core.HttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
@@ -24,7 +24,7 @@ class FakeLambda(
      * Convenience function to get Lambda client
      */
     fun client() = Lambda.Http(
-        AwsCredentialScope("*", "lambda"),
+        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 

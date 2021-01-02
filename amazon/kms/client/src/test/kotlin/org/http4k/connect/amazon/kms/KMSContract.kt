@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.CustomerMasterKeySpec.RSA_3072
 import org.http4k.connect.amazon.model.EncryptionAlgorithm.RSAES_OAEP_SHA_256
@@ -20,9 +19,9 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.junit.jupiter.api.Test
 
-abstract class KMSContract(http: HttpHandler) : AwsContract(AwsService.of("kms"), http) {
+abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
     private val kms by lazy {
-        KMS.Http(aws.scope, { aws.credentials }, http)
+        KMS.Http(aws.region, { aws.credentials }, http)
     }
 
     @Test

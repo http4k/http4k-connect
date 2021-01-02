@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate:
 
+### v2.4.0.0
+- **http4k-connect-** : Remove need for AWSCredentialScope - just use Region instead since each service already knows the scope required.
+
 ### v2.3.2.0
 - **http4k-connect-amazon-sqs* : New module.
 - **http4k-connect-amazon-sqs-fake* : New module. See README for limitations of FakeSQS.

@@ -1,23 +1,22 @@
 package org.http4k.connect.amazon
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.cloudnative.env.fromConfigFile
-import org.http4k.connect.amazon.model.AwsService
+import org.http4k.connect.amazon.model.Region
 import org.http4k.lens.LensFailure
 import org.http4k.lens.composite
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.io.File
 
-data class AwsEnvironment(val credentials: AwsCredentials, val scope: AwsCredentialScope)
+data class AwsEnvironment(val credentials: AwsCredentials, val region: Region)
 
 val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
-    AwsCredentialScope("ldn-north-1", "svc")
+    Region.of("ldn-north-1")
 )
 
-fun configAwsEnvironment(service: AwsService): AwsEnvironment {
+fun configAwsEnvironment(): AwsEnvironment {
     try {
         val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
         val env = Environment.fromConfigFile(config) overrides
@@ -31,7 +30,7 @@ fun configAwsEnvironment(service: AwsService): AwsEnvironment {
                     EnvironmentKey.required("http4k-connect-aws-secret-access-key")(it)
                 )
             }(env),
-            AwsCredentialScope(region, service.value)
+            Region.of(region)
         )
     } catch (e: LensFailure) {
         assumeTrue(false, "no aws profile found (${e.failures.map { it.meta.name }.joinToString(",")}})")

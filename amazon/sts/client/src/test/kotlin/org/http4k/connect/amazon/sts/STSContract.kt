@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.sts
 
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,11 +11,11 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-abstract class STSContract(http: HttpHandler) : AwsContract(AwsService.of("sts"), http) {
+abstract class STSContract(http: HttpHandler) : AwsContract(http) {
 
     protected val clock = Clock.systemDefaultZone()
     private val sts by lazy {
-        STS.Http(aws.scope, { aws.credentials }, http, clock)
+        STS.Http(aws.region, { aws.credentials }, http, clock)
     }
 
     @Test

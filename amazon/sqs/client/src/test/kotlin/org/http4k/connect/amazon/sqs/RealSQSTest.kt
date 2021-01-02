@@ -5,5 +5,5 @@ import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
 
 class RealSQSTest : SQSContract(JavaHttpClient()), RealAwsEnvironment {
-    override val aws get() = configAwsEnvironment(service)
+    override val aws get() = configAwsEnvironment()
 }

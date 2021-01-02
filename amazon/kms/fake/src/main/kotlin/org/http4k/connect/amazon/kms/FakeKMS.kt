@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.kms
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.AmazonJsonFake
@@ -147,7 +146,7 @@ class FakeKMS(
      * Convenience function to get a KMS client
      */
     fun client() = KMS.Http(
-        AwsCredentialScope("*", "kms"),
+        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 

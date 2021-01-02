@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.s3
 
-import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.BucketKey
@@ -154,14 +153,14 @@ class FakeS3(
      * Convenience function to get an S3 client for global operations
      */
     fun s3Client() = S3.Http(
-        AwsCredentialScope("us-east-1", "s3"),
+        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 
     /**
      * Convenience function to get an S3 client for bucket operations
      */
     fun s3BucketClient(name: BucketName, region: Region) = S3Bucket.Http(name,
-        AwsCredentialScope(region.value, "s3"),
+        region,
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 
