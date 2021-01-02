@@ -38,8 +38,8 @@ class ReceiveMessage(
                         .map {
                             SQSMessage(
                                 SQSMessageId.of(text("MessageId")),
-                                text("MD5OfBody"),
                                 text("Body"),
+                                text("MD5OfBody"),
                                 it.children("Attributes")
                                     .map { it.firstChild("Name").textContent to it.firstChild("Value").textContent }
                                     .toMap()

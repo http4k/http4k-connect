@@ -1,5 +1,7 @@
 package org.http4k.connect.amazon.sqs
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.AwsService
@@ -35,6 +37,8 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs")
                     .successValue().MessageId
 
                 val received = receiveMessage(accountId, queueName).successValue()
+                assertThat(received.first().messageId, equalTo(id))
+                assertThat(received.first().body, equalTo("hello world"))
             } finally {
                 deleteQueue(accountId, queueName, expires).successValue()
             }
