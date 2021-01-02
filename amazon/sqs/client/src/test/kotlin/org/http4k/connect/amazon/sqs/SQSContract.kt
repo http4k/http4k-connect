@@ -32,7 +32,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs")
             val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
 
             try {
-                val id = sendMessage(accountId, queueName, "hello world", expires)
+                val id = sendMessage(accountId, queueName, "hello world", expires = expires)
                     .successValue().MessageId
 
                 val received = receiveMessage(accountId, queueName).successValue().first()
