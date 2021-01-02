@@ -38,14 +38,12 @@ class FakeSQS(
 
     override val app = routes(
         "/{account}/{queueName}" bind POST to routes(
-            deleteQueue(),
             deleteMessage(),
-            sendMessage(),
-            receiveMessage()
+            deleteQueue(),
+            receiveMessage(),
+            sendMessage()
         ),
-        "/" bind POST to routes(
-            createQueue(),
-        )
+        "/" bind POST to createQueue()
     )
 
     private fun createQueue() = { r: Request -> r.form("Action") == "CreateQueue" }
