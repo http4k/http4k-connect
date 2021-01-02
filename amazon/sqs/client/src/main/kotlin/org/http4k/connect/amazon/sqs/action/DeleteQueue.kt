@@ -16,14 +16,13 @@ import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 class DeleteQueue(private val accountId: AwsAccount,
                   private val queueName: QueueName,
                   expires: ZonedDateTime? = null)
-    : SQSAction<SentMessage>(
+    : SQSAction<Unit>(
     "DeleteQueue",
     expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) }
-
 ) {
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(SentMessage.from(response))
+            status.successful -> Success(Unit)
             else -> Failure(RemoteFailure(POST, uri(), status))
         }
     }

@@ -16,7 +16,7 @@ class CreateQueue(queueName: QueueName,
                   tags: Map<String, String> = emptyMap(),
                   attributes: Map<String, String> = emptyMap(),
                   expires: ZonedDateTime? = null)
-    : SQSAction<SentMessage>(
+    : SQSAction<CreatedQueue>(
     "CreateQueue",
     *(tags.entries
         .flatMap { listOf("Tag.Key" to it.key, "Tag.Value" to it.value) } +
@@ -32,8 +32,19 @@ class CreateQueue(queueName: QueueName,
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(SentMessage.from(response))
+            status.successful -> Success(CreatedQueue.from(response))
             else -> Failure(RemoteFailure(POST, uri(), status))
         }
+    }
+}
+
+data class CreatedQueue(
+    val QueueUrl: Uri
+) {
+    companion object {
+        fun from(response: Response) =
+            with(documentBuilderFactory().parse(response.body.stream)) {
+                CreatedQueue(Uri.of(text("QueueUrl")))
+            }
     }
 }

@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.sqs
 
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.successValue
@@ -22,9 +23,18 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(AwsService.of("sqs")
 
     @Test
     fun `queue lifecycle`() {
-        sqs.createQueue(queueName,
-            mapOf("tag" to "value"),
-            mapOf("MaximumMessageSize" to "10000"),
-            expires).successValue()
+        with(sqs) {
+            val created = createQueue(queueName,
+                mapOf("tag" to "value"),
+                mapOf("MaximumMessageSize" to "10000"),
+                expires).successValue()
+            val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
+
+            try {
+
+            } finally {
+                deleteQueue(accountId, queueName, expires).successValue()
+            }
+        }
     }
 }
