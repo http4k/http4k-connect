@@ -38,6 +38,7 @@ class STSCredentialsProviderTest {
         every { sts.invoke(any<AssumeRole>()) } returns assumedRole(firstCreds)
 
         assertThat(provider(), equalTo(firstCreds.toHttp4k()))
+        clock.tickBy(Duration.ofSeconds(1))
         assertThat(provider(), equalTo(firstCreds.toHttp4k()))
 
         verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
@@ -50,11 +51,17 @@ class STSCredentialsProviderTest {
 
         assertThat(provider(), equalTo(firstCreds.toHttp4k()))
 
-        clock.time = now.plusSeconds(2)
+        verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
 
         val secondCreds = credentialsExpiringAt(now.plusSeconds(61), 2)
         every { sts.invoke(any<AssumeRole>()) } returns assumedRole(secondCreds)
 
+        clock.tickBy(Duration.ofSeconds(1))
+        assertThat(provider(), equalTo(firstCreds.toHttp4k()))
+
+        verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
+
+        clock.tickBy(Duration.ofMillis(1))
         assertThat(provider(), equalTo(secondCreds.toHttp4k()))
 
         verify(exactly = 2) { sts.invoke(any<AssumeRole>()) }
@@ -73,10 +80,14 @@ class STSCredentialsProviderTest {
     private val arn = ARN.of("arn:aws:foobar")
 }
 
-class TestClock(var time: Instant) : Clock() {
+class TestClock(private var time: Instant) : Clock() {
     override fun getZone(): ZoneId = TODO("Not yet implemented")
 
     override fun withZone(zone: ZoneId?): Clock = TODO("Not yet implemented")
 
     override fun instant(): Instant = time
+
+    fun tickBy(duration: Duration) {
+        time = time.plus(duration)
+    }
 }
