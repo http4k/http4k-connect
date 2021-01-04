@@ -7,6 +7,7 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.lambda.action.invokeFunction
 import org.http4k.connect.amazon.model.FunctionName
 import org.http4k.core.HttpHandler
+import org.http4k.format.Moshi
 import org.junit.jupiter.api.Test
 
 val reverse = FunctionName("reverse")
@@ -19,6 +20,6 @@ abstract class LambdaContract(http: HttpHandler) : AwsContract(http) {
 
     @Test
     fun `can use echo lambda`() {
-        assertThat(lambda.invokeFunction(reverse, "hello"), equalTo(Success("olleh")))
+        assertThat(lambda.invokeFunction(reverse, "hello", Moshi), equalTo(Success("olleh")))
     }
 }

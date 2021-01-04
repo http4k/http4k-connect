@@ -34,4 +34,4 @@ class InvokeFunction<RESP : Any>(private val name: FunctionName,
     companion object
 }
 
-inline fun <reified RESP : Any> Lambda.invokeFunction(name: FunctionName, req: Any) = this(InvokeFunction(name, req, RESP::class))
+inline fun <reified RESP : Any> Lambda.invokeFunction(name: FunctionName, req: Any, autoMarshalling: AutoMarshalling = Moshi) = this(InvokeFunction(name, req, RESP::class, autoMarshalling))

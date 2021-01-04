@@ -25,6 +25,6 @@ fun main() {
     val client = fakeLambda.client()
 
     JavaHttpClient()(Request(GET, "http://whatever")).bodyString()
-    println(client.invokeFunction<Resp>(deployedLambda, Req("hello")))
+    println(client.invokeFunction<Resp>(deployedLambda, Req("hello"), Moshi))
 }
 
