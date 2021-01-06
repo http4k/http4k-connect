@@ -8,6 +8,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
+import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ServerFilters.CatchAll
 import org.http4k.server.ServerConfig
@@ -33,7 +34,7 @@ abstract class ChaosFake : HttpHandler {
         .then(CatchAll())
         .then(app.withChaosApi(chaosEngine))(request)
 
-    fun start(port: Int = this::class.defaultPort(),
+    fun start(port: Int = this::class.defaultPort,
               serverConfig: (Int) -> ServerConfig = ::SunHttp) =
         asServer(serverConfig(port)).start().also {
             println("Started ${this::class.simpleName} on $port")
@@ -43,6 +44,10 @@ abstract class ChaosFake : HttpHandler {
 /**
  * Calculate a standard port number for a Fake using the classname as a seed
  */
-fun <T : ChaosFake> KClass<T>.defaultPort() = Random(
-    (simpleName.hashCode() % MAX_VALUE).toLong()).nextInt(65535 - 10000) + 10000
+val <T : ChaosFake> KClass<T>.defaultPort
+    get() = Random((simpleName.hashCode() % MAX_VALUE).toLong()).nextInt(65535 - 10000) + 10000
 
+/**
+ * Local URI for this fake
+ */
+val <T : ChaosFake> KClass<T>.defaultLocalUri get() = Uri.of("http://localhost:$defaultPort")

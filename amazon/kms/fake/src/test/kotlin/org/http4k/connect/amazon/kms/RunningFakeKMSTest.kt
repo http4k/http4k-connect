@@ -2,16 +2,14 @@ package org.http4k.connect.amazon.kms
 
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.fakeAwsEnvironment
-import org.http4k.connect.defaultPort
-import org.http4k.core.Uri
+import org.http4k.connect.defaultLocalUri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetHostFrom
 import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 
 class RunningFakeKMSTest : KMSContract(
-    SetHostFrom(Uri.of("http://localhost:" + FakeKMS::class.defaultPort()))
-        .then(JavaHttpClient())
+    SetHostFrom(FakeKMS::class.defaultLocalUri).then(JavaHttpClient())
 ) {
     override val aws = fakeAwsEnvironment
     private lateinit var server: Http4kServer
