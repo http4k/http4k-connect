@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.kms.action.KMSAction
  */
 @Http4kConnectAdapter
 interface KMS {
-    operator fun <R : Any> invoke(request: KMSAction<R>): Result<R, RemoteFailure>
+    operator fun <R : Any> invoke(action: KMSAction<R>): Result<R, RemoteFailure>
 
     companion object : AwsServiceCompanion("kms")
 }

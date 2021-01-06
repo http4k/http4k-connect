@@ -16,5 +16,5 @@ fun SecretsManager.Companion.Http(region: Region,
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SecretsManager {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
-    override fun <R : Any> invoke(request: SecretsManagerAction<R>) = request.toResult(http(request.toRequest()))
+    override fun <R : Any> invoke(action: SecretsManagerAction<R>) = action.toResult(http(action.toRequest()))
 }

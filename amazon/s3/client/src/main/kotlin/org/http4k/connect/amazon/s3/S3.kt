@@ -16,7 +16,7 @@ import java.io.InputStream
  */
 @Http4kConnectAdapter
 interface S3 {
-    operator fun <R> invoke(request: S3Action<R>): Result<R, RemoteFailure>
+    operator fun <R> invoke(action: S3Action<R>): Result<R, RemoteFailure>
 
     companion object : AwsServiceCompanion("s3")
 }
@@ -26,7 +26,7 @@ interface S3 {
  */
 @Http4kConnectAdapter
 interface S3Bucket {
-    operator fun <R> invoke(request: S3BucketAction<R>): Result<R, RemoteFailure>
+    operator fun <R> invoke(action: S3BucketAction<R>): Result<R, RemoteFailure>
 
     operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure> = this(GetKey(key))
     operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure> = this(PutKey(key, content))

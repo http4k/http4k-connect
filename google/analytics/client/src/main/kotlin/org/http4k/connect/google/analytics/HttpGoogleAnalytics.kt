@@ -7,5 +7,5 @@ import org.http4k.core.HttpHandler
 
 fun GoogleAnalytics.Companion.Http(trackingId: TrackingId,
                                    http: HttpHandler = JavaHttpClient()) = object : GoogleAnalytics {
-    override fun <R> invoke(request: GoogleAnalyticsAction<R>) = request.toResult(http(request.toRequest(trackingId)))
+    override fun <R> invoke(action: GoogleAnalyticsAction<R>) = action.toResult(http(action.toRequest(trackingId)))
 }

@@ -16,5 +16,5 @@ fun STS.Companion.Http(region: Region,
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : STS {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
-    override fun <R> invoke(request: STSAction<R>) = request.toResult(http(request.toRequest()))
+    override fun <R> invoke(action: STSAction<R>) = action.toResult(http(action.toRequest()))
 }

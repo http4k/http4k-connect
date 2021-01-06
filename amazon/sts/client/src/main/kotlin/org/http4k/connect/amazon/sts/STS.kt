@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.sts.action.STSAction
  */
 @Http4kConnectAdapter
 interface STS {
-    operator fun <R> invoke(request: STSAction<R>): Result<R, RemoteFailure>
+    operator fun <R> invoke(action: STSAction<R>): Result<R, RemoteFailure>
 
     companion object : AwsServiceCompanion("sts")
 }

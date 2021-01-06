@@ -15,5 +15,5 @@ fun SystemsManager.Companion.Http(region: Region,
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SystemsManager {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
-    override fun <R : Any> invoke(request: SystemsManagerAction<R>) = request.toResult(http(request.toRequest()))
+    override fun <R : Any> invoke(action: SystemsManagerAction<R>) = action.toResult(http(action.toRequest()))
 }

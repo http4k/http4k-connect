@@ -16,5 +16,5 @@ fun SQS.Companion.Http(region: Region,
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SQS {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
-    override fun <R> invoke(request: SQSAction<R>) = request.toResult(http(request.toRequest()))
+    override fun <R> invoke(action: SQSAction<R>) = action.toResult(http(action.toRequest()))
 }

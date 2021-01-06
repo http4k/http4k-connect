@@ -16,5 +16,5 @@ fun Lambda.Companion.Http(region: Region,
                           payloadMode: Payload.Mode = Payload.Mode.Signed) = object : Lambda {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
-    override fun <RESP : Any> invoke(request: LambdaAction<RESP>) = request.toResult(http(request.toRequest()))
+    override fun <RESP : Any> invoke(action: LambdaAction<RESP>) = action.toResult(http(action.toRequest()))
 }

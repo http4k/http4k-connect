@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.lambda.action.LambdaAction
  */
 @Http4kConnectAdapter
 interface Lambda {
-    operator fun <RESP : Any> invoke(request: LambdaAction<RESP>): Result<RESP, RemoteFailure>
+    operator fun <RESP : Any> invoke(action: LambdaAction<RESP>): Result<RESP, RemoteFailure>
 
     companion object : AwsServiceCompanion("lambda")
 }

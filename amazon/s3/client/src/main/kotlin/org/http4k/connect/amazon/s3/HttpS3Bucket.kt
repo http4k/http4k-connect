@@ -18,5 +18,5 @@ fun S3Bucket.Companion.Http(bucketName: BucketName,
                             payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3Bucket {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode, "$bucketName.").then(rawHttp)
 
-    override fun <R> invoke(request: S3BucketAction<R>) = request.toResult(http(request.toRequest()))
+    override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(http(action.toRequest()))
 }

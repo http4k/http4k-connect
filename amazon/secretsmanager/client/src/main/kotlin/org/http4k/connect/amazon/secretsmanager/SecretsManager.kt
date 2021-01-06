@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.secretsmanager.action.SecretsManagerAction
  */
 @Http4kConnectAdapter
 interface SecretsManager {
-    operator fun <R : Any> invoke(request: SecretsManagerAction<R>): Result<R, RemoteFailure>
+    operator fun <R : Any> invoke(action: SecretsManagerAction<R>): Result<R, RemoteFailure>
 
     companion object : AwsServiceCompanion("secretsmanager")
 }

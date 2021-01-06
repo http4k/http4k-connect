@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.systemsmanager.action.SystemsManagerAction
  */
 @Http4kConnectAdapter
 interface SystemsManager {
-    operator fun <R : Any> invoke(request: SystemsManagerAction<R>): Result<R, RemoteFailure>
+    operator fun <R : Any> invoke(action: SystemsManagerAction<R>): Result<R, RemoteFailure>
 
     companion object : AwsServiceCompanion("ssm")
 }

@@ -15,5 +15,5 @@ fun S3.Companion.Http(region: Region,
                       clock: Clock = Clock.systemDefaultZone(),
                       payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3 {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
-    override fun <R> invoke(request: S3Action<R>) = request.toResult(http(request.toRequest()))
+    override fun <R> invoke(action: S3Action<R>) = action.toResult(http(action.toRequest()))
 }

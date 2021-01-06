@@ -16,5 +16,5 @@ fun KMS.Companion.Http(region: Region,
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
-    override fun <R : Any> invoke(request: KMSAction<R>) = request.toResult(http(request.toRequest()))
+    override fun <R : Any> invoke(action: KMSAction<R>) = action.toResult(http(action.toRequest()))
 }
