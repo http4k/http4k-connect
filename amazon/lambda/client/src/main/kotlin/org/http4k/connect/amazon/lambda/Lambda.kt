@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.lambda
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.AwsServiceCompanion
 import org.http4k.connect.amazon.lambda.action.LambdaAction
 
 /**
@@ -12,6 +13,6 @@ import org.http4k.connect.amazon.lambda.action.LambdaAction
 interface Lambda {
     operator fun <RESP : Any> invoke(request: LambdaAction<RESP>): Result<RESP, RemoteFailure>
 
-    companion object
+    companion object : AwsServiceCompanion("lambda")
 }
 

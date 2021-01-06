@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.sts
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.AwsServiceCompanion
 import org.http4k.connect.amazon.sts.action.STSAction
 
 /**
@@ -12,5 +13,5 @@ import org.http4k.connect.amazon.sts.action.STSAction
 interface STS {
     operator fun <R> invoke(request: STSAction<R>): Result<R, RemoteFailure>
 
-    companion object
+    companion object : AwsServiceCompanion("sts")
 }

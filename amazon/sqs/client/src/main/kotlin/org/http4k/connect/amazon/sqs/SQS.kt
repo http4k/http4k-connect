@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.sqs
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.AwsServiceCompanion
 import org.http4k.connect.amazon.sqs.action.SQSAction
 
 /**
@@ -12,5 +13,5 @@ import org.http4k.connect.amazon.sqs.action.SQSAction
 interface SQS {
     operator fun <R> invoke(request: SQSAction<R>): Result<R, RemoteFailure>
 
-    companion object
+    companion object : AwsServiceCompanion("sqs")
 }

@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.s3
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.AwsServiceCompanion
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.s3.action.GetKey
 import org.http4k.connect.amazon.s3.action.PutKey
@@ -17,7 +18,7 @@ import java.io.InputStream
 interface S3 {
     operator fun <R> invoke(request: S3Action<R>): Result<R, RemoteFailure>
 
-    companion object
+    companion object : AwsServiceCompanion("s3")
 }
 
 /**
@@ -30,6 +31,6 @@ interface S3Bucket {
     operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure> = this(GetKey(key))
     operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure> = this(PutKey(key, content))
 
-    companion object
+    companion object : AwsServiceCompanion("s3")
 }
 
