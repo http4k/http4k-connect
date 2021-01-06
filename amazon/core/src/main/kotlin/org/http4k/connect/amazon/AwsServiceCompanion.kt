@@ -9,6 +9,7 @@ import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetHostFrom
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
 
@@ -25,6 +26,7 @@ open class AwsServiceCompanion(awsServiceName: String) {
         payloadMode: Payload.Mode,
         servicePrefix: String = "") =
         SetHostFrom(Uri.of("https://$servicePrefix$awsService.$region.amazonaws.com"))
+            .then(SetXForwardedHost())
             .then(ClientFilters.AwsAuth(
                 AwsCredentialScope(region.value, awsService.value),
                 credentialsProvider, clock, payloadMode))
