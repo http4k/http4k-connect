@@ -39,7 +39,7 @@ abstract class Http4kConnectProcessor : AbstractProcessor() {
 internal inline fun <reified T : Annotation> RoundEnvironment.annotated() =
     rootElements.filter { it.getAnnotation(T::class.java) != null }
         .filterIsInstance<TypeElement>()
-        .map { it.toImmutableKmClass()}
+        .map { it.toImmutableKmClass() }
 
 
 @KotlinPoetMetadataPreview

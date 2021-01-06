@@ -10,6 +10,7 @@ abstract class SystemMoshiContract(private val moshi: ConfigurableMoshi,
                                    vararg actions: Any
 ) {
     private val obj = actions.toList()
+
     @Test
     fun `can roundtrip all objects`() {
         obj.forEach {

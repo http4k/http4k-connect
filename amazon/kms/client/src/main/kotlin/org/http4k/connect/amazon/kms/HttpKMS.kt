@@ -10,7 +10,7 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
-import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.ClientFilters.SetHostFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
@@ -21,7 +21,7 @@ fun KMS.Companion.Http(region: Region,
                        clock: Clock = Clock.systemDefaultZone(),
                        payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
 
-    private val http = SetBaseUriFrom(Uri.of("https://kms.$region.amazonaws.com"))
+    private val http = SetHostFrom(Uri.of("https://kms.$region.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(ClientFilters.AwsAuth(AwsCredentialScope(region.value, "kms"), credentialsProvider, clock, payloadMode))
         .then(rawHttp)

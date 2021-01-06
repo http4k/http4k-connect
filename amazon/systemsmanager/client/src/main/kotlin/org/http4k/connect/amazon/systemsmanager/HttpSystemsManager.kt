@@ -10,7 +10,7 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
-import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.ClientFilters.SetHostFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
@@ -20,7 +20,7 @@ fun SystemsManager.Companion.Http(region: Region,
                                   rawHttp: HttpHandler = JavaHttpClient(),
                                   clock: Clock = Clock.systemDefaultZone(),
                                   payloadMode: Payload.Mode = Payload.Mode.Signed) = object : SystemsManager {
-    private val http = SetBaseUriFrom(Uri.of("https://ssm.$region.amazonaws.com"))
+    private val http = SetHostFrom(Uri.of("https://ssm.$region.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(ClientFilters.AwsAuth(AwsCredentialScope(region.value, "ssm"), credentialsProvider, clock, payloadMode))
         .then(rawHttp)

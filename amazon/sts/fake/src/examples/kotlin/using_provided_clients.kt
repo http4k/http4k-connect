@@ -10,8 +10,8 @@ fun main() {
     val fakeSts = FakeSTS()
 
     fakeSts.client().assumeRole(
-            ARN.of(
-                Region.of("ldn-north-1"), AwsService.of("kms"), "key", "resource", AwsAccount.of("0")
-            ), UUID.randomUUID().toString()
+        ARN.of(
+            Region.of("ldn-north-1"), AwsService.of("kms"), "key", "resource", AwsAccount.of("0")
+        ), UUID.randomUUID().toString()
     )
 }

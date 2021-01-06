@@ -35,11 +35,11 @@ interface Bintray {
 data class Downloads(val from: Instant, val to: Instant)
 
 fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = JavaHttpClient()) = object : Bintray {
-    private val http = ClientFilters.SetBaseUriFrom(Uri.of("https://api.bintray.com"))
+    private val http = ClientFilters.SetHostFrom(Uri.of("https://api.bintray.com"))
         .then(ClientFilters.BasicAuth(credentials))
         .then(httpHandler)
 
-   override fun invoke(request: Uploads): Result<String, Status> {
+    override fun invoke(request: Uploads): Result<String, Status> {
         val result = http(Request(POST, "/packages/${request.pkg.owner}/maven/${request.pkg.packageName}/stats/time_range_downloads"))
             .with(Body.auto<Downloads>().toLens() of Downloads(Instant.now(), Instant.now()))
 
@@ -49,7 +49,7 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         }
     }
 
-   override fun invoke(request: Repo): Result<String, Status> {
+    override fun invoke(request: Repo): Result<String, Status> {
         val result = http(Request(GET, "/repos/${request.owner}/maven"))
 
         return when {
@@ -58,7 +58,7 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         }
     }
 
-   override fun invoke(request: Org): Result<String, Status> {
+    override fun invoke(request: Org): Result<String, Status> {
         val result = http(Request(GET, "/orgs/${request.owner}"))
 
         return when {
@@ -67,7 +67,7 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         }
     }
 
-   override fun invoke(request: Package): Result<String, Status> {
+    override fun invoke(request: Package): Result<String, Status> {
         val result = http(Request(GET, "/packages/${request.owner}/maven/${request.packageName}"))
 
         return when {

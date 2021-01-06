@@ -21,7 +21,7 @@ class CreateQueue(queueName: QueueName,
     *(tags.entries
         .flatMap { listOf("Tag.Key" to it.key, "Tag.Value" to it.value) } +
         attributes.entries
-            .flatMapIndexed { i, it -> listOf("Attribute.${i+1}.Name" to it.key, "Attribute.${i+1}.Value" to it.value) } +
+            .flatMapIndexed { i, it -> listOf("Attribute.${i + 1}.Name" to it.key, "Attribute.${i + 1}.Value" to it.value) } +
         listOf(
             "QueueName" to queueName.value,
             expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) }
