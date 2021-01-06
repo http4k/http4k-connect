@@ -5,6 +5,9 @@ import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.minLength
 
 class BucketName private constructor(value: String) : StringValue(value) {
+
+    fun toUri(region: Region) = AwsService.of("$this.s3").toUri(region)
+
     companion object : StringValueFactory<BucketName>(::BucketName, 1.minLength)
 }
 

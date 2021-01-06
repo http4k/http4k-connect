@@ -10,6 +10,7 @@ import dev.forkhandles.values.minValue
 import dev.forkhandles.values.regex
 import org.http4k.base64Decoded
 import org.http4k.base64Encode
+import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
 class ARN private constructor(value: String) : StringValue(value) {
@@ -33,6 +34,8 @@ class AwsAccount private constructor(value: String) : StringValue(value.padStart
 
 class AwsService private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<AwsService>(::AwsService, 1.minLength)
+
+    fun toUri(region: Region) = Uri.of("https://$this.${region}.amazonaws.com")
 }
 
 class Timestamp private constructor(value: Long) : LongValue(value) {
