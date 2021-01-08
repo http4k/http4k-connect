@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.core.Method.POST
@@ -20,6 +21,8 @@ class DeleteQueue(private val accountId: AwsAccount,
     "DeleteQueue",
     expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) }
 ) {
+    constructor(queueARN: ARN, expires: ZonedDateTime? = null) : this(queueARN.account, queueARN.resourceId(QueueName::of), expires)
+
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)

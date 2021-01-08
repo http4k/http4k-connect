@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.amazon.model.SQSMessageId
@@ -49,6 +50,17 @@ class SendMessage(private val accountId: AwsAccount,
             messageGroupId?.let { "MessageGroupId" to it }
         ).toTypedArray()
 ) {
+
+    constructor(queueARN: ARN,
+                payload: String,
+                delaySeconds: Int? = null,
+                deduplicationId: String? = null,
+                messageGroupId: String? = null,
+                expires: ZonedDateTime? = null,
+                attributes: List<MessageAttribute>? = null,
+                systemAttributes: List<MessageAttribute>? = null) :
+        this(queueARN.account, queueARN.resourceId(QueueName::of), payload, delaySeconds, deduplicationId, messageGroupId, expires, attributes, systemAttributes)
+
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SentMessage.from(response))
