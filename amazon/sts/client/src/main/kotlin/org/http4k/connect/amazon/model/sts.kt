@@ -6,6 +6,7 @@ import dev.forkhandles.values.ZonedDateTimeValue
 import dev.forkhandles.values.ZonedDateTimeValueFactory
 import dev.forkhandles.values.minLength
 import dev.forkhandles.values.regex
+import org.http4k.aws.AwsCredentials
 import java.time.ZonedDateTime
 
 class TokenCode private constructor(value: String) : StringValue(value) {
@@ -27,4 +28,6 @@ data class Credentials(
     val AccessKeyId: AccessKeyId,
     val SecretAccessKey: SecretAccessKey,
     val Expiration: Expiration
-)
+) {
+    fun asHttp4k() = AwsCredentials(AccessKeyId.value, SecretAccessKey.value, SessionToken.value)
+}
