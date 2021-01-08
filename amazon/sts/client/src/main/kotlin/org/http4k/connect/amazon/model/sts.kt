@@ -20,7 +20,7 @@ class TokenCode private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<TokenCode>(::TokenCode, "[\\d]{6}".regex)
 }
 
-class RoleId private constructor(value: String) : StringValue(value) {
+class RoleId private constructor(value: String) : ResourceId(value) {
     companion object : StringValueFactory<RoleId>(::RoleId, 1.minLength)
 }
 

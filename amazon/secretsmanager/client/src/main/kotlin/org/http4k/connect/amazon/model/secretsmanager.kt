@@ -4,7 +4,7 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.minLength
 
-class SecretId private constructor(value: String) : StringValue(value) {
+class SecretId private constructor(value: String) : ResourceId(value) {
     companion object : StringValueFactory<SecretId>(::SecretId, 1.minLength)
 }
 
