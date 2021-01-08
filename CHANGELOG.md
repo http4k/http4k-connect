@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v2.7.1.0
 - **http4k-connect-amazon-systemsmanager** : Refined model.
+- **http4k-connect-amazon-*** : Fixed handling of ARNs.
 
 ### v2.7.0.0
 - **http4k-connect-amazon-*** : Refined ARN model.
