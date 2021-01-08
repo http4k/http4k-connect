@@ -9,6 +9,8 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.ClientFilters.SetHostFrom
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.time.Clock
 
@@ -18,8 +20,8 @@ fun S3.Companion.Http(
     clock: Clock = Clock.systemDefaultZone(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3 {
-    val http = ClientFilters.SetHostFrom(Uri.of("https://s3.amazonaws.com"))
-        .then(ClientFilters.SetXForwardedHost())
+    val http = SetHostFrom(Uri.of("https://s3.amazonaws.com"))
+        .then(SetXForwardedHost())
         .then(
             ClientFilters.AwsAuth(
                 AwsCredentialScope("us-east-1", awsService.value),
