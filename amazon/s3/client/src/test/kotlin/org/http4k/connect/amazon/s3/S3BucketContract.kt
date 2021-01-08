@@ -30,7 +30,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
     @BeforeEach
     fun recreate() {
         s3Bucket.deleteKey(key).successValue()
-        s3.deleteBucket(bucket)
+        s3Bucket.deleteBucket()
         s3.createBucket(bucket, aws.region).successValue()
     }
 
@@ -57,7 +57,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
             assertThat(s3Bucket.listKeys().successValue(), equalTo(Listing.Empty))
         } finally {
             s3Bucket.deleteKey(key).successValue()
-            s3.deleteBucket(bucket)
+            s3Bucket.deleteBucket()
         }
     }
 }
