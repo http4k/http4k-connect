@@ -4,13 +4,13 @@ The S3 connector consists of 2 interfaces:
 - `S3` for global operations, providing the following Actions:
 
      *  CreateBucket
-     *  DeleteBucket
      *  ListBuckets
 
 - `S3.Bucket` for bucket level operations, providing the following Actions:
 
      *  CopyKey
      *  CreateKey
+     *  DeleteBucket
      *  DeleteKey
      *  GetKey
      *  ListKeys
