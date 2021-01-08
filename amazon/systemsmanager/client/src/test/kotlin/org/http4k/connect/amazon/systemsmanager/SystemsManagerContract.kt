@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.ParameterType
+import org.http4k.connect.amazon.model.SSMParameterName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST
@@ -18,7 +19,7 @@ abstract class SystemsManagerContract(http: HttpHandler) : AwsContract(http) {
 
     @Test
     fun `parameter lifecycle`() {
-        val name = UUID.randomUUID().toString()
+        val name = SSMParameterName.of(UUID.randomUUID().toString())
         assertThat(secretsManager.getParameter(name).failureOrNull()!!.status, equalTo(BAD_REQUEST))
         assertThat(secretsManager.putParameter(name, "value", ParameterType.String).successValue().Version, equalTo(1))
         assertThat(secretsManager.putParameter(name, "value", ParameterType.String).failureOrNull()!!.status, equalTo(BAD_REQUEST))
