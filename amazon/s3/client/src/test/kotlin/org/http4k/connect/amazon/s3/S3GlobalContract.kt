@@ -13,7 +13,7 @@ import java.util.UUID
 
 abstract class S3GlobalContract(http: HttpHandler) : AwsContract(http) {
     private val s3 by lazy {
-        S3.Http(aws.region, { aws.credentials }, http)
+        S3.Http({ aws.credentials }, http)
     }
 
     private val s3Bucket by lazy {
@@ -24,16 +24,20 @@ abstract class S3GlobalContract(http: HttpHandler) : AwsContract(http) {
 
     @BeforeEach
     fun deleteBucket() {
-        s3Bucket.deleteBucket().successValue()
+        s3Bucket.deleteBucket()
     }
 
     @Test
     fun `bucket lifecycle`() {
         assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
         assertThat(s3.createBucket(bucket, aws.region), equalTo(Success(Unit)))
-        assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(true))
-        assertThat(s3Bucket.deleteBucket(), equalTo(Success(Unit)))
-        assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
+        try {
+            assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(true))
+            assertThat(s3Bucket.deleteBucket(), equalTo(Success(Unit)))
+            assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
+        } finally {
+            s3Bucket.deleteBucket().successValue()
+        }
     }
 }
 

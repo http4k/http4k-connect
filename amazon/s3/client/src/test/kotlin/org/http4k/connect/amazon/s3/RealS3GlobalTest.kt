@@ -3,9 +3,8 @@ package org.http4k.connect.amazon.s3
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
-import org.junit.jupiter.api.Disabled
+import org.http4k.filter.debug
 
-@Disabled
-class RealS3GlobalTest : S3GlobalContract(JavaHttpClient()), RealAwsEnvironment {
+class RealS3GlobalTest : S3GlobalContract(JavaHttpClient().debug()), RealAwsEnvironment {
     override val aws get() = configAwsEnvironment()
 }
