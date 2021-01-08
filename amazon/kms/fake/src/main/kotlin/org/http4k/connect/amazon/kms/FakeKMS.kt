@@ -79,7 +79,7 @@ class FakeKMS(
     private fun createKey() = api.route<CreateKey> {
         val keyId = KMSKeyId.of(UUID.randomUUID().toString())
         val storedCMK = StoredCMK(
-            keyId, toArn(keyId), it.KeyUsage ?: ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
+            keyId, keyId.toArn(), it.KeyUsage ?: ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
                 ?: CustomerMasterKeySpec.SYMMETRIC_DEFAULT
         )
 
@@ -89,20 +89,20 @@ class FakeKMS(
     }
 
     private fun describeKey() = api.route<DescribeKey> { req ->
-        keys[toArn(req.KeyId).value]?.let {
+        keys[req.KeyId.toArn().value]?.let {
             KeyDescription(KeyMetadata(it.keyId, it.arn, AwsAccount.of("0"), it.keyUsage))
         }
     }
 
     private fun decrypt() = api.route<Decrypt> { req ->
-        keys[toArn(req.KeyId).value]?.let {
+        keys[req.KeyId.toArn().value]?.let {
             val plainText = Base64Blob.encoded(req.CiphertextBlob.decoded().reversed())
             Decrypted(KMSKeyId.of(it.arn), plainText, req.EncryptionAlgorithm ?: SYMMETRIC_DEFAULT)
         }
     }
 
     private fun encrypt() = api.route<Encrypt> { req ->
-        keys[toArn(req.KeyId).value]?.let {
+        keys[req.KeyId.toArn().value]?.let {
             Encrypted(
                 KMSKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
                     ?: SYMMETRIC_DEFAULT
@@ -111,20 +111,20 @@ class FakeKMS(
     }
 
     private fun getPublicKey() = api.route<GetPublicKey> {
-        keys[toArn(it.KeyId).value]?.let {
+        keys[it.KeyId.toArn().value]?.let {
             PublicKey(KMSKeyId.of(it.arn), it.customerMasterKeySpec, emptyList(), it.keyUsage, publicKey, emptyList())
         }
     }
 
     private fun scheduleKeyDeletion() = api.route<ScheduleKeyDeletion> { req ->
-        keys[toArn(req.KeyId).value]?.let {
-            keys[toArn(req.KeyId).value] = it.copy(deletion = Timestamp.of(MAX_VALUE))
+        keys[req.KeyId.toArn().value]?.let {
+            keys[req.KeyId.toArn().value] = it.copy(deletion = Timestamp.of(MAX_VALUE))
             KeyDeletionSchedule(KMSKeyId.of(it.arn), Timestamp.of(MAX_VALUE))
         }
     }
 
     private fun sign() = api.route<Sign> { req ->
-        keys[toArn(req.KeyId).value]?.let {
+        keys[req.KeyId.toArn().value]?.let {
             Signed(
                 KMSKeyId.of(it.arn),
                 Base64Blob.encoded(
@@ -136,7 +136,7 @@ class FakeKMS(
     }
 
     private fun verify() = api.route<Verify> { req ->
-        keys[toArn(req.KeyId).value]?.let {
+        keys[req.KeyId.toArn().value]?.let {
             when {
                 req.Signature.decoded().startsWith(req.SigningAlgorithm.name) ->
                     VerifyResult(KMSKeyId.of(it.arn), true, req.SigningAlgorithm)
@@ -145,9 +145,9 @@ class FakeKMS(
         }
     }
 
-    private fun toArn(keyId: KMSKeyId) = when {
-        keyId.value.startsWith("arn") -> ARN.of(keyId.value)
-        else -> ARN.of(AwsService.of("kms"), Region.of("ldn-north-1"), AwsAccount.of("0"), "key", keyId)
+    private fun KMSKeyId.toArn() = when {
+        value.startsWith("arn") -> ARN.of(value)
+        else -> ARN.of(AwsService.of("kms"), Region.of("ldn-north-1"), AwsAccount.of("0"), "key", this)
     }
 
     /**

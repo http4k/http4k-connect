@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.model.SSMParameterName
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.amazon.systemsmanager.action.DeleteParameter
 import org.http4k.connect.amazon.systemsmanager.action.GetParameter
@@ -20,7 +21,7 @@ import org.http4k.connect.storage.Storage
 import org.http4k.routing.routes
 import java.time.Clock
 
-data class StoredParameter(val name: String, val value: String, val type: ParameterType)
+data class StoredParameter(val name: SSMParameterName, val value: String, val type: ParameterType)
 
 class FakeSystemsManager(
     private val parameters: Storage<StoredParameter> = Storage.InMemory(),
@@ -36,25 +37,25 @@ class FakeSystemsManager(
     )
 
     private fun deleteParameter() = api.route<DeleteParameter> { req ->
-        parameters[req.Name]?.let {
-            parameters.remove(req.Name)
+        parameters[req.Name.value]?.let {
+            parameters.remove(req.Name.value)
             Unit
         }
     }
 
 
     private fun getParameter() = api.route<GetParameter> { req ->
-        parameters[req.Name]?.let {
+        parameters[req.Name.value]?.let {
             ParameterValue(Parameter(
-                ARN.of(AwsService.of("ssm"), Region.of("us-east-1"), AwsAccount.of("0"), "parameter", it.name),
-                it.name, it.value, it.type, null, 1, Timestamp.of(0), null, null))
+                ARN.of(SystemsManager.awsService, Region.of("us-east-1"), AwsAccount.of("0"), "parameter", req.Name),
+                req.Name, it.value, it.type, null, 1, Timestamp.of(0), null, null))
         }
     }
 
     private fun putParameter() = api.route<PutParameter> { req ->
         when {
-            parameters[req.Name] == null -> {
-                parameters[req.Name] = StoredParameter(req.Name, req.Value, req.Type)
+            parameters[req.Name.value] == null -> {
+                parameters[req.Name.value] = StoredParameter(req.Name, req.Value, req.Type)
                 PutParameterResult("Standard", 1)
             }
             else -> null

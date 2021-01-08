@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v2.7.1.0
+- **http4k-connect-amazon-systemsmanager** : Refined model.
+
 ### v2.7.0.0
 - **http4k-connect-amazon-*** : Refined ARN model.
 - **http4k-connect-amazon-s3** : Fix Delete Bucket action.

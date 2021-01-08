@@ -63,29 +63,29 @@ class FakeSecretsManager(
         secrets[req.Name] = StoredSecretValue(versionId,
             createdAt, createdAt,
             req.SecretString, req.SecretBinary)
-        CreatedSecret(req.Name.toArn(), req.Name, versionId)
+        CreatedSecret(SecretId.of(req.Name).toArn(), req.Name, versionId)
     }
 
     private fun deleteSecret() = api.route<DeleteSecret> { req ->
-        val resourceId = req.SecretId.resourceId()
+        val secretId = req.SecretId.resourceId()
 
-        secrets[resourceId]
+        secrets[secretId.value]
             ?.let {
-                secrets.remove(resourceId)
-                DeletedSecret(resourceId, resourceId.toArn(), Timestamp.of(0))
+                secrets.remove(secretId.value)
+                DeletedSecret(secretId.value, secretId.toArn(), Timestamp.of(0))
             }
     }
 
     private fun getSecret() = api.route<GetSecretValue> { req ->
-        val resourceId = req.SecretId.resourceId()
+        val secretId = req.SecretId.resourceId()
 
-        secrets.keySet(resourceId).firstOrNull()
+        secrets.keySet(secretId.value).firstOrNull()
             ?.let { secrets[it] }
             ?.let {
                 SecretValue(
-                    resourceId.toArn(),
+                    secretId.toArn(),
                     Timestamp.of(0),
-                    resourceId,
+                    secretId.value,
                     it.secretBinary,
                     it.secretString,
                     it.versionId,
@@ -96,44 +96,44 @@ class FakeSecretsManager(
 
     private fun listSecrets() = api.route<ListSecrets> {
         Secrets(secrets.keySet("").map {
-            Secret(it.toArn(), it)
+            Secret(SecretId.of(it).toArn(), it)
         })
     }
 
     private fun putSecret() = api.route<PutSecretValue> { req ->
-        val resourceId = req.SecretId.resourceId()
-        secrets[resourceId]
+        val secretId = req.SecretId.resourceId()
+        secrets[secretId.value]
             ?.let {
                 val versionId = VersionId.of(randomUUID().toString())
-                secrets[resourceId] = StoredSecretValue(versionId,
+                secrets[secretId.value] = StoredSecretValue(versionId,
                     it.createdAt,
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                UpdatedSecretValue(resourceId.toArn(), resourceId, versionId)
+                UpdatedSecretValue(secretId.toArn(), secretId.value, versionId)
             }
     }
 
     private fun updateSecret() = api.route<UpdateSecret> { req ->
-        val resourceId = req.SecretId.resourceId()
+        val secretId = req.SecretId.resourceId()
 
-        secrets[resourceId]
+        secrets[secretId.value]
             ?.let {
                 val versionId = VersionId.of(randomUUID().toString())
-                secrets[resourceId] = StoredSecretValue(versionId,
+                secrets[secretId.value] = StoredSecretValue(versionId,
                     it.createdAt,
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
                     req.SecretString, req.SecretBinary)
 
-                UpdatedSecret(resourceId.toArn(), resourceId, versionId)
+                UpdatedSecret(secretId.toArn(), secretId.value, versionId)
             }
     }
 
-    private fun String.toArn() = ARN.of(
-        AwsService.of("secretsmanager"),
+    private fun SecretId.toArn() = ARN.of(
+        SecretsManager.awsService,
         Region.of("us-east-1"),
         AwsAccount.of("0"),
-        "secret", this,
+        "secret", this
         )
 
     /**
@@ -144,10 +144,12 @@ class FakeSecretsManager(
         { AwsCredentials("accessKey", "secret") }, this, clock)
 }
 
-private fun SecretId.resourceId() = when {
-    value.startsWith("arn") -> value.split(":").last()
-    else -> value
-}
+private fun SecretId.resourceId() = SecretId.of(
+    when {
+        value.startsWith("arn") -> value.split(":").last()
+        else -> value
+    }
+)
 
 fun main() {
     FakeSecretsManager().start()
