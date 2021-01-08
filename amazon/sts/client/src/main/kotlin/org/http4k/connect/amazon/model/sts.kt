@@ -6,15 +6,8 @@ import dev.forkhandles.values.ZonedDateTimeValue
 import dev.forkhandles.values.ZonedDateTimeValueFactory
 import dev.forkhandles.values.minLength
 import dev.forkhandles.values.regex
+import org.http4k.aws.AwsCredentials
 import java.time.ZonedDateTime
-
-class SessionToken private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<SessionToken>(::SessionToken, 1.minLength)
-}
-
-class AccessKeyId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<AccessKeyId>(::AccessKeyId, 1.minLength)
-}
 
 class TokenCode private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<TokenCode>(::TokenCode, "[\\d]{6}".regex)
@@ -22,10 +15,6 @@ class TokenCode private constructor(value: String) : StringValue(value) {
 
 class RoleId private constructor(value: String) : ResourceId(value) {
     companion object : StringValueFactory<RoleId>(::RoleId, 1.minLength)
-}
-
-class SecretAccessKey private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<SecretAccessKey>(::SecretAccessKey, 1.minLength)
 }
 
 class Expiration private constructor(value: ZonedDateTime) : ZonedDateTimeValue(value) {
@@ -39,4 +28,6 @@ data class Credentials(
     val AccessKeyId: AccessKeyId,
     val SecretAccessKey: SecretAccessKey,
     val Expiration: Expiration
-)
+) {
+    fun asHttp4k() = AwsCredentials(AccessKeyId.value, SecretAccessKey.value, SessionToken.value)
+}

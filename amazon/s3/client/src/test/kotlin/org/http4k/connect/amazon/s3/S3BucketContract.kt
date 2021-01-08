@@ -22,15 +22,15 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
     }
 
     private val s3 by lazy {
-        S3.Http(aws.region, { aws.credentials }, http)
+        S3.Http({ aws.credentials }, http)
     }
 
     private val key = BucketKey.of(UUID.randomUUID().toString())
 
     @BeforeEach
     fun recreate() {
-        s3Bucket.deleteKey(key).successValue()
-        s3.deleteBucket(bucket)
+        s3Bucket.deleteKey(key)
+        s3Bucket.deleteBucket()
         s3.createBucket(bucket, aws.region).successValue()
     }
 
@@ -56,8 +56,8 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
             assertThat(s3Bucket[key].successValue(), equalTo(null))
             assertThat(s3Bucket.listKeys().successValue(), equalTo(Listing.Empty))
         } finally {
-            s3Bucket.deleteKey(key).successValue()
-            s3.deleteBucket(bucket)
+            s3Bucket.deleteKey(key)
+            s3Bucket.deleteBucket()
         }
     }
 }

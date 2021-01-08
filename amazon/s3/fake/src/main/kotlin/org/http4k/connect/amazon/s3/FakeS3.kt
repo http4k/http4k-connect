@@ -153,7 +153,6 @@ class FakeS3(
      * Convenience function to get an S3 client for global operations
      */
     fun s3Client() = S3.Http(
-        Region.of("ldn-north-1"),
         { AwsCredentials("accessKey", "secret") }, this, clock)
 
     /**

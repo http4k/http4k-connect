@@ -13,6 +13,10 @@ import org.http4k.base64Encode
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
+class AccessKeyId private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<AccessKeyId>(::AccessKeyId, 1.minLength)
+}
+
 class ARN private constructor(value: String) : StringValue(value) {
     private val parts = value.split(":", "/")
     val partition = parts[1]
@@ -73,15 +77,17 @@ class AwsService private constructor(value: String) : StringValue(value) {
     fun toUri(region: Region) = Uri.of("https://$this.${region}.amazonaws.com")
 }
 
-class Timestamp private constructor(value: Long) : LongValue(value) {
-    companion object : LongValueFactory<Timestamp>(::Timestamp, 0L.minValue)
-}
-
 class Base64Blob private constructor(value: String) : StringValue(value) {
     fun decoded() = value.base64Decoded()
 
     companion object : StringValueFactory<Base64Blob>(::Base64Blob, 1.minLength) {
         fun encoded(unencoded: String) = Base64Blob(unencoded.base64Encode())
+    }
+}
+
+class KMSKeyId private constructor(value: String) : ResourceId(value) {
+    companion object : StringValueFactory<KMSKeyId>(::KMSKeyId, 1.minLength) {
+        fun of(arn: ARN) = of(arn.value)
     }
 }
 
@@ -91,10 +97,12 @@ class Region private constructor(value: String) : StringValue(value) {
 
 abstract class ResourceId(value: String) : StringValue(value)
 
-class KMSKeyId private constructor(value: String) : ResourceId(value) {
-    companion object : StringValueFactory<KMSKeyId>(::KMSKeyId, 1.minLength) {
-        fun of(arn: ARN) = of(arn.value)
-    }
+class SecretAccessKey private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<SecretAccessKey>(::SecretAccessKey, 1.minLength)
+}
+
+class SessionToken private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<SessionToken>(::SessionToken, 1.minLength)
 }
 
 @JsonSerializable
@@ -102,3 +110,7 @@ data class Tag(
     val Key: String,
     val Value: String
 )
+
+class Timestamp private constructor(value: Long) : LongValue(value) {
+    companion object : LongValueFactory<Timestamp>(::Timestamp, 0L.minValue)
+}
