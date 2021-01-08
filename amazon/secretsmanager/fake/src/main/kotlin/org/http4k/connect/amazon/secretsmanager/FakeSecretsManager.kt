@@ -130,10 +130,11 @@ class FakeSecretsManager(
     }
 
     private fun String.toArn() = ARN.of(
-        Region.of("us-east-1"),
         AwsService.of("secretsmanager"),
+        Region.of("us-east-1"),
+        AwsAccount.of("0"),
         "secret", this,
-        AwsAccount.of("0"))
+        )
 
     /**
      * Convenience function to get SecretsManager client

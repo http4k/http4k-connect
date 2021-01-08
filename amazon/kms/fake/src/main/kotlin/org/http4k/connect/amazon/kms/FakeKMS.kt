@@ -78,8 +78,10 @@ class FakeKMS(
 
     private fun createKey() = api.route<CreateKey> {
         val keyId = KMSKeyId.of(UUID.randomUUID().toString())
-        val storedCMK = StoredCMK(keyId, toArn(keyId), it.KeyUsage ?: ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
-            ?: CustomerMasterKeySpec.SYMMETRIC_DEFAULT)
+        val storedCMK = StoredCMK(
+            keyId, toArn(keyId), it.KeyUsage ?: ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
+                ?: CustomerMasterKeySpec.SYMMETRIC_DEFAULT
+        )
 
         keys[storedCMK.arn.value] = storedCMK
 
@@ -101,8 +103,10 @@ class FakeKMS(
 
     private fun encrypt() = api.route<Encrypt> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Encrypted(KMSKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
-                ?: SYMMETRIC_DEFAULT)
+            Encrypted(
+                KMSKeyId.of(it.arn), Base64Blob.encoded(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
+                    ?: SYMMETRIC_DEFAULT
+            )
         }
     }
 
@@ -121,9 +125,13 @@ class FakeKMS(
 
     private fun sign() = api.route<Sign> { req ->
         keys[toArn(req.KeyId).value]?.let {
-            Signed(KMSKeyId.of(it.arn),
-                Base64Blob.encoded(req.SigningAlgorithm.name
-                    + req.Message.decoded().take(50)), req.SigningAlgorithm)
+            Signed(
+                KMSKeyId.of(it.arn),
+                Base64Blob.encoded(
+                    req.SigningAlgorithm.name
+                        + req.Message.decoded().take(50)
+                ), req.SigningAlgorithm
+            )
         }
     }
 
@@ -139,7 +147,7 @@ class FakeKMS(
 
     private fun toArn(keyId: KMSKeyId) = when {
         keyId.value.startsWith("arn") -> ARN.of(keyId.value)
-        else -> ARN.of(Region.of("ldn-north-1"), AwsService.of("kms"), "key", keyId.value, AwsAccount.of("0"))
+        else -> ARN.of(AwsService.of("kms"), Region.of("ldn-north-1"), AwsAccount.of("0"), "key", keyId)
     }
 
     /**
@@ -147,7 +155,8 @@ class FakeKMS(
      */
     fun client() = KMS.Http(
         Region.of("ldn-north-1"),
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 }
 
 fun main() {

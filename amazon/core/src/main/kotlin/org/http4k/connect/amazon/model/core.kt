@@ -14,13 +14,48 @@ import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
 class ARN private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<ARN>(::ARN, 1.minLength.and { it.startsWith("arn:aws:") }) {
-        fun of(region: Region,
-               awsService: AwsService,
-               resourceType: String,
-               resourceId: String,
-               account: AwsAccount) = of(
-            "arn:aws:$awsService:$region:$account:$resourceType:$resourceId")
+    private val parts = value.split(":", "/")
+    val partition = parts[1]
+    val awsService = AwsService.of(parts[2])
+    val region by lazy { Region.of(parts[3]) }
+    val account by lazy { AwsAccount.of(parts[4]) }
+
+    private val resource = parts.drop(5)
+
+    val resourceType by lazy {
+        if (resource.size == 2) resource[0]
+        else error("No resource type found in $value")
+    }
+
+    fun <T : ResourceId> resourceId(fn: (String) -> T) =
+        if (resource.size == 2) fn(resource[1])
+        else fn(resource[0])
+
+    companion object : StringValueFactory<ARN>(::ARN, 1.minLength.and { it.startsWith("arn:") }) {
+        fun of(
+            awsService: AwsService,
+            region: Region,
+            account: AwsAccount,
+            resourceId: ResourceId,
+            partition: String = "aws"
+        ) = of("arn:$partition:$awsService:$region:$account:$resourceId")
+
+        fun of(
+            awsService: AwsService,
+            region: Region,
+            account: AwsAccount,
+            resourcePath: String,
+            partition: String = "aws"
+        ) = of("arn:$partition:$awsService:$region:$account:$resourcePath")
+
+        fun of(
+            awsService: AwsService,
+            region: Region,
+            account: AwsAccount,
+            resourceType: String,
+            resourceId: ResourceId,
+            partition: String = "aws"
+        ) = of("arn:$partition:$awsService:$region:$account:$resourceType:$resourceId")
     }
 }
 
@@ -54,7 +89,9 @@ class Region private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<Region>(::Region, "[a-z]+-[a-z]+-\\d".regex)
 }
 
-class KMSKeyId private constructor(value: String) : StringValue(value) {
+abstract class ResourceId(value: String) : StringValue(value)
+
+class KMSKeyId private constructor(value: String) : ResourceId(value) {
     companion object : StringValueFactory<KMSKeyId>(::KMSKeyId, 1.minLength) {
         fun of(arn: ARN) = of(arn.value)
     }

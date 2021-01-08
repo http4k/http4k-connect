@@ -46,7 +46,7 @@ class FakeSystemsManager(
     private fun getParameter() = api.route<GetParameter> { req ->
         parameters[req.Name]?.let {
             ParameterValue(Parameter(
-                ARN.of(Region.of("us-east-1"), AwsService.of("ssm"), "parameter", it.name, AwsAccount.of("0")),
+                ARN.of(AwsService.of("ssm"), Region.of("us-east-1"), AwsAccount.of("0"), "parameter", it.name),
                 it.name, it.value, it.type, null, 1, Timestamp.of(0), null, null))
         }
     }
