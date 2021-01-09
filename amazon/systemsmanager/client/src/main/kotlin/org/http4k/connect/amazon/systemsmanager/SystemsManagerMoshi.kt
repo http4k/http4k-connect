@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.systemsmanager
 
 import com.squareup.moshi.Moshi
-import org.http4k.connect.adapter
 import org.http4k.connect.amazon.model.SSMParameterName
 import org.http4k.connect.amazon.systemsmanager.action.KotshiDeleteParameterJsonAdapter
 import org.http4k.connect.amazon.systemsmanager.action.KotshiGetParameterJsonAdapter
@@ -12,6 +11,7 @@ import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterResultJ
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
+import org.http4k.format.adapter
 import org.http4k.format.asConfigurable
 import org.http4k.format.text
 import org.http4k.format.withAwsCoreMappings

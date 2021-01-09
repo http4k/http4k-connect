@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.kms
 
 import com.squareup.moshi.Moshi
-import org.http4k.connect.adapter
 import org.http4k.connect.amazon.kms.action.KotshiCreateKeyJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiDecryptJsonAdapter
 import org.http4k.connect.amazon.kms.action.KotshiDecryptedJsonAdapter
@@ -24,6 +23,7 @@ import org.http4k.connect.amazon.kms.action.KotshiVerifyResultJsonAdapter
 import org.http4k.connect.amazon.model.KotshiKeyMetadataJsonAdapter
 import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
+import org.http4k.format.adapter
 import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
