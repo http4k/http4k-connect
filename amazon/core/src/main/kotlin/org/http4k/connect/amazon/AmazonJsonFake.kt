@@ -14,7 +14,7 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
             fn(autoMarshalling.asA(it.bodyString(), Req::class))
                 ?.let { Response(OK).body(autoMarshalling.asFormatString(it)) }
                 ?: Response(BAD_REQUEST)
-                    .body(autoMarshalling.asFormatString(JsonError("ResourceNotFoundException", "$awsService can't find the specified secret.")))
+                    .body(autoMarshalling.asFormatString(JsonError("ResourceNotFoundException", "$awsService can't find the specified item.")))
         }
 }
 
