@@ -19,7 +19,10 @@ import org.http4k.core.Status.Companion.METHOD_NOT_ALLOWED
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
+import org.http4k.routing.Router
+import org.http4k.routing.asRouter
 import org.http4k.routing.bind
+import org.http4k.routing.headers
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.template.HandlebarsTemplates
@@ -41,27 +44,14 @@ class FakeS3(
 
     private val GLOBAL_BUCKET = "unknown"
 
-    override val app = routes(
-        "/{id:.+}" bind GET to {
-            val id = it.path("id")!!
-            when (val subdomain = it.subdomain()) {
-                "s3" -> listBucketKeys(subdomain) //??
-                else -> getKey(subdomain, id)
-            }
-        },
-        "/{id:.+}" bind PUT to {
-            val id = it.path("id")!!
-            when (val subdomain = it.subdomain()) {
-                "s3" -> putBucket(id)
-                else -> {
-                    when (val source = it.header("x-amz-copy-source")) {
-                        null -> putKey(subdomain, id, it.body.payload.array())
-                        else -> copyKey(subdomain, source, id)
-                    }
+    fun subdomainIs(value: String): Router = { it: Request -> value == it.subdomain() }.asRouter()
 
-                }
-            }
-        },
+    override val app = routes(
+        "/{id:.+}" bind GET to routes(subdomainIs("s3") bind { listBucketKeys("s3") }),
+        "/{id:.+}" bind GET to { getKey(it.subdomain(), it.path("id")!!) },
+        "/{id:.+}" bind PUT to routes(subdomainIs("s3") bind { putBucket(it.path("id")!!) }),
+        "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!) }),
+        "/{id:.+}" bind PUT to { putKey(it.subdomain(), it.path("id")!!, it.body.payload.array()) },
         "/{id:.+}" bind DELETE to {
             val id = it.path("id")!!
             when (val subdomain = it.subdomain()) {
