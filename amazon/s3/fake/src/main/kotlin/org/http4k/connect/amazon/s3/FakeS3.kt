@@ -20,6 +20,7 @@ import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.routing.Router
+import org.http4k.routing.and
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
 import org.http4k.routing.headers
@@ -49,11 +50,13 @@ class FakeS3(
 
     override val app = routes(
         "/{id:.+}" bind GET to routes(isS3() bind { listBucketKeys("s3") }),
-        "/{id:.+}" bind GET to { getKey(it.subdomain(), it.path("id")!!) },
+        "/{id:.+}" bind GET to routes(isBucket() bind { getKey(it.subdomain(), it.path("id")!!) }),
         "/{id:.+}" bind PUT to routes(isS3() bind { putBucket(it.path("id")!!) }),
-        "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!) }),
+        "/{id:.+}" bind PUT to routes(isBucket().and(headers("x-amz-copy-source")) bind {
+            copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!) }
+        ),
         "/{id:.+}" bind PUT to { putKey(it.subdomain(), it.path("id")!!, it.body.payload.array()) },
-        "/{id:.+}" bind DELETE to { deleteKey(it.subdomain(), it.path("id")!!) },
+        "/{id:.+}" bind DELETE to routes(isBucket() bind { deleteKey(it.subdomain(), it.path("id")!!) }),
         "/" bind PUT to {
             when (val subdomain = it.subdomain()) {
                 "s3" -> Response(METHOD_NOT_ALLOWED)
