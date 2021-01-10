@@ -19,7 +19,6 @@ import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.routing.Router
-import org.http4k.routing.and
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
 import org.http4k.routing.headers
@@ -48,18 +47,30 @@ class FakeS3(
     private fun isBucket(): Router = { it: Request -> it.subdomain() != "s3" }.asRouter()
 
     override val app = routes(
-        "/{id:.+}" bind GET to routes(isS3() bind { listBucketKeys("s3") }),
-        "/{id:.+}" bind GET to routes(isBucket() bind { getKey(it.subdomain(), it.path("id")!!) }),
-        "/{id:.+}" bind PUT to routes(isS3() bind { putBucket(it.path("id")!!) }),
-        "/{id:.+}" bind PUT to routes(isBucket().and(headers("x-amz-copy-source")) bind {
-            copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!) }
+        isS3() bind routes(
+            "/{id:.+}" bind GET to { listBucketKeys("s3") },
+            "/{id:.+}" bind PUT to { putBucket(it.path("id")!!) },
+            "/" bind GET to { listBuckets() }
         ),
-        "/{id:.+}" bind PUT to routes(isBucket() bind { putKey(it.subdomain(), it.path("id")!!, it.body.payload.array()) }),
-        "/{id:.+}" bind DELETE to routes(isBucket() bind { deleteKey(it.subdomain(), it.path("id")!!) }),
-        "/" bind PUT to routes(isBucket() bind { putBucket(it.subdomain()) }),
-        "/" bind DELETE to routes(isBucket() bind { deleteBucket(it.subdomain()) }),
-        "/" bind GET to routes(isS3() bind { listBuckets() }),
-        "/" bind GET to routes(isBucket() bind { listBucketKeys(it.subdomain()) })
+        routes(isBucket() bind routes(
+            "/{id:.+}" bind GET to { getKey(it.subdomain(), it.path("id")!!) },
+            "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind {
+                copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!)
+            }
+            ),
+            "/{id:.+}" bind PUT to {
+                putKey(
+                    it.subdomain(),
+                    it.path("id")!!,
+                    it.body.payload.array()
+                )
+            },
+            "/{id:.+}" bind DELETE to { deleteKey(it.subdomain(), it.path("id")!!) },
+            "/" bind PUT to { putBucket(it.subdomain()) },
+            "/" bind DELETE to { deleteBucket(it.subdomain()) },
+            "/" bind GET to { listBucketKeys(it.subdomain()) }
+        )
+        )
     )
 
     private fun copyKey(destinationBucket: String, source: String, destinationKey: String) =
