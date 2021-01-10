@@ -1,5 +1,4 @@
 import dev.forkhandles.result4k.Result
-import dev.forkhandles.result4k.valueOrNull
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
@@ -40,7 +39,6 @@ fun main() {
 
     // all operations return a Result monad of the API type
     val invokeResult: Result<Resp, RemoteFailure> = client.invokeFunction(deployedLambda, Req("hello"), Moshi)
-    val resp: Resp = invokeResult.valueOrNull()!!
-    println(resp)
+    println(invokeResult)
 }
 

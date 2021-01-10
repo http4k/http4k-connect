@@ -5,6 +5,7 @@ The Example connector provides the following Actions:
      *  Echo
 
 ### Example usage
+
 ```kotlin
 const val USE_REAL_CLIENT = false
 
@@ -17,14 +18,14 @@ fun main() {
 
     // all operations return a Result monad of the API type
     val echoedResult: Result<Echoed, RemoteFailure> = example.echo("hello")
-    val echoed: Echoed = echoedResult.valueOrNull()!!
-    println(echoed)
+    println(echoedResult)
 }
 ```
 
 ### Default Fake port: 22375
 
 To start:
+
 ```
 FakeExample().start()
 ```

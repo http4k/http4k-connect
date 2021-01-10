@@ -1,16 +1,17 @@
-# Security Token Service
+import dev.forkhandles.result4k.Result
+import org.http4k.aws.AwsCredentials
+import org.http4k.client.JavaHttpClient
+import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.sts.FakeSTS
+import org.http4k.connect.amazon.sts.Http
+import org.http4k.connect.amazon.sts.STS
+import org.http4k.connect.amazon.sts.action.AssumedRole
+import org.http4k.connect.amazon.sts.assumeRole
+import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 
-The STS connector provides the following Actions:
-
-     *  AssumeRole
-
-The client APIs utilise the `http4k-aws` module for request signing, which means no dependencies on the incredibly fat
-Amazon-SDK JARs. This means this integration is perfect for running Serverless Lambdas where binary size is a
-performance factor.
-
-### Example usage
-
-```kotlin
 const val USE_REAL_CLIENT = false
 
 fun main() {
@@ -27,12 +28,3 @@ fun main() {
     val assumeRoleResult: Result<AssumedRole, RemoteFailure> = client.assumeRole(roleArn, "sessionId")
     println(assumeRoleResult)
 }
-```
-
-### Default Fake port: 20434
-
-To start:
-
-```
-FakeSTS().start()
-```

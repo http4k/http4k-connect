@@ -1,5 +1,4 @@
 import dev.forkhandles.result4k.Result
-import dev.forkhandles.result4k.valueOrNull
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.example.Example
@@ -21,6 +20,5 @@ fun main() {
 
     // all operations return a Result monad of the API type
     val echoedResult: Result<Echoed, RemoteFailure> = example.echo("hello")
-    val echoed: Echoed = echoedResult.valueOrNull()!!
-    println(echoed)
+    println(echoedResult)
 }
