@@ -48,39 +48,68 @@ class FakeS3(
 
     override val app = routes(
         isS3() bind routes(
-            "/{id:.+}" bind GET to { listBucketKeys("s3") },
-            "/{id:.+}" bind PUT to { putBucket(it.path("id")!!) },
-            "/" bind GET to { listBuckets() }
+            globalListBucketKeys(),
+            globalPutBucket(),
+            globalListBuckets()
         ),
         isBucket() bind routes(
-            "/{id:.+}" bind GET to { getKey(it.subdomain(), it.path("id")!!) },
-            "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind {
-                copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!)
-            }
-            ),
-            "/{id:.+}" bind PUT to {
-                putKey(it.subdomain(), it.path("id")!!, it.body.payload.array())
-            },
-            "/{id:.+}" bind DELETE to { deleteKey(it.subdomain(), it.path("id")!!) },
-            "/" bind PUT to { putBucket(it.subdomain()) },
-            "/" bind DELETE to { deleteBucket(it.subdomain()) },
-            "/" bind GET to { listBucketKeys(it.subdomain()) }
+            bucketGetKey(),
+            copyKey(),
+            bucketPutKey(),
+            bucketDeleteKey(),
+            bucketPutBucket(),
+            bucketDeleteBucket(),
+            bucketListKeys()
         )
     )
 
-    private fun copyKey(destinationBucket: String, source: String, destinationKey: String) =
-        bucketContent[source.split("/").let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
+    private fun bucketListKeys() = "/" bind GET to { listBucketKeys(it.subdomain()) }
+
+    private fun bucketDeleteBucket() =
+        "/" bind DELETE to { Response(if (buckets.remove(it.subdomain())) OK else NOT_FOUND) }
+
+    private fun bucketPutBucket() = "/" bind PUT to { putBucket(it.subdomain()) }
+
+    private fun bucketDeleteKey() = "/{id:.+}" bind DELETE to { req ->
+        val bucket = req.subdomain()
+        (buckets[bucket]
+            ?.let { Response(if (bucketContent.remove("${bucket}-${req.path("id")!!}")) OK else NOT_FOUND) }
+            ?: Response(NOT_FOUND))
+    }
+
+    fun bucketPutKey() = "/{id:.+}" bind PUT to {
+        putKey(it.subdomain(), it.path("id")!!, it.body.payload.array())
+    }
+
+    private fun copyKey() = "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { req ->
+        bucketContent[req.header("x-amz-copy-source")!!.split("/")
+            .let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
             ?.let {
-                putKey(destinationBucket, destinationKey, Base64.getDecoder().decode(it.content))
+                putKey(req.subdomain(), req.path("id")!!, Base64.getDecoder().decode(it.content))
                 Response(OK)
             } ?: Response(NOT_FOUND)
+    }
+    )
 
+    private fun bucketGetKey() = "/{id:.+}" bind GET to { req ->
+        val bucket = req.subdomain()
+        buckets[bucket]
+            ?.let {
+                bucketContent["${bucket}-${req.path("id")!!}"]?.content?.let {
+                    Base64.getDecoder().decode(it).inputStream()
+                }
+            }?.let { Response(OK).body(it) }
+            ?: Response(NOT_FOUND)
+    }
 
-    private fun getKey(bucket: String, key: String): Response = buckets[bucket]
-        ?.let {
-            bucketContent["$bucket-$key"]?.content?.let { Base64.getDecoder().decode(it).inputStream() }
-        }?.let { Response(OK).body(it) }
-        ?: Response(NOT_FOUND)
+    private fun globalListBuckets() = "/" bind GET to {
+        Response(OK)
+            .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
+    }
+
+    private fun globalPutBucket() = "/{id:.+}" bind PUT to { putBucket(it.path("id")!!) }
+
+    private fun globalListBucketKeys() = "/{id:.+}" bind GET to { listBucketKeys("s3") }
 
     private fun listBucketKeys(bucket: String) = buckets[bucket]
         ?.let {
@@ -93,15 +122,6 @@ class FakeS3(
                 ))
         }
         ?: Response(NOT_FOUND)
-
-    private fun listBuckets() = Response(OK)
-        .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
-
-    private fun deleteBucket(bucket: String) = Response(if (buckets.remove(bucket)) OK else NOT_FOUND)
-
-    private fun deleteKey(bucket: String, key: String) = (buckets[bucket]
-        ?.let { Response(if (bucketContent.remove("$bucket-$key")) OK else NOT_FOUND) }
-        ?: Response(NOT_FOUND))
 
     private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
         ?.let {
