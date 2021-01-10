@@ -48,9 +48,9 @@ fun Example.echo(value: String): Result<Echoed, RemoteFailure> = this(Echo(value
 // constructing and using the clients
 val example = Example.Http(httpHandler)
 
-val echoed: Result<Echoed, RemoteFailure> = example(Echo("hello world"))
+val echoed: Result<Echoed, RemoteFailure> = example.echo("hello world")
 // or...
-val alsoEchoed: Result<Echoed, RemoteFailure> = example.echo("hello world")
+val alsoEchoed: Result<Echoed, RemoteFailure> = example(Echo("hello world"))
 ```
 
 ### System Fake Modules (named http4k-{vendor}-{system}-fake)

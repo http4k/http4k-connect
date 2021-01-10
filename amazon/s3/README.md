@@ -16,7 +16,7 @@ The S3 connector consists of 2 interfaces:
      *  ListKeys
      *  PutKey
 
-Example client usage:
+### Example usage
 ```kotlin
 const val useRealClient = false
 

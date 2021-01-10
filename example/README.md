@@ -4,7 +4,7 @@ The Example connector provides the following Actions:
 
      *  Echo
 
-Example client usage:
+### Example usage
 ```kotlin
 const val useRealClient = false
 

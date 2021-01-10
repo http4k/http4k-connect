@@ -12,7 +12,7 @@ The KMS connector provides the following Actions:
      *  Sign
      *  Verify
 
-Example client usage:
+### Example usage
 ```kotlin
 const val useRealClient = false
 
