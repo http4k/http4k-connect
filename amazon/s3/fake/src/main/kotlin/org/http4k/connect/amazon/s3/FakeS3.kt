@@ -15,7 +15,6 @@ import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.CREATED
-import org.http4k.core.Status.Companion.METHOD_NOT_ALLOWED
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
@@ -57,25 +56,10 @@ class FakeS3(
         ),
         "/{id:.+}" bind PUT to routes(isBucket() bind { putKey(it.subdomain(), it.path("id")!!, it.body.payload.array()) }),
         "/{id:.+}" bind DELETE to routes(isBucket() bind { deleteKey(it.subdomain(), it.path("id")!!) }),
-
-        "/" bind PUT to {
-            when (val subdomain = it.subdomain()) {
-                "s3" -> Response(METHOD_NOT_ALLOWED)
-                else -> putBucket(subdomain)
-            }
-        },
-        "/" bind DELETE to {
-            when (val subdomain = it.subdomain()) {
-                "s3" -> Response(METHOD_NOT_ALLOWED)
-                else -> deleteBucket(subdomain)
-            }
-        },
-        "/" bind GET to {
-            when (val subdomain = it.subdomain()) {
-                "s3" -> listBuckets()
-                else -> listBucketKeys(subdomain)
-            }
-        }
+        "/" bind PUT to routes(isBucket() bind { putBucket(it.subdomain()) }),
+        "/" bind DELETE to routes(isBucket() bind { deleteBucket(it.subdomain()) }),
+        "/" bind GET to routes(isS3() bind { listBuckets() }),
+        "/" bind GET to routes(isBucket() bind { listBucketKeys(it.subdomain()) })
     )
 
     private fun copyKey(destinationBucket: String, source: String, destinationKey: String) =
@@ -86,13 +70,11 @@ class FakeS3(
             } ?: Response(NOT_FOUND)
 
 
-    private fun getKey(bucket: String, key: String): Response {
-        return buckets[bucket]
-            ?.let {
-                bucketContent["$bucket-$key"]?.content?.let { Base64.getDecoder().decode(it).inputStream() }
-            }?.let { Response(OK).body(it) }
-            ?: Response(NOT_FOUND)
-    }
+    private fun getKey(bucket: String, key: String): Response = buckets[bucket]
+        ?.let {
+            bucketContent["$bucket-$key"]?.content?.let { Base64.getDecoder().decode(it).inputStream() }
+        }?.let { Response(OK).body(it) }
+        ?: Response(NOT_FOUND)
 
     private fun listBucketKeys(bucket: String) = buckets[bucket]
         ?.let {
