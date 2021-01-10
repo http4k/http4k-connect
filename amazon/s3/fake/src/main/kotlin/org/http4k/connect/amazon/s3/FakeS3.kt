@@ -31,8 +31,8 @@ class FakeS3(
             globalListBuckets(buckets)
         ),
         isBucket bind routes(
-            bucketGetKey(buckets, bucketContent),
             copyKey(buckets, bucketContent, clock),
+            bucketGetKey(buckets, bucketContent),
             bucketPutKey(buckets, bucketContent, clock),
             bucketDeleteKey(buckets, bucketContent),
             bucketPutBucket(buckets),

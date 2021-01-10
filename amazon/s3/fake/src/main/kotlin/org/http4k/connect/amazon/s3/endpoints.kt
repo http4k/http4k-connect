@@ -127,10 +127,13 @@ fun putBucket(bucket: String, buckets: Storage<Unit>): Response {
 }
 
 fun Request.subdomain(buckets: Storage<Unit>): String =
-    (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: run {
-        buckets[GLOBAL_BUCKET] = Unit
-        GLOBAL_BUCKET
-    }
+    (header("x-forwarded-host") ?: header("host"))
+        ?.split('.')
+        ?.firstOrNull()
+        ?: run {
+            buckets[GLOBAL_BUCKET] = Unit
+            GLOBAL_BUCKET
+        }
 
 private val lens by lazy {
     Body.viewModel(HandlebarsTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()
