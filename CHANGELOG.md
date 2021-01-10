@@ -3,11 +3,6 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v2.9.0.0
-- **http4k-connect-amazon-kms** : Exclude dependencies on KotlinReflect through Moshi.
-- **http4k-connect-amazon-secretsmanager** : Exclude dependencies on KotlinReflect through Moshi.
-- **http4k-connect-amazon-systemsmanager** : Exclude dependencies on KotlinReflect through Moshi.
-
 ### v2.8.0.0
 - **http4k-connect-*** : Upgrade to http4k 4.X.X.X.
 
