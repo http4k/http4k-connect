@@ -34,7 +34,8 @@ import java.util.Base64
 class FakeS3(
     private val buckets: Storage<Unit> = Storage.InMemory(),
     private val bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
-    private val clock: Clock = Clock.systemDefaultZone()) : ChaosFake() {
+    private val clock: Clock = Clock.systemDefaultZone()
+) : ChaosFake() {
 
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
@@ -131,9 +132,11 @@ class FakeS3(
 
     private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
         ?.let {
-            bucketContent["$bucket-$key"] = BucketKeyContent(BucketKey.of(key),
+            bucketContent["$bucket-$key"] = BucketKeyContent(
+                BucketKey.of(key),
                 Base64.getEncoder().encodeToString(bytes),
-                ZonedDateTime.now(clock))
+                ZonedDateTime.now(clock)
+            )
             Response(CREATED)
         }
         ?: Response(NOT_FOUND)
@@ -153,14 +156,16 @@ class FakeS3(
      * Convenience function to get an S3 client for global operations
      */
     fun s3Client() = S3.Http(
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 
     /**
      * Convenience function to get an S3 client for bucket operations
      */
     fun s3BucketClient(name: BucketName, region: Region) = S3Bucket.Http(name,
         region,
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 }
 
 fun main() {

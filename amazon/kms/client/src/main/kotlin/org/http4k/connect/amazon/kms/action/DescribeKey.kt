@@ -7,8 +7,8 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class DescribeKey(val KeyId: KMSKeyId, val GrantTokens: List<String>? = null)
-    : KMSAction<KeyDescription>(KeyDescription::class)
+data class DescribeKey(val KeyId: KMSKeyId, val GrantTokens: List<String>? = null) :
+    KMSAction<KeyDescription>(KeyDescription::class)
 
 @JsonSerializable
 data class KeyDescription(val KeyMetadata: KeyMetadata)

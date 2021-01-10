@@ -26,5 +26,8 @@ fun <T, E> Result<T, E>.successValue(): T = when (this) {
 }
 
 fun assumeDockerDaemonRunning() {
-    assumeTrue("Docker is not running", getRuntime().exec("docker ps").errorStream.bufferedReader().readText().isEmpty())
+    assumeTrue(
+        "Docker is not running",
+        getRuntime().exec("docker ps").errorStream.bufferedReader().readText().isEmpty()
+    )
 }

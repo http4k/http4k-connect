@@ -22,7 +22,8 @@ import javax.sql.DataSource
 inline fun <reified T : Any> Storage.Companion.Jdbc(
     dataSource: DataSource,
     tableName: String = T::class.java.simpleName,
-    autoMarshalling: AutoMarshalling = Moshi): Storage<T> = object : Storage<T> {
+    autoMarshalling: AutoMarshalling = Moshi
+): Storage<T> = object : Storage<T> {
 
     private val db = Database.connect(dataSource)
 

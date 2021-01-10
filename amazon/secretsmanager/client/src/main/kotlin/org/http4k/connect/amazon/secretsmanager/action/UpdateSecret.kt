@@ -19,17 +19,21 @@ data class UpdateSecret internal constructor(
     val Description: String?,
     val KmsKeyId: KMSKeyId?
 ) : SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
-    constructor(SecretId: SecretId,
-                ClientRequestToken: UUID,
-                SecretString: String,
-                Description: String? = null,
-                KmsKeyId: KMSKeyId? = null) : this(SecretId, ClientRequestToken, SecretString, null, Description, KmsKeyId)
+    constructor(
+        SecretId: SecretId,
+        ClientRequestToken: UUID,
+        SecretString: String,
+        Description: String? = null,
+        KmsKeyId: KMSKeyId? = null
+    ) : this(SecretId, ClientRequestToken, SecretString, null, Description, KmsKeyId)
 
-    constructor(SecretId: SecretId,
-                ClientRequestToken: UUID,
-                SecretBinary: Base64Blob,
-                Description: String? = null,
-                KmsKeyId: KMSKeyId? = null) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
+    constructor(
+        SecretId: SecretId,
+        ClientRequestToken: UUID,
+        SecretBinary: Base64Blob,
+        Description: String? = null,
+        KmsKeyId: KMSKeyId? = null
+    ) : this(SecretId, ClientRequestToken, null, SecretBinary, Description, KmsKeyId)
 }
 
 @JsonSerializable

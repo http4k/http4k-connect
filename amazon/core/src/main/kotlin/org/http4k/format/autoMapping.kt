@@ -13,9 +13,11 @@ import org.http4k.connect.amazon.model.SessionToken
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.lens.BiDiMapping
 
-inline fun <reified V : Value<String>, T> AutoMappingConfiguration<T>.text(noinline fn: (String) -> V) = text(BiDiMapping(fn) { it.value })
+inline fun <reified V : Value<String>, T> AutoMappingConfiguration<T>.text(noinline fn: (String) -> V) =
+    text(BiDiMapping(fn) { it.value })
 
-inline fun <reified V : Value<Long>, T> AutoMappingConfiguration<T>.long(noinline fn: (Long) -> V) = long(BiDiMapping(fn) { it.value })
+inline fun <reified V : Value<Long>, T> AutoMappingConfiguration<T>.long(noinline fn: (Long) -> V) =
+    long(BiDiMapping(fn) { it.value })
 
 fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     text(AccessKeyId::of)

@@ -15,15 +15,16 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class SendMessage(private val accountId: AwsAccount,
-                  private val queueName: QueueName,
-                  payload: String,
-                  delaySeconds: Int? = null,
-                  deduplicationId: String? = null,
-                  messageGroupId: String? = null,
-                  expires: ZonedDateTime? = null,
-                  attributes: List<MessageAttribute>? = null,
-                  systemAttributes: List<MessageAttribute>? = null
+class SendMessage(
+    private val accountId: AwsAccount,
+    private val queueName: QueueName,
+    payload: String,
+    delaySeconds: Int? = null,
+    deduplicationId: String? = null,
+    messageGroupId: String? = null,
+    expires: ZonedDateTime? = null,
+    attributes: List<MessageAttribute>? = null,
+    systemAttributes: List<MessageAttribute>? = null
 ) : SQSAction<SentMessage>(
     "SendMessage",
     *(
@@ -51,15 +52,27 @@ class SendMessage(private val accountId: AwsAccount,
         ).toTypedArray()
 ) {
 
-    constructor(queueARN: ARN,
-                payload: String,
-                delaySeconds: Int? = null,
-                deduplicationId: String? = null,
-                messageGroupId: String? = null,
-                expires: ZonedDateTime? = null,
-                attributes: List<MessageAttribute>? = null,
-                systemAttributes: List<MessageAttribute>? = null) :
-        this(queueARN.account, queueARN.resourceId(QueueName::of), payload, delaySeconds, deduplicationId, messageGroupId, expires, attributes, systemAttributes)
+    constructor(
+        queueARN: ARN,
+        payload: String,
+        delaySeconds: Int? = null,
+        deduplicationId: String? = null,
+        messageGroupId: String? = null,
+        expires: ZonedDateTime? = null,
+        attributes: List<MessageAttribute>? = null,
+        systemAttributes: List<MessageAttribute>? = null
+    ) :
+        this(
+            queueARN.account,
+            queueARN.resourceId(QueueName::of),
+            payload,
+            delaySeconds,
+            deduplicationId,
+            messageGroupId,
+            expires,
+            attributes,
+            systemAttributes
+        )
 
     override fun toResult(response: Response) = with(response) {
         when {
@@ -81,7 +94,11 @@ data class SentMessage(
     companion object {
         fun from(response: Response) =
             with(documentBuilderFactory().parse(response.body.stream)) {
-                SentMessage(text("MD5OfMessageBody"), SQSMessageId.of(text("MessageId")), textOptional("MD5OfMessageAttributes"))
+                SentMessage(
+                    text("MD5OfMessageBody"),
+                    SQSMessageId.of(text("MessageId")),
+                    textOptional("MD5OfMessageAttributes")
+                )
             }
     }
 }

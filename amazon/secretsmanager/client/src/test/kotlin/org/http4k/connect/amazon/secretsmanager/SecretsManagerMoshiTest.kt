@@ -23,7 +23,14 @@ val ASecretId = SecretId.of(randomString)
 
 class SecretsManagerMoshiTest : SystemMoshiContract(
     SecretsManagerMoshi,
-    CreateSecret(randomString, UUID.randomUUID(), randomString, randomString, KeyId, listOf(Tag(randomString, randomString))),
+    CreateSecret(
+        randomString,
+        UUID.randomUUID(),
+        randomString,
+        randomString,
+        KeyId,
+        listOf(Tag(randomString, randomString))
+    ),
     DeleteSecret(ASecretId, true, 1),
     GetSecretValue(ASecretId, VersionId.of(randomString), VersionStage.of(randomString)),
     ListSecrets(1, randomString, SortOrder.asc, listOf(Filter(randomString, listOf(randomString)))),

@@ -9,11 +9,13 @@ import org.http4k.core.then
 import org.http4k.filter.Payload
 import java.time.Clock
 
-fun Lambda.Companion.Http(region: Region,
-                          credentialsProvider: () -> AwsCredentials,
-                          rawHttp: HttpHandler = JavaHttpClient(),
-                          clock: Clock = Clock.systemDefaultZone(),
-                          payloadMode: Payload.Mode = Payload.Mode.Signed) = object : Lambda {
+fun Lambda.Companion.Http(
+    region: Region,
+    credentialsProvider: () -> AwsCredentials,
+    rawHttp: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemDefaultZone(),
+    payloadMode: Payload.Mode = Payload.Mode.Signed
+) = object : Lambda {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
     override fun <RESP : Any> invoke(action: LambdaAction<RESP>) = action.toResult(http(action.toRequest()))

@@ -25,7 +25,8 @@ class FakeLambda(
      */
     fun client() = Lambda.Http(
         Region.of("ldn-north-1"),
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 }
 
 fun main() {

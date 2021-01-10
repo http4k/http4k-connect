@@ -50,7 +50,10 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
 
             assertThat(s3Bucket.copyKey(bucket, key, newKey).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
-            assertThat(s3Bucket.listKeys().successValue(), equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value })))
+            assertThat(
+                s3Bucket.listKeys().successValue(),
+                equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value }))
+            )
             assertThat(s3Bucket.deleteKey(newKey).successValue(), equalTo(Unit))
             assertThat(s3Bucket.deleteKey(key).successValue(), equalTo(Unit))
             assertThat(s3Bucket[key].successValue(), equalTo(null))

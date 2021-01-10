@@ -7,9 +7,11 @@ import java.time.ZonedDateTime
 
 data class ListAllMyBuckets(val buckets: List<BucketName>) : ViewModel
 
-data class BucketKeyContent(val key: BucketKey,
-                            val content: String,
-                            val modified: ZonedDateTime) {
+data class BucketKeyContent(
+    val key: BucketKey,
+    val content: String,
+    val modified: ZonedDateTime
+) {
     val size = content.length
 }
 

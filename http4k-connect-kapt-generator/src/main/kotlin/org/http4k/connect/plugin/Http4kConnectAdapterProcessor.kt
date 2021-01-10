@@ -63,9 +63,16 @@ private fun ImmutableKmClass.generateActionFunctions(it: ImmutableKmClass): List
         .map {
             val baseFunction = FunSpec.builder(actionClazz.decapitalize())
                 .receiver(name.asClassName())
-                .addCode(CodeBlock.of("return this(%T(${it.valueParameters.joinToString(", ") { it.name.decapitalize() }}))", actionClassName))
-                .returns(Result::class.asTypeName()
-                    .parameterizedBy(listOf(message, RemoteFailure::class.asTypeName())))
+                .addCode(
+                    CodeBlock.of(
+                        "return this(%T(${it.valueParameters.joinToString(", ") { it.name.decapitalize() }}))",
+                        actionClassName
+                    )
+                )
+                .returns(
+                    Result::class.asTypeName()
+                        .parameterizedBy(listOf(message, RemoteFailure::class.asTypeName()))
+                )
 
             it.valueParameters.forEach {
                 val base = ParameterSpec.builder(it.name.decapitalize(), it.type!!.generifiedType())

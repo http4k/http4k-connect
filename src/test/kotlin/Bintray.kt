@@ -40,7 +40,12 @@ fun Bintray.Companion.Http(credentials: Credentials, httpHandler: HttpHandler = 
         .then(httpHandler)
 
     override fun invoke(request: Uploads): Result<String, Status> {
-        val result = http(Request(POST, "/packages/${request.pkg.owner}/maven/${request.pkg.packageName}/stats/time_range_downloads"))
+        val result = http(
+            Request(
+                POST,
+                "/packages/${request.pkg.owner}/maven/${request.pkg.packageName}/stats/time_range_downloads"
+            )
+        )
             .with(Body.auto<Downloads>().toLens() of Downloads(Instant.now(), Instant.now()))
 
         return when {

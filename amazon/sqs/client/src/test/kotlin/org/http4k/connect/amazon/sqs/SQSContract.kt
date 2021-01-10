@@ -24,10 +24,12 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
     @Test
     fun `queue lifecycle`() {
         with(sqs) {
-            val created = createQueue(queueName,
+            val created = createQueue(
+                queueName,
                 mapOf("tag" to "value"),
                 mapOf("MaximumMessageSize" to "10000"),
-                expires).successValue()
+                expires
+            ).successValue()
             val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
 
             try {

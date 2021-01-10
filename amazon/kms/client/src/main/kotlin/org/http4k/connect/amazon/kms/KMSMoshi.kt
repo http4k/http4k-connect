@@ -28,12 +28,13 @@ import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
-object KMSMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(KMSJsonAdapterFactory)
-    .asConfigurable()
-    .withStandardMappings()
-    .withAwsCoreMappings()
-    .done()
+object KMSMoshi : ConfigurableMoshi(
+    Moshi.Builder()
+        .add(KMSJsonAdapterFactory)
+        .asConfigurable()
+        .withStandardMappings()
+        .withAwsCoreMappings()
+        .done()
 )
 
 object KMSJsonAdapterFactory : AwsJsonAdapterFactory(

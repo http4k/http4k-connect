@@ -26,7 +26,9 @@ abstract class STSContract(http: HttpHandler) : AwsContract(http) {
             durationSeconds = Duration.ofHours(1)
         )
 
-        assertTrue(result.successValue()
-            .Credentials.Expiration.value.isAfter(ZonedDateTime.now(clock)))
+        assertTrue(
+            result.successValue()
+                .Credentials.Expiration.value.isAfter(ZonedDateTime.now(clock))
+        )
     }
 }

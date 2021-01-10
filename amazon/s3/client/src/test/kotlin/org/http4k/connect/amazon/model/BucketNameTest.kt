@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test
 class BucketNameTest {
     @Test
     fun `can construct uri`() {
-        assertThat(BucketName.of("foobar").toUri(Region.of("eu-west-1")), equalTo(Uri.of("https://foobar.s3.eu-west-1.amazonaws.com")))
+        assertThat(
+            BucketName.of("foobar").toUri(Region.of("eu-west-1")),
+            equalTo(Uri.of("https://foobar.s3.eu-west-1.amazonaws.com"))
+        )
     }
 }

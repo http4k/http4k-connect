@@ -68,10 +68,14 @@ class STSCredentialsProviderTest {
     }
 
     private fun assumedRole(credentials: Credentials) = Success(
-        AssumedRole(AssumedRoleUser(arn, RoleId.of("hello")),
-            credentials))
+        AssumedRole(
+            AssumedRoleUser(arn, RoleId.of("hello")),
+            credentials
+        )
+    )
 
-    private fun credentialsExpiringAt(expiry: Instant, counter: Int) = Credentials(SessionToken.of("SessionToken"),
+    private fun credentialsExpiringAt(expiry: Instant, counter: Int) = Credentials(
+        SessionToken.of("SessionToken"),
         AccessKeyId.of(counter.toString()),
         SecretAccessKey.of("SecretAccessKey"),
         Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC")))

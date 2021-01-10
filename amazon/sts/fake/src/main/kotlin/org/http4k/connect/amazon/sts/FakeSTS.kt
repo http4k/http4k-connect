@@ -25,8 +25,9 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 import java.util.UUID.randomUUID
 
-class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
-              private val defaultSessionValidity: Duration = ofHours(1)
+class FakeSTS(
+    private val clock: Clock = Clock.systemDefaultZone(),
+    private val defaultSessionValidity: Duration = ofHours(1)
 ) : ChaosFake() {
     private val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 
@@ -42,14 +43,16 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
             ?.toLong()
             ?.let(::ofSeconds)
             ?: defaultSessionValidity
-        Response(OK).with(lens of AssumeRoleResponse(
-            req.form("RoleArn")!!,
-            req.form("RoleSessionName")!!,
-            "accessKeyId",
-            "secretAccessKey",
-            randomUUID().toString().base64Encode(),
-            ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
-        ))
+        Response(OK).with(
+            lens of AssumeRoleResponse(
+                req.form("RoleArn")!!,
+                req.form("RoleSessionName")!!,
+                "accessKeyId",
+                "secretAccessKey",
+                randomUUID().toString().base64Encode(),
+                ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
+            )
+        )
     }
 
     /**
@@ -57,7 +60,8 @@ class FakeSTS(private val clock: Clock = Clock.systemDefaultZone(),
      */
     fun client() = STS.Http(
         Region.of("ldn-north-1"),
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 }
 
 fun main() {

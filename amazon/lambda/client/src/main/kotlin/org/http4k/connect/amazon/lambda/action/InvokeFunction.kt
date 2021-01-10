@@ -13,10 +13,12 @@ import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
 import kotlin.reflect.KClass
 
-class InvokeFunction<RESP : Any>(private val name: FunctionName,
-                                 private val req: Any,
-                                 private val respClass: KClass<RESP>,
-                                 private val autoMarshalling: AutoMarshalling = Moshi) : LambdaAction<RESP> {
+class InvokeFunction<RESP : Any>(
+    private val name: FunctionName,
+    private val req: Any,
+    private val respClass: KClass<RESP>,
+    private val autoMarshalling: AutoMarshalling = Moshi
+) : LambdaAction<RESP> {
     override fun toRequest() = Request(POST, uri())
         .header("X-Amz-Invocation-Type", "RequestResponse")
         .header("X-Amz-Log-Type", "Tail")
@@ -34,4 +36,8 @@ class InvokeFunction<RESP : Any>(private val name: FunctionName,
     companion object
 }
 
-inline fun <reified RESP : Any> Lambda.invokeFunction(name: FunctionName, req: Any, autoMarshalling: AutoMarshalling = Moshi) = this(InvokeFunction(name, req, RESP::class, autoMarshalling))
+inline fun <reified RESP : Any> Lambda.invokeFunction(
+    name: FunctionName,
+    req: Any,
+    autoMarshalling: AutoMarshalling = Moshi
+) = this(InvokeFunction(name, req, RESP::class, autoMarshalling))

@@ -15,12 +15,15 @@ import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
-abstract class SQSAction<R>(private val action: String, private vararg val mappings: Pair<String, String>?) : Action<R> {
+abstract class SQSAction<R>(private val action: String, private vararg val mappings: Pair<String, String>?) :
+    Action<R> {
     override fun toRequest() =
         (listOf("Action" to action, "Version" to "2012-11-05") + mappings)
             .filterNotNull()
-            .fold(Request(POST, uri())
-                .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)) { acc, it ->
+            .fold(
+                Request(POST, uri())
+                    .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
+            ) { acc, it ->
                 acc.form(it.first, it.second)
             }
 

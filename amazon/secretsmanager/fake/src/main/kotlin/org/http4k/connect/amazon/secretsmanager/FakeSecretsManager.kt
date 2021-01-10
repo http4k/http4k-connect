@@ -37,7 +37,8 @@ data class StoredSecretValue(
     val createdAt: Timestamp,
     val updatedAt: Timestamp,
     val secretString: String? = null,
-    val secretBinary: Base64Blob? = null)
+    val secretBinary: Base64Blob? = null
+)
 
 class FakeSecretsManager(
     private val secrets: Storage<StoredSecretValue> = Storage.InMemory(),
@@ -60,9 +61,11 @@ class FakeSecretsManager(
     private fun createSecret() = api.route<CreateSecret> { req ->
         val versionId = VersionId.of(randomUUID().toString())
         val createdAt = Timestamp.of(clock.instant().toEpochMilli() / 1000)
-        secrets[req.Name] = StoredSecretValue(versionId,
+        secrets[req.Name] = StoredSecretValue(
+            versionId,
             createdAt, createdAt,
-            req.SecretString, req.SecretBinary)
+            req.SecretString, req.SecretBinary
+        )
         CreatedSecret(SecretId.of(req.Name).toArn(), req.Name, versionId)
     }
 
@@ -105,10 +108,12 @@ class FakeSecretsManager(
         secrets[secretId.value]
             ?.let {
                 val versionId = VersionId.of(randomUUID().toString())
-                secrets[secretId.value] = StoredSecretValue(versionId,
+                secrets[secretId.value] = StoredSecretValue(
+                    versionId,
                     it.createdAt,
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
-                    req.SecretString, req.SecretBinary)
+                    req.SecretString, req.SecretBinary
+                )
 
                 UpdatedSecretValue(secretId.toArn(), secretId.value, versionId)
             }
@@ -120,10 +125,12 @@ class FakeSecretsManager(
         secrets[secretId.value]
             ?.let {
                 val versionId = VersionId.of(randomUUID().toString())
-                secrets[secretId.value] = StoredSecretValue(versionId,
+                secrets[secretId.value] = StoredSecretValue(
+                    versionId,
                     it.createdAt,
                     Timestamp.of(clock.instant().toEpochMilli() / 1000),
-                    req.SecretString, req.SecretBinary)
+                    req.SecretString, req.SecretBinary
+                )
 
                 UpdatedSecret(secretId.toArn(), secretId.value, versionId)
             }
@@ -134,14 +141,15 @@ class FakeSecretsManager(
         Region.of("us-east-1"),
         AwsAccount.of("0"),
         "secret", this
-        )
+    )
 
     /**
      * Convenience function to get SecretsManager client
      */
     fun client() = SecretsManager.Http(
         Region.of("ldn-north-1"),
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 }
 
 private fun SecretId.resourceId() = SecretId.of(

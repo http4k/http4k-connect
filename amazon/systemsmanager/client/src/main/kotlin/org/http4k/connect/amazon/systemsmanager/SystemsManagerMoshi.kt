@@ -17,13 +17,14 @@ import org.http4k.format.text
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
-object SystemsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(SystemsManagerJsonAdapterFactory)
-    .asConfigurable()
-    .withStandardMappings()
-    .withAwsCoreMappings()
-    .withSystemsManagerMappings()
-    .done()
+object SystemsManagerMoshi : ConfigurableMoshi(
+    Moshi.Builder()
+        .add(SystemsManagerJsonAdapterFactory)
+        .asConfigurable()
+        .withStandardMappings()
+        .withAwsCoreMappings()
+        .withSystemsManagerMappings()
+        .done()
 )
 
 fun <T> AutoMappingConfiguration<T>.withSystemsManagerMappings() = apply {

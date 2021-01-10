@@ -6,8 +6,9 @@ import org.http4k.format.ConfigurableMoshi
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class SystemMoshiContract(private val moshi: ConfigurableMoshi,
-                                   vararg actions: Any
+abstract class SystemMoshiContract(
+    private val moshi: ConfigurableMoshi,
+    vararg actions: Any
 ) {
     private val obj = actions.toList()
 

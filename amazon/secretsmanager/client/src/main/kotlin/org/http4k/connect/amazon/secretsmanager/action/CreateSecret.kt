@@ -20,19 +20,23 @@ data class CreateSecret internal constructor(
     val KmsKeyId: KMSKeyId?,
     val Tags: List<Tag>?
 ) : SecretsManagerAction<CreatedSecret>(CreatedSecret::class) {
-    constructor(Name: String,
-                ClientRequestToken: UUID,
-                SecretString: String,
-                Description: String? = null,
-                KmsKeyId: KMSKeyId? = null,
-                Tags: List<Tag>? = null) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
+    constructor(
+        Name: String,
+        ClientRequestToken: UUID,
+        SecretString: String,
+        Description: String? = null,
+        KmsKeyId: KMSKeyId? = null,
+        Tags: List<Tag>? = null
+    ) : this(Name, ClientRequestToken, SecretString, null, Description, KmsKeyId, Tags)
 
-    constructor(Name: String,
-                ClientRequestToken: UUID,
-                SecretBinary: Base64Blob,
-                Description: String? = null,
-                KmsKeyId: KMSKeyId? = null,
-                Tags: List<Tag>? = null) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
+    constructor(
+        Name: String,
+        ClientRequestToken: UUID,
+        SecretBinary: Base64Blob,
+        Description: String? = null,
+        KmsKeyId: KMSKeyId? = null,
+        Tags: List<Tag>? = null
+    ) : this(Name, ClientRequestToken, null, SecretBinary, Description, KmsKeyId, Tags)
 }
 
 @JsonSerializable

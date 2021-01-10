@@ -9,11 +9,13 @@ import org.http4k.core.then
 import org.http4k.filter.Payload
 import java.time.Clock
 
-fun KMS.Companion.Http(region: Region,
-                       credentialsProvider: () -> AwsCredentials,
-                       rawHttp: HttpHandler = JavaHttpClient(),
-                       clock: Clock = Clock.systemDefaultZone(),
-                       payloadMode: Payload.Mode = Payload.Mode.Signed) = object : KMS {
+fun KMS.Companion.Http(
+    region: Region,
+    credentialsProvider: () -> AwsCredentials,
+    rawHttp: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemDefaultZone(),
+    payloadMode: Payload.Mode = Payload.Mode.Signed
+) = object : KMS {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
 
     override fun <R : Any> invoke(action: KMSAction<R>) = action.toResult(http(action.toRequest()))

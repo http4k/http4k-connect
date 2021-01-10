@@ -23,7 +23,7 @@ const val USE_REAL_CLIENT = false
 
 fun main() {
     // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if(USE_REAL_CLIENT) JavaHttpClient() else FakeKMS()
+    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeKMS()
 
     // create a client
     val client = KMS.Http(Region.of("us-east-1"), { AwsCredentials("accessKeyId", "secretKey") }, http.debug())
@@ -34,7 +34,8 @@ fun main() {
     println(key)
 
     // we can encrypt some text...
-    val encrypted: Encrypted = client.encrypt(keyId = key.KeyMetadata.KeyId, Base64Blob.encoded("hello")).valueOrNull()!!
+    val encrypted: Encrypted =
+        client.encrypt(keyId = key.KeyMetadata.KeyId, Base64Blob.encoded("hello")).valueOrNull()!!
     println(encrypted.CiphertextBlob.decoded())
 
     // and decrypt it again!

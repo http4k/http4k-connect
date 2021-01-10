@@ -15,10 +15,11 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Simple, refreshing (and blocking) credentials provider.
  */
-class STSCredentialsProvider(private val sts: STS,
-                             private val clock: Clock,
-                             private val assumeRole: () -> AssumeRole,
-                             private val gracePeriod: Duration = ofSeconds(300)
+class STSCredentialsProvider(
+    private val sts: STS,
+    private val clock: Clock,
+    private val assumeRole: () -> AssumeRole,
+    private val gracePeriod: Duration = ofSeconds(300)
 ) : () -> AwsCredentials {
     private val credentials = AtomicReference<Credentials>(null)
 

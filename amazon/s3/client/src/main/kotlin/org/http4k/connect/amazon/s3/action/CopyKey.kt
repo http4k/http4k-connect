@@ -12,9 +12,10 @@ import org.http4k.core.Response
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-data class CopyKey(val sourceBucket: BucketName, val source: BucketKey, val destination: BucketKey) : S3BucketAction<Unit> {
-    override fun toRequest() = Request(PUT, uri()
-    ).header("x-amz-copy-source", "$sourceBucket/${source}")
+data class CopyKey(val sourceBucket: BucketName, val source: BucketKey, val destination: BucketKey) :
+    S3BucketAction<Unit> {
+    override fun toRequest() = Request(PUT, uri())
+        .header("x-amz-copy-source", "$sourceBucket/${source}")
 
     override fun toResult(response: Response) = with(response) {
         when {

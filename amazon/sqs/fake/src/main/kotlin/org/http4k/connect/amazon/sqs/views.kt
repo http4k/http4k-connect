@@ -23,6 +23,7 @@ object DeleteQueueResponse : ViewModel
 
 object DeleteMessageResponse : ViewModel
 
-internal fun String.md5() = BigInteger(1,
+internal fun String.md5() = BigInteger(
+    1,
     MessageDigest.getInstance("MD5").digest(toByteArray())
 ).toString(16)

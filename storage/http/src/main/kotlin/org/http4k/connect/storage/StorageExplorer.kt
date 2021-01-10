@@ -31,8 +31,10 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
 
-inline fun <reified T : Any> Storage<T>.asHttpHandler(bodyLens: BiDiBodyLens<T> = Body.auto<T>().toLens(),
-                                                      storageSecurity: Security = NoSecurity): HttpHandler {
+inline fun <reified T : Any> Storage<T>.asHttpHandler(
+    bodyLens: BiDiBodyLens<T> = Body.auto<T>().toLens(),
+    storageSecurity: Security = NoSecurity
+): HttpHandler {
 
     val static = static(Classpath("/META-INF/resources/webjars/swagger-ui/3.35.1"))
 

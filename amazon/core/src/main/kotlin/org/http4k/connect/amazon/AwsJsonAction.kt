@@ -15,7 +15,8 @@ import kotlin.reflect.KClass
 abstract class AwsJsonAction<R : Any>(
     private val service: AwsService,
     private val clazz: KClass<R>,
-    private val autoMarshalling: AutoMarshalling) : Action<R> {
+    private val autoMarshalling: AutoMarshalling
+) : Action<R> {
     override fun toRequest() = Request(POST, Uri.of("/"))
         .header("X-Amz-Target", "${service}.${javaClass.simpleName}")
         .replaceHeader("Content-Type", "application/x-amz-json-1.1")

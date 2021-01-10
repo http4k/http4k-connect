@@ -102,15 +102,18 @@ class GoogleAnalyticsTest {
     }
 
     private fun assertPageView(title: String, path: String, host: String) {
-        assertThat(testHttpClient.captured, equalTo(Request(POST, "/collect")
-            .header("User-Agent", DEFAULT_USER_AGENT)
-            .form(VERSION, "1")
-            .form(MEASUREMENT_ID, "TEST-MEASUREMENT-ID")
-            .form(CLIENT_ID, "TEST-CLIENT-ID")
-            .form(DOCUMENT_TITLE, title)
-            .form(DOCUMENT_PATH, path)
-            .form(DOCUMENT_HOST, host)
-        ))
+        assertThat(
+            testHttpClient.captured, equalTo(
+                Request(POST, "/collect")
+                    .header("User-Agent", DEFAULT_USER_AGENT)
+                    .form(VERSION, "1")
+                    .form(MEASUREMENT_ID, "TEST-MEASUREMENT-ID")
+                    .form(CLIENT_ID, "TEST-CLIENT-ID")
+                    .form(DOCUMENT_TITLE, title)
+                    .form(DOCUMENT_PATH, path)
+                    .form(DOCUMENT_HOST, host)
+            )
+        )
     }
 
     private fun assertNoPageView() {

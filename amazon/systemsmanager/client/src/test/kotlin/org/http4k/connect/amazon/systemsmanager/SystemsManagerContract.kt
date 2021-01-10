@@ -22,7 +22,10 @@ abstract class SystemsManagerContract(http: HttpHandler) : AwsContract(http) {
         val name = SSMParameterName.of(UUID.randomUUID().toString())
         assertThat(secretsManager.getParameter(name).failureOrNull()!!.status, equalTo(BAD_REQUEST))
         assertThat(secretsManager.putParameter(name, "value", ParameterType.String).successValue().Version, equalTo(1))
-        assertThat(secretsManager.putParameter(name, "value", ParameterType.String).failureOrNull()!!.status, equalTo(BAD_REQUEST))
+        assertThat(
+            secretsManager.putParameter(name, "value", ParameterType.String).failureOrNull()!!.status,
+            equalTo(BAD_REQUEST)
+        )
         assertThat(secretsManager.getParameter(name).successValue().Parameter.Value, equalTo("value"))
 
         secretsManager.deleteParameter(name).successValue()

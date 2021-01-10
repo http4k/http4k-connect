@@ -28,13 +28,14 @@ import org.http4k.format.text
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
-object SecretsManagerMoshi : ConfigurableMoshi(Moshi.Builder()
-    .add(SecretsManagerJsonAdapterFactory)
-    .asConfigurable()
-    .withStandardMappings()
-    .withAwsCoreMappings()
-    .withSecretsManagerMappings()
-    .done()
+object SecretsManagerMoshi : ConfigurableMoshi(
+    Moshi.Builder()
+        .add(SecretsManagerJsonAdapterFactory)
+        .asConfigurable()
+        .withStandardMappings()
+        .withAwsCoreMappings()
+        .withSecretsManagerMappings()
+        .done()
 )
 
 fun <T> AutoMappingConfiguration<T>.withSecretsManagerMappings() = apply {

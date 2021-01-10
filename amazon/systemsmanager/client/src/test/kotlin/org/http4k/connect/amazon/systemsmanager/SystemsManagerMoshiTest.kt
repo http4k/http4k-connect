@@ -14,6 +14,17 @@ class SystemsManagerMoshiTest : SystemMoshiContract(
     SystemsManagerMoshi,
     DeleteParameter(SSMParameterName.of(randomString)),
     GetParameter(SSMParameterName.of(randomString), true),
-    PutParameter(SSMParameterName.of(randomString), randomString, ParameterType.SecureString, KMSKeyId.of(randomString), true,
-        randomString, randomString, randomString, listOf(randomString), listOf(Tag(randomString, randomString)), randomString)
+    PutParameter(
+        SSMParameterName.of(randomString),
+        randomString,
+        ParameterType.SecureString,
+        KMSKeyId.of(randomString),
+        true,
+        randomString,
+        randomString,
+        randomString,
+        listOf(randomString),
+        listOf(Tag(randomString, randomString)),
+        randomString
+    )
 )

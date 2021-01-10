@@ -12,7 +12,8 @@ import java.io.File
 
 data class AwsEnvironment(val credentials: AwsCredentials, val region: Region)
 
-val fakeAwsEnvironment = AwsEnvironment(AwsCredentials("key", "keyid"),
+val fakeAwsEnvironment = AwsEnvironment(
+    AwsCredentials("key", "keyid"),
     Region.of("ldn-north-1")
 )
 

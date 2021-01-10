@@ -70,7 +70,8 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
             val verification = kms.verify(keyId, plaintext, signed.Signature, RSASSA_PSS_SHA_256).successValue()
             assertThat(verification.SignatureValid, equalTo(true))
 
-            val verificationFailure = kms.verify(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384).failureOrNull()
+            val verificationFailure =
+                kms.verify(keyId, plaintext, signed.Signature, RSASSA_PKCS1_V1_5_SHA_384).failureOrNull()
             assertThat(verificationFailure!!.status, equalTo(BAD_REQUEST))
         } finally {
             val deletion = kms.scheduleKeyDeletion(keyId, 7).successValue()

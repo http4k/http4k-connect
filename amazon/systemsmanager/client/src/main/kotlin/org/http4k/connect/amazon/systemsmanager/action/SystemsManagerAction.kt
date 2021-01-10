@@ -6,4 +6,5 @@ import org.http4k.connect.amazon.systemsmanager.SystemsManagerMoshi
 import org.http4k.format.AutoMarshalling
 import kotlin.reflect.KClass
 
-abstract class SystemsManagerAction<R : Any>(clazz: KClass<R>, autoMarshalling: AutoMarshalling = SystemsManagerMoshi) : AwsJsonAction<R>(AwsService.of("AmazonSSM"), clazz, autoMarshalling)
+abstract class SystemsManagerAction<R : Any>(clazz: KClass<R>, autoMarshalling: AutoMarshalling = SystemsManagerMoshi) :
+    AwsJsonAction<R>(AwsService.of("AmazonSSM"), clazz, autoMarshalling)

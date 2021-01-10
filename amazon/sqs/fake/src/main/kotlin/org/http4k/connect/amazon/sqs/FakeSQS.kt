@@ -51,9 +51,11 @@ class FakeSQS(
         val queueName = req.form("QueueName")!!
         if (queues.keySet(queueName).isEmpty()) queues[queueName] = listOf()
 
-        Response(OK).with(lens of CreateQueueResponse(
-            req.uri.extend(Uri.of("/$awsAccount/$queueName"))
-        ))
+        Response(OK).with(
+            lens of CreateQueueResponse(
+                req.uri.extend(Uri.of("/$awsAccount/$queueName"))
+            )
+        )
     }
 
     private fun deleteQueue() = { r: Request -> r.form("Action") == "DeleteQueue" }
@@ -100,7 +102,8 @@ class FakeSQS(
      */
     fun client() = SQS.Http(
         Region.of("ldn-north-1"),
-        { AwsCredentials("accessKey", "secret") }, this, clock)
+        { AwsCredentials("accessKey", "secret") }, this, clock
+    )
 }
 
 fun main() {

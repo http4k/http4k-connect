@@ -22,7 +22,10 @@ abstract class FakeSystemContract(private val fake: ChaosFake) {
     @Test
     fun `can serve the Chaos API`() {
         val response = fake(Request(GET, "/chaos"))
-        assertThat(response, hasStatus(OK).and(hasContentType(APPLICATION_JSON)).and(hasBody(containsSubstring("http4k Chaos Engine"))))
+        assertThat(
+            response,
+            hasStatus(OK).and(hasContentType(APPLICATION_JSON)).and(hasBody(containsSubstring("http4k Chaos Engine")))
+        )
     }
 
     @Test

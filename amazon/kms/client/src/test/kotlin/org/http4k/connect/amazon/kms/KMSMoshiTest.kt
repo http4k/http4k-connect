@@ -44,11 +44,23 @@ val KeyUsage = ENCRYPT_DECRYPT
 val CreationDate = Timestamp.of(0)
 val Arn = ARN.of("arn:aws:$randomString")
 
-val KeyMetadata = KeyMetadata(KeyId, Arn, AwsAccount.of(MAX_VALUE.toString()), KeyUsage,
-    listOf(RSAES_OAEP_SHA_256), listOf(RSASSA_PSS_SHA_256), SYMMETRIC_DEFAULT, true, CreationDate)
+val KeyMetadata = KeyMetadata(
+    KeyId, Arn, AwsAccount.of(MAX_VALUE.toString()), KeyUsage,
+    listOf(RSAES_OAEP_SHA_256), listOf(RSASSA_PSS_SHA_256), SYMMETRIC_DEFAULT, true, CreationDate
+)
 
-class KMSMoshiTest : SystemMoshiContract(KMSMoshi,
-    CreateKey(SYMMETRIC_DEFAULT, KeyUsage, true, randomString, randomString, randomString, randomString, listOf(Tag(randomString, randomString))),
+class KMSMoshiTest : SystemMoshiContract(
+    KMSMoshi,
+    CreateKey(
+        SYMMETRIC_DEFAULT,
+        KeyUsage,
+        true,
+        randomString,
+        randomString,
+        randomString,
+        randomString,
+        listOf(Tag(randomString, randomString))
+    ),
     KeyCreated(KeyMetadata),
     Decrypt(KeyId, Blob, RSAES_OAEP_SHA_256, EncryptionContext, GrantTokens),
     Decrypted(KeyId, Blob, RSAES_OAEP_SHA_256),

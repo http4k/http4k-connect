@@ -66,8 +66,10 @@ data class AssumeRole(
         )
 
         return listOfNotNull(base, policies, tags, transitiveTags, other)
-            .flatten().fold(Request(POST, Uri.of(""))
-                .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)) { acc, it ->
+            .flatten().fold(
+                Request(POST, Uri.of(""))
+                    .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
+            ) { acc, it ->
                 acc.form(it.first, it.second)
             }
     }
@@ -78,8 +80,9 @@ data class AssumeRole(
     }
 }
 
-data class AssumedRole(val AssumedRoleUser: AssumedRoleUser,
-                       val Credentials: Credentials
+data class AssumedRole(
+    val AssumedRoleUser: AssumedRoleUser,
+    val Credentials: Credentials
 ) {
     companion object {
         fun from(response: Response) =

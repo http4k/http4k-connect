@@ -15,15 +15,21 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class DeleteMessage(private val accountId: AwsAccount,
-                    private val queueName: QueueName,
-                    receiptHandle: ReceiptHandle, expires: ZonedDateTime? = null)
-    : SQSAction<Unit>(
+class DeleteMessage(
+    private val accountId: AwsAccount,
+    private val queueName: QueueName,
+    receiptHandle: ReceiptHandle, expires: ZonedDateTime? = null
+) : SQSAction<Unit>(
     "DeleteMessage",
     "ReceiptHandle" to receiptHandle.value,
     expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) }
 ) {
-    constructor(queueARN: ARN, receiptHandle: ReceiptHandle, expires: ZonedDateTime? = null) : this(queueARN.account, queueARN.resourceId(QueueName::of), receiptHandle, expires)
+    constructor(queueARN: ARN, receiptHandle: ReceiptHandle, expires: ZonedDateTime? = null) : this(
+        queueARN.account,
+        queueARN.resourceId(QueueName::of),
+        receiptHandle,
+        expires
+    )
 
     override fun toResult(response: Response) = with(response) {
         when {

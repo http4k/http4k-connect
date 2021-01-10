@@ -14,36 +14,37 @@ import org.http4k.format.Moshi
 /**
  * S3-backed storage implementation. Automatically marshals objects to and from string-value format.
  */
-inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling: AutoMarshalling = Moshi): Storage<T> = object : Storage<T> {
-    override fun get(key: String): T? = s3[BucketKey.of(key)]
-        .map { it?.reader()?.readText()?.let { autoMarshalling.asA<T>(it) } }
-        .recover { it.throwIt() }
-
-    override fun set(key: String, data: T) {
-        s3[BucketKey.of(key)] = autoMarshalling.asInputStream(data)
-    }
-
-    override fun remove(key: String) =
-        s3(DeleteKey(BucketKey.of(key)))
-            .map { true }
+inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling: AutoMarshalling = Moshi): Storage<T> =
+    object : Storage<T> {
+        override fun get(key: String): T? = s3[BucketKey.of(key)]
+            .map { it?.reader()?.readText()?.let { autoMarshalling.asA<T>(it) } }
             .recover { it.throwIt() }
 
-    override fun keySet(keyPrefix: String) =
-        when (val result = s3(ListKeys())) {
-            is Success -> result.value
-                .filter { it.value.startsWith(keyPrefix) }
-                .map { it.value }
-                .toSet()
-            is Failure -> result.reason.throwIt()
+        override fun set(key: String, data: T) {
+            s3[BucketKey.of(key)] = autoMarshalling.asInputStream(data)
         }
 
-    override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix).map { BucketKey.of(it) }) {
-        when {
-            isEmpty() -> false
-            else -> {
-                forEach { s3(DeleteKey(it)) }
-                true
+        override fun remove(key: String) =
+            s3(DeleteKey(BucketKey.of(key)))
+                .map { true }
+                .recover { it.throwIt() }
+
+        override fun keySet(keyPrefix: String) =
+            when (val result = s3(ListKeys())) {
+                is Success -> result.value
+                    .filter { it.value.startsWith(keyPrefix) }
+                    .map { it.value }
+                    .toSet()
+                is Failure -> result.reason.throwIt()
+            }
+
+        override fun removeAll(keyPrefix: String) = with(keySet(keyPrefix).map { BucketKey.of(it) }) {
+            when {
+                isEmpty() -> false
+                else -> {
+                    forEach { s3(DeleteKey(it)) }
+                    true
+                }
             }
         }
     }
-}

@@ -10,12 +10,14 @@ import org.http4k.core.then
 import org.http4k.filter.Payload
 import java.time.Clock
 
-fun S3Bucket.Companion.Http(bucketName: BucketName,
-                            region: Region,
-                            credentialsProvider: () -> AwsCredentials,
-                            rawHttp: HttpHandler = JavaHttpClient(),
-                            clock: Clock = Clock.systemDefaultZone(),
-                            payloadMode: Payload.Mode = Payload.Mode.Signed) = object : S3Bucket {
+fun S3Bucket.Companion.Http(
+    bucketName: BucketName,
+    region: Region,
+    credentialsProvider: () -> AwsCredentials,
+    rawHttp: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemDefaultZone(),
+    payloadMode: Payload.Mode = Payload.Mode.Signed
+) = object : S3Bucket {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode, "$bucketName.").then(rawHttp)
 
     override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(http(action.toRequest()))
