@@ -10,11 +10,9 @@ import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes
-import java.time.Clock
 
 class FakeSQS(
     queues: Storage<List<SQSMessage>> = Storage.InMemory(),
-    clock: Clock = Clock.systemDefaultZone(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890")
 ) : ChaosFake() {
 
@@ -28,12 +26,10 @@ class FakeSQS(
         "/" bind POST to createQueue(queues, awsAccount)
     )
 
-    private val client = SQS.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this, clock)
-
     /**
      * Convenience function to get a SQS client
      */
-    fun client() = client
+    fun client() = SQS.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this)
 }
 
 fun main() {

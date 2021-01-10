@@ -11,12 +11,8 @@ import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes
-import java.time.Clock
 
-class FakeKMS(
-    keys: Storage<StoredCMK> = Storage.InMemory(),
-    private val clock: Clock = Clock.systemDefaultZone()
-) : ChaosFake() {
+class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaosFake() {
 
     private val api = AmazonJsonFake(KMSMoshi, AwsService.of("TrentService"))
 
@@ -44,7 +40,7 @@ class FakeKMS(
     /**
      * Convenience function to get a KMS client
      */
-    fun client() = KMS.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this, clock)
+    fun client() = KMS.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this)
 }
 
 
