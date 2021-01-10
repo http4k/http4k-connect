@@ -6,4 +6,7 @@ import org.http4k.connect.amazon.configAwsEnvironment
 
 class RealS3BucketTest : S3BucketContract(JavaHttpClient()), RealAwsEnvironment {
     override val aws get() = configAwsEnvironment()
+    override fun waitForBucketCreation() {
+        Thread.sleep(10000)
+    }
 }

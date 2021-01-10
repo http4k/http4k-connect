@@ -44,15 +44,16 @@ class FakeS3(
 
     private val GLOBAL_BUCKET = "unknown"
 
-    fun subdomainIs(value: String): Router = { it: Request -> value == it.subdomain() }.asRouter()
+    private fun isS3(): Router = { it: Request -> it.subdomain() == "s3" }.asRouter()
+    private fun isBucket(): Router = { it: Request -> it.subdomain() != "s3" }.asRouter()
 
     override val app = routes(
-        "/{id:.+}" bind GET to routes(subdomainIs("s3") bind { listBucketKeys("s3") }),
+        "/{id:.+}" bind GET to routes(isS3() bind { listBucketKeys("s3") }),
         "/{id:.+}" bind GET to { getKey(it.subdomain(), it.path("id")!!) },
-        "/{id:.+}" bind PUT to routes(subdomainIs("s3") bind { putBucket(it.path("id")!!) }),
+        "/{id:.+}" bind PUT to routes(isS3() bind { putBucket(it.path("id")!!) }),
         "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!) }),
         "/{id:.+}" bind PUT to { putKey(it.subdomain(), it.path("id")!!, it.body.payload.array()) },
-        "/{id:.+}" bind DELETE to routes(subdomainIs("s3") bind { deleteBucket(it.path("id")!!) }),
+        "/{id:.+}" bind DELETE to routes(isS3() bind { deleteBucket(it.path("id")!!) }),
         "/{id:.+}" bind DELETE to { deleteKey(it.subdomain(), it.path("id")!!) },
         "/" bind PUT to {
             when (val subdomain = it.subdomain()) {

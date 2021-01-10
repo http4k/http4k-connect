@@ -36,7 +36,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
 
     @Test
     fun `bucket key lifecycle`() {
-        Thread.sleep(10000)
+        waitForBucketCreation()
         try {
             val newKey = BucketKey.of(UUID.randomUUID().toString())
 
@@ -63,4 +63,6 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
             s3Bucket.deleteBucket()
         }
     }
+
+    open fun waitForBucketCreation() {}
 }
