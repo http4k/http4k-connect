@@ -52,24 +52,19 @@ class FakeS3(
             "/{id:.+}" bind PUT to { putBucket(it.path("id")!!) },
             "/" bind GET to { listBuckets() }
         ),
-        routes(isBucket() bind routes(
+        isBucket() bind routes(
             "/{id:.+}" bind GET to { getKey(it.subdomain(), it.path("id")!!) },
             "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind {
                 copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!)
             }
             ),
             "/{id:.+}" bind PUT to {
-                putKey(
-                    it.subdomain(),
-                    it.path("id")!!,
-                    it.body.payload.array()
-                )
+                putKey(it.subdomain(), it.path("id")!!, it.body.payload.array())
             },
             "/{id:.+}" bind DELETE to { deleteKey(it.subdomain(), it.path("id")!!) },
             "/" bind PUT to { putBucket(it.subdomain()) },
             "/" bind DELETE to { deleteBucket(it.subdomain()) },
             "/" bind GET to { listBucketKeys(it.subdomain()) }
-        )
         )
     )
 
