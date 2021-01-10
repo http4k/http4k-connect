@@ -53,7 +53,6 @@ class FakeS3(
         "/{id:.+}" bind PUT to routes(isS3() bind { putBucket(it.path("id")!!) }),
         "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { copyKey(it.subdomain(), it.header("x-amz-copy-source")!!, it.path("id")!!) }),
         "/{id:.+}" bind PUT to { putKey(it.subdomain(), it.path("id")!!, it.body.payload.array()) },
-        "/{id:.+}" bind DELETE to routes(isS3() bind { deleteBucket(it.path("id")!!) }),
         "/{id:.+}" bind DELETE to { deleteKey(it.subdomain(), it.path("id")!!) },
         "/" bind PUT to {
             when (val subdomain = it.subdomain()) {
