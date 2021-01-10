@@ -42,55 +42,51 @@ class FakeS3(
     private val GLOBAL_BUCKET = "unknown"
 
     override val app = routes(
-        "/{id:.+}" bind routes(
-            GET to {
-                val id = it.path("id")!!
-                when (val subdomain = it.subdomain()) {
-                    "s3" -> listBucketKeys(subdomain) //??
-                    else -> getKey(subdomain, id)
-                }
-            },
-            PUT to {
-                val id = it.path("id")!!
-                when (val subdomain = it.subdomain()) {
-                    "s3" -> putBucket(id)
-                    else -> {
-                        when (val source = it.header("x-amz-copy-source")) {
-                            null -> putKey(subdomain, id, it.body.payload.array())
-                            else -> copyKey(subdomain, source, id)
-                        }
-
+        "/{id:.+}" bind GET to {
+            val id = it.path("id")!!
+            when (val subdomain = it.subdomain()) {
+                "s3" -> listBucketKeys(subdomain) //??
+                else -> getKey(subdomain, id)
+            }
+        },
+        "/{id:.+}" bind PUT to {
+            val id = it.path("id")!!
+            when (val subdomain = it.subdomain()) {
+                "s3" -> putBucket(id)
+                else -> {
+                    when (val source = it.header("x-amz-copy-source")) {
+                        null -> putKey(subdomain, id, it.body.payload.array())
+                        else -> copyKey(subdomain, source, id)
                     }
-                }
-            },
-            DELETE to {
-                val id = it.path("id")!!
-                when (val subdomain = it.subdomain()) {
-                    "s3" -> deleteBucket(id)
-                    else -> deleteKey(subdomain, id)
+
                 }
             }
-        ),
-        "/" bind routes(
-            PUT to {
-                when (val subdomain = it.subdomain()) {
-                    "s3" -> Response(METHOD_NOT_ALLOWED)
-                    else -> putBucket(subdomain)
-                }
-            },
-            DELETE to {
-                when (val subdomain = it.subdomain()) {
-                    "s3" -> Response(METHOD_NOT_ALLOWED)
-                    else -> deleteBucket(subdomain)
-                }
-            },
-            GET to {
-                when (val subdomain = it.subdomain()) {
-                    "s3" -> listBuckets()
-                    else -> listBucketKeys(subdomain)
-                }
+        },
+        "/{id:.+}" bind DELETE to {
+            val id = it.path("id")!!
+            when (val subdomain = it.subdomain()) {
+                "s3" -> deleteBucket(id)
+                else -> deleteKey(subdomain, id)
             }
-        )
+        },
+        "/" bind PUT to {
+            when (val subdomain = it.subdomain()) {
+                "s3" -> Response(METHOD_NOT_ALLOWED)
+                else -> putBucket(subdomain)
+            }
+        },
+        "/" bind DELETE to {
+            when (val subdomain = it.subdomain()) {
+                "s3" -> Response(METHOD_NOT_ALLOWED)
+                else -> deleteBucket(subdomain)
+            }
+        },
+        "/" bind GET to {
+            when (val subdomain = it.subdomain()) {
+                "s3" -> listBuckets()
+                else -> listBucketKeys(subdomain)
+            }
+        }
     )
 
     private fun copyKey(destinationBucket: String, source: String, destinationKey: String) =
@@ -142,15 +138,17 @@ class FakeS3(
         ?: Response(NOT_FOUND)
 
     private fun putBucket(id: String): Response {
-        buckets[id] ?: { buckets[id] = Unit }()
+        buckets[id] ?: run {
+            buckets[id] = Unit
+        }
         return Response(CREATED)
     }
 
     private fun Request.subdomain(): String =
-        (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: {
+        (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: run {
             buckets[GLOBAL_BUCKET] = Unit
             GLOBAL_BUCKET
-        }()
+        }
 
     /**
      * Convenience function to get an S3 client for global operations
@@ -162,7 +160,8 @@ class FakeS3(
     /**
      * Convenience function to get an S3 client for bucket operations
      */
-    fun s3BucketClient(name: BucketName, region: Region) = S3Bucket.Http(name,
+    fun s3BucketClient(name: BucketName, region: Region) = S3Bucket.Http(
+        name,
         region,
         { AwsCredentials("accessKey", "secret") }, this, clock
     )
