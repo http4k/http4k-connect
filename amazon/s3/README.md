@@ -16,6 +16,37 @@ The S3 connector consists of 2 interfaces:
      *  ListKeys
      *  PutKey
 
+Example client usage:
+```kotlin
+const val useRealClient = false
+
+fun main() {
+    // we can connect to the real service or the fake (drop in replacement)
+    val http: HttpHandler = if (useRealClient) JavaHttpClient() else FakeS3()
+
+    val bucketName = BucketName.of("foobar")
+    val bucketKey = BucketKey.of("keyName")
+    val region = Region.of("us-east-1")
+
+    // create global and bucket level clients
+    val s3 = S3.Http({ AwsCredentials("accessKeyId", "secretKey") }, http.debug())
+    val s3Bucket = S3Bucket.Http(bucketName, region, { AwsCredentials("accessKeyId", "secretKey") }, http.debug())
+
+    // all operations return a Result monad of the API type
+    val createResult: Result<Unit, RemoteFailure> = s3.createBucket(bucketName, region)
+    createResult.valueOrNull()!!
+
+    // we can store some content in the bucket...
+    val putResult: Result<Unit, RemoteFailure> = s3Bucket.putKey(bucketKey, "hellothere".byteInputStream())
+    putResult.valueOrNull()!!
+
+    // and get back the content which we stored
+    val getResult: Result<InputStream?, RemoteFailure> = s3Bucket.get(bucketKey)
+    val content: InputStream = getResult.valueOrNull()!!
+    println(content.reader().readText())
+}
+```
+
 The client APIs utilise the `http4k-aws` module for request signing, which means no dependencies on the incredibly fat Amazon-SDK JARs. This means this integration is perfect for running Serverless Lambdas where binary size is a performance factor.
 
 ### How the Fake works with bucket-level operations

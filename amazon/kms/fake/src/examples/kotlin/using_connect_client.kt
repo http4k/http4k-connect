@@ -1,19 +1,24 @@
-# KMS
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.valueOrNull
+import org.http4k.aws.AwsCredentials
+import org.http4k.client.JavaHttpClient
+import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.kms.FakeKMS
+import org.http4k.connect.amazon.kms.Http
+import org.http4k.connect.amazon.kms.KMS
+import org.http4k.connect.amazon.kms.action.Decrypted
+import org.http4k.connect.amazon.kms.action.Encrypted
+import org.http4k.connect.amazon.kms.action.KeyCreated
+import org.http4k.connect.amazon.kms.createKey
+import org.http4k.connect.amazon.kms.decrypt
+import org.http4k.connect.amazon.kms.encrypt
+import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.CustomerMasterKeySpec.ECC_NIST_P384
+import org.http4k.connect.amazon.model.KeyUsage.ENCRYPT_DECRYPT
+import org.http4k.connect.amazon.model.Region
+import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 
-The KMS connector provides the following Actions:
-
-     *  CreateKey
-     *  DescribeKey
-     *  Decrypt
-     *  Encrypt
-     *  GetPublicKey
-     *  ListKeys
-     *  ScheduleKeyDeletion
-     *  Sign
-     *  Verify
-
-Example client usage:
-```kotlin
 const val useRealClient = false
 
 fun main() {
@@ -36,15 +41,3 @@ fun main() {
     val decrypted: Decrypted = client.decrypt(keyId = key.KeyMetadata.KeyId, encrypted.CiphertextBlob).valueOrNull()!!
     println(decrypted.Plaintext.decoded())
 }
-```
-
-The client APIs utilise the `http4k-aws` module for request signing, which means no dependencies on the incredibly fat Amazon-SDK JARs. This means this integration is perfect for running Serverless Lambdas where binary size is a performance factor.
-
-The FakeKMS implementation currently does not properly encrypt/decrypt or sign/verify the contents of messages - it uses a trivially simple (and fast) reversible algorithm which simulates this functionality.
-
-### Default Fake port: 45302
-
-To start:
-```
-FakeKMS().start()
-```

@@ -1,11 +1,15 @@
-# Example Service
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.valueOrNull
+import org.http4k.client.JavaHttpClient
+import org.http4k.connect.RemoteFailure
+import org.http4k.connect.example.Example
+import org.http4k.connect.example.FakeExample
+import org.http4k.connect.example.Http
+import org.http4k.connect.example.action.Echoed
+import org.http4k.connect.example.echo
+import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 
-The Example connector provides the following Actions:
-
-     *  Echo
-
-Example client usage:
-```kotlin
 const val useRealClient = false
 
 fun main() {
@@ -20,11 +24,3 @@ fun main() {
     val echoed: Echoed = echoedResult.valueOrNull()!!
     println(echoed)
 }
-```
-
-### Default Fake port: 22375
-
-To start:
-```
-FakeExample().start()
-```
