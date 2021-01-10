@@ -121,8 +121,8 @@ fun putKey(
     }
     ?: Response(NOT_FOUND)
 
-fun putBucket(id: String, buckets: Storage<Unit>): Response {
-    buckets[id] ?: run { buckets[id] = Unit }
+fun putBucket(bucket: String, buckets: Storage<Unit>): Response {
+    buckets[bucket] ?: run { buckets[bucket] = Unit }
     return Response(CREATED)
 }
 
