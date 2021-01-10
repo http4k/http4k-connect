@@ -43,87 +43,113 @@ class FakeS3(
 
     private val GLOBAL_BUCKET = "unknown"
 
-    private fun isS3(): Router = { it: Request -> it.subdomain() == "s3" }.asRouter()
-    private fun isBucket(): Router = { it: Request -> it.subdomain() != "s3" }.asRouter()
+    private fun isS3(): Router = { it: Request -> it.subdomain(buckets) == "s3" }.asRouter()
+    private fun isBucket(): Router = { it: Request -> it.subdomain(buckets) != "s3" }.asRouter()
 
     override val app = routes(
         isS3() bind routes(
-            globalListBucketKeys(),
-            globalPutBucket(),
-            globalListBuckets()
+            globalListBucketKeys(buckets, bucketContent),
+            globalPutBucket(buckets),
+            globalListBuckets(buckets)
         ),
         isBucket() bind routes(
-            bucketGetKey(),
-            copyKey(),
-            bucketPutKey(),
-            bucketDeleteKey(),
-            bucketPutBucket(),
-            bucketDeleteBucket(),
+            bucketGetKey(buckets, bucketContent),
+            copyKey(bucketContent, buckets),
+            bucketPutKey(buckets, bucketContent),
+            bucketDeleteKey(buckets, bucketContent),
+            bucketPutBucket(buckets),
+            bucketDeleteBucket(buckets),
             bucketListKeys()
         )
     )
 
-    private fun bucketListKeys() = "/" bind GET to { listBucketKeys(it.subdomain()) }
+    private fun bucketListKeys() = "/" bind GET to { listBucketKeys(it.subdomain(buckets), buckets, bucketContent) }
 
-    private fun bucketDeleteBucket() =
-        "/" bind DELETE to { Response(if (buckets.remove(it.subdomain())) OK else NOT_FOUND) }
+    private fun bucketDeleteBucket(buckets: Storage<Unit>) =
+        "/" bind DELETE to { Response(if (buckets.remove(it.subdomain(buckets))) OK else NOT_FOUND) }
 
-    private fun bucketPutBucket() = "/" bind PUT to { putBucket(it.subdomain()) }
+    private fun bucketPutBucket(buckets: Storage<Unit>) = "/" bind PUT to { putBucket(it.subdomain(buckets), buckets) }
 
-    private fun bucketDeleteKey() = "/{id:.+}" bind DELETE to { req ->
-        val bucket = req.subdomain()
-        (buckets[bucket]
-            ?.let { Response(if (bucketContent.remove("${bucket}-${req.path("id")!!}")) OK else NOT_FOUND) }
-            ?: Response(NOT_FOUND))
-    }
+    private fun bucketDeleteKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+        "/{id:.+}" bind DELETE to { req ->
+            val bucket = req.subdomain(buckets)
+            (buckets[bucket]
+                ?.let { Response(if (bucketContent.remove("${bucket}-${req.path("id")!!}")) OK else NOT_FOUND) }
+                ?: Response(NOT_FOUND))
+        }
 
-    fun bucketPutKey() = "/{id:.+}" bind PUT to {
-        putKey(it.subdomain(), it.path("id")!!, it.body.payload.array())
-    }
+    private fun bucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+        "/{id:.+}" bind PUT to {
+            putKey(it.subdomain(buckets), it.path("id")!!, it.body.payload.array(), buckets, bucketContent, clock)
+        }
 
-    private fun copyKey() = "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { req ->
+    private fun copyKey(
+        bucketContent: Storage<BucketKeyContent>, buckets: Storage<Unit>
+    ) = "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { req ->
         bucketContent[req.header("x-amz-copy-source")!!.split("/")
             .let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
             ?.let {
-                putKey(req.subdomain(), req.path("id")!!, Base64.getDecoder().decode(it.content))
+                putKey(
+                    req.subdomain(buckets),
+                    req.path("id")!!,
+                    Base64.getDecoder().decode(it.content),
+                    buckets,
+                    bucketContent,
+                    clock
+                )
                 Response(OK)
             } ?: Response(NOT_FOUND)
     }
     )
 
-    private fun bucketGetKey() = "/{id:.+}" bind GET to { req ->
-        val bucket = req.subdomain()
-        buckets[bucket]
-            ?.let {
-                bucketContent["${bucket}-${req.path("id")!!}"]?.content?.let {
-                    Base64.getDecoder().decode(it).inputStream()
-                }
-            }?.let { Response(OK).body(it) }
-            ?: Response(NOT_FOUND)
-    }
+    private fun bucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+        "/{id:.+}" bind GET to { req ->
+            val bucket = req.subdomain(buckets)
+            buckets[bucket]
+                ?.let {
+                    bucketContent["${bucket}-${req.path("id")!!}"]?.content?.let {
+                        Base64.getDecoder().decode(it).inputStream()
+                    }
+                }?.let { Response(OK).body(it) }
+                ?: Response(NOT_FOUND)
+        }
 
-    private fun globalListBuckets() = "/" bind GET to {
+    private fun globalListBuckets(buckets: Storage<Unit>) = "/" bind GET to {
         Response(OK)
             .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
     }
 
-    private fun globalPutBucket() = "/{id:.+}" bind PUT to { putBucket(it.path("id")!!) }
+    private fun globalPutBucket(buckets: Storage<Unit>) = "/{id:.+}" bind PUT to { putBucket(it.path("id")!!, buckets) }
 
-    private fun globalListBucketKeys() = "/{id:.+}" bind GET to { listBucketKeys("s3") }
-
-    private fun listBucketKeys(bucket: String) = buckets[bucket]
-        ?.let {
-            Response(OK)
-                .with(lens of ListBucketResult(
-                    bucketContent.keySet(bucket)
-                        .map { it.removePrefix("$bucket-") }
-                        .map { bucketContent["$bucket-$it"]!! }
-                        .sortedBy { it.key.value }
-                ))
+    private fun globalListBucketKeys(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+        "/{id:.+}" bind GET to {
+            listBucketKeys(
+                "s3",
+                buckets, bucketContent
+            )
         }
-        ?: Response(NOT_FOUND)
 
-    private fun putKey(bucket: String, key: String, bytes: ByteArray) = buckets[bucket]
+    private fun listBucketKeys(bucket: String, buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+        buckets[bucket]
+            ?.let {
+                Response(OK)
+                    .with(lens of ListBucketResult(
+                        bucketContent.keySet(bucket)
+                            .map { it.removePrefix("$bucket-") }
+                            .map { bucketContent["$bucket-$it"]!! }
+                            .sortedBy { it.key.value }
+                    ))
+            }
+            ?: Response(NOT_FOUND)
+
+    private fun putKey(
+        bucket: String,
+        key: String,
+        bytes: ByteArray,
+        buckets: Storage<Unit>,
+        bucketContent: Storage<BucketKeyContent>,
+        clock: Clock
+    ) = buckets[bucket]
         ?.let {
             bucketContent["$bucket-$key"] = BucketKeyContent(
                 BucketKey.of(key),
@@ -134,14 +160,12 @@ class FakeS3(
         }
         ?: Response(NOT_FOUND)
 
-    private fun putBucket(id: String): Response {
-        buckets[id] ?: run {
-            buckets[id] = Unit
-        }
+    private fun putBucket(id: String, buckets: Storage<Unit>): Response {
+        buckets[id] ?: run { buckets[id] = Unit }
         return Response(CREATED)
     }
 
-    private fun Request.subdomain(): String =
+    private fun Request.subdomain(buckets: Storage<Unit>): String =
         (header("x-forwarded-host") ?: header("host"))?.split('.')?.firstOrNull() ?: run {
             buckets[GLOBAL_BUCKET] = Unit
             GLOBAL_BUCKET
@@ -150,9 +174,7 @@ class FakeS3(
     /**
      * Convenience function to get an S3 client for global operations
      */
-    fun s3Client() = S3.Http(
-        { AwsCredentials("accessKey", "secret") }, this, clock
-    )
+    fun s3Client() = S3.Http({ AwsCredentials("accessKey", "secret") }, this, clock)
 
     /**
      * Convenience function to get an S3 client for bucket operations
