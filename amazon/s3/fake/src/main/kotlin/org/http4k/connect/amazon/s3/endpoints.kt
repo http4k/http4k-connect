@@ -10,7 +10,7 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
@@ -117,13 +117,13 @@ fun putKey(
             Base64.getEncoder().encodeToString(bytes),
             ZonedDateTime.now(clock)
         )
-        Response(Status.CREATED)
+        Response(CREATED)
     }
     ?: Response(NOT_FOUND)
 
 fun putBucket(id: String, buckets: Storage<Unit>): Response {
     buckets[id] ?: run { buckets[id] = Unit }
-    return Response(Status.CREATED)
+    return Response(CREATED)
 }
 
 fun Request.subdomain(buckets: Storage<Unit>): String =
