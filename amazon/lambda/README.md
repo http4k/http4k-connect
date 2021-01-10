@@ -6,7 +6,7 @@ The Lambda connector provides the following Actions:
 
 ### Example usage
 ```kotlin
-const val useRealClient = false
+const val USE_REAL_CLIENT = false
 
 fun main() {
     val deployedLambda = FunctionName("http4kLambda")
@@ -20,7 +20,7 @@ fun main() {
     )
 
     // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if (useRealClient) JavaHttpClient() else fakeLambda
+    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else fakeLambda
 
     // create a client
     val client = Lambda.Http(Region.of("us-east-1"), { AwsCredentials("accessKeyId", "secretKey") }, http.debug())

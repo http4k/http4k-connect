@@ -14,11 +14,11 @@ The KMS connector provides the following Actions:
 
 ### Example usage
 ```kotlin
-const val useRealClient = false
+const val USE_REAL_CLIENT = false
 
 fun main() {
     // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if(useRealClient) JavaHttpClient() else FakeKMS()
+    val http: HttpHandler = if(USE_REAL_CLIENT) JavaHttpClient() else FakeKMS()
 
     // create a client
     val client = KMS.Http(Region.of("us-east-1"), { AwsCredentials("accessKeyId", "secretKey") }, http.debug())

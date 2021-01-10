@@ -6,11 +6,11 @@ The Example connector provides the following Actions:
 
 ### Example usage
 ```kotlin
-const val useRealClient = false
+const val USE_REAL_CLIENT = false
 
 fun main() {
     // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if (useRealClient) JavaHttpClient() else FakeExample()
+    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeExample()
 
     // create a client
     val example = Example.Http(http.debug())

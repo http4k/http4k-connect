@@ -12,11 +12,11 @@ import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import java.io.InputStream
 
-const val useRealClient = false
+const val USE_REAL_CLIENT = false
 
 fun main() {
     // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if (useRealClient) JavaHttpClient() else FakeS3()
+    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeS3()
 
     val bucketName = BucketName.of("foobar")
     val bucketKey = BucketKey.of("keyName")
