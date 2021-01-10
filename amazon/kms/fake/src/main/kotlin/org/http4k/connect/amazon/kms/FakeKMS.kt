@@ -50,7 +50,7 @@ data class StoredCMK(
 
 class FakeKMS(
     private val keys: Storage<StoredCMK> = Storage.InMemory(),
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
     private val api = AmazonJsonFake(KMSMoshi, AwsService.of("TrentService"))

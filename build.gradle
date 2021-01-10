@@ -141,6 +141,19 @@ allprojects {
                 }
                 from components.java
 
+                pom.withXml {
+                    asNode().dependencies.runtime.findAll() {
+                        it.artifactId.text() == 'http4k-format-moshi'
+                    }.each() {
+                        it
+                            .appendNode("exclusions")
+                            .appendNode("exclusion")
+                            .appendNode("groupId", "org.jetbrains.kotlin")
+                            .parent()
+                            .appendNode("artifactId", "kotlin-reflect")
+                    }
+                }
+
                 artifact sourcesJar
                 artifact javadocJar
             }
