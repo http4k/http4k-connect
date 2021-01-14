@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v2.9.1.0
+- **http4k-connect-amazon-** : Expose Moshi to client API users for JSON-based systems
+
 ### v2.9.0.0
 - **http4k-connect-amazon-sqs** : Fixed SQS MessageAttributes as API is not as advertised...
 - **http4k-connect-amazon-fake** : Extracting out endpoints for easier extension.
