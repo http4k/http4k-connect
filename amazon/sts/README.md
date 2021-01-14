@@ -15,7 +15,7 @@ const val USE_REAL_CLIENT = false
 
 fun main() {
     val region = Region.of("us-east-1")
-    val roleArn = ARN.of("arn:aws:sts:us-east-1:000000000001:role:myqueue")
+    val roleArn = ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
 
     // we can connect to the real service or the fake (drop in replacement)
     val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeSTS()
