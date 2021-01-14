@@ -44,12 +44,12 @@ sealed class SQSMessageAttribute(private val name: String, private val category:
 //    }
 }
 
-fun MessageAttribute(name: String, value: String, dataType: DataType? = null): MessageAttribute =
+fun MessageAttribute(name: String, value: String, dataType: DataType): MessageAttribute =
     object : MessageAttribute,
         MessageFields by SQSMessageAttribute.SingularValue(name, "MessageAttribute", "String", value, dataType) {}
 
 //@JvmName("MessageAttributeStringList")
-//fun MessageAttribute(name: String, value: List<String>, dataType: DataType? = null): MessageAttribute =
+//fun MessageAttribute(name: String, value: List<String>, dataType: DataType): MessageAttribute =
 //    object : MessageAttribute,
 //        MessageFields by SQSMessageAttribute.ListValue(value, "MessageAttribute", "StringList", name, dataType) {}
 
@@ -68,12 +68,12 @@ fun MessageAttribute(name: String, value: Base64Blob): MessageAttribute =
 //            Binary
 //        ) {}
 
-fun MessageSystemAttribute(name: String, value: String, dataType: DataType? = null): MessageSystemAttribute =
+fun MessageSystemAttribute(name: String, value: String, dataType: DataType): MessageSystemAttribute =
     object : MessageSystemAttribute,
         MessageFields by SQSMessageAttribute.SingularValue(name, "MessageSystemAttribute", "String", value, dataType) {}
 
 //@JvmName("MessageSystemAttributeStringList")
-//fun MessageSystemAttribute(name: String, value: List<String>, dataType: DataType? = null): MessageSystemAttribute =
+//fun MessageSystemAttribute(name: String, value: List<String>, dataType: DataType): MessageSystemAttribute =
 //    object : MessageSystemAttribute,
 //        MessageFields by SQSMessageAttribute.ListValue(value, "MessageSystemAttribute", "StringList", name, dataType) {}
 

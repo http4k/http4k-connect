@@ -41,6 +41,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
                     accountId, queueName, "hello world", expires = expires,
                     attributes = listOf(
                         MessageAttribute("foo", "123", DataType.Number),
+                        MessageAttribute("bar", "123", DataType.Number),
                         MessageAttribute("binaryfoo", Base64Blob.encoded("foobar"))
                     ),
                     systemAttributes = listOf(
