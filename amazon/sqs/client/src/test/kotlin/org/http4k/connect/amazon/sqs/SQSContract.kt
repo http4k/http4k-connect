@@ -5,8 +5,10 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.QueueName
+import org.http4k.connect.amazon.sqs.action.MessageAttribute
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -15,7 +17,7 @@ import java.util.UUID
 abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
 
     private val sqs by lazy {
-        SQS.Http(aws.region, { aws.credentials }, http)
+        SQS.Http(aws.region, { aws.credentials }, http.debug())
     }
 
     private val queueName = QueueName.of(UUID.randomUUID().toString())
@@ -33,7 +35,9 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
             val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
 
             try {
-                val id = sendMessage(accountId, queueName, "hello world", expires = expires)
+                val id = sendMessage(accountId, queueName, "hello world", expires = expires,
+                attributes = listOf(MessageAttribute("foo", "bar", "String"))
+                )
                     .successValue().MessageId
 
                 val received = receiveMessage(accountId, queueName).successValue().first()
