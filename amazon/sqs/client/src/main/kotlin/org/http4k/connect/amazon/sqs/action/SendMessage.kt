@@ -24,34 +24,20 @@ class SendMessage(
     messageGroupId: String? = null,
     expires: ZonedDateTime? = null,
     attributes: List<MessageAttribute>? = null,
-    systemAttributes: List<MessageAttribute>? = null
+    systemAttributes: List<MessageSystemAttribute>? = null
 ) : SQSAction<SentMessage>(
     "SendMessage",
     *(
-        (attributes ?: emptyList())
-            .flatMapIndexed { i, it ->
-                listOf(
-                    "MessageAttribute.${i + 1}.Name" to it.name,
-                    "MessageAttribute.${i + 1}.Type" to it.type,
-                    "MessageAttribute.${i + 1}.Value" to it.value
-                )
-            } +
-            (systemAttributes ?: emptyList())
-                .flatMapIndexed { i, it ->
-                    listOf(
-                        "MessageSystemAttribute.${i + 1}.Name" to it.name,
-                        "MessageSystemAttribute.${i + 1}.Type" to it.type,
-                        "MessageSystemAttribute.${i + 1}.Value" to it.value
-                    )
-                } +
-            ("MessageBody" to payload) +
-            expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) } +
-            delaySeconds?.let { "DelaySeconds" to it.toString() } +
-            deduplicationId?.let { "MessageDeduplicationId" to it } +
-            messageGroupId?.let { "MessageGroupId" to it }
+        asList(attributes ?: emptyList(), systemAttributes ?: emptyList()) +
+            listOfNotNull(
+                ("MessageBody" to payload),
+                expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
+                delaySeconds?.let { "DelaySeconds" to it.toString() },
+                deduplicationId?.let { "MessageDeduplicationId" to it },
+                messageGroupId?.let { "MessageGroupId" to it }
+            )
         ).toTypedArray()
 ) {
-
     constructor(
         queueARN: ARN,
         payload: String,
@@ -60,7 +46,7 @@ class SendMessage(
         messageGroupId: String? = null,
         expires: ZonedDateTime? = null,
         attributes: List<MessageAttribute>? = null,
-        systemAttributes: List<MessageAttribute>? = null
+        systemAttributes: List<MessageSystemAttribute>? = null
     ) :
         this(
             queueARN.account,
@@ -84,8 +70,6 @@ class SendMessage(
     override fun uri() = Uri.of("/${accountId.value}/${queueName.value}")
 }
 
-data class MessageAttribute(val name: String, val value: String, val type: String)
-
 data class SentMessage(
     val MD5OfMessageBody: String,
     val MessageId: SQSMessageId,
@@ -101,4 +85,8 @@ data class SentMessage(
                 )
             }
     }
+}
+
+private fun asList(vararg messageFields: List<MessageFields>) = messageFields.flatMap {
+    it.flatMapIndexed { index, messageFields -> messageFields.toFields(index+1).toList() }
 }
