@@ -2,6 +2,8 @@ package org.http4k.connect.amazon.sqs
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.awsCredentials
+import org.http4k.connect.amazon.awsRegion
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.sqs.action.SQSAction
 import org.http4k.core.HttpHandler
@@ -13,10 +15,15 @@ fun SQS.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone(),
-    payloadMode: Payload.Mode = Payload.Mode.Signed
+    clock: Clock = Clock.systemDefaultZone()
 ) = object : SQS {
-    private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode).then(rawHttp)
+    private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
 
     override fun <R> invoke(action: SQSAction<R>) = action.toResult(http(action.toRequest()))
 }
+
+fun SQS.Companion.Http(
+    env: Map<String, String> = System.getenv(),
+    rawHttp: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemDefaultZone()
+) = Http(env.awsRegion(), env.awsCredentials(), rawHttp, clock)

@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.s3
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.awsCredentials
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -12,12 +13,14 @@ import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetHostFrom
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
+import java.lang.System.getenv
 import java.time.Clock
+import java.time.Clock.systemDefaultZone
 
 fun S3.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone(),
+    clock: Clock = systemDefaultZone(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3 {
     val http = SetHostFrom(Uri.of("https://s3.amazonaws.com"))
@@ -32,3 +35,10 @@ fun S3.Companion.Http(
 
     override fun <R> invoke(action: S3Action<R>) = action.toResult(http(action.toRequest()))
 }
+
+fun S3.Companion.Http(
+    env: Map<String, String> = getenv(),
+    rawHttp: HttpHandler = JavaHttpClient(),
+    clock: Clock = systemDefaultZone(),
+    payloadMode: Payload.Mode = Payload.Mode.Signed
+) = Http(env.awsCredentials(), rawHttp, clock, payloadMode)

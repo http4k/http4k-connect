@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.s3
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.awsCredentials
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.s3.action.S3BucketAction
@@ -22,3 +23,12 @@ fun S3Bucket.Companion.Http(
 
     override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(http(action.toRequest()))
 }
+
+fun S3Bucket.Companion.Http(
+    bucketName: BucketName,
+    region: Region,
+    env: Map<String, String> = System.getenv(),
+    rawHttp: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemDefaultZone(),
+    payloadMode: Payload.Mode = Payload.Mode.Signed
+) = Http(bucketName, region, env.awsCredentials(), rawHttp, clock, payloadMode)
