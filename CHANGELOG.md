@@ -8,6 +8,9 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-amazon-** : Removed unused Payload type for various clients.
 - **http4k-connect-*** : Upgrade Values4k
 
+### v2.9.2.0
+- **http4k-connect-amazon-** : Add convenience methods for constructing AWS clients
+
 ### v2.9.1.0
 - **http4k-connect-amazon-** : Expose Moshi to client API users for JSON-based systems
 
