@@ -1,0 +1,20 @@
+on: [repository_dispatch]
+jobs:
+  create-toolbox-release:
+    if: github.event.action == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create release note
+        run: ./build-release-note.sh ${{ github.event.client_payload.version }} > NOTE.md
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.client_payload.version }}
+          release_name: ${{ github.event.client_payload.version }}
+          body_path: NOTE.md
+          draft: false
+          prerelease: false

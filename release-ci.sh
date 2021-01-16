@@ -5,7 +5,7 @@
 #set -o pipefail
 #set -o nounset
 
-NEW_VERSION=$1
+NEW_VERSION=`jq -r .connect.version $DIR/version.json`
 
 echo "Attempting to release $NEW_VERSION"
 
