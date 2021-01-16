@@ -4,6 +4,7 @@ import dev.forkhandles.values.LongValue
 import dev.forkhandles.values.LongValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
+import dev.forkhandles.values.Value
 import dev.forkhandles.values.and
 import dev.forkhandles.values.minLength
 import dev.forkhandles.values.minValue
@@ -65,7 +66,7 @@ class ARN private constructor(value: String) : StringValue(value) {
 
 fun StringValue.toARN() = ARN.of(value)
 
-fun <T> StringValueFactory<T>.of(arn: ARN) = of(arn.value)
+fun <T : Value<String>> StringValueFactory<T>.of(arn: ARN) = of(arn.value)
 
 class AwsAccount private constructor(value: String) : StringValue(value.padStart(12, '0')) {
     companion object : StringValueFactory<AwsAccount>(::AwsAccount, 1.minLength.and { it.all(Char::isDigit) })

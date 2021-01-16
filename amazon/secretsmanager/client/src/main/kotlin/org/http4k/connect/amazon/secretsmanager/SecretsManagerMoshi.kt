@@ -24,7 +24,7 @@ import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.adapter
 import org.http4k.format.asConfigurable
-import org.http4k.format.text
+import org.http4k.format.value
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
@@ -39,9 +39,9 @@ object SecretsManagerMoshi : ConfigurableMoshi(
 )
 
 fun <T> AutoMappingConfiguration<T>.withSecretsManagerMappings() = apply {
-    text(SecretId::of)
-    text(VersionId::of)
-    text(VersionStage::of)
+    value(SecretId)
+    value(VersionId)
+    value(VersionStage)
 }
 
 object SecretsManagerJsonAdapterFactory : AwsJsonAdapterFactory(
