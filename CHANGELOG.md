@@ -3,10 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v2.10.0.0 (uncut)
+### v2.10.0.0
 - **http4k-connect-amazon-** : Add convenience functions to create clients from the system environment. 
 - **http4k-connect-amazon-** : Removed unused Payload type for various clients.
-- **http4k-connect-*** : Upgrade Values4k
+- **http4k-connect-*** : Upgrade Values4k and http4k
 
 ### v2.9.2.0
 - **http4k-connect-amazon-** : Add convenience methods for constructing AWS clients
