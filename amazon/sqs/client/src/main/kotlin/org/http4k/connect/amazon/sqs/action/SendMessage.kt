@@ -15,16 +15,16 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class SendMessage(
-    private val accountId: AwsAccount,
-    private val queueName: QueueName,
-    payload: String,
-    delaySeconds: Int? = null,
-    deduplicationId: String? = null,
-    messageGroupId: String? = null,
-    expires: ZonedDateTime? = null,
-    attributes: List<MessageAttribute>? = null,
-    systemAttributes: List<MessageSystemAttribute>? = null
+data class SendMessage(
+    val accountId: AwsAccount,
+    val queueName: QueueName,
+    val payload: String,
+    val delaySeconds: Int? = null,
+    val deduplicationId: String? = null,
+    val messageGroupId: String? = null,
+    val expires: ZonedDateTime? = null,
+    val attributes: List<MessageAttribute>? = null,
+    val systemAttributes: List<MessageSystemAttribute>? = null
 ) : SQSAction<SentMessage>(
     "SendMessage",
     *(
@@ -88,5 +88,5 @@ data class SentMessage(
 }
 
 private fun asList(vararg messageFields: List<MessageFields>) = messageFields.flatMap {
-    it.flatMapIndexed { index, messageFields -> messageFields.toFields(index+1).toList() }
+    it.flatMapIndexed { index, messageFields -> messageFields.toFields(index + 1).toList() }
 }

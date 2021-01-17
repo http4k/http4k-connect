@@ -14,10 +14,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class DeleteQueue(
-    private val accountId: AwsAccount,
-    private val queueName: QueueName,
-    expires: ZonedDateTime? = null
+data class DeleteQueue(
+    val accountId: AwsAccount,
+    val queueName: QueueName,
+    val expires: ZonedDateTime? = null
 ) : SQSAction<Unit>(
     "DeleteQueue",
     expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) }

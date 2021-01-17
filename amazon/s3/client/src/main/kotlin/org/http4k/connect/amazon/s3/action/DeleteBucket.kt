@@ -24,4 +24,12 @@ class DeleteBucket : S3BucketAction<Unit?> {
             else -> Failure(RemoteFailure(DELETE, uri(), status))
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode() = javaClass.hashCode()
 }

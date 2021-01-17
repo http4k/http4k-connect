@@ -15,10 +15,11 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class DeleteMessage(
-    private val accountId: AwsAccount,
-    private val queueName: QueueName,
-    receiptHandle: ReceiptHandle, expires: ZonedDateTime? = null
+data class DeleteMessage(
+    val accountId: AwsAccount,
+    val queueName: QueueName,
+    val receiptHandle: ReceiptHandle,
+    val expires: ZonedDateTime? = null
 ) : SQSAction<Unit>(
     "DeleteMessage",
     "ReceiptHandle" to receiptHandle.value,

@@ -12,11 +12,11 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class CreateQueue(
-    queueName: QueueName,
-    tags: Map<String, String> = emptyMap(),
-    attributes: Map<String, String> = emptyMap(),
-    expires: ZonedDateTime? = null
+data class CreateQueue(
+    val queueName: QueueName,
+    val tags: Map<String, String> = emptyMap(),
+    val attributes: Map<String, String> = emptyMap(),
+    val expires: ZonedDateTime? = null
 ) : SQSAction<CreatedQueue>(
     "CreateQueue",
     *(tags.entries

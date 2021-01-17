@@ -17,13 +17,13 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
-class ReceiveMessage(
-    private val accountId: AwsAccount,
-    private val queueName: QueueName,
-    maxNumberOfMessages: Int? = null,
-    visibilityTimeout: Int? = null,
-    attributeName: String? = null,
-    expires: ZonedDateTime? = null
+data class ReceiveMessage(
+    val accountId: AwsAccount,
+    val queueName: QueueName,
+    val maxNumberOfMessages: Int? = null,
+    val visibilityTimeout: Int? = null,
+    val attributeName: String? = null,
+    val expires: ZonedDateTime? = null
 ) : SQSAction<List<SQSMessage>>(
     "ReceiveMessage",
     maxNumberOfMessages?.let { "MaxNumberOfMessages" to it.toString() },

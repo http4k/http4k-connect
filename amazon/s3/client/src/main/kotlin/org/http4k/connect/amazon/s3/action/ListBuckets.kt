@@ -13,6 +13,7 @@ import org.http4k.core.Uri
 
 @Http4kConnectAction
 class ListBuckets : S3Action<Listing<BucketName>> {
+
     override fun toRequest() = Request(Method.GET, Uri.of("/"))
 
     override fun toResult(response: Response) = with(response) {
@@ -25,4 +26,12 @@ class ListBuckets : S3Action<Listing<BucketName>> {
             else -> Failure(RemoteFailure(Method.GET, Uri.of("/"), status))
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int = javaClass.hashCode()
 }
