@@ -94,12 +94,12 @@ allprojects {
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = "sources"
+        archiveClassifier = "sources"
         from sourceSets.main.allSource
     }
 
     task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
-        classifier = 'javadoc'
+        archiveClassifier = 'javadoc'
         from "$buildDir/dokka/javadoc"
     }
 
@@ -208,11 +208,6 @@ allprojects {
         dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
     }
 
-}
-
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-    freeCompilerArgs += "-Xjvm-default=enable"
 }
 
 coveralls {
