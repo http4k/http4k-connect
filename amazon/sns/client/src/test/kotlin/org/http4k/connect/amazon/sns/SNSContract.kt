@@ -19,8 +19,8 @@ abstract class SNSContract(http: HttpHandler) : AwsContract(http) {
         with(sns) {
             val topicArn = createTopic(
                 topicName,
-                listOf(Tag("key", "value")),
-                emptyMap()
+                listOf(Tag("key", "value"), Tag("key2", "value2")),
+                mapOf("foo" to "bar")
             ).successValue().topicArn
             try {
 //                val id = sendMessage(

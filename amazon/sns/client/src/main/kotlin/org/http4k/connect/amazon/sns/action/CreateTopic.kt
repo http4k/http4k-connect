@@ -18,12 +18,14 @@ data class CreateTopic(
 ) : SNSAction<CreatedTopic>(
     "CreateTopic",
     *(tags
-        .flatMap { listOf("Tag.Key" to it.Key, "Tag.Value" to it.Value) } +
+        .flatMapIndexed { i, tag -> listOf(
+            "Tag.member.${i + 1}.Key" to tag.Key,
+            "Tag.member.${i + 1}.Value" to tag.Value) } +
         attributes.entries
             .flatMapIndexed { i, it ->
                 listOf(
-                    "Attribute.${i + 1}.Name" to it.key,
-                    "Attribute.${i + 1}.Value" to it.value
+                    "Attribute.entry.${i + 1}.key" to it.key,
+                    "Attribute.entry.${i + 1}.value" to it.value
                 )
             } +
         listOf("Name" to topicName.value)
