@@ -6,8 +6,6 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.MessageAttribute
-import org.http4k.connect.amazon.model.MessageSystemAttribute
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.amazon.model.asList

@@ -5,7 +5,6 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.MessageAttribute
 import org.http4k.connect.amazon.model.PhoneNumber
 import org.http4k.connect.amazon.model.SNSMessageId
 import org.http4k.connect.amazon.model.asList
@@ -30,15 +29,15 @@ data class PublishMessage(
     "Publish",
     *(
         asList(attributes ?: emptyList()) +
-        listOfNotNull(
-            "Message" to message,
-            messageStructure?.let { "MessageStructure" to it },
-            messageDeduplicationId?.let { "MessageDeduplicationId" to it },
-            messageGroupId?.let { "MessageGroupId" to it },
-            topicArn?.let { "TopicArn" to it.value },
-            targetArn?.let { "TargetArn" to it.value },
-            phoneNumber?.let { "PhoneNumber" to it.value },
-        )
+            listOfNotNull(
+                "Message" to message,
+                messageStructure?.let { "MessageStructure" to it },
+                messageDeduplicationId?.let { "MessageDeduplicationId" to it },
+                messageGroupId?.let { "MessageGroupId" to it },
+                topicArn?.let { "TopicArn" to it.value },
+                targetArn?.let { "TargetArn" to it.value },
+                phoneNumber?.let { "PhoneNumber" to it.value },
+            )
         ).toTypedArray()
 ) {
     override fun toResult(response: Response) = with(response) {

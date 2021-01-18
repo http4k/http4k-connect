@@ -24,7 +24,8 @@ fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount) =
     { r: Request -> r.form("Action") == "CreateTopic" }
         .asRouter() bind { req: Request ->
         val topicName = req.form("Name")!!
-        if (topics.keySet(topicName).isEmpty()) topics[topicName] = listOf()
+        val arn = ARN.of(SNS.awsService, Region.of("us-east-1"), awsAccount, TopicName.of(topicName))
+        if (topics.keySet(arn.value).isEmpty()) topics[arn.value] = listOf()
 
         Response(OK).with(
             viewModelLens of CreateTopicResponse(
@@ -35,7 +36,7 @@ fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount) =
 
 fun deleteTopic(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "DeleteTopic" }
     .asRouter() bind { req: Request ->
-    val topicArn = req.form("TopicARN")!!
+    val topicArn = req.form("TopicArn")!!
 
     when {
         topics.keySet(topicArn).isEmpty() -> Response(BAD_REQUEST)
@@ -54,7 +55,7 @@ fun listTopics(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Acti
 fun publish(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "Publish" }
     .asRouter() bind { req: Request ->
 
-    val topicArn = req.form("TopicARN")!!
+    val topicArn = req.form("TopicArn")!!
 
     topics[topicArn]?.let {
         topics[topicArn] = it + SNSMessage(req.form("Message")!!)

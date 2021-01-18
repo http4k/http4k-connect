@@ -3,8 +3,9 @@ package org.http4k.connect.amazon.sns.action
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.DataType
 import org.http4k.connect.amazon.model.DataType.Binary
-import org.http4k.connect.amazon.model.MessageAttribute
 import org.http4k.connect.amazon.model.MessageFields
+
+interface MessageAttribute : MessageFields
 
 sealed class SNSMessageAttribute(
     private val name: String,
