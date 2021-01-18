@@ -2,16 +2,19 @@ package org.http4k.connect.amazon.sns
 
 import CreateTopicResponse
 import DeleteTopicResponse
+import ListTopicsResponse
+import PublishResponse
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.model.SNSMessageId
 import org.http4k.connect.amazon.model.TopicName
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.ContentType
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.body.form
 import org.http4k.core.with
@@ -19,6 +22,7 @@ import org.http4k.routing.asRouter
 import org.http4k.routing.bind
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
+import java.util.UUID
 
 fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount) =
     { r: Request -> r.form("Action") == "CreateTopic" }
@@ -38,12 +42,28 @@ fun deleteTopic(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Act
     val topicArn = req.form("TopicARN")!!
 
     when {
-        topics.keySet(topicArn).isEmpty() -> Response(Status.BAD_REQUEST)
+        topics.keySet(topicArn).isEmpty() -> Response(BAD_REQUEST)
         else -> {
             topics.remove(topicArn)
             Response(OK).with(viewModelLens of DeleteTopicResponse)
         }
     }
+}
+
+fun listTopics(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "ListTopics" }
+    .asRouter() bind { req: Request ->
+    Response(OK).with(viewModelLens of ListTopicsResponse(topics.keySet("").map(ARN::of)))
+}
+
+fun publish(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "Publish" }
+    .asRouter() bind { req: Request ->
+
+    val topicArn = req.form("TopicARN")!!
+
+    topics[topicArn]?.let {
+        topics[topicArn] = it + SNSMessage(req.form("Message")!!)
+        Response(OK).with(viewModelLens of PublishResponse(SNSMessageId.of(UUID.randomUUID().toString())))
+    } ?: Response(BAD_REQUEST)
 }
 
 val viewModelLens by lazy {
