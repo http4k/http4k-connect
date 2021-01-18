@@ -3,6 +3,9 @@ package org.http4k.connect.amazon.sns
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.DataType
+import org.http4k.connect.amazon.model.MessageAttribute
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TopicName
 import org.http4k.connect.successValue
@@ -14,6 +17,7 @@ abstract class SNSContract(http: HttpHandler) : AwsContract(http) {
     private val sns by lazy {
         SNS.Http(aws.region, { aws.credentials }, http)
     }
+
     private val topicName = TopicName.of(UUID.randomUUID().toString())
 
     @Test
@@ -26,29 +30,15 @@ abstract class SNSContract(http: HttpHandler) : AwsContract(http) {
             ).successValue().topicArn
             try {
                 assertThat(listTopics().successValue().contains(topicArn), equalTo(true))
-//                val id = sendMessage(
-//                    accountId, queueName, "hello world", expires = expires,
-//                    attributes = listOf(
-//                        MessageAttribute("foo", "123", org.http4k.connect.amazon.model.DataType.Number),
-//                        MessageAttribute("bar", "123", org.http4k.connect.amazon.model.DataType.Number),
-//                        MessageAttribute("binaryfoo", org.http4k.connect.amazon.model.Base64Blob.encoded("foobar"))
-//                    ),
-//                    systemAttributes = listOf(
-//                        MessageSystemAttribute(
-//                            "AWSTraceHeader",
-//                            "Root=1-5f4a4a2d-b94f96db34d41be1349080d2",
-//                            org.http4k.connect.amazon.model.DataType.String
-//                        )
-//                    )
-//                ).successValue().MessageId
-//
-//                val received = receiveMessage(accountId, queueName).successValue().first()
-//                assertThat(received.messageId, equalTo(id))
-//                assertThat(received.body, equalTo("hello world"))
-//
-//                deleteMessage(accountId, queueName, received.receiptHandle).successValue()
-//
-//                assertThat(receiveMessage(accountId, queueName).successValue().size, equalTo(0))
+
+                publishMessage(
+                    "hello world", "subject", topicArn = topicArn,
+                    attributes = listOf(
+                        MessageAttribute("foo", "123", DataType.Number),
+                        MessageAttribute("bar", "123", DataType.Number),
+                        MessageAttribute("binaryfoo", Base64Blob.encoded("foobar"))
+                    )
+                ).successValue()
             } finally {
                 deleteTopic(topicArn).successValue()
             }
