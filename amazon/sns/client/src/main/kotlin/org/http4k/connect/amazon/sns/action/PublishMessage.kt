@@ -9,6 +9,9 @@ import org.http4k.connect.amazon.model.MessageAttribute
 import org.http4k.connect.amazon.model.PhoneNumber
 import org.http4k.connect.amazon.model.SNSMessageId
 import org.http4k.connect.amazon.model.asList
+import org.http4k.connect.amazon.model.text
+import org.http4k.connect.amazon.model.textOptional
+import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 
@@ -52,10 +55,10 @@ data class PublishedMessage(
 ) {
     companion object {
         fun from(response: Response) =
-            with(documentBuilderFactory().parse(response.body.stream)) {
+            with(response.xmlDoc()) {
                 PublishedMessage(
                     SNSMessageId.of(text("MessageId")),
-                    textOpt("SequenceNumber")
+                    textOptional("SequenceNumber")
                 )
             }
     }

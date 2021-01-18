@@ -11,6 +11,9 @@ import org.http4k.connect.amazon.model.MessageSystemAttribute
 import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.amazon.model.asList
+import org.http4k.connect.amazon.model.text
+import org.http4k.connect.amazon.model.textOptional
+import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.Method
 import org.http4k.core.Response
 import org.http4k.core.Uri
@@ -80,7 +83,7 @@ data class SentMessage(
 ) {
     companion object {
         fun from(response: Response) =
-            with(documentBuilderFactory().parse(response.body.stream)) {
+            with(response.xmlDoc()) {
                 SentMessage(
                     text("MD5OfMessageBody"),
                     SQSMessageId.of(text("MessageId")),

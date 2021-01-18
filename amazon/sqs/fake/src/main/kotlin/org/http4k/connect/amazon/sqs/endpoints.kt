@@ -42,7 +42,7 @@ fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
     when {
         queues.keySet(queueName).isEmpty() -> Response(Status.BAD_REQUEST)
         else -> {
-            queues -= queueName
+            queues.remove(queueName)
             Response(OK).with(viewModelLens of DeleteQueueResponse)
         }
     }

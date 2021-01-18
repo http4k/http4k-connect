@@ -1,5 +1,7 @@
 package org.http4k.connect.amazon.sns
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TopicName
@@ -23,6 +25,7 @@ abstract class SNSContract(http: HttpHandler) : AwsContract(http) {
                 mapOf("foo" to "bar")
             ).successValue().topicArn
             try {
+                assertThat(listTopics().successValue().contains(topicArn), equalTo(true))
 //                val id = sendMessage(
 //                    accountId, queueName, "hello world", expires = expires,
 //                    attributes = listOf(

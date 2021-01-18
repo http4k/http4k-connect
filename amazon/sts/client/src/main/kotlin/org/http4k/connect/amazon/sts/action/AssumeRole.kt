@@ -14,6 +14,8 @@ import org.http4k.connect.amazon.model.SecretAccessKey
 import org.http4k.connect.amazon.model.SessionToken
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TokenCode
+import org.http4k.connect.amazon.model.text
+import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -22,7 +24,6 @@ import org.http4k.core.Uri
 import org.http4k.core.body.form
 import org.http4k.core.with
 import org.http4k.lens.Header.CONTENT_TYPE
-import org.w3c.dom.Document
 import java.time.Duration
 
 @Http4kConnectAction
@@ -86,7 +87,7 @@ data class AssumedRole(
 ) {
     companion object {
         fun from(response: Response) =
-            with(documentBuilderFactory().parse(response.body.stream)) {
+            with(response.xmlDoc()) {
                 AssumedRole(
                     AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
                     Credentials(
@@ -99,5 +100,3 @@ data class AssumedRole(
             }
     }
 }
-
-private fun Document.text(name: String) = getElementsByTagName(name).item(0).textContent.trim()

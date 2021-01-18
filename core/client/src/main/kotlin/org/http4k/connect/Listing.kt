@@ -11,5 +11,7 @@ sealed class Listing<out T> : Iterable<T> {
     data class Unpaged<T>(val items: List<T>) : Listing<T>(), Iterable<T> by items
 
     data class Paged<T>(val items: List<T>, val page: Pages) : Listing<T>(), Iterable<T> by items
+
+    data class Tokenized<T, TOKEN>(val items: List<T>, val nextToken: TOKEN) : Listing<T>(), Iterable<T> by items
 }
 

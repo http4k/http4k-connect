@@ -7,6 +7,8 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.TopicName
+import org.http4k.connect.amazon.model.text
+import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 
@@ -18,9 +20,12 @@ data class CreateTopic(
 ) : SNSAction<CreatedTopic>(
     "CreateTopic",
     *(tags
-        .flatMapIndexed { i, tag -> listOf(
-            "Tag.member.${i + 1}.Key" to tag.Key,
-            "Tag.member.${i + 1}.Value" to tag.Value) } +
+        .flatMapIndexed { i, tag ->
+            listOf(
+                "Tag.member.${i + 1}.Key" to tag.Key,
+                "Tag.member.${i + 1}.Value" to tag.Value
+            )
+        } +
         attributes.entries
             .flatMapIndexed { i, it ->
                 listOf(
@@ -41,9 +46,8 @@ data class CreateTopic(
 
 data class CreatedTopic(val topicArn: ARN) {
     companion object {
-        fun from(response: Response) =
-            with(documentBuilderFactory().parse(response.body.stream)) {
-                CreatedTopic(ARN.of(text("TopicArn")))
-            }
+        fun from(response: Response) = with(response) {
+            CreatedTopic(ARN.of(xmlDoc().text("TopicArn")))
+        }
     }
 }
