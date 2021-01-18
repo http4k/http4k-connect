@@ -11,3 +11,7 @@ class SNSMessageId private constructor(value: String) : StringValue(value) {
 class PhoneNumber private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<PhoneNumber>(::PhoneNumber, 1.minLength)
 }
+
+class TopicName private constructor(value: String) : ResourceId(value) {
+    companion object : StringValueFactory<TopicName>(::TopicName, 1.minLength)
+}
