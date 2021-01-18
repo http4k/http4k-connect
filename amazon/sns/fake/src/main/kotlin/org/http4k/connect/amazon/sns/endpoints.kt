@@ -1,9 +1,5 @@
 package org.http4k.connect.amazon.sns
 
-import CreateTopicResponse
-import DeleteTopicResponse
-import ListTopicsResponse
-import PublishResponse
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Region
