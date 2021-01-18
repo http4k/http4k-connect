@@ -5,6 +5,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.QueueName
+import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.Method.POST
@@ -16,13 +17,13 @@ import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 @Http4kConnectAction
 data class CreateQueue(
     val queueName: QueueName,
-    val tags: Map<String, String> = emptyMap(),
+    val tags: List<Tag> = emptyList(),
     val attributes: Map<String, String> = emptyMap(),
     val expires: ZonedDateTime? = null
 ) : SQSAction<CreatedQueue>(
     "CreateQueue",
-    *(tags.entries
-        .flatMap { listOf("Tag.Key" to it.key, "Tag.Value" to it.value) } +
+    *(tags
+        .flatMap { listOf("Tag.Key" to it.Key, "Tag.Value" to it.Value) } +
         attributes.entries
             .flatMapIndexed { i, it ->
                 listOf(
