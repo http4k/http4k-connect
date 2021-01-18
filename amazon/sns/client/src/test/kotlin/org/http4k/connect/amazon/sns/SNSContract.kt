@@ -20,7 +20,7 @@ abstract class SNSContract(http: HttpHandler) : AwsContract(http) {
             val topicArn = createTopic(
                 topicName,
                 listOf(Tag("key", "value")),
-                mapOf("MaximumMessageSize" to "10000")
+                emptyMap()
             ).successValue().topicArn
             try {
 //                val id = sendMessage(
