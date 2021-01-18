@@ -48,7 +48,7 @@ fun deleteTopic(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Act
 }
 
 fun listTopics(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "ListTopics" }
-§    .asRouter() bind {
+    .asRouter() bind {
     Response(OK).with(viewModelLens of ListTopicsResponse(topics.keySet("").map(ARN::of)))
 }
 
