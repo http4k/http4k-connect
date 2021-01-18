@@ -3,8 +3,11 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v2.10.1.0 (uncut)
+### v2.11.0.0
+- **http4k-connect-amazon-sns** : New module.
+- **http4k-connect-amazon-sns-fake* : New module.
 - **http4k-connect-** : Make all action classes Data classes so they are test friendly
+- **http4k-connect-amazon-sqs** : [Breaking] Tags is now a `List<Tag>` instead of a `Map<String, String>`.
 
 ### v2.10.0.0
 - **http4k-connect-amazon-** : Add convenience functions to create clients from the system environment. 

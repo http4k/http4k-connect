@@ -6,6 +6,8 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Listing
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketKey
+import org.http4k.connect.amazon.model.text
+import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -21,8 +23,8 @@ class ListKeys : S3BucketAction<Listing<BucketKey>> {
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> {
-                val keys = documentBuilderFactory().parse(body.stream).getElementsByTagName("Key")
-                val items = (0 until keys.length).map { BucketKey.of(keys.item(it).textContent) }
+                val keys = xmlDoc().getElementsByTagName("Key")
+                val items = (0 until keys.length).map { BucketKey.of(keys.item(it).text()) }
                 Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
             }
             else -> Failure(RemoteFailure(GET, uri(), status))

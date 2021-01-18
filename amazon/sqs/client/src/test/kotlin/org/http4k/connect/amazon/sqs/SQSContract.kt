@@ -5,8 +5,9 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.DataType
 import org.http4k.connect.amazon.model.QueueName
-import org.http4k.connect.amazon.sqs.action.DataType
+import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.sqs.action.MessageAttribute
 import org.http4k.connect.amazon.sqs.action.MessageSystemAttribute
 import org.http4k.connect.successValue
@@ -30,7 +31,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
         with(sqs) {
             val created = createQueue(
                 queueName,
-                mapOf("tag" to "value"),
+                listOf(Tag("tag", "value")),
                 mapOf("MaximumMessageSize" to "10000"),
                 expires
             ).successValue()

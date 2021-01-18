@@ -10,6 +10,11 @@ import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.amazon.model.ReceiptHandle
 import org.http4k.connect.amazon.model.SQSMessage
 import org.http4k.connect.amazon.model.SQSMessageId
+import org.http4k.connect.amazon.model.children
+import org.http4k.connect.amazon.model.firstChild
+import org.http4k.connect.amazon.model.sequenceOfNodes
+import org.http4k.connect.amazon.model.text
+import org.http4k.connect.amazon.model.xmlDoc
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Uri
@@ -49,7 +54,7 @@ data class ReceiveMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(
-                with(documentBuilderFactory().parse(response.body.stream)) {
+                with(xmlDoc()) {
                     getElementsByTagName("Message")
                         .sequenceOfNodes()
                         .map {

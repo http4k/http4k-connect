@@ -30,7 +30,7 @@ fun main() {
     val client = SQS.Http(region, { AwsCredentials("accessKeyId", "secretKey") }, http.debug())
 
     // all operations return a Result monad of the API type
-    val createdQueueResult: Result<CreatedQueue, RemoteFailure> = client.createQueue(queueName, emptyMap(), emptyMap())
+    val createdQueueResult: Result<CreatedQueue, RemoteFailure> = client.createQueue(queueName, emptyList(), emptyMap())
     println(createdQueueResult)
 
     // send a message
