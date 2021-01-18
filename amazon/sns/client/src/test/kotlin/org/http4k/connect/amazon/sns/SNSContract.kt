@@ -1,8 +1,6 @@
-package org.http4k.connect.amazon.sqs
+package org.http4k.connect.amazon.sns
 
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.sns.Http
-import org.http4k.connect.amazon.sns.SNS
 import org.http4k.core.HttpHandler
 
 abstract class SNSContract(http: HttpHandler) : AwsContract(http) {

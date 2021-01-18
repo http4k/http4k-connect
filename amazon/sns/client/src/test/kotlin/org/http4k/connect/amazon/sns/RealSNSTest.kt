@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.sqs
+package org.http4k.connect.amazon.sns
 
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.RealAwsEnvironment

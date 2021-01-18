@@ -2,8 +2,6 @@ package org.http4k.connect.amazon.sns
 
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.fakeAwsEnvironment
-import org.http4k.connect.amazon.sqs.FakeSNS
-import org.http4k.connect.amazon.sqs.SNSContract
 import org.http4k.connect.defaultLocalUri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetHostFrom

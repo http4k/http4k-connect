@@ -8,6 +8,7 @@ import org.http4k.core.Uri
 import org.http4k.core.body.form
 import org.http4k.core.with
 import org.http4k.lens.Header.CONTENT_TYPE
+import org.w3c.dom.Document
 import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
@@ -16,7 +17,7 @@ abstract class SNSAction<R>(private val action: String, private vararg val mappi
     Action<R> {
 
     override fun toRequest() =
-        (listOf("Action" to action, "Version" to "2012-11-05") + mappings)
+        (listOf("Action" to action, "Version" to "2010-03-31") + mappings)
             .filterNotNull()
             .fold(
                 Request(POST, uri())
@@ -25,10 +26,13 @@ abstract class SNSAction<R>(private val action: String, private vararg val mappi
                 acc.form(it.first, it.second)
             }
 
-    protected abstract fun uri(): Uri
+    fun uri() = Uri.of("/")
 }
 
 internal fun documentBuilderFactory() =
     DocumentBuilderFactory.newInstance()
         .newDocumentBuilder()
         .apply { setEntityResolver { _, _ -> InputSource(StringReader("")) } }
+
+fun Document.text(name: String) = textOpt(name)!!
+fun Document.textOpt(name: String) = getElementsByTagName(name).item(0)?.textContent?.trim()

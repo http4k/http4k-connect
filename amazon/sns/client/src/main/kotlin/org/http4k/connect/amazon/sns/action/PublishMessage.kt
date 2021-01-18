@@ -11,8 +11,6 @@ import org.http4k.connect.amazon.model.SNSMessageId
 import org.http4k.connect.amazon.model.asList
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
-import org.http4k.core.Uri
-import org.w3c.dom.Document
 
 @Http4kConnectAction
 data class PublishMessage(
@@ -46,8 +44,6 @@ data class PublishMessage(
             else -> Failure(RemoteFailure(POST, uri(), status))
         }
     }
-
-    override fun uri() = Uri.of("/")
 }
 
 data class PublishedMessage(
@@ -65,5 +61,3 @@ data class PublishedMessage(
     }
 }
 
-private fun Document.text(name: String) = textOpt(name)!!
-private fun Document.textOpt(name: String) = getElementsByTagName(name).item(0)?.textContent?.trim()

@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.sns
 
 import org.http4k.connect.FakeSystemContract
-import org.http4k.connect.amazon.sqs.FakeSNS
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 
