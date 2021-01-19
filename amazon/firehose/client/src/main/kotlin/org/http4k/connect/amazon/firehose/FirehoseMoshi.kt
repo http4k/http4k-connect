@@ -2,6 +2,8 @@ package org.http4k.connect.amazon.firehose
 
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.firehose.action.KotshiBatchResultJsonAdapter
+import org.http4k.connect.amazon.firehose.action.KotshiDeliveryStreamsJsonAdapter
+import org.http4k.connect.amazon.firehose.action.KotshiListDeliveryStreamsJsonAdapter
 import org.http4k.connect.amazon.firehose.action.KotshiPutRecordBatchJsonAdapter
 import org.http4k.connect.amazon.firehose.action.KotshiPutRecordJsonAdapter
 import org.http4k.connect.amazon.firehose.action.KotshiRecordAddedJsonAdapter
@@ -28,6 +30,8 @@ object FirehoseMoshi : ConfigurableMoshi(
 
 object FirehoseJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiBatchResultJsonAdapter),
+    adapter(::KotshiListDeliveryStreamsJsonAdapter),
+    adapter(::KotshiDeliveryStreamsJsonAdapter),
     adapter(::KotshiPutRecordBatchJsonAdapter),
     adapter(::KotshiPutRecordJsonAdapter),
     adapter(::KotshiRecordJsonAdapter),
