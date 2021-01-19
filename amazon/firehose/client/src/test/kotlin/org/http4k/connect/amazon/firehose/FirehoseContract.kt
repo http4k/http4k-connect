@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.firehose
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.DeliveryStreamType.DirectPut
 import org.http4k.connect.amazon.firehose.action.Record
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.DeliveryStreamName
@@ -19,9 +20,31 @@ abstract class FirehoseContract(http: HttpHandler) : AwsContract(http) {
     private val deliveryStreamName = DeliveryStreamName.of("connect")
 
     @Test
+    fun `create and delete delivery stream`() {
+        val deliveryStreamName = DeliveryStreamName.of(randomString)
+        with(firehose) {
+            try {
+                createDeliveryStream(
+                    deliveryStreamName, DirectPut
+
+                ).successValue()
+                assertThat(
+                    listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName),
+                    equalTo(true)
+                )
+            } finally {
+                deleteDeliveryStream(deliveryStreamName).successValue()
+            }
+        }
+    }
+
+    @Test
     fun `send records`() {
         with(firehose) {
-            assertThat(listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName), equalTo(true))
+            assertThat(
+                listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName),
+                equalTo(true)
+            )
             putRecord(
                 deliveryStreamName,
                 Record(Base64Blob.encoded(randomString))
