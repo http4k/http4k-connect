@@ -59,7 +59,7 @@ allprojects {
         } else if (project.name.startsWith("http4k-connect-storage-core")) {
             // bom - no code
         } else if (project.name.startsWith("http4k-connect-storage")) {
-            api(project(":http4k-connect-core-fake"))
+            api(project(":http4k-connect-storage-core"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
             testImplementation(project(path: ":http4k-connect-storage-core", configuration: "testArtifacts"))
         } else if (project.name == "http4k-connect") {

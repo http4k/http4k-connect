@@ -6,7 +6,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.with
-import org.http4k.format.Moshi.auto
+import org.http4k.format.Jackson.auto
 import org.http4k.lens.BiDiBodyLens
 
 inline fun <reified T : Any> Storage.Companion.Http(

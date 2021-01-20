@@ -22,7 +22,7 @@ import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive
 import org.http4k.filter.ServerFilters
-import org.http4k.format.Moshi.auto
+import org.http4k.format.Jackson.auto
 import org.http4k.lens.BiDiBodyLens
 import org.http4k.lens.Path
 import org.http4k.lens.Query
