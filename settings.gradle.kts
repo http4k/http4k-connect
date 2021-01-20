@@ -2,6 +2,7 @@ include(":http4k-connect-kapt-generator")
 
 includeWithName("http4k-connect-bom", "bom")
 includeSystem("core")
+includeStorage("core")
 includeStorage("jdbc")
 includeStorage("redis")
 includeStorage("s3")

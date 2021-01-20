@@ -56,9 +56,12 @@ allprojects {
             api(project(":${project.name.substring(0, project.name.length() - 5)}"))
             testImplementation(project(path: ":${project.name.substring(0, project.name.length() - 5)}", configuration: "testArtifacts"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
+        } else if (project.name.startsWith("http4k-connect-storage-core")) {
+            // bom - no code
         } else if (project.name.startsWith("http4k-connect-storage")) {
             api(project(":http4k-connect-core-fake"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
+            testImplementation(project(path: ":http4k-connect-storage-core", configuration: "testArtifacts"))
         } else if (project.name == "http4k-connect") {
             rootProject.subprojects.forEach {
                 testImplementation(project(it.name))
