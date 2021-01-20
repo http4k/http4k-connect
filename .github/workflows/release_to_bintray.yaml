@@ -27,5 +27,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: http4k/http4k-connect
-          event-type: release
+          event-type: connect-release
           client-payload: '{"version": "${{ steps.tagName.outputs.tag }}"}'
