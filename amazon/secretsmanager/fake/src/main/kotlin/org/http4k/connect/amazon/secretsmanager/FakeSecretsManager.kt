@@ -24,7 +24,7 @@ data class StoredSecretValue(
 )
 
 class FakeSecretsManager(
-    private val secrets: Storage<StoredSecretValue> = Storage.InMemory(),
+    secrets: Storage<StoredSecretValue> = Storage.InMemory(),
     private val clock: Clock = Clock.systemDefaultZone()
 ) : ChaosFake() {
 
