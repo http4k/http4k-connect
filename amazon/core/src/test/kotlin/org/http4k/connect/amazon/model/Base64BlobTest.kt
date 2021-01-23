@@ -21,4 +21,13 @@ class Base64BlobTest {
         assertThat(encoded.value, equalTo("aGVsbG8="))
         assertThat(String(encoded.decodedBytes()), equalTo(String(message)))
     }
+
+    @Test
+    fun `encode decode stream`() {
+        val message = "hello"
+        val stream = message.byteInputStream()
+        val encoded = Base64Blob.encoded(stream)
+        assertThat(encoded.value, equalTo("aGVsbG8="))
+        assertThat(String(encoded.decodedInputStream().readAllBytes()), equalTo(message))
+    }
 }

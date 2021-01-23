@@ -12,6 +12,7 @@ import dev.forkhandles.values.regex
 import org.http4k.base64Decoded
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
+import java.io.InputStream
 import java.util.Base64
 
 class AccessKeyId private constructor(value: String) : StringValue(value) {
@@ -81,10 +82,12 @@ class AwsService private constructor(value: String) : StringValue(value) {
 class Base64Blob private constructor(value: String) : StringValue(value) {
     fun decoded() = value.base64Decoded()
     fun decodedBytes() = value.base64Decoded().toByteArray()
+    fun decodedInputStream() = value.base64Decoded().byteInputStream()
 
     companion object : StringValueFactory<Base64Blob>(::Base64Blob, 1.minLength) {
         fun encoded(unencoded: String) = encoded(unencoded.toByteArray())
         fun encoded(unencoded: ByteArray) = Base64Blob(Base64.getEncoder().encodeToString(unencoded))
+        fun encoded(unencoded: InputStream) = encoded(unencoded.readAllBytes())
     }
 }
 
