@@ -10,9 +10,9 @@ import dev.forkhandles.values.minLength
 import dev.forkhandles.values.minValue
 import dev.forkhandles.values.regex
 import org.http4k.base64Decoded
-import org.http4k.base64Encode
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
+import java.util.Base64
 
 class AccessKeyId private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<AccessKeyId>(::AccessKeyId, 1.minLength)
@@ -80,9 +80,11 @@ class AwsService private constructor(value: String) : StringValue(value) {
 
 class Base64Blob private constructor(value: String) : StringValue(value) {
     fun decoded() = value.base64Decoded()
+    fun decodedBytes() = value.base64Decoded().toByteArray()
 
     companion object : StringValueFactory<Base64Blob>(::Base64Blob, 1.minLength) {
-        fun encoded(unencoded: String) = Base64Blob(unencoded.base64Encode())
+        fun encoded(unencoded: String) = encoded(unencoded.toByteArray())
+        fun encoded(unencoded: ByteArray) = Base64Blob(Base64.getEncoder().encodeToString(unencoded))
     }
 }
 
