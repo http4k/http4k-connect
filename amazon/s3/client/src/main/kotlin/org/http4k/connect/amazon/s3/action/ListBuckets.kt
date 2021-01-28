@@ -8,7 +8,7 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.xmlDoc
-import org.http4k.core.Method
+import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
@@ -16,7 +16,7 @@ import org.http4k.core.Uri
 @Http4kConnectAction
 class ListBuckets : S3Action<Listing<BucketName>> {
 
-    override fun toRequest() = Request(Method.GET, Uri.of("/"))
+    override fun toRequest() = Request(GET, Uri.of("/"))
 
     override fun toResult(response: Response) = with(response) {
         when {
@@ -25,7 +25,7 @@ class ListBuckets : S3Action<Listing<BucketName>> {
                 val items = (0 until buckets.length).map { BucketName.of(buckets.item(it).text()) }
                 Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
             }
-            else -> Failure(RemoteFailure(Method.GET, Uri.of("/"), status))
+            else -> Failure(RemoteFailure(GET, Uri.of("/"), status))
         }
     }
 

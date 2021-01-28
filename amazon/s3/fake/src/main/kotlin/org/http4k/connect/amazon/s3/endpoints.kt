@@ -4,7 +4,7 @@ import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
-import org.http4k.core.ContentType
+import org.http4k.core.ContentType.Companion.APPLICATION_XML
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
@@ -29,16 +29,22 @@ fun bucketListKeys(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyConte
     "/" bind GET to { listKeys(it.subdomain(buckets), buckets, bucketContent) }
 
 fun bucketDeleteBucket(buckets: Storage<Unit>) =
-    "/" bind DELETE to { Response(if (buckets.remove(it.subdomain(buckets))) OK else NOT_FOUND) }
+    "/" bind DELETE to {
+        if (buckets.remove(it.subdomain(buckets))) Response(OK)
+        else invalidBucketNameResponse()
+    }
 
 fun bucketPutBucket(buckets: Storage<Unit>) = "/" bind PUT to { putBucket(it.subdomain(buckets), buckets) }
 
 fun bucketDeleteKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
     "/{id:.+}" bind DELETE to { req ->
         val bucket = req.subdomain(buckets)
-        (buckets[bucket]
-            ?.let { Response(if (bucketContent.remove("${bucket}-${req.path("id")!!}")) OK else NOT_FOUND) }
-            ?: Response(NOT_FOUND))
+        buckets[bucket]
+            ?.let {
+                if (bucketContent.remove("${bucket}-${req.path("id")!!}")) Response(OK)
+                else Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
+            }
+            ?: invalidBucketNameResponse()
     }
 
 fun bucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, clock: Clock) =
@@ -60,7 +66,7 @@ fun copyKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, cl
                     clock
                 )
                 Response(OK)
-            } ?: Response(NOT_FOUND)
+            } ?: invalidBucketNameResponse()
     })
 
 fun bucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
@@ -68,11 +74,12 @@ fun bucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent
         val bucket = req.subdomain(buckets)
         buckets[bucket]
             ?.let {
-                bucketContent["${bucket}-${req.path("id")!!}"]?.content?.let {
-                    Base64.getDecoder().decode(it).inputStream()
-                }
-            }?.let { Response(OK).body(it) }
-            ?: Response(NOT_FOUND)
+                bucketContent["${bucket}-${req.path("id")!!}"]
+                    ?.content?.let { Base64.getDecoder().decode(it).inputStream() }
+                    ?.let { Response(OK).body(it) }
+                    ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
+            }
+            ?: invalidBucketNameResponse()
     }
 
 fun globalListBuckets(buckets: Storage<Unit>) = "/" bind GET to {
@@ -119,7 +126,7 @@ fun putKey(
         )
         Response(CREATED)
     }
-    ?: Response(NOT_FOUND)
+    ?: invalidBucketNameResponse()
 
 fun putBucket(bucket: String, buckets: Storage<Unit>): Response {
     buckets[bucket] ?: run { buckets[bucket] = Unit }
@@ -136,7 +143,9 @@ fun Request.subdomain(buckets: Storage<Unit>): String =
         }
 
 private val lens by lazy {
-    Body.viewModel(HandlebarsTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()
+    Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 }
 
 private const val GLOBAL_BUCKET = "unknown"
+
+private fun invalidBucketNameResponse() = Response(NOT_FOUND).with(lens of S3Error("NoSuchBucket"))
