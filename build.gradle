@@ -46,9 +46,7 @@ allprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
         testImplementation("org.testcontainers:junit-jupiter")
         testImplementation("org.testcontainers:testcontainers")
-    }
 
-    dependencies {
         if (project.name.endsWith("core-fake")) {
             api(project(":http4k-connect-core"))
         } else if (project.name.endsWith("fake")) {
