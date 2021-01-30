@@ -107,4 +107,32 @@ dependencies {
 - [Redis](./storage/redis) -> `org.http4k:http4k-connect-storage-redis`
 - [S3](./storage/s3) -> `org.http4k:http4k-connect-storage-s3"`
 
+## Implementing your own adapters
+It is very easy to implement your own adapters to follow the pattern. For the system `MySystem`, you would need to:
+
+1. Depend on the `http4k-connect-core` artifact
+2. Add an Action interface and implementation:
+```kotlin
+interface MySystemAction<R> : Action<R, RemoteFaiure`
+
+data class Echo(val value: String) : MySystemAction<Echoed> {
+    override fun toRequest() = Request(GET, "echo").body(value)
+    override fun toResult(response: Response) = Success(Echoed(response.bodyString()))
+}
+
+data class Echoed(val value: String)
+```
+3. Add your adapter interface and HTTP implementation:
+```kotlin
+interface MySystem {
+    operator fun <R : Any> invoke(action: MySystemAction<R>): Result<R, RemoteFailure>
+
+    companion object
+}
+
+fun MySystem.Companion.Http(http: HttpHandler) = object : MySystem {
+    override fun <R : Any> invoke(action: MySystemAction<R>) = action.toResult(http(action.toRequest()))
+}
+```
+
 ## Want to add a new system or Storage backend? Read the [guide](CONTRIBUTING.md).
