@@ -1,6 +1,6 @@
 on:
   repository_dispatch:
-    types: [http4k-release]
+    types: [connect-release]
 jobs:
   create-toolbox-release:
     runs-on: ubuntu-latest
