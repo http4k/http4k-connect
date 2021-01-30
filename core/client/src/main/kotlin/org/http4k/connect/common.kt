@@ -1,6 +1,5 @@
 package org.http4k.connect
 
-import dev.forkhandles.result4k.Result
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -9,7 +8,7 @@ import org.http4k.core.Uri
 
 interface Action<R> {
     fun toRequest(): Request
-    fun toResult(response: Response): Result<R, RemoteFailure>
+    fun toResult(response: Response): R
 }
 
 data class RemoteFailure(val method: Method, val uri: Uri, val status: Status, val message: String? = null) {

@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon
 
 import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
@@ -16,7 +17,7 @@ abstract class AwsJsonAction<R : Any>(
     private val service: AwsService,
     private val clazz: KClass<R>,
     private val autoMarshalling: AutoMarshalling
-) : Action<R> {
+) : Action<Result<R, RemoteFailure>> {
     override fun toRequest() = Request(POST, Uri.of("/"))
         .header("X-Amz-Target", "${service}.${javaClass.simpleName}")
         .replaceHeader("Content-Type", "application/x-amz-json-1.1")

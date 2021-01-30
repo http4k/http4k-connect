@@ -1,5 +1,7 @@
 package org.http4k.connect.amazon.lambda.action
 
+import dev.forkhandles.result4k.Result
 import org.http4k.connect.Action
+import org.http4k.connect.RemoteFailure
 
-interface LambdaAction<RESP> : Action<RESP>
+interface LambdaAction<R> : Action<Result<R, RemoteFailure>>
