@@ -25,7 +25,7 @@ jobs:
         id: tagName
       - uses: peter-evans/repository-dispatch@v1.1.1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ORG_PUBLIC_REPO_WORKFLOW_TRIGGERING }}
           repository: http4k/http4k-connect
           event-type: connect-release
           client-payload: '{"version": "${{ steps.tagName.outputs.tag }}"}'
