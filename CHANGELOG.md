@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v2.14.1.0
+- **http4k-connect-*** : upgrade http4k, 
+- **http4k-connect-kapt-generator** : Un-hardcode result type as per Action interface. 
+
 ### v2.14.0.0
 - **http4k-connect-*** : [Breaking] Changed Result type on Action to be generic to support other programming models. This will only affect users who are implementing their own adapters. To fix, change: 
 ```kotlin
