@@ -48,6 +48,5 @@ fun includeStorage(name: String) {
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
     }
 }

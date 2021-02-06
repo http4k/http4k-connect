@@ -5,8 +5,8 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
-    implementation("se.ansman.kotshi:api:2.3.2")
-    kapt("se.ansman.kotshi:compiler:2.3.2")
+    implementation("se.ansman.kotshi:api:2.3.3")
+    kapt("se.ansman.kotshi:compiler:2.3.3")
 
     implementation("org.http4k:http4k-aws")
     implementation("org.http4k:http4k-format-core")

@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
     }
 
     dependencies {
@@ -19,8 +18,13 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
-        maven { url 'https://jitpack.io' }
+        jcenter() {
+            // remove this when exposed migrated to MC
+            content {
+                includeModule("org.jetbrains.exposed", "exposed-core")
+                includeModule("org.jetbrains.exposed", "exposed-jdbc")
+            }
+        }
     }
 
     apply plugin: "kotlin"
