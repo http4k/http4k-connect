@@ -31,6 +31,7 @@ class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaosFake() {
             api.decrypt(keys),
             api.encrypt(keys),
             api.getPublicKey(keys, publicKey),
+            api.listKeys(keys),
             api.scheduleKeyDeletion(keys),
             api.sign(keys),
             api.verify(keys)

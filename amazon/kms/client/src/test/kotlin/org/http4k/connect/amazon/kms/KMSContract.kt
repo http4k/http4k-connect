@@ -29,10 +29,13 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
         val plaintext = Base64Blob.encoded("hello there")
 
         val creation = kms.createKey(RSA_3072, ENCRYPT_DECRYPT).successValue()
+
         val keyId = creation.KeyMetadata.KeyId
         assertThat(keyId, present())
 
-        try {
+        assertThat(kms.listKeys().successValue().Keys.any { it.KeyId ==keyId }, equalTo(true))
+
+            try {
             val describe = kms.describeKey(keyId).successValue()
             assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 

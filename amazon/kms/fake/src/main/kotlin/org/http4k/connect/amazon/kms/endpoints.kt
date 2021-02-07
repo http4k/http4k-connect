@@ -11,6 +11,9 @@ import org.http4k.connect.amazon.kms.action.GetPublicKey
 import org.http4k.connect.amazon.kms.action.KeyCreated
 import org.http4k.connect.amazon.kms.action.KeyDeletionSchedule
 import org.http4k.connect.amazon.kms.action.KeyDescription
+import org.http4k.connect.amazon.kms.action.KeyEntry
+import org.http4k.connect.amazon.kms.action.KeyList
+import org.http4k.connect.amazon.kms.action.ListKeys
 import org.http4k.connect.amazon.kms.action.PublicKey
 import org.http4k.connect.amazon.kms.action.ScheduleKeyDeletion
 import org.http4k.connect.amazon.kms.action.Sign
@@ -42,6 +45,14 @@ fun AmazonJsonFake.createKey(keys: Storage<StoredCMK>) = route<CreateKey> {
     keys[storedCMK.arn.value] = storedCMK
 
     KeyCreated(KeyMetadata(storedCMK.keyId, storedCMK.arn, AwsAccount.of("0"), it.KeyUsage))
+}
+
+fun AmazonJsonFake.listKeys(keys: Storage<StoredCMK>) = route<ListKeys> {
+    KeyList(
+        keys.keySet("")
+            .mapNotNull { keys[it] }
+            .map { KeyEntry(it.keyId, it.arn) }
+    )
 }
 
 fun AmazonJsonFake.describeKey(keys: Storage<StoredCMK>) = route<DescribeKey> { req ->
