@@ -5,7 +5,7 @@ on:
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 jobs:
-  release:
+  release-to-bintray:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

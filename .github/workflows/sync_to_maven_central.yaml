@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 12 * * *"
 jobs:
-  create-toolbox-release:
+  sync-maven-central:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

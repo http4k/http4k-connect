@@ -2,7 +2,7 @@ on:
   repository_dispatch:
     types: [connect-release]
 jobs:
-  create-toolbox-release:
+  build-github-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
