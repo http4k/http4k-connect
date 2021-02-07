@@ -1,6 +1,8 @@
 on:
   repository_dispatch:
     types: [connect-release]
+  schedule:
+    - cron: "0 12 * * *"
 jobs:
   create-toolbox-release:
     runs-on: ubuntu-latest
