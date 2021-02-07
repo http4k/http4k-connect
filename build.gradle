@@ -103,9 +103,9 @@ allprojects {
         from sourceSets.main.allSource
     }
 
-    task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    task javadocJar(type: Jar, dependsOn: javadoc) {
         archiveClassifier = 'javadoc'
-        from "$buildDir/dokka/javadoc"
+        from javadoc.destinationDir
     }
 
     task testJar(type: Jar) {
