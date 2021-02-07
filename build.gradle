@@ -187,16 +187,18 @@ allprojects {
         }
     }
 
-    jacocoTestReport {
-        reports {
-            html.enabled = true
-            xml.enabled = true
-        }
-        afterEvaluate {
-            classDirectories.setFrom(files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: '**/Kotshi**/**')
-                fileTree(dir: it, exclude: '**/**Extensions**')
-            }))
+    if (hasCodeCoverage(project)) {
+        jacocoTestReport {
+            reports {
+                html.enabled = true
+                xml.enabled = true
+            }
+            afterEvaluate {
+                classDirectories.setFrom(files(classDirectories.files.collect {
+                    fileTree(dir: it, exclude: '**/Kotshi**/**')
+                    fileTree(dir: it, exclude: '**/**Extensions**')
+                }))
+            }
         }
     }
 
@@ -222,6 +224,11 @@ allprojects {
 
 }
 
+def hasCodeCoverage(project) {
+    return project.name != "http4k-connect-bom" &&
+        project.name != "http4k-connect-kapt-adapter"
+}
+
 coveralls {
     sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
     jacocoReportPath = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
@@ -231,7 +238,11 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = subprojects.test
     getSourceDirectories().from(subprojects.sourceSets.main.allSource.srcDirs)
     getClassDirectories().from(subprojects.sourceSets.main.output)
-    getExecutionData().from(subprojects.findAll { it.name != "http4k-connect-bom" }.jacocoTestReport.executionData)
+    getExecutionData()
+        .from(
+            subprojects.findAll {hasCodeCoverage(it) }
+                .jacocoTestReport.executionData
+        )
 
     reports {
         html.enabled = true
