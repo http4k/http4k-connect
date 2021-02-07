@@ -81,7 +81,7 @@ allprojects {
     }
 
     jacoco {
-        toolVersion = "0.8.3"
+        toolVersion = "0.8.6"
     }
 
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
