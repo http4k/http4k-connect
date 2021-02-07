@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v2.15.0.0
+- **http4k-connect-google-analytics** : [Break] Harmonised interface with other adapters. TrackingId now moved 
+to individual requests
+
 ### v2.14.2.0
 - **http4k-connect-*** : upgrade http4k, kotlin, others
 

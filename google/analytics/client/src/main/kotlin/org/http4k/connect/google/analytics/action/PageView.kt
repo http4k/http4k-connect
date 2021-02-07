@@ -18,9 +18,10 @@ data class PageView(
     val clientId: ClientId,
     val documentTitle: String,
     val documentPath: String,
-    val documentHost: String
+    val documentHost: String,
+    val trackingId: TrackingId
 ) : GoogleAnalyticsAction<Unit> {
-    override fun toRequest(trackingId: TrackingId) = Request(POST, uri())
+    override fun toRequest() = Request(POST, uri())
         .header("User-Agent", userAgent)
         .form(VERSION, "1")
         .form(MEASUREMENT_ID, trackingId.value)

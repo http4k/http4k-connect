@@ -33,8 +33,8 @@ import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalytics.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
-    private val analytics = ServerFilters.LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
+    private val client = GoogleAnalytics.Http(testHttpClient)
+    private val analytics = ServerFilters.LogPageView(client, TrackingId.of("TEST-MEASUREMENT-ID")) { ClientId.of("TEST-CLIENT-ID") }.then {
         when {
             it.uri.path.contains("fail") -> Response(BAD_REQUEST)
             it.uri.path.contains("informational") -> Response(CONTINUE)

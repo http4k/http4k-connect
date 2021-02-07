@@ -3,6 +3,7 @@ package org.http4k.filter
 import org.http4k.connect.google.analytics.GoogleAnalytics
 import org.http4k.connect.google.analytics.action.PageView
 import org.http4k.connect.google.model.ClientId
+import org.http4k.connect.google.model.TrackingId
 import org.http4k.core.Filter
 import org.http4k.core.Request
 import org.http4k.routing.RoutedRequest
@@ -13,6 +14,7 @@ import java.util.UUID
  */
 fun ServerFilters.LogPageView(
     analytics: GoogleAnalytics,
+    trackingId: TrackingId,
     clientId: (Request) -> ClientId = { ClientId.of(UUID.randomUUID().toString()) }
 ): Filter = Filter { handler ->
     { request ->
@@ -24,7 +26,7 @@ fun ServerFilters.LogPageView(
                     else -> request.uri.path
                 }
                 val userAgent = it.header("User-Agent") ?: DEFAULT_USER_AGENT
-                analytics(PageView(userAgent, clientId(request), path, path, host))
+                analytics(PageView(userAgent, clientId(request), path, path, host, trackingId))
             }
         }
     }
