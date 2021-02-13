@@ -14,7 +14,7 @@ function maven_publish() {
     local PAYLOAD="{\"username\": \"${SONATYPE_USER}\", \"password\": \"${SONATYPE_KEY}\"}"
 
     local PUBLISHED=$(
-        curl --fail --silent -o /dev/null https://mvnrepository.com/artifact/org.http4k/"${PACKAGE}"/"${LOCAL_VERSION}"
+        curl --fail --silent -o /dev/null https://repo.maven.apache.org/maven2/org/http4k/"${PACKAGE}"/"${LOCAL_VERSION}"/"${PACKAGE}"-"${LOCAL_VERSION}".pom
         echo $?
     )
 
