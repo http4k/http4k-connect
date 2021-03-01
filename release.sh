@@ -15,9 +15,10 @@ sed -i '' s/"$BINTRAY_VERSION"/"$NEW_VERSION"/g README.md
 sed -i '' s/"$BINTRAY_VERSION"/"$NEW_VERSION"/g version.json
 
 git add README.md
-git commit -am"upgrade"
-git tag -a "$NEW_VERSION" -m "http4k-connect version $NEW_VERSION (was $BINTRAY_VERSION)"
-git push origin "$NEW_VERSION"
+
+git commit -am"Release $NEW_VERSION"
+
+git push origin
 
 git push
 
