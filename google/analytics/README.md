@@ -7,6 +7,7 @@ The GA connector provides the following Actions:
 ### Default Fake port: 35628
 
 To start:
+
 ```
 FakeGoogleAnalytics().start()
 ```

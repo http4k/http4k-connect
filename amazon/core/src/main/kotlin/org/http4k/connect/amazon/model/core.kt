@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.model
 
 import dev.forkhandles.values.LongValue
 import dev.forkhandles.values.LongValueFactory
+import dev.forkhandles.values.NonEmptyStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.Value
@@ -16,7 +17,7 @@ import java.io.InputStream
 import java.util.Base64
 
 class AccessKeyId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<AccessKeyId>(::AccessKeyId, 1.minLength)
+    companion object : NonEmptyStringValueFactory<AccessKeyId>(::AccessKeyId)
 }
 
 class ARN private constructor(value: String) : StringValue(value) {
@@ -74,7 +75,7 @@ class AwsAccount private constructor(value: String) : StringValue(value.padStart
 }
 
 class AwsService private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<AwsService>(::AwsService, 1.minLength)
+    companion object : NonEmptyStringValueFactory<AwsService>(::AwsService)
 
     fun toUri(region: Region) = Uri.of("https://$this.${region}.amazonaws.com")
 }
@@ -84,7 +85,7 @@ class Base64Blob private constructor(value: String) : StringValue(value) {
     fun decodedBytes() = value.base64Decoded().toByteArray()
     fun decodedInputStream() = value.base64Decoded().byteInputStream()
 
-    companion object : StringValueFactory<Base64Blob>(::Base64Blob, 1.minLength) {
+    companion object : NonEmptyStringValueFactory<Base64Blob>(::Base64Blob) {
         fun encoded(unencoded: String) = encoded(unencoded.toByteArray())
         fun encoded(unencoded: ByteArray) = Base64Blob(Base64.getEncoder().encodeToString(unencoded))
         fun encoded(unencoded: InputStream) = encoded(unencoded.readAllBytes())
@@ -92,7 +93,7 @@ class Base64Blob private constructor(value: String) : StringValue(value) {
 }
 
 class KMSKeyId private constructor(value: String) : ResourceId(value) {
-    companion object : StringValueFactory<KMSKeyId>(::KMSKeyId, 1.minLength) {
+    companion object : NonEmptyStringValueFactory<KMSKeyId>(::KMSKeyId) {
         fun of(arn: ARN) = of(arn.value)
     }
 }
@@ -104,11 +105,11 @@ class Region private constructor(value: String) : StringValue(value) {
 abstract class ResourceId(value: String) : StringValue(value)
 
 class SecretAccessKey private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<SecretAccessKey>(::SecretAccessKey, 1.minLength)
+    companion object : NonEmptyStringValueFactory<SecretAccessKey>(::SecretAccessKey)
 }
 
 class SessionToken private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<SessionToken>(::SessionToken, 1.minLength)
+    companion object : NonEmptyStringValueFactory<SessionToken>(::SessionToken)
 }
 
 @JsonSerializable

@@ -33,9 +33,9 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
         val keyId = creation.KeyMetadata.KeyId
         assertThat(keyId, present())
 
-        assertThat(kms.listKeys().successValue().Keys.any { it.KeyId ==keyId }, equalTo(true))
+        assertThat(kms.listKeys().successValue().Keys.any { it.KeyId == keyId }, equalTo(true))
 
-            try {
+        try {
             val describe = kms.describeKey(keyId).successValue()
             assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 

@@ -1,19 +1,18 @@
 package org.http4k.connect.amazon.model
 
+import dev.forkhandles.values.NonEmptyStringValueFactory
 import dev.forkhandles.values.StringValue
-import dev.forkhandles.values.StringValueFactory
-import dev.forkhandles.values.minLength
 
 class QueueName private constructor(value: String) : ResourceId(value) {
-    companion object : StringValueFactory<QueueName>(::QueueName, 1.minLength)
+    companion object : NonEmptyStringValueFactory<QueueName>(::QueueName)
 }
 
 class SQSMessageId private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<SQSMessageId>(::SQSMessageId, 1.minLength)
+    companion object : NonEmptyStringValueFactory<SQSMessageId>(::SQSMessageId)
 }
 
 class ReceiptHandle private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<ReceiptHandle>(::ReceiptHandle, 1.minLength)
+    companion object : NonEmptyStringValueFactory<ReceiptHandle>(::ReceiptHandle)
 }
 
 data class SQSMessage(
