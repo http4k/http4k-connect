@@ -24,9 +24,9 @@ import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.adapter
 import org.http4k.format.asConfigurable
+import org.http4k.format.value
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
-import value
 
 object SecretsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()

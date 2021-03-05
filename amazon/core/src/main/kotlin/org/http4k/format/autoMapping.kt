@@ -11,7 +11,6 @@ import org.http4k.connect.amazon.model.SecretAccessKey
 import org.http4k.connect.amazon.model.SessionToken
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.lens.BiDiMapping
-import value
 
 fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     value(AccessKeyId)
