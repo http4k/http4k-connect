@@ -2,6 +2,7 @@ package org.http4k.lens
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.http4k.connect.github.CallbackEvent
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.with
@@ -30,6 +31,17 @@ class HeaderTests {
             xHubSignature256(
                 Request(GET, "").with(xHubSignature256 of "randomUUID")
             ), equalTo("randomUUID")
+        )
+    }
+
+    @Test
+    fun `roundtrip event`() {
+        val event = Header.X_GITHUB_EVENT
+
+        assertThat(
+            event(
+                Request(GET, "").with(event of CallbackEvent.check_suite)
+            ), equalTo(CallbackEvent.check_suite)
         )
     }
 }
