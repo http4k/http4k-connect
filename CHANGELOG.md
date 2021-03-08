@@ -3,8 +3,8 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v2.15.3.0 (uncut)
-- **http4k-connect-github** : New module containing only basic callback support and Filters for checking requests.
+### v2.15.3.0
+- **http4k-connect-github** : New module containing only basic callback infrastructure and Filters for checking requests.
 
 ### v2.15.2.0
 - **http4k-connect-*** : upgrade http4k. This should Fix #17 (Enable custom domain in S3).
