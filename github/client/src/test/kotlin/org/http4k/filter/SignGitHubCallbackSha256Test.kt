@@ -1,4 +1,4 @@
-package org.http4k.connect.github.filter
+package org.http4k.filter
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -8,8 +8,6 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.I_M_A_TEAPOT
 import org.http4k.core.then
-import org.http4k.filter.ClientFilters
-import org.http4k.filter.SignGitHubCallbackSha256
 import org.http4k.hamkrest.hasStatus
 import org.http4k.lens.Header
 import org.http4k.lens.X_HUB_SIGNATURE_256

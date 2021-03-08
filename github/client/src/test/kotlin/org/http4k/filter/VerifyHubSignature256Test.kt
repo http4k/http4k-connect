@@ -1,4 +1,4 @@
-package org.http4k.connect.github.filter
+package org.http4k.filter
 
 import com.natpryce.hamkrest.assertion.assertThat
 import org.http4k.cloudnative.env.Secret
@@ -9,8 +9,6 @@ import org.http4k.core.Status.Companion.FORBIDDEN
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.then
 import org.http4k.core.with
-import org.http4k.filter.ServerFilters
-import org.http4k.filter.VerifyGitHubSignatureSha256
 import org.http4k.hamkrest.hasStatus
 import org.http4k.lens.Header
 import org.http4k.lens.X_HUB_SIGNATURE_256
