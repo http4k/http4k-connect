@@ -6,8 +6,8 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.github.action.GitHubCallbackAction
 
 @Http4kConnectAdapter
-interface GitHubCallback {
-    operator fun <R> invoke(action: GitHubCallbackAction<R>): Result<R, RemoteFailure>
+fun interface GitHubCallback {
+    operator fun invoke(action: GitHubCallbackAction): Result<Unit, RemoteFailure>
 
     companion object
 }
