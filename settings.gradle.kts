@@ -17,7 +17,11 @@ includeSystem("amazon", "sns")
 includeSystem("amazon", "sqs")
 includeSystem("amazon", "sts")
 includeSystem("amazon", "systemsmanager")
+
 includeSystem("example")
+
+includeSystemWithWebhooks("github")
+
 includeSystem("google", "analytics")
 
 fun includeSystem(system: String) {
@@ -30,6 +34,13 @@ fun includeSystem(owner: String, system: String) {
     val projectName = "http4k-connect-$owner-$system"
     includeWithName(projectName, "$owner/$system/client")
     includeWithName("$projectName-fake", "$owner/$system/fake")
+}
+
+fun includeSystemWithWebhooks(system: String) {
+    val projectName = "http4k-connect-$system"
+    includeWithName(projectName, "$system/client")
+    includeWithName("$projectName-webhooks", "$system/webhooks")
+    includeWithName("$projectName-fake", "$system/fake")
 }
 
 fun includeCommon(projectName: String, file: String) {
