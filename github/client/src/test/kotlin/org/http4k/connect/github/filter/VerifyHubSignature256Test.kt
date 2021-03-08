@@ -1,6 +1,7 @@
 package org.http4k.connect.github.filter
 
 import com.natpryce.hamkrest.assertion.assertThat
+import org.http4k.cloudnative.env.Secret
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -17,7 +18,7 @@ import org.junit.jupiter.api.Test
 
 class VerifyHubSignature256Test {
 
-    private val app = ServerFilters.VerifyGitHubSignatureSha256("secret").then { Response(OK) }
+    private val app = ServerFilters.VerifyGitHubSignatureSha256 { Secret("secret") }.then { Response(OK) }
 
     @Test
     fun `if valid lets through`() {
