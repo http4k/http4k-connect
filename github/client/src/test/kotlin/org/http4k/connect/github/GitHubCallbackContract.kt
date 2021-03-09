@@ -8,14 +8,22 @@ import org.http4k.connect.github.action.GitHubCallbackAction
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
+import org.http4k.core.then
+import org.http4k.filter.ServerFilters
+import org.http4k.filter.VerifyGitHubSignatureSha256
 import org.junit.jupiter.api.Test
 
 class TestCallbackAction : GitHubCallbackAction(CallbackEvent.check_suite)
 
 class GitHubCallbackContract {
-    private val callback = GitHubCallback.Http(
-        Uri.of("/foobar"), { Secret("secret") }, { Response(OK) }
-    )
+    private val secret = { Secret("secret") }
+
+    private val server = ServerFilters.VerifyGitHubSignatureSha256(secret)
+        .then {
+        Response(OK)
+    }
+
+    private val callback = GitHubCallback.Http(Uri.of("/foobar"), secret, server)
 
     @Test
     fun `test callback`() {
