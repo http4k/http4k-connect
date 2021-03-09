@@ -16,11 +16,11 @@ import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
 import javax.annotation.processing.SupportedSourceVersion
-import javax.lang.model.SourceVersion
+import javax.lang.model.SourceVersion.RELEASE_8
 import javax.lang.model.element.TypeElement
 
 @KotlinPoetMetadataPreview
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(RELEASE_8)
 @SupportedAnnotationTypes("org.http4k.connect.Http4kConnectAdapter")
 @SupportedOptions(KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
