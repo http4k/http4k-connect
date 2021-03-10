@@ -1,6 +1,6 @@
 package org.http4k.connect.amazon.model
 
-import dev.forkhandles.values.NonEmptyStringValueFactory
+import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.ZonedDateTimeValue
@@ -14,7 +14,7 @@ class TokenCode private constructor(value: String) : StringValue(value) {
 }
 
 class RoleId private constructor(value: String) : ResourceId(value) {
-    companion object : NonEmptyStringValueFactory<RoleId>(::RoleId)
+    companion object : NonBlankStringValueFactory<RoleId>(::RoleId)
 }
 
 class Expiration private constructor(value: ZonedDateTime) : ZonedDateTimeValue(value) {
