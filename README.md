@@ -84,7 +84,7 @@ dependencies {
     testImplementation "org.http4k:http4k-connect-amazon-s3-fake"
 
     // ...and a storage backend (optional)
-    testImplementation "org.http4k:http4k-storage-redis"
+    testImplementation "org.http4k:http4k-connect-storage-redis"
 }
 ```
 
