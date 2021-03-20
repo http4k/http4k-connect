@@ -11,7 +11,7 @@ import java.time.Clock
 
 class FakeLambda(
     vararg lambdas: Pair<FunctionName, HttpHandler>,
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemUTC()
 ) : ChaosFake() {
 
     override val app = routes(

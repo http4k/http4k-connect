@@ -11,13 +11,13 @@ import org.http4k.core.then
 import org.http4k.filter.Payload
 import java.lang.System.getenv
 import java.time.Clock
-import java.time.Clock.systemDefaultZone
+import java.time.Clock.systemUTC
 
 fun STS.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemDefaultZone()
+    clock: Clock = systemUTC()
 ) = object : STS {
     private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
 
@@ -27,5 +27,5 @@ fun STS.Companion.Http(
 fun STS.Companion.Http(
     env: Map<String, String> = getenv(),
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemDefaultZone()
+    clock: Clock = systemUTC()
 ) = Http(env.awsRegion(), env.awsCredentials(), rawHttp, clock)

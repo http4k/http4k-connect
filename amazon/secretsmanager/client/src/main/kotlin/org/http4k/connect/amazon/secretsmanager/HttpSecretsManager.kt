@@ -15,7 +15,7 @@ fun SecretsManager.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone()
+    clock: Clock = Clock.systemUTC()
 ) = object : SecretsManager {
     private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
 
@@ -25,5 +25,5 @@ fun SecretsManager.Companion.Http(
 fun SecretsManager.Companion.Http(
     env: Map<String, String> = System.getenv(),
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone()
+    clock: Clock = Clock.systemUTC()
 ) = Http(env.awsRegion(), env.awsCredentials(), rawHttp, clock)

@@ -26,7 +26,7 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
 
     @Test
     fun `encrypt-decrypt key lifecycle`() {
-        val plaintext = Base64Blob.encoded("hello there")
+        val plaintext = Base64Blob.encode("hello there")
 
         val creation = kms.createKey(RSA_3072, ENCRYPT_DECRYPT).successValue()
 
@@ -57,7 +57,7 @@ abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
 
     @Test
     fun `sign-verify key lifecycle`() {
-        val plaintext = Base64Blob.encoded("hello there")
+        val plaintext = Base64Blob.encode("hello there")
 
         val creation = kms.createKey(RSA_3072, SIGN_VERIFY).successValue()
         val keyId = creation.KeyMetadata.KeyId

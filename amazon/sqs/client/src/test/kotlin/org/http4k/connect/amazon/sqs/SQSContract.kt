@@ -43,7 +43,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
                     attributes = listOf(
                         MessageAttribute("foo", "123", DataType.Number),
                         MessageAttribute("bar", "123", DataType.Number),
-                        MessageAttribute("binaryfoo", Base64Blob.encoded("foobar"))
+                        MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
                     ),
                     systemAttributes = listOf(
                         MessageSystemAttribute(

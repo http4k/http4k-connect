@@ -6,6 +6,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.AwsService
+import org.http4k.core.ContentType
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -16,11 +17,12 @@ import kotlin.reflect.KClass
 abstract class AwsJsonAction<R : Any>(
     private val service: AwsService,
     private val clazz: KClass<R>,
-    private val autoMarshalling: AutoMarshalling
+    private val autoMarshalling: AutoMarshalling,
+    private val contentType: ContentType = ContentType("application/x-amz-json-1.1")
 ) : Action<Result<R, RemoteFailure>> {
     override fun toRequest() = Request(POST, Uri.of("/"))
         .header("X-Amz-Target", "${service}.${javaClass.simpleName}")
-        .replaceHeader("Content-Type", "application/x-amz-json-1.1")
+        .replaceHeader("Content-Type", contentType.value)
         .body(autoMarshalling.asFormatString(this))
 
     override fun toResult(response: Response) = with(response) {

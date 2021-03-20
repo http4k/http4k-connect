@@ -36,7 +36,7 @@ abstract class SNSContract(http: HttpHandler) : AwsContract(http) {
                     attributes = listOf(
                         MessageAttribute("foo", "123", Number),
                         MessageAttribute("bar", "123", Number),
-                        MessageAttribute("binaryfoo", Base64Blob.encoded("foobar"))
+                        MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
                     )
                 ).successValue()
             } finally {

@@ -9,7 +9,7 @@ class Base64BlobTest {
     @Test
     fun `encode decode string`() {
         val message = "hello"
-        val encoded = Base64Blob.encoded(message)
+        val encoded = Base64Blob.encode(message)
         assertThat(encoded.value, equalTo("aGVsbG8="))
         assertThat(encoded.decoded(), equalTo(message))
     }
@@ -17,7 +17,7 @@ class Base64BlobTest {
     @Test
     fun `encode decode bytes`() {
         val message = "hello".toByteArray()
-        val encoded = Base64Blob.encoded(message)
+        val encoded = Base64Blob.encode(message)
         assertThat(encoded.value, equalTo("aGVsbG8="))
         assertThat(String(encoded.decodedBytes()), equalTo(String(message)))
     }
@@ -26,7 +26,7 @@ class Base64BlobTest {
     fun `encode decode stream`() {
         val message = "hello"
         val stream = message.byteInputStream()
-        val encoded = Base64Blob.encoded(stream)
+        val encoded = Base64Blob.encode(stream)
         assertThat(encoded.value, equalTo("aGVsbG8="))
         assertThat(String(encoded.decodedInputStream().readAllBytes()), equalTo(message))
     }
