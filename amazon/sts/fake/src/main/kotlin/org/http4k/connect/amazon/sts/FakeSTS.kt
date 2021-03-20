@@ -11,7 +11,7 @@ import java.time.Duration
 import java.time.Duration.ofHours
 
 class FakeSTS(
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock = Clock.systemUTC(),
     defaultSessionValidity: Duration = ofHours(1)
 ) : ChaosFake() {
 

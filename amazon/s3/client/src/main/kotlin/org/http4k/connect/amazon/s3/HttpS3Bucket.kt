@@ -16,7 +16,7 @@ fun S3Bucket.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone(),
+    clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3Bucket {
     private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode, "$bucketName.").then(rawHttp)
@@ -29,6 +29,6 @@ fun S3Bucket.Companion.Http(
     region: Region,
     env: Map<String, String> = System.getenv(),
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone(),
+    clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = Http(bucketName, region, env.awsCredentials(), rawHttp, clock, payloadMode)
