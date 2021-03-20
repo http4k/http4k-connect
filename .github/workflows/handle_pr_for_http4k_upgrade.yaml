@@ -2,7 +2,7 @@ on:
   pull_request:
     types: [labeled]
     branches:
-      - auto/*
+      - "auto/*"
 jobs:
   handle-pr-for-http4k-upgrade:
     runs-on: ubuntu-latest
