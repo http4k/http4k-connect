@@ -13,7 +13,7 @@ import java.util.UUID
 
 abstract class STSContract(http: HttpHandler) : AwsContract(http) {
 
-    protected val clock = Clock.systemDefaultZone()
+    protected val clock = Clock.systemUTC()
     private val sts by lazy {
         STS.Http(aws.region, { aws.credentials }, http, clock)
     }

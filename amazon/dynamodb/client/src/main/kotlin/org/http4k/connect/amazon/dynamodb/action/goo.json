@@ -1,0 +1,81 @@
+{
+    "ConsumedCapacity": [
+        {
+            "CapacityUnits": 123,
+            "GlobalSecondaryIndexes": {
+                "string" : {
+                    "CapacityUnits": 123,
+                    "ReadCapacityUnits": 123,
+                    "WriteCapacityUnits": 123
+                }
+            },
+            "LocalSecondaryIndexes": {
+                "string" : {
+                    "CapacityUnits": 123,
+                    "ReadCapacityUnits": 123,
+                    "WriteCapacityUnits": 123
+                }
+            },
+            "ReadCapacityUnits": 123,
+            "Table": {
+                "CapacityUnits": 123,
+                "ReadCapacityUnits": 123,
+                "WriteCapacityUnits": 123
+            },
+            "TableName": "string",
+            "WriteCapacityUnits": 123
+        }
+    ],
+    "Responses": {
+        "string" : [
+            {
+                "string" : {
+                    "B": "blob",
+                    "BOOL": true,
+                    "BS": [ "blob" ],
+                    "L": [
+                        "AttributeValue"
+                    ],
+                    "M": {
+                        "string" : "AttributeValue"
+                    },
+                    "N": "string",
+                    "NS": [ "string" ],
+                    "NULL": true,
+                    "S": "string",
+                    "SS": [ "string" ]
+                }
+            }
+        ]
+    },
+    "UnprocessedKeys": {
+        "string" : {
+            "AttributesToGet": [ "string" ],
+            "ConsistentRead": true,
+            "ExpressionAttributeNames": {
+                "string" : "string"
+            },
+            "Keys": [
+                {
+                    "string" : {
+                        "B": "blob",
+                        "BOOL": true,
+                        "BS": [ "blob" ],
+                        "L": [
+                            "AttributeValue"
+                        ],
+                        "M": {
+                            "string" : "AttributeValue"
+                        },
+                        "N": "string",
+                        "NS": [ "string" ],
+                        "NULL": true,
+                        "S": "string",
+                        "SS": [ "string" ]
+                    }
+                }
+            ],
+            "ProjectionExpression": "string"
+        }
+    }
+}

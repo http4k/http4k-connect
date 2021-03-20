@@ -18,7 +18,7 @@ import java.time.Clock
 class FakeS3(
     private val buckets: Storage<Unit> = Storage.InMemory(),
     bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemUTC()
 ) : ChaosFake() {
 
     private val isS3 = { it: Request -> it.subdomain(buckets) == "s3" }.asRouter()

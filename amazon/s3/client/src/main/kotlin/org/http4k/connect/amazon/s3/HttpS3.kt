@@ -15,12 +15,12 @@ import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload
 import java.lang.System.getenv
 import java.time.Clock
-import java.time.Clock.systemDefaultZone
+import java.time.Clock.systemUTC
 
 fun S3.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemDefaultZone(),
+    clock: Clock = systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3 {
     val http = SetHostFrom(Uri.of("https://s3.amazonaws.com"))
@@ -39,6 +39,6 @@ fun S3.Companion.Http(
 fun S3.Companion.Http(
     env: Map<String, String> = getenv(),
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemDefaultZone(),
+    clock: Clock = systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = Http(env.awsCredentials(), rawHttp, clock, payloadMode)
