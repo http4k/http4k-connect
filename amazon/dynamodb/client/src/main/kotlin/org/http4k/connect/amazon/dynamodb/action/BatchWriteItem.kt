@@ -11,7 +11,7 @@ data class BatchWriteItem(
     val RequestItems: Map<TableName, ReqWriteItem>,
     val ReturnItemCollectionMetrics: ReturnItemCollectionMetrics? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null
-) : DynamoDbAction<BatchItems>(BatchItems::class, DynamoDbMoshi)
+) : DynamoDbAction<BatchWriteItems>(BatchWriteItems::class, DynamoDbMoshi)
 
 @JsonSerializable
 data class ReqWriteItem(
@@ -21,3 +21,10 @@ data class ReqWriteItem(
 
 @JsonSerializable
 data class PutRequest(val Item: AttributeValues)
+
+@JsonSerializable
+data class BatchWriteItems(
+    val ConsumedCapacity: List<ConsumedCapacity>?,
+    val Responses: Map<String, AttributeNames>?,
+    val UnprocessedKeys: Map<String, ReqWriteItem>?
+)

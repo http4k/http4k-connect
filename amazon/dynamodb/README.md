@@ -2,17 +2,26 @@
 
 The DynamoDb connector provides the following Actions:
 
-     *  CreateTable
-     *  DeleteTable
-     *  DescribeTable
-     *  ListTables
-     *  UpdateTable
+    * CreateTable
+    * DeleteTable
+    * DescribeTable
+    * ListTables
+    * UpdateTable
 
-     *  GetItem
-     *  PutItem
-     *  Query
-     *  ExecuteTransaction
-     *  UpdateItem
+    * DeleteItem
+    * GetItem
+    * PutItem
+    * Query
+    * UpdateItem
+    * TransactWriteItems
+    * ConditionCheck
+
+    * BatchGetItem
+    * BatchWriteItem
+
+    * ExecuteTransaction
+    * ExecuteStatement
+    * BatchExecuteStatement
 
 Not that there currently is no Fake implementation of the Dynamo adapter. You can use [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html) local instead
 

@@ -10,7 +10,7 @@ import se.ansman.kotshi.JsonSerializable
 data class BatchGetItem(
     val RequestItems: Map<TableName, ReqGetItem>,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null
-) : DynamoDbAction<BatchItems>(BatchItems::class, DynamoDbMoshi)
+) : DynamoDbAction<BatchGetItems>(BatchGetItems::class, DynamoDbMoshi)
 
 @JsonSerializable
 data class ReqGetItem(
@@ -21,7 +21,7 @@ data class ReqGetItem(
 )
 
 @JsonSerializable
-data class BatchItems(
+data class BatchGetItems(
     val ConsumedCapacity: List<ConsumedCapacity>?,
     val Responses: Map<String, AttributeNames>?,
     val UnprocessedKeys: Map<String, ReqGetItem>?
