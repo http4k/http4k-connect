@@ -2,8 +2,9 @@ package org.http4k.connect.amazon.dynamodb
 
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.dynamodb.action.KotshiAttributeValueJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiBatchGetItemsJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiBatchGetItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchItemsJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiBatchWriteItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiCapacityJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiConditionCheckJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiConsumedCapacityJsonAdapter
@@ -27,9 +28,11 @@ import org.http4k.connect.amazon.dynamodb.action.KotshiModifiedItemsJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiParameterizedStatementJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiPutItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiPutJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiPutRequestJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiQueryJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiQueryResponseJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiRequestedItemJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReqGetItemJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReqWriteItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTableListJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTransactGetItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTransactWriteItemJsonAdapter
@@ -110,7 +113,8 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiUpdateJsonAdapter),
 
     // Batch
-    adapter(::KotshiBatchGetItemsJsonAdapter),
+    adapter(::KotshiBatchGetItemJsonAdapter),
+    adapter(::KotshiBatchWriteItemJsonAdapter),
 
     // PartiSQL
     adapter(::KotshiExecuteTransactionJsonAdapter),
@@ -154,7 +158,9 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiReplicaJsonAdapter),
     adapter(::KotshiReplicaUpdateJsonAdapter),
     adapter(::KotshiReplicaUpdatesJsonAdapter),
-    adapter(::KotshiRequestedItemJsonAdapter),
+    adapter(::KotshiReqGetItemJsonAdapter),
+    adapter(::KotshiReqWriteItemJsonAdapter),
+    adapter(::KotshiPutRequestJsonAdapter),
     adapter(::KotshiRestoreSummaryJsonAdapter),
     adapter(::KotshiSSEDescriptionJsonAdapter),
     adapter(::KotshiSSESpecificationJsonAdapter),

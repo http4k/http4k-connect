@@ -7,13 +7,13 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class BatchGetItems(
-    val RequestItems: Map<TableName, RequestedItem>,
+data class BatchGetItem(
+    val RequestItems: Map<TableName, ReqGetItem>,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null
 ) : DynamoDbAction<BatchItems>(BatchItems::class, DynamoDbMoshi)
 
 @JsonSerializable
-data class RequestedItem(
+data class ReqGetItem(
     val Keys: List<AttributeValues>,
     val ProjectionExpression: String? = null,
     val ExpressionAttributeNames: AttributeNames? = null,
@@ -24,5 +24,5 @@ data class RequestedItem(
 data class BatchItems(
     val ConsumedCapacity: List<ConsumedCapacity>?,
     val Responses: Map<String, AttributeNames>?,
-    val UnprocessedKeys: Map<String, RequestedItem>?
+    val UnprocessedKeys: Map<String, ReqGetItem>?
 )
