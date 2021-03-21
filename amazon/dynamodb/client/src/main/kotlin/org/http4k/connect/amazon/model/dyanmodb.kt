@@ -49,8 +49,10 @@ data class Attribute<IN, OUT>(
     }
 }
 
-class AttributeName private constructor(value: String) : StringValue(value) {
+class AttributeName private constructor(value: String) : StringValue(value), Comparable<AttributeName> {
     companion object : NonBlankStringValueFactory<AttributeName>(::AttributeName)
+
+    override fun compareTo(other: AttributeName): Int = value.compareTo(other.value)
 }
 
 enum class DynamoDataType {

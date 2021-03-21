@@ -32,6 +32,6 @@ data class ReqGetItem internal constructor(
 @JsonSerializable
 data class BatchGetItems(
     val ConsumedCapacity: List<ConsumedCapacity>?,
-    val Responses: Map<String, NamesToValues>?,
+    val Responses: Map<String, List<NamesToValues>>?,
     val UnprocessedKeys: Map<String, ReqGetItem>?
 )
