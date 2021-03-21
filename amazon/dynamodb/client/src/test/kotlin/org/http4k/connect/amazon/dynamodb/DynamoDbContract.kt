@@ -26,6 +26,7 @@ import org.http4k.connect.amazon.model.KeyType.HASH
 import org.http4k.connect.amazon.model.TableName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -62,7 +63,7 @@ abstract class DynamoDbContract(
         waitForUpdate()
     }
 
-    @BeforeEach
+    @AfterEach
     fun after() {
         dynamo.deleteTable(table)
     }
@@ -221,7 +222,7 @@ abstract class DynamoDbContract(
 
     @Test
     @Disabled
-    fun deleteTables() {
+    fun `delete tables`() {
         dynamo.listTables()
             .successValue()
             .TableNames
