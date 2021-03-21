@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Str
 import org.http4k.connect.amazon.dynamodb.action.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.action.ReqGetItem
+import org.http4k.connect.amazon.dynamodb.action.ReqStatement
 import org.http4k.connect.amazon.dynamodb.action.ReqWriteItem
 import org.http4k.connect.amazon.dynamodb.action.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Delete
@@ -97,7 +98,8 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    fun `batch items`() {
+    @Disabled
+    fun `batch operations`() {
         with(dynamo) {
             val write = batchWriteItem(
                 mapOf(
@@ -115,8 +117,29 @@ abstract class DynamoDbContract(
             ).successValue()
 
             assertThat(get.UnprocessedItems, absent())
+
+            batchExecuteStatement(listOf(ReqStatement(
+                """SELECT * FROM "$table" WHERE $attrS = "hello2""""
+            ))).successValue()
         }
     }
+//
+//    @Test
+//    fun `partiSQL operations`() {
+//        with(dynamo) {
+//            val write = executeTransaction(
+//                listOf(ParameterizedStatement(""))
+//            ).successValue().
+//
+//            assertThat(write.UnprocessedKeys, absent())
+//
+//            val get = batchGetItem(
+//                mapOf(table to ReqGetItem.Get(listOf(mapOf(attrS to "hello2"))))
+//            ).successValue()
+//
+//            assertThat(get.UnprocessedItems, absent())
+//        }
+//    }
 
     @Test
     @Disabled

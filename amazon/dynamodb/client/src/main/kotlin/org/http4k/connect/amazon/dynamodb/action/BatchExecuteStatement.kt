@@ -15,7 +15,7 @@ data class BatchExecuteStatement(
 data class ReqStatement(
     val Statement: String,
     val ConsistentRead: Boolean? = null,
-    val Parameters: List<NamesToValues>? = null
+    val Parameters: List<AttributeValue>? = null
 )
 
 @JsonSerializable
@@ -43,7 +43,7 @@ data class BatchStatementError(
 
 @JsonSerializable
 data class StatementResponse(
-    val TableName: TableName,
+    val TableName: TableName?,
     val Error: BatchStatementError?,
     internal val Item: ItemResult?
 ) {
