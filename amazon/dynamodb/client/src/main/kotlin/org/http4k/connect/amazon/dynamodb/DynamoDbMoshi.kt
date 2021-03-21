@@ -48,7 +48,6 @@ import org.http4k.connect.amazon.dynamodb.action.KotshiProvisionedThroughputJson
 import org.http4k.connect.amazon.dynamodb.action.KotshiProvisionedThroughputOverrideJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiProvisionedThroughputResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiPutItemJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiPutRequestJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiQueryJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiQueryResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiReplicaCreateJsonAdapter
@@ -169,7 +168,6 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiReqGetItemJsonAdapter),
     adapter(::KotshiReqWriteItemJsonAdapter),
     adapter(::KotshiReqStatementJsonAdapter),
-    adapter(::KotshiPutRequestJsonAdapter),
     adapter(::KotshiRestoreSummaryJsonAdapter),
     adapter(::KotshiSSEDescriptionJsonAdapter),
     adapter(::KotshiSSESpecificationJsonAdapter),

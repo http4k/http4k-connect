@@ -8,19 +8,21 @@ import se.ansman.kotshi.JsonSerializable
 @Http4kConnectAction
 @JsonSerializable
 data class BatchWriteItem(
-    val RequestItems: Map<TableName, ReqWriteItem>,
+    val RequestItems: Map<TableName, List<ReqWriteItem>>,
     val ReturnItemCollectionMetrics: ReturnItemCollectionMetrics? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null
 ) : DynamoDbAction<BatchWriteItems>(BatchWriteItems::class, DynamoDbMoshi)
 
 @JsonSerializable
-data class ReqWriteItem(
-    val DeleteRequest: Map<String, AttributeValue>?,
-    val PutRequest: PutRequest?
-)
-
-@JsonSerializable
-data class PutRequest(val Item: NamesToValues)
+data class ReqWriteItem internal constructor(
+    val DeleteRequest: NamesToValues? = null,
+    val PutRequest: Map<String, Any>? = null
+) {
+    companion object {
+        fun Delete(Key: NamesToValues) = ReqWriteItem(DeleteRequest = Key)
+        fun Put(Item: NamesToValues) = ReqWriteItem(PutRequest = mapOf("Item" to Item))
+    }
+}
 
 @JsonSerializable
 data class BatchWriteItems(
