@@ -42,7 +42,7 @@ abstract class DynamoDbContract(
         DynamoDb.Http(aws.region, { aws.credentials }, http)
     }
 
-    private val table = TableName.of(UUID.randomUUID().toString())
+    private val table = TableName.of("http4k-connect" + UUID.randomUUID().toString())
 
     private val attrBool = Attribute.boolean("theBool")
     private val attrB = Attribute.base64Blob("theBase64Blob")
@@ -98,7 +98,6 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    @Disabled
     fun `batch operations`() {
         with(dynamo) {
             val write = batchWriteItem(
@@ -117,37 +116,27 @@ abstract class DynamoDbContract(
             ).successValue()
 
             assertThat(get.UnprocessedItems, absent())
-
-            batchExecuteStatement(listOf(ReqStatement(
-                """SELECT * FROM "$table" WHERE $attrS = "hello2""""
-            ))).successValue()
         }
     }
-//
-//    @Test
-//    fun `partiSQL operations`() {
-//        with(dynamo) {
-//            val write = executeTransaction(
-//                listOf(ParameterizedStatement(""))
-//            ).successValue().
-//
-//            assertThat(write.UnprocessedKeys, absent())
-//
-//            val get = batchGetItem(
-//                mapOf(table to ReqGetItem.Get(listOf(mapOf(attrS to "hello2"))))
-//            ).successValue()
-//
-//            assertThat(get.UnprocessedItems, absent())
-//        }
-//    }
+
+    @Test
+    fun `partiSQL operations`() {
+        with(dynamo) {
+            putItem(table, item = item("hello")).successValue()
+
+            executeStatement(statement()).successValue()
+
+            batchExecuteStatement(listOf(ReqStatement(statement()))).successValue()
+
+//            executeTransaction(listOf(ParameterizedStatement(delete()))).successValue()
+        }
+    }
 
     @Test
     @Disabled
     fun `item lifecycle`() {
         with(dynamo) {
-            putItem(
-                table, item = item("hello")
-            ).successValue()
+            putItem(table, item = item("hello")).successValue()
 
             val item = getItem(table, mapOf(attrS to "hello")).successValue().item
 
@@ -223,6 +212,9 @@ abstract class DynamoDbContract(
         }
     }
 
+    private fun delete() = """DELETE FROM "$table" WHERE "$attrS" = "hello";"""
+    private fun statement() = """SELECT "$attrS" FROM "$table" WHERE "$attrS" = "hello";"""
+
     private fun DynamoDb.createTable(tableName: TableName, keyAttr: Attribute<*, *>) = createTable(
         tableName, listOf(keyAttr.keySchema(HASH)), listOf(keyAttr.attrDefinition()),
         billingMode = PAY_PER_REQUEST
@@ -230,13 +222,16 @@ abstract class DynamoDbContract(
 
     private fun waitForUpdate() = Thread.sleep(duration.toMillis())
 
-//    @Test
-//    fun deleteTables() {
-//        dynamo.listTables()
-//            .successValue()
-//            .TableNames.forEach {
-//                println("DELETING$it")
-//                dynamo.deleteTable(it)
-//            }
-//    }
+    @Test
+    @Disabled
+    fun deleteTables() {
+        dynamo.listTables()
+            .successValue()
+            .TableNames
+            .filter { it.value.startsWith("http4k-connect") }
+            .forEach {
+                println("DELETING$it")
+                dynamo.deleteTable(it)
+            }
+    }
 }
