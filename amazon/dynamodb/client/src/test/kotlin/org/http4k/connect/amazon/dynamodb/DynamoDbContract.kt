@@ -132,8 +132,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    @Disabled
-    fun `item lifecycle`() {
+        fun `item lifecycle`() {
         with(dynamo) {
             putItem(table, item = item("hello")).successValue()
 
@@ -190,7 +189,6 @@ abstract class DynamoDbContract(
     )
 
     @Test
-    @Disabled
     fun `table lifecycle`() {
         with(dynamo) {
             assertThat(listTables().successValue().TableNames, hasElement(table))
