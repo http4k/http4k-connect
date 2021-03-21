@@ -13,16 +13,25 @@ data class BatchGetItem(
 ) : DynamoDbAction<BatchGetItems>(BatchGetItems::class, DynamoDbMoshi)
 
 @JsonSerializable
-data class ReqGetItem(
-    val Keys: List<AttributeValues>,
+data class ReqGetItem internal constructor(
+    val Keys: List<NamesToValues>,
     val ProjectionExpression: String? = null,
-    val ExpressionAttributeNames: AttributeNames? = null,
+    val ExpressionAttributeNames: TokensToNames? = null,
     val ConsistentRead: Boolean? = null
-)
+) {
+    companion object {
+        fun Get(
+            Keys: List<NamesToValues>,
+            ProjectionExpression: String? = null,
+            ExpressionAttributeNames: TokensToNames? = null,
+            ConsistentRead: Boolean? = null
+        ) = ReqGetItem(Keys, ProjectionExpression, ExpressionAttributeNames, ConsistentRead)
+    }
+}
 
 @JsonSerializable
 data class BatchGetItems(
     val ConsumedCapacity: List<ConsumedCapacity>?,
-    val Responses: Map<String, AttributeNames>?,
-    val UnprocessedKeys: Map<String, ReqGetItem>?
+    val Responses: Map<String, List<NamesToValues>>?,
+    val UnprocessedItems: Map<String, ReqGetItem>?
 )

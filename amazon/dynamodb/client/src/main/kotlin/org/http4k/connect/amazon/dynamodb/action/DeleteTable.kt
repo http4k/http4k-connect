@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.model.TableDescriptionResponse
 import org.http4k.connect.amazon.model.TableName
 import se.ansman.kotshi.JsonSerializable
 

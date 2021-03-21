@@ -14,11 +14,11 @@ data class Query(
     val FilterExpression: String? = null,
     val ProjectionExpression: String? = null,
     val IndexName: IndexName? = null,
-    val ExpressionAttributeNames: AttributeNames? = null,
-    val ExpressionAttributeValues: AttributeValues? = null,
+    val ExpressionAttributeNames: TokensToNames? = null,
+    val ExpressionAttributeValues: TokensToValues? = null,
     val Select: Select? = null,
     val ConsistentRead: Boolean? = null,
-    val ExclusiveStartKey: AttributeValues? = null,
+    val ExclusiveStartKey: NamesToValues? = null,
     val Limit: Int? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ScanIndexForward: Boolean? = null,
@@ -29,7 +29,7 @@ data class QueryResponse(
     internal val Items: List<ItemResult>?,
     val ConsumedCapacity: ConsumedCapacity?,
     val Count: Int?,
-    val LastEvaluatedKey: AttributeValues?,
+    val LastEvaluatedKey: NamesToValues?,
     val ScannedCount: Int?
 ) {
     val items = Items?.map { it.toItem() } ?: emptyList()

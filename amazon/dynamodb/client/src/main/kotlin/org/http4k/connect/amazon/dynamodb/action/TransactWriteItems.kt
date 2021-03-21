@@ -21,55 +21,90 @@ data class ModifiedItems(
 )
 
 @JsonSerializable
-data class TransactWriteItem(
-    val ConditionCheck: ConditionCheck?,
-    val Delete: Delete?,
-    val Put: Put?,
-    val Update: Update?
-)
+data class TransactWriteItem internal constructor(
+    val ConditionCheck: Map<String, Any?>? = null,
+    val Delete: Map<String, Any?>? = null,
+    val Put: Map<String, Any?>? = null,
+    val Update: Map<String, Any?>? = null
+) {
+    companion object {
+        fun ConditionCheck(
+            TableName: TableName,
+            Key: NamesToValues,
+            ConditionExpression: String,
+            ExpressionAttributeNames: TokensToNames? = null,
+            ExpressionAttributeValues: TokensToValues? = null,
+            ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
+        ) = TransactWriteItem(
+            ConditionCheck = mapOf(
+                "TableName" to TableName,
+                "ConditionExpression" to ConditionExpression,
+                "Key" to Key,
+                "ExpressionAttributeNames" to ExpressionAttributeNames,
+                "ExpressionAttributeValues" to ExpressionAttributeValues,
+                "ReturnValuesOnConditionCheckFailure" to ReturnValuesOnConditionCheckFailure
+            )
+        )
 
-@JsonSerializable
-data class ConditionCheck(
-    val TableName: TableName,
-    val ConditionExpression: String,
-    val Key: AttributeValues,
-    val ExpressionAttributeNames: AttributeNames? = null,
-    val ExpressionAttributeValues: AttributeValues? = null,
-    val ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
-)
+        fun Delete(
+            TableName: TableName,
+            Key: NamesToValues,
+            ConditionExpression: String? = null,
+            ExpressionAttributeNames: TokensToNames? = null,
+            ExpressionAttributeValues: TokensToValues? = null,
+            ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
+        ) = TransactWriteItem(
+            Delete = mapOf(
+                "TableName" to TableName,
+                "ConditionExpression" to ConditionExpression,
+                "Key" to Key,
+                "ExpressionAttributeNames" to ExpressionAttributeNames,
+                "ExpressionAttributeValues" to ExpressionAttributeValues,
+                "ReturnValuesOnConditionCheckFailure" to ReturnValuesOnConditionCheckFailure
+            )
+        )
+
+        fun Put(
+            TableName: TableName,
+            Item: NamesToValues,
+            ConditionExpression: String? = null,
+            ExpressionAttributeNames: TokensToNames? = null,
+            ExpressionAttributeValues: TokensToValues? = null,
+            ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
+        ) = TransactWriteItem(
+            Put = mapOf(
+                "TableName" to TableName,
+                "ConditionExpression" to ConditionExpression,
+                "ExpressionAttributeNames" to ExpressionAttributeNames,
+                "ExpressionAttributeValues" to ExpressionAttributeValues,
+                "Item" to Item,
+                "ReturnValuesOnConditionCheckFailure" to ReturnValuesOnConditionCheckFailure
+            )
+        )
+
+        fun Update(
+            TableName: TableName,
+            Key: NamesToValues,
+            UpdateExpression: String,
+            ConditionExpression: String? = null,
+            ExpressionAttributeNames: TokensToNames? = null,
+            ExpressionAttributeValues: TokensToValues? = null,
+            ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
+        ) = TransactWriteItem(
+            Update = mapOf(
+                "TableName" to TableName,
+                "ConditionExpression" to ConditionExpression,
+                "Key" to Key,
+                "UpdateExpression" to UpdateExpression,
+                "ExpressionAttributeNames" to ExpressionAttributeNames,
+                "ExpressionAttributeValues" to ExpressionAttributeValues,
+                "ReturnValuesOnConditionCheckFailure" to ReturnValuesOnConditionCheckFailure
+            )
+        )
+    }
+}
 
 @JsonSerializable
 enum class ReturnValuesOnConditionCheckFailure {
     ALL_OLD, NONE
 }
-
-@JsonSerializable
-data class Delete(
-    val TableName: TableName,
-    val ConditionExpression: String,
-    val Key: AttributeValues,
-    val ExpressionAttributeNames: AttributeNames? = null,
-    val ExpressionAttributeValues: AttributeValues? = null,
-    val ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
-)
-
-@JsonSerializable
-data class Put(
-    val TableName: TableName,
-    val ConditionExpression: String,
-    val ExpressionAttributeNames: AttributeNames? = null,
-    val ExpressionAttributeValues: AttributeValues? = null,
-    val Item: AttributeValues?,
-    val ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
-)
-
-@JsonSerializable
-data class Update(
-    val TableName: TableName,
-    val ConditionExpression: String?,
-    val Key: AttributeValues,
-    val UpdateExpression: String? = null,
-    val ExpressionAttributeNames: AttributeNames? = null,
-    val ExpressionAttributeValues: AttributeValues? = null,
-    val ReturnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure? = null
-)

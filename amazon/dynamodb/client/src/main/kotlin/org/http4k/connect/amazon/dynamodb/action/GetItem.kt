@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.TableName
 import se.ansman.kotshi.JsonSerializable
 
@@ -10,9 +9,9 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class GetItem(
     val TableName: TableName,
-    val Key: Map<AttributeName, AttributeValue>,
+    val Key: NamesToValues,
     val ProjectionExpression: String? = null,
-    val ExpressionAttributeNames: AttributeNames? = null,
+    val ExpressionAttributeNames: TokensToNames? = null,
     val ConsistentRead: Boolean? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null
 ) : DynamoDbAction<GetResponse>(GetResponse::class, DynamoDbMoshi)

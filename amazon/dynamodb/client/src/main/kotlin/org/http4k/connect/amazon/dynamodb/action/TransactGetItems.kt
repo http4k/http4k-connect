@@ -10,15 +10,42 @@ import se.ansman.kotshi.JsonSerializable
 data class TransactGetItems(
     val TransactItems: List<TransactGetItem>,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null
-) : DynamoDbAction<ModifiedItems>(ModifiedItems::class, DynamoDbMoshi)
+) : DynamoDbAction<GetItemsResponse>(GetItemsResponse::class, DynamoDbMoshi)
 
 @JsonSerializable
 data class Get(
     val TableName: TableName,
-    val Key: AttributeValues,
+    val Key: NamesToValues,
     val ProjectionExpression: String? = null,
-    val ExpressionAttributeNames: AttributeNames? = null
+    val ExpressionAttributeNames: TokensToNames? = null
 )
 
 @JsonSerializable
-data class TransactGetItem(val Get: Get)
+data class TransactGetItem internal constructor(val Get: Map<String, Any?>) {
+    companion object {
+        fun Get(
+            TableName: TableName,
+            Key: NamesToValues,
+            ProjectionExpression: String? = null,
+            ExpressionAttributeNames: TokensToNames? = null
+        ) = TransactGetItem(
+            Get = mapOf(
+                "TableName" to TableName,
+                "Key" to Key,
+                "ProjectionExpression" to ProjectionExpression,
+                "ExpressionAttributeNames" to ExpressionAttributeNames
+            )
+        )
+    }
+}
+
+@JsonSerializable
+data class GetItemsResponse(
+    val ConsumedCapacity: ConsumedCapacity?,
+    val ItemCollectionMetrics: ItemCollectionMetrics?,
+    internal val Responses: List<GetItemsResponseItem>) {
+    val responses = Responses.map { it.Item }.map(ItemResult::toItem)
+}
+
+@JsonSerializable
+data class GetItemsResponseItem(val Item: ItemResult)

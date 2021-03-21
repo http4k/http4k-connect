@@ -15,14 +15,24 @@ data class BatchExecuteStatement(
 data class ReqStatement(
     val Statement: String,
     val ConsistentRead: Boolean? = null,
-    val Parameters: List<AttributeValues>? = null
+    val Parameters: List<AttributeValue>? = null
 )
 
 @JsonSerializable
 data class BatchStatements(val Responses: List<StatementResponse>)
 
 enum class ErrorCode {
-    ConditionalCheckFailed, ItemCollectionSizeLimitExceeded, RequestLimitExceeded, ValidationError, ProvisionedThroughputExceeded, TransactionConflict, ThrottlingError, InternalServerError, ResourceNotFound, AccessDenied, DuplicateItem
+    ConditionalCheckFailed,
+    ItemCollectionSizeLimitExceeded,
+    RequestLimitExceeded,
+    ValidationError,
+    ProvisionedThroughputExceeded,
+    TransactionConflict,
+    ThrottlingError,
+    InternalServerError,
+    ResourceNotFound,
+    AccessDenied,
+    DuplicateItem
 }
 
 @JsonSerializable
@@ -33,7 +43,7 @@ data class BatchStatementError(
 
 @JsonSerializable
 data class StatementResponse(
-    val TableName: TableName,
+    val TableName: TableName?,
     val Error: BatchStatementError?,
     internal val Item: ItemResult?
 ) {

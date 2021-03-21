@@ -1,58 +1,92 @@
 package org.http4k.connect.amazon.dynamodb.action
 
+import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.model.AttributeDefinition
 import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.BillingMode
+import org.http4k.connect.amazon.model.DynamoDataType
+import org.http4k.connect.amazon.model.DynamoDataType.B
+import org.http4k.connect.amazon.model.DynamoDataType.BOOL
+import org.http4k.connect.amazon.model.DynamoDataType.BS
+import org.http4k.connect.amazon.model.DynamoDataType.L
+import org.http4k.connect.amazon.model.DynamoDataType.M
+import org.http4k.connect.amazon.model.DynamoDataType.N
+import org.http4k.connect.amazon.model.DynamoDataType.NS
+import org.http4k.connect.amazon.model.DynamoDataType.NULL
+import org.http4k.connect.amazon.model.DynamoDataType.S
+import org.http4k.connect.amazon.model.DynamoDataType.SS
+import org.http4k.connect.amazon.model.DynamoDataType.valueOf
+import org.http4k.connect.amazon.model.IndexName
+import org.http4k.connect.amazon.model.IndexStatus
+import org.http4k.connect.amazon.model.KMSKeyId
+import org.http4k.connect.amazon.model.KeyType
+import org.http4k.connect.amazon.model.ProjectionType
+import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.model.ReplicaStatus
+import org.http4k.connect.amazon.model.SSEType
+import org.http4k.connect.amazon.model.StreamViewType
 import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.model.TableStatus
+import org.http4k.connect.amazon.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
+import java.math.BigDecimal
 
-typealias AttributeNames = Map<String, AttributeName>
-typealias AttributeValues = Map<String, AttributeValue>
+typealias TokensToNames = Map<String, AttributeName>
+typealias NamesToValues = Map<AttributeName, AttributeValue>
+typealias TokensToValues = Map<String, AttributeValue>
 typealias ItemResult = Map<String, Map<String, Any>>
 
 @JsonSerializable
-data class AttributeValue(
+data class AttributeValue internal constructor(
     val B: Base64Blob? = null,
     val BOOL: Boolean? = null,
-    val BS: List<Base64Blob>? = null,
+    val BS: Set<Base64Blob>? = null,
     val L: List<AttributeValue>? = null,
-    val M: AttributeValues? = null,
+    val M: NamesToValues? = null,
     val N: String? = null,
-    val NS: List<String>? = null,
+    val NS: Set<String>? = null,
     val NULL: Boolean? = null,
     val S: String? = null,
-    val SS: List<String>? = null
+    val SS: Set<String>? = null
 ) {
     companion object {
-        fun Base64(value: Base64Blob) = AttributeValue(B = value)
-        fun Bool(value: Boolean) = AttributeValue(BOOL = value)
-        fun Base64List(value: List<Base64Blob>) = AttributeValue(BS = value)
-        fun List(value: List<AttributeValue>) = AttributeValue(L = value)
-        fun Map(value: AttributeValues) = AttributeValue(M = value)
-        fun Num(value: Number) = AttributeValue(N = value.toString())
-        fun NumList(value: List<Number>) = AttributeValue(NS = value.map { it.toString() })
+        fun Base64(value: Base64Blob?) = value?.let { AttributeValue(B = it) } ?: Null()
+        fun Bool(value: Boolean?) = value?.let { AttributeValue(BOOL = it) } ?: Null()
+        fun Base64Set(value: Set<Base64Blob>?) = value?.let { AttributeValue(BS = it) } ?: Null()
+        fun List(value: List<AttributeValue>?) = value?.let { AttributeValue(L = it) } ?: Null()
+        fun Map(value: NamesToValues?) = value?.let { AttributeValue(M = it) } ?: Null()
+        fun Num(value: Number?) = value?.let { AttributeValue(N = it.toString()) } ?: Null()
+        fun NumSet(value: Set<Number>?) = value?.let { AttributeValue(NS = it.map { it.toString() }.toSet()) } ?: Null()
         fun Null() = AttributeValue(NULL = true)
-        fun Str(value: String) = AttributeValue(S = value)
-        fun StrList(value: List<String>) = AttributeValue(SS = value)
+        fun Str(value: String?) = value?.let { AttributeValue(S = it) } ?: Null()
+        fun StrSet(value: Set<String>?) = value?.let { AttributeValue(SS = it.map { it }.toSet()) } ?: Null()
 
         @Suppress("UNCHECKED_CAST")
-        fun from(entry: Map.Entry<String, Any>): AttributeValue = when (entry.key) {
-            "B" -> Base64(Base64Blob.encoded(entry.value.toString()))
-            "BOOL" -> Bool(entry.value.toString().toBoolean())
-            "BS" -> Base64List((entry.value as List<String>).map { Base64Blob.encoded(entry.value.toString()) })
-            "L" -> List((entry.value as List<Map<String, Any>>).map { from(it.entries.first()) })
-            "N" -> Num(entry.value.toString().toLong())
-            "NS" -> NumList((entry.value as List<String>).map { entry.value.toString().toLong() })
-            "NULL" -> Null()
-            "S" -> Str(entry.value.toString())
-            "SS" -> StrList(entry.value as List<String>)
-            else -> error("illegal response")
+        fun from(key: DynamoDataType, value: Any): AttributeValue = when (key) {
+            B -> Base64(Base64Blob.of(value as String))
+            BOOL -> Bool(value.toString().toBoolean())
+            BS -> Base64Set((value as List<String>).map(Base64Blob::of).toSet())
+            L -> List((value as List<Map<String, Any>>).map { it.toAttributeValue() })
+            M -> Map(
+                (value as Map<String, Map<String, Any>>)
+                    .map { AttributeName.of(it.key) to it.value.toAttributeValue() }.toMap()
+            )
+            N -> Num(BigDecimal(value as String))
+            NS -> NumSet((value as List<String>).map(::BigDecimal).toSet())
+            NULL -> Null()
+            S -> Str(value as String)
+            SS -> StrSet((value as List<String>).toSet())
         }
+
+        private fun Map<String, Any>.toAttributeValue(): AttributeValue =
+            entries.first().let { (k, v) -> from(valueOf(k), v) }
     }
 }
 
 @JsonSerializable
 data class ItemCollectionMetrics(
-    val ItemCollectionKey: AttributeValues?,
+    val ItemCollectionKey: NamesToValues?,
     val SizeEstimateRangeGB: List<Long>?
 )
 
@@ -95,8 +129,227 @@ data class ModifiedItem(
 
 fun ItemResult.toItem() =
     map {
-        AttributeName.of(it.key) to
-            AttributeValue.from(it.value.entries.first())
+        val (key, v) = it.value.entries.first()
+        AttributeName.of(it.key) to AttributeValue.from(valueOf(key), v)
     }
         .toMap()
 
+
+@JsonSerializable
+data class KeySchema(
+    val AttributeName: AttributeName,
+    val KeyType: KeyType
+)
+
+@JsonSerializable
+data class Projection(
+    val NonKeyAttributes: List<AttributeName>? = null,
+    val ProjectionType: ProjectionType? = null
+)
+
+@JsonSerializable
+data class ProvisionedThroughput(
+    val ReadCapacityUnits: Long,
+    val WriteCapacityUnits: Long
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndex(
+    val IndexName: IndexName,
+    val KeySchema: List<KeySchema>,
+    val Projection: Projection,
+    val ProvisionedThroughput: ProvisionedThroughput?
+)
+
+@JsonSerializable
+data class LocalSecondaryIndexes(
+    val IndexName: IndexName,
+    val KeySchema: List<KeySchema>,
+    val Projection: Projection
+)
+
+@JsonSerializable
+data class SSESpecification(
+    val Enabled: Boolean,
+    val KMSMasterKeyId: KMSKeyId? = null,
+    val SSEType: SSEType? = null
+)
+
+@JsonSerializable
+data class StreamSpecification(
+    val StreamEnabled: Boolean,
+    val StreamViewType: StreamViewType? = null
+)
+
+@JsonSerializable
+data class ArchivalSummary(
+    val ArchivalBackupArn: ARN?,
+    val ArchivalDateTime: Timestamp?,
+    val ArchivalReason: String?
+)
+
+@JsonSerializable
+data class BillingModeSummary(
+    val BillingMode: BillingMode?,
+    val LastUpdateToPayPerRequestDateTime: Timestamp?
+)
+
+@JsonSerializable
+data class ProvisionedThroughputResponse(
+    val LastDecreaseDateTime: Timestamp?,
+    val LastIncreaseDateTime: Timestamp?,
+    val NumberOfDecreasesToday: Long?,
+    val ReadCapacityUnits: Long?,
+    val WriteCapacityUnits: Long?
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexResponse(
+    val Backfilling: Boolean?,
+    val IndexArn: ARN?,
+    val IndexName: String?,
+    val IndexSizeBytes: Long?,
+    val IndexStatus: IndexStatus?,
+    val ItemCount: Long?,
+    val KeySchema: List<KeySchema>?,
+    val Projection: Projection?,
+    val ProvisionedThroughput: ProvisionedThroughputResponse?
+
+)
+
+@JsonSerializable
+data class LocalSecondaryIndexResponse(
+    val IndexArn: ARN?,
+    val IndexName: String?,
+    val IndexSizeBytes: Long?,
+    val ItemCount: Long?,
+    val KeySchema: List<KeySchema>?,
+    val Projection: Projection?
+)
+
+@JsonSerializable
+data class ProvisionedThroughputOverride(
+    val ReadCapacityUnits: Long?
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexReplica(
+    val IndexName: IndexName?,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?
+)
+
+@JsonSerializable
+data class Replica(
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexReplica>?,
+    val KMSMasterKeyId: KMSKeyId?,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?,
+    val RegionName: String?,
+    val ReplicaInaccessibleDateTime: Timestamp?,
+    val ReplicaStatus: ReplicaStatus?,
+    val ReplicaStatusDescription: String?,
+    val ReplicaStatusPercentProgress: String?
+)
+
+@JsonSerializable
+data class RestoreSummary(
+    val RestoreDateTime: Timestamp?,
+    val RestoreInProgress: Boolean?,
+    val SourceBackupArn: ARN?,
+    val SourceTableArn: ARN?
+)
+
+@JsonSerializable
+data class SSEDescription(
+    val InaccessibleEncryptionDateTime: Timestamp?,
+    val KMSMasterKeyArn: ARN?,
+    val SSEType: SSEType?,
+    val Status: String?
+)
+
+@JsonSerializable
+data class TableDescription(
+    val ArchivalSummary: ArchivalSummary?,
+    val AttributeDefinitions: List<AttributeDefinition>?,
+    val BillingModeSummary: BillingModeSummary?,
+    val CreationDateTime: Timestamp?,
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexResponse>?,
+    val GlobalTableVersion: String?,
+    val ItemCount: Long?,
+    val KeySchema: List<KeySchema>?,
+    val LatestStreamArn: ARN?,
+    val LatestStreamLabel: String?,
+    val LocalSecondaryIndexes: List<LocalSecondaryIndexResponse>?,
+    val ProvisionedThroughput: ProvisionedThroughputResponse?,
+    val Replicas: List<Replica>?,
+    val RestoreSummary: RestoreSummary?,
+    val SSEDescription: SSEDescription?,
+    val StreamSpecification: StreamSpecification?,
+    val TableArn: ARN?,
+    val TableId: String?,
+    val TableName: TableName?,
+    val TableSizeBytes: Long?,
+    val TableStatus: TableStatus?
+)
+
+@JsonSerializable
+data class TableDescriptionResponse(
+    val TableDescription: TableDescription
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexCreate(
+    val IndexName: IndexName?,
+    val KeySchema: List<KeySchema>?,
+    val Projection: Projection?,
+    val ProvisionedThroughput: ProvisionedThroughput?
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexDelete(
+    val IndexName: IndexName?
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexUpdate(
+    val IndexName: IndexName?,
+    val ProvisionedThroughput: ProvisionedThroughput?
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexUpdates(
+    val Create: GlobalSecondaryIndexCreate?,
+    val Delete: GlobalSecondaryIndexDelete?,
+    val Update: GlobalSecondaryIndexUpdate?
+)
+
+@JsonSerializable
+data class GlobalSecondaryIndexesUpdate(
+    val IndexName: IndexName?,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?
+)
+
+@JsonSerializable
+data class ReplicaCreate(
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexesUpdate>?,
+    val KMSMasterKeyId: KMSKeyId?,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?,
+    val RegionName: Region?
+)
+
+@JsonSerializable
+data class ReplicaDelete(val RegionName: Region?)
+
+@JsonSerializable
+data class ReplicaUpdate(
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexesUpdate>?,
+    val KMSMasterKeyId: KMSKeyId?,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?,
+    val RegionName: String?
+)
+
+@JsonSerializable
+data class ReplicaUpdates(
+    val Create: ReplicaCreate?,
+    val Delete: ReplicaDelete?,
+    val Update: ReplicaUpdate?
+)

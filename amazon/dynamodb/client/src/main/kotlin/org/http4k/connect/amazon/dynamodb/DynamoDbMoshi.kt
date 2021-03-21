@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.dynamodb
 
 import com.squareup.moshi.Moshi
+import org.http4k.connect.amazon.dynamodb.action.KotshiArchivalSummaryJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiAttributeValueJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchExecuteStatementJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchGetItemJsonAdapter
@@ -9,12 +10,11 @@ import org.http4k.connect.amazon.dynamodb.action.KotshiBatchStatementErrorJsonAd
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchStatementsJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchWriteItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchWriteItemsJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiBillingModeSummaryJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiCapacityJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiConditionCheckJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiConsumedCapacityJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiCreateTableJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiDeleteItemJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiDeleteJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiDeleteTableJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiDescribeTableJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiDescribedTableJsonAdapter
@@ -23,60 +23,58 @@ import org.http4k.connect.amazon.dynamodb.action.KotshiExecuteTransactionJsonAda
 import org.http4k.connect.amazon.dynamodb.action.KotshiExecutedStatementJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiExecutedTransactionJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiGetItemJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGetItemsResponseItemJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGetItemsResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiGetJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiGetResponseJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexCreateJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexDeleteJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexReplicaJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexResponseJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexUpdateJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexUpdatesJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiGlobalSecondaryIndexesUpdateJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiItemCollectionMetricsJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiKeySchemaJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiListTablesJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiLocalSecondaryIndexResponseJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiLocalSecondaryIndexesJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiModifiedItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiModifiedItemsJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiParameterizedStatementJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiProjectionJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiProvisionedThroughputJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiProvisionedThroughputOverrideJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiProvisionedThroughputResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiPutItemJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiPutJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiPutRequestJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiQueryJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiQueryResponseJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReplicaCreateJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReplicaDeleteJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReplicaJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReplicaUpdateJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiReplicaUpdatesJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiReqGetItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiReqStatementJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiReqWriteItemJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiRestoreSummaryJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiSSEDescriptionJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiSSESpecificationJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiStatementResponseJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiStreamSpecificationJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiTableDescriptionJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiTableDescriptionResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTableListJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTransactGetItemJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiTransactGetItemsJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTransactWriteItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTransactWriteItemsJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiUpdateItemJsonAdapter
-import org.http4k.connect.amazon.dynamodb.action.KotshiUpdateJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiUpdateTableJsonAdapter
 import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.IndexName
-import org.http4k.connect.amazon.model.KotshiArchivalSummaryJsonAdapter
 import org.http4k.connect.amazon.model.KotshiAttributeDefinitionJsonAdapter
-import org.http4k.connect.amazon.model.KotshiBillingModeSummaryJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexCreateJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexDeleteJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexReplicaJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexResponseJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexUpdateJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexUpdatesJsonAdapter
-import org.http4k.connect.amazon.model.KotshiGlobalSecondaryIndexesUpdateJsonAdapter
-import org.http4k.connect.amazon.model.KotshiKeySchemaJsonAdapter
-import org.http4k.connect.amazon.model.KotshiLocalSecondaryIndexResponseJsonAdapter
-import org.http4k.connect.amazon.model.KotshiLocalSecondaryIndexesJsonAdapter
-import org.http4k.connect.amazon.model.KotshiProjectionJsonAdapter
-import org.http4k.connect.amazon.model.KotshiProvisionedThroughputJsonAdapter
-import org.http4k.connect.amazon.model.KotshiProvisionedThroughputOverrideJsonAdapter
-import org.http4k.connect.amazon.model.KotshiProvisionedThroughputResponseJsonAdapter
-import org.http4k.connect.amazon.model.KotshiReplicaCreateJsonAdapter
-import org.http4k.connect.amazon.model.KotshiReplicaDeleteJsonAdapter
-import org.http4k.connect.amazon.model.KotshiReplicaJsonAdapter
-import org.http4k.connect.amazon.model.KotshiReplicaUpdateJsonAdapter
-import org.http4k.connect.amazon.model.KotshiReplicaUpdatesJsonAdapter
-import org.http4k.connect.amazon.model.KotshiRestoreSummaryJsonAdapter
-import org.http4k.connect.amazon.model.KotshiSSEDescriptionJsonAdapter
-import org.http4k.connect.amazon.model.KotshiSSESpecificationJsonAdapter
-import org.http4k.connect.amazon.model.KotshiStreamSpecificationJsonAdapter
-import org.http4k.connect.amazon.model.KotshiTableDescriptionJsonAdapter
-import org.http4k.connect.amazon.model.KotshiTableDescriptionResponseJsonAdapter
 import org.http4k.connect.amazon.model.TableName
 import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
@@ -112,11 +110,8 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiPutItemJsonAdapter),
     adapter(::KotshiQueryJsonAdapter),
     adapter(::KotshiUpdateItemJsonAdapter),
+    adapter(::KotshiTransactGetItemsJsonAdapter),
     adapter(::KotshiTransactWriteItemsJsonAdapter),
-    adapter(::KotshiConditionCheckJsonAdapter),
-    adapter(::KotshiDeleteJsonAdapter),
-    adapter(::KotshiPutJsonAdapter),
-    adapter(::KotshiUpdateJsonAdapter),
 
     // Batch
     adapter(::KotshiBatchGetItemJsonAdapter),
@@ -143,6 +138,8 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiExecutedStatementJsonAdapter),
     adapter(::KotshiGetJsonAdapter),
     adapter(::KotshiGetResponseJsonAdapter),
+    adapter(::KotshiGetItemsResponseJsonAdapter),
+    adapter(::KotshiGetItemsResponseItemJsonAdapter),
     adapter(::KotshiGlobalSecondaryIndexCreateJsonAdapter),
     adapter(::KotshiGlobalSecondaryIndexDeleteJsonAdapter),
     adapter(::KotshiGlobalSecondaryIndexesUpdateJsonAdapter),
@@ -171,7 +168,6 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiReqGetItemJsonAdapter),
     adapter(::KotshiReqWriteItemJsonAdapter),
     adapter(::KotshiReqStatementJsonAdapter),
-    adapter(::KotshiPutRequestJsonAdapter),
     adapter(::KotshiRestoreSummaryJsonAdapter),
     adapter(::KotshiSSEDescriptionJsonAdapter),
     adapter(::KotshiSSESpecificationJsonAdapter),

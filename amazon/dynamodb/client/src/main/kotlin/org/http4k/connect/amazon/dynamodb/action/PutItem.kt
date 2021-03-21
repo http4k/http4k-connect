@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.TableName
 import se.ansman.kotshi.JsonSerializable
 
@@ -11,9 +10,9 @@ import se.ansman.kotshi.JsonSerializable
 data class PutItem(
     val TableName: TableName,
     val ConditionExpression: String? = null,
-    val ExpressionAttributeNames: AttributeNames? = null,
-    val ExpressionAttributeValues: AttributeValues? = null,
-    val Item: Map<AttributeName, AttributeValue>? = null,
+    val ExpressionAttributeNames: TokensToNames? = null,
+    val ExpressionAttributeValues: TokensToValues? = null,
+    val Item: NamesToValues? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ReturnItemCollectionMetrics: ReturnItemCollectionMetrics? = null,
     val ReturnValues: ReturnValues? = null
