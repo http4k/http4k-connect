@@ -86,9 +86,9 @@ class Base64Blob private constructor(value: String) : StringValue(value) {
     fun decodedInputStream() = value.base64Decoded().byteInputStream()
 
     companion object : NonBlankStringValueFactory<Base64Blob>(::Base64Blob) {
-        fun encoded(unencoded: String) = encoded(unencoded.toByteArray())
-        fun encoded(unencoded: ByteArray) = Base64Blob(Base64.getEncoder().encodeToString(unencoded))
-        fun encoded(unencoded: InputStream) = encoded(unencoded.readAllBytes())
+        fun encode(unencoded: String) = encode(unencoded.toByteArray())
+        fun encode(unencoded: ByteArray) = Base64Blob(Base64.getEncoder().encodeToString(unencoded))
+        fun encode(unencoded: InputStream) = encode(unencoded.readAllBytes())
     }
 }
 

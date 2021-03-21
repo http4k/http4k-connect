@@ -32,7 +32,7 @@ import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.randomString
 import java.lang.Integer.MAX_VALUE
 
-val Blob = Base64Blob.encoded(randomString)
+val Blob = Base64Blob.encode(randomString)
 
 val KeyId = KMSKeyId.of(randomString)
 

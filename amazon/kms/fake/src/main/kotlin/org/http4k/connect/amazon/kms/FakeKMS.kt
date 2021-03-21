@@ -17,11 +17,11 @@ class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaosFake() {
     private val api = AmazonJsonFake(KMSMoshi, AwsService.of("TrentService"))
 
     private val publicKey by lazy {
-        Base64Blob.encoded(this::class.java.classLoader.getResource("id_example.pub")!!.readText())
+        Base64Blob.encode(this::class.java.classLoader.getResource("id_example.pub")!!.readText())
     }
 
     private val privateKey by lazy {
-        Base64Blob.encoded(this::class.java.classLoader.getResource("id_example")!!.readText())
+        Base64Blob.encode(this::class.java.classLoader.getResource("id_example")!!.readText())
     }
 
     override val app = routes(

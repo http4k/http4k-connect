@@ -68,7 +68,6 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    @Disabled
     fun `transactional items`() {
         with(dynamo) {
             transactWriteItems(
