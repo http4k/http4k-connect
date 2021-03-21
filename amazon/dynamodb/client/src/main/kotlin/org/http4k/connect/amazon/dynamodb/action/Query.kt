@@ -32,7 +32,7 @@ data class QueryResponse(
     val LastEvaluatedKey: NamesToValues?,
     val ScannedCount: Int?
 ) {
-    val items = Items?.map { it.toItem() } ?: emptyList()
+    val items = Items?.map(ItemResult::toItem) ?: emptyList()
 }
 
 enum class Select {

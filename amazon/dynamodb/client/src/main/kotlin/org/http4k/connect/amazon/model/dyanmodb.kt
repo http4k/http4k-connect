@@ -25,14 +25,27 @@ data class Attribute<IN, OUT>(
     private val toVal: (IN) -> AttributeValue,
     private val fromValue: (AttributeValue) -> OUT?
 ) {
+    /**
+     * Create a typed binding for this attribute
+     */
     infix fun to(t: IN) = name to toVal(t)
 
+    /**
+     * Used for creating tables
+     */
     fun keySchema(keyType: KeyType) = KeySchema(name, keyType)
+
+    /**
+     * Used for creating tables
+     */
     fun attrDefinition() = AttributeDefinition(name, type)
 
     override fun toString() = name.toString()
 
-    operator fun get(item: NamesToValues) = item[name]?.let { fromValue(it) }
+    /**
+     * Lookup this attribute from a queried Item
+     */
+    operator fun get(item: NamesToValues): OUT? = item[name]?.let { fromValue(it) }
 
     companion object {
         fun boolean(name: String) = Attribute(AttributeName.of(name), BOOL, AttributeValue::Bool, AttributeValue::BOOL)
