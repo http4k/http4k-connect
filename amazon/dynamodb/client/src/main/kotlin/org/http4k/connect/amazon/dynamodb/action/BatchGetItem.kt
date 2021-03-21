@@ -33,5 +33,5 @@ data class ReqGetItem internal constructor(
 data class BatchGetItems(
     val ConsumedCapacity: List<ConsumedCapacity>?,
     val Responses: Map<String, List<NamesToValues>>?,
-    val UnprocessedKeys: Map<String, ReqGetItem>?
+    val UnprocessedItems: Map<String, ReqGetItem>?
 )

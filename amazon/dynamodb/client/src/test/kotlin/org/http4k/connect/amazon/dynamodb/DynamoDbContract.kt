@@ -106,10 +106,15 @@ abstract class DynamoDbContract(
                         ReqWriteItem.Delete(mapOf(attrS to "hello"))
                     )
                 )
-            ).successValue().Responses
+            ).successValue()
+
+            assertThat(write.UnprocessedKeys, absent())
+
             val get = batchGetItem(
                 mapOf(table to ReqGetItem.Get(listOf(mapOf(attrS to "hello2"))))
-            ).successValue().Responses
+            ).successValue()
+
+            assertThat(get.UnprocessedItems, absent())
         }
     }
 
