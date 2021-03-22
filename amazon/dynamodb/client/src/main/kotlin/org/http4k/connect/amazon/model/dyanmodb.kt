@@ -16,11 +16,64 @@ import org.http4k.connect.amazon.model.DynamoDataType.N
 import org.http4k.connect.amazon.model.DynamoDataType.NS
 import org.http4k.connect.amazon.model.DynamoDataType.S
 import org.http4k.connect.amazon.model.DynamoDataType.SS
+import org.http4k.lens.BiDiLens
+import org.http4k.lens.BiDiLensSpec
 import org.http4k.lens.LensExtractor
+import org.http4k.lens.LensGet
+import org.http4k.lens.LensSet
+import org.http4k.lens.ParamMeta.StringParam
+import org.http4k.lens.StringBiDiMappings
+import org.http4k.lens.map
 import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
+import java.math.BigInteger
+import java.time.format.DateTimeFormatter
 
 fun Item(): ItemAttributes = mapOf()
+
+object Attr : BiDiLensSpec<ItemAttributes, AttributeValue>("item", StringParam,
+    LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
+    LensSet { name, values, target -> values.fold(target) { m, next -> m + (AttributeName.of(name) to next) } }
+) {
+    fun string() = map({ it.S!! }, AttributeValue::Str)
+    fun nonEmptyString() = map({ it.S!!.takeIf(String::isNotBlank) ?: error("missing") }, AttributeValue::Str)
+    fun int() = map({ it.N!!.toString().toInt() }, AttributeValue::Num)
+    fun long() = map({ it.N!!.toString().toLong() }, AttributeValue::Num)
+    fun double() = map({ it.N!!.toString().toDouble() }, AttributeValue::Num)
+    fun float() = map({ it.N!!.toString().toFloat() }, AttributeValue::Num)
+    fun boolean() = map({ it.BOOL!! }, AttributeValue::Bool)
+    fun base64Blob() = map({ it.B!! }, { AttributeValue.Base64(it) })
+    fun bigDecimal() = map({ BigDecimal(it.N!!.toString()) }, AttributeValue::Num)
+    fun bigInteger() = map({ BigInteger(it.N!!.toString()) }, AttributeValue::Num)
+    fun uuid() = string().map(StringBiDiMappings.uuid())
+    fun uri() = string().map(StringBiDiMappings.uri())
+    fun duration() = string().map(StringBiDiMappings.duration())
+    fun yearMonth() = string().map(StringBiDiMappings.yearMonth())
+    fun instant() = string().map(StringBiDiMappings.instant())
+    fun localDateTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME) =
+        string().map(StringBiDiMappings.localDateTime(formatter))
+
+    fun zonedDateTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME) =
+        string().map(StringBiDiMappings.zonedDateTime(formatter))
+
+    fun localDate(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE) =
+        string().map(StringBiDiMappings.localDate(formatter))
+
+    fun localTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_TIME) =
+        string().map(StringBiDiMappings.localTime(formatter))
+
+    fun offsetTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_TIME) =
+        string().map(StringBiDiMappings.offsetTime(formatter))
+
+    fun offsetDateTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME) =
+        string().map(StringBiDiMappings.zonedDateTime(formatter))
+
+    inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
+
+    override val multi = error("unsupported at the moment")
+}
+
+val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = meta.name
 
 data class Attribute<IN, OUT>(
     val name: AttributeName,
