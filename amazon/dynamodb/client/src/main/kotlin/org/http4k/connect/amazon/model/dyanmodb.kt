@@ -5,6 +5,7 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
+import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
 import org.http4k.connect.amazon.dynamodb.action.KeySchema
 import org.http4k.connect.amazon.model.DynamoDataType.B
@@ -41,18 +42,22 @@ open class AttrLensSpec<OUT>(
     private val get: LensGet<ItemAttributes, OUT>,
     private val setter: LensSet<ItemAttributes, OUT>
 ) : BiDiLensSpec<ItemAttributes, OUT>("item", StringParam, get, setter) {
-    internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType,get, setter)
+    internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType, get, setter)
 
     override val multi = throw UnsupportedOperationException("")
 }
 
 object Attr : AttrLensSpec<AttributeValue>(S,
     LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
-    LensSet { name, values, target -> values.fold(target) { m, next -> m + (AttributeName.of(name) to next) } }
+    LensSet { name, values, target ->
+        (values.takeIf { it.isNotEmpty() } ?: listOf(Null()))
+            .fold(target) { m, next -> m + (AttributeName.of(name) to next) }
+    }
 ) {
     fun string() = map({ it.S!! }, AttributeValue::Str)
     fun strings() = map({ it.SS!! }, { AttributeValue.StrSet(it) })
-    fun nonEmptyString() = with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("blank string") }, AttributeValue::Str)
+    fun nonEmptyString() =
+        with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("blank string") }, AttributeValue::Str)
     fun int() = with(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
     fun ints() = with(NS).map({ it.NS!!.map(String::toInt).toSet() }, AttributeValue::NumSet)
     fun long() = with(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
