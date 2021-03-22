@@ -5,101 +5,15 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
-import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
-import org.http4k.connect.amazon.model.DynamoDataType.B
-import org.http4k.connect.amazon.model.DynamoDataType.BOOL
-import org.http4k.connect.amazon.model.DynamoDataType.BS
-import org.http4k.connect.amazon.model.DynamoDataType.N
-import org.http4k.connect.amazon.model.DynamoDataType.NS
-import org.http4k.connect.amazon.model.DynamoDataType.NULL
 import org.http4k.lens.BiDiLens
-import org.http4k.lens.BiDiLensSpec
-import org.http4k.lens.LensGet
-import org.http4k.lens.LensSet
-import org.http4k.lens.ParamMeta.StringParam
-import org.http4k.lens.StringBiDiMappings
-import org.http4k.lens.map
 import se.ansman.kotshi.JsonSerializable
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
-import java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.time.format.DateTimeFormatter.ISO_OFFSET_TIME
-import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 fun Item(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
     mapOf<AttributeName, AttributeValue>().with(*modifiers)
 
 fun ItemAttributes.with(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
     modifiers.fold(this) { memo, next -> next(memo) }
-
-open class AttrLensSpec<OUT>(
-    protected val dataType: DynamoDataType,
-    private val get: LensGet<ItemAttributes, OUT>,
-    private val setter: LensSet<ItemAttributes, OUT>
-) : BiDiLensSpec<ItemAttributes, OUT>("item", StringParam, get, setter) {
-    internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType, get, setter)
-
-    override val multi get() = throw UnsupportedOperationException("")
-}
-
-object Attr : AttrLensSpec<AttributeValue>(NULL,
-    LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
-    LensSet { name, values, target ->
-        (values.takeIf { it.isNotEmpty() } ?: listOf(Null()))
-            .fold(target) { m, next -> m + (AttributeName.of(name) to next) }
-    }
-) {
-    fun list() = map({ it.L!! }, { AttributeValue.List(it) })
-    fun map() = map({ it.M!! }, { AttributeValue.Map(it) })
-    fun string() = map({ it.S!! }, AttributeValue::Str)
-    fun strings() = map({ it.SS!! }, { AttributeValue.StrSet(it) })
-    fun nonEmptyString() =
-        with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("blank string") }, AttributeValue::Str)
-
-    fun int() = with(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
-    fun numbers() = with(NS).map({ it.NS!!.map(String::toBigDecimal).toSet() }, AttributeValue::NumSet)
-    fun ints() = with(NS).map({ it.NS!!.map(String::toInt).toSet() }, AttributeValue::NumSet)
-    fun long() = with(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
-    fun longs() = with(NS).map({ it.NS!!.map(String::toLong).toSet() }, AttributeValue::NumSet)
-    fun double() = with(N).map({ it.N!!.toString().toDouble() }, AttributeValue::Num)
-    fun doubles() = with(NS).map({ it.NS!!.map(String::toDouble).toSet() }, AttributeValue::NumSet)
-    fun float() = with(N).map({ it.N!!.toString().toFloat() }, AttributeValue::Num)
-    fun floats() = with(NS).map({ it.NS!!.map(String::toFloat).toSet() }, AttributeValue::NumSet)
-    fun boolean() = with(BOOL).map({ it.BOOL!! }, AttributeValue::Bool)
-    fun base64Blob() = with(B).map({ it.B!! }, { AttributeValue.Base64(it) })
-    fun base64Blobs() = with(BS).map({ it.BS!! }, { AttributeValue.Base64Set(it) })
-    fun bigDecimal() = with(N).map({ it.N!!.toString().toBigDecimal() }, AttributeValue::Num)
-    fun bigDecimals() = with(NS).map({ it.NS!!.map(String::toBigDecimal).toSet() }, AttributeValue::NumSet)
-    fun bigInteger() = with(N).map({ it.N!!.toString().toBigInteger() }, AttributeValue::Num)
-    fun bigIntegers() = with(NS).map({ it.NS!!.map(String::toBigInteger).toSet() }, AttributeValue::NumSet)
-    fun uuid() = string().map(StringBiDiMappings.uuid())
-    fun uri() = string().map(StringBiDiMappings.uri())
-    fun duration() = string().map(StringBiDiMappings.duration())
-    fun yearMonth() = string().map(StringBiDiMappings.yearMonth())
-    fun instant() = string().map(StringBiDiMappings.instant())
-    fun localDateTime(formatter: DateTimeFormatter = ISO_LOCAL_DATE_TIME) =
-        string().map(StringBiDiMappings.localDateTime(formatter))
-
-    fun zonedDateTime(formatter: DateTimeFormatter = ISO_ZONED_DATE_TIME) =
-        string().map(StringBiDiMappings.zonedDateTime(formatter))
-
-    fun localDate(formatter: DateTimeFormatter = ISO_LOCAL_DATE) =
-        string().map(StringBiDiMappings.localDate(formatter))
-
-    fun localTime(formatter: DateTimeFormatter = ISO_LOCAL_TIME) =
-        string().map(StringBiDiMappings.localTime(formatter))
-
-    fun offsetTime(formatter: DateTimeFormatter = ISO_OFFSET_TIME) =
-        string().map(StringBiDiMappings.offsetTime(formatter))
-
-    fun offsetDateTime(formatter: DateTimeFormatter = ISO_OFFSET_DATE_TIME) =
-        string().map(StringBiDiMappings.zonedDateTime(formatter))
-
-    inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
-}
 
 val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = AttributeName.of(meta.name)
 

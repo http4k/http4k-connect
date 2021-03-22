@@ -19,7 +19,7 @@ import org.http4k.connect.amazon.dynamodb.action.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Delete
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Update
-import org.http4k.connect.amazon.model.Attr
+import org.http4k.connect.amazon.model.Attribute
 import org.http4k.connect.amazon.model.AttributeDefinition
 import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.Base64Blob
@@ -51,17 +51,17 @@ abstract class DynamoDbContract(
 
     private val table = TableName.of("http4k-connect" + UUID.randomUUID().toString())
 
-    private val attrBool = Attr.boolean().required("theBool")
-    private val attrB = Attr.base64Blob().required("theBase64Blob")
-    private val attrBS = Attr.base64Blobs().required("theBase64Blobs")
-    private val attrN = Attr.int().required("theNum")
-    private val attrNS = Attr.ints().required("theNums")
-    private val attrL = Attr.list().required("theList")
-    private val attrM = Attr.map().required("theMap")
-    private val attrS = Attr.string().required("theString")
-    private val attrSS = Attr.strings().required("theStrings")
-    private val attrNL = Attr.string().optional("theNull")
-    private val attrMissing = Attr.string().required("theMissing")
+    private val attrBool = Attribute.boolean().required("theBool")
+    private val attrB = Attribute.base64Blob().required("theBase64Blob")
+    private val attrBS = Attribute.base64Blobs().required("theBase64Blobs")
+    private val attrN = Attribute.int().required("theNum")
+    private val attrNS = Attribute.ints().required("theNums")
+    private val attrL = Attribute.list().required("theList")
+    private val attrM = Attribute.map().required("theMap")
+    private val attrS = Attribute.string().required("theString")
+    private val attrSS = Attribute.strings().required("theStrings")
+    private val attrNL = Attribute.optional("theNull")
+    private val attrMissing = Attribute.string().required("theMissing")
 
     @BeforeEach
     fun create() {

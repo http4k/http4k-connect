@@ -12,7 +12,7 @@ import org.http4k.connect.amazon.dynamodb.action.TableDescriptionResponse
 import org.http4k.connect.amazon.dynamodb.deleteTable
 import org.http4k.connect.amazon.dynamodb.getItem
 import org.http4k.connect.amazon.dynamodb.putItem
-import org.http4k.connect.amazon.model.Attr
+import org.http4k.connect.amazon.model.Attribute
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.Region
@@ -22,16 +22,16 @@ import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 
-private val attrBool = Attr.boolean().required("theBool")
-private val attrB = Attr.base64Blob().required("theBase64Blob")
-private val attrBS = Attr.base64Blobs().required("theBase64Blobs")
-private val attrN = Attr.int().required("theNum")
-private val attrNS = Attr.ints().required("theNums")
-private val attrL = Attr.list().required("theList")
-private val attrM = Attr.map().required("theMap")
-private val attrS = Attr.string().required("theString")
-private val attrSS = Attr.strings().required("theStrings")
-private val attrNL = Attr.string().optional("theNull")
+private val attrBool = Attribute.boolean().required("theBool")
+private val attrB = Attribute.base64Blob().required("theBase64Blob")
+private val attrBS = Attribute.base64Blobs().required("theBase64Blobs")
+private val attrN = Attribute.int().required("theNum")
+private val attrNS = Attribute.ints().required("theNums")
+private val attrL = Attribute.list().required("theList")
+private val attrM = Attribute.map().required("theMap")
+private val attrS = Attribute.string().required("theString")
+private val attrSS = Attribute.strings().required("theStrings")
+private val attrNL = Attribute.string().optional("theNull")
 
 fun main() {
     // we can connect to the real service
