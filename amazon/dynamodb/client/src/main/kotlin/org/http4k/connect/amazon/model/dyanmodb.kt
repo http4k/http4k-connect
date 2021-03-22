@@ -44,7 +44,7 @@ open class AttrLensSpec<OUT>(
 ) : BiDiLensSpec<ItemAttributes, OUT>("item", StringParam, get, setter) {
     internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType, get, setter)
 
-    override val multi = throw UnsupportedOperationException("")
+    override val multi get() = throw UnsupportedOperationException("")
 }
 
 object Attr : AttrLensSpec<AttributeValue>(S,
@@ -54,10 +54,12 @@ object Attr : AttrLensSpec<AttributeValue>(S,
             .fold(target) { m, next -> m + (AttributeName.of(name) to next) }
     }
 ) {
+    fun list() = map({ it.L!! }, { AttributeValue.List(it) })
     fun string() = map({ it.S!! }, AttributeValue::Str)
     fun strings() = map({ it.SS!! }, { AttributeValue.StrSet(it) })
     fun nonEmptyString() =
         with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("blank string") }, AttributeValue::Str)
+
     fun int() = with(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
     fun ints() = with(NS).map({ it.NS!!.map(String::toInt).toSet() }, AttributeValue::NumSet)
     fun long() = with(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
