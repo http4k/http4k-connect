@@ -38,22 +38,15 @@ fun Item(): ItemAttributes = mapOf()
 
 open class AttrLensSpec<OUT>(
     protected val dataType: DynamoDataType,
-    protected val multiDataType: DynamoDataType,
     private val get: LensGet<ItemAttributes, OUT>,
     private val setter: LensSet<ItemAttributes, OUT>
 ) : BiDiLensSpec<ItemAttributes, OUT>("item", StringParam, get, setter) {
-    internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType,
-        when(dataType) {
-            B -> BS
-            N -> NS
-            else -> SS
-        },
-        get, setter)
+    internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType,get, setter)
 
     override val multi = throw UnsupportedOperationException("")
 }
 
-object Attr : AttrLensSpec<AttributeValue>(S,SS,
+object Attr : AttrLensSpec<AttributeValue>(S,
     LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
     LensSet { name, values, target -> values.fold(target) { m, next -> m + (AttributeName.of(name) to next) } }
 ) {
