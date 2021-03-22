@@ -122,7 +122,7 @@ abstract class DynamoDbContract(
     @Test
     fun `partiSQL operations`() {
         with(dynamo) {
-            putItem(table, item = item("hello")).successValue()
+            putItem(table, item("hello")).successValue()
 
             executeStatement(statement()).successValue()
 
@@ -135,7 +135,7 @@ abstract class DynamoDbContract(
     @Test
         fun `item lifecycle`() {
         with(dynamo) {
-            putItem(table, item = item("hello")).successValue()
+            putItem(table, item("hello")).successValue()
 
             val item = getItem(table, mapOf(attrS to "hello")).successValue().item
 
