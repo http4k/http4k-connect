@@ -28,6 +28,12 @@ import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
+import java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.time.format.DateTimeFormatter.ISO_OFFSET_TIME
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 fun Item(): ItemAttributes = mapOf()
 
@@ -50,22 +56,22 @@ object Attr : BiDiLensSpec<ItemAttributes, AttributeValue>("item", StringParam,
     fun duration() = string().map(StringBiDiMappings.duration())
     fun yearMonth() = string().map(StringBiDiMappings.yearMonth())
     fun instant() = string().map(StringBiDiMappings.instant())
-    fun localDateTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME) =
+    fun localDateTime(formatter: DateTimeFormatter = ISO_LOCAL_DATE_TIME) =
         string().map(StringBiDiMappings.localDateTime(formatter))
 
-    fun zonedDateTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME) =
+    fun zonedDateTime(formatter: DateTimeFormatter = ISO_ZONED_DATE_TIME) =
         string().map(StringBiDiMappings.zonedDateTime(formatter))
 
-    fun localDate(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE) =
+    fun localDate(formatter: DateTimeFormatter = ISO_LOCAL_DATE) =
         string().map(StringBiDiMappings.localDate(formatter))
 
-    fun localTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_TIME) =
+    fun localTime(formatter: DateTimeFormatter = ISO_LOCAL_TIME) =
         string().map(StringBiDiMappings.localTime(formatter))
 
-    fun offsetTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_TIME) =
+    fun offsetTime(formatter: DateTimeFormatter = ISO_OFFSET_TIME) =
         string().map(StringBiDiMappings.offsetTime(formatter))
 
-    fun offsetDateTime(formatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME) =
+    fun offsetDateTime(formatter: DateTimeFormatter = ISO_OFFSET_DATE_TIME) =
         string().map(StringBiDiMappings.zonedDateTime(formatter))
 
     inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
