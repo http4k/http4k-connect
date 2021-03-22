@@ -19,18 +19,13 @@ import org.http4k.connect.amazon.model.DynamoDataType.SS
 import org.http4k.lens.BiDiLens
 import org.http4k.lens.BiDiLensSpec
 import org.http4k.lens.LensExtractor
-import org.http4k.lens.LensFailure
 import org.http4k.lens.LensGet
 import org.http4k.lens.LensSet
-import org.http4k.lens.Meta
-import org.http4k.lens.Missing
-import org.http4k.lens.ParamMeta
 import org.http4k.lens.ParamMeta.StringParam
 import org.http4k.lens.StringBiDiMappings
 import org.http4k.lens.map
 import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
-import java.math.BigInteger
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
@@ -41,24 +36,45 @@ import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 fun Item(): ItemAttributes = mapOf()
 
-object Attr : BiDiLensSpec<ItemAttributes, AttributeValue>("item", StringParam,
+open class AttrLensSpec<OUT>(
+    protected val dataType: DynamoDataType,
+    protected val multiDataType: DynamoDataType,
+    private val get: LensGet<ItemAttributes, OUT>,
+    private val setter: LensSet<ItemAttributes, OUT>
+) : BiDiLensSpec<ItemAttributes, OUT>("item", StringParam, get, setter) {
+    internal fun with(dataType: DynamoDataType) = AttrLensSpec(dataType,
+        when(dataType) {
+            B -> BS
+            N -> NS
+            else -> SS
+        },
+        get, setter)
+
+    override val multi = throw UnsupportedOperationException("")
+}
+
+object Attr : AttrLensSpec<AttributeValue>(S,SS,
     LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
     LensSet { name, values, target -> values.fold(target) { m, next -> m + (AttributeName.of(name) to next) } }
 ) {
-    fun with(dataType: DynamoDataType) = AttrLensSpec(dataType)
-}
-
-object Attr : AttrLensSpec(S) {
     fun string() = map({ it.S!! }, AttributeValue::Str)
-    fun nonEmptyString() = with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("missing") }, AttributeValue::Str)
+    fun strings() = map({ it.SS!! }, { AttributeValue.StrSet(it) })
+    fun nonEmptyString() = with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("blank string") }, AttributeValue::Str)
     fun int() = with(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
+    fun ints() = with(NS).map({ it.NS!!.map(String::toInt).toSet() }, AttributeValue::NumSet)
     fun long() = with(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
+    fun longs() = with(NS).map({ it.NS!!.map(String::toLong).toSet() }, AttributeValue::NumSet)
     fun double() = with(N).map({ it.N!!.toString().toDouble() }, AttributeValue::Num)
+    fun doubles() = with(NS).map({ it.NS!!.map(String::toDouble).toSet() }, AttributeValue::NumSet)
     fun float() = with(N).map({ it.N!!.toString().toFloat() }, AttributeValue::Num)
+    fun floats() = with(NS).map({ it.NS!!.map(String::toFloat).toSet() }, AttributeValue::NumSet)
     fun boolean() = with(BOOL).map({ it.BOOL!! }, AttributeValue::Bool)
     fun base64Blob() = with(B).map({ it.B!! }, { AttributeValue.Base64(it) })
-    fun bigDecimal() = with(N).map({ BigDecimal(it.N!!.toString()) }, AttributeValue::Num)
-    fun bigInteger() = with(N).map({ BigInteger(it.N!!.toString()) }, AttributeValue::Num)
+    fun base64Blobs() = with(BS).map({ it.BS!! }, { AttributeValue.Base64Set(it) })
+    fun bigDecimal() = with(N).map({ it.N!!.toString().toBigDecimal() }, AttributeValue::Num)
+    fun bigDecimals() = with(NS).map({ it.NS!!.map(String::toBigDecimal).toSet() }, AttributeValue::NumSet)
+    fun bigInteger() = with(N).map({ it.N!!.toString().toBigInteger() }, AttributeValue::Num)
+    fun bigIntegers() = with(NS).map({ it.NS!!.map(String::toBigInteger).toSet() }, AttributeValue::NumSet)
     fun uuid() = string().map(StringBiDiMappings.uuid())
     fun uri() = string().map(StringBiDiMappings.uri())
     fun duration() = string().map(StringBiDiMappings.duration())
@@ -83,41 +99,6 @@ object Attr : AttrLensSpec(S) {
         string().map(StringBiDiMappings.zonedDateTime(formatter))
 
     inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
-
-    override val multi = object : AttrLensSpec(dataType) {
-        override fun optional(name: String, description: String?): AttrLensSpec<IN, List<OUT>?> {
-            val getLens = get(name)
-            val setLens = set(name)
-            return BiDiLens(
-                Meta(false, location, ParamMeta.ArrayParam(paramMeta), name, description),
-                { getLens(it).run { if (isEmpty()) null else this } },
-                { out: List<OUT>?, target: IN -> setLens(out ?: emptyList(), target) }
-            )
-        }
-
-        override fun required(name: String, description: String?): BiDiLens<IN, List<OUT>> {
-            val getLens = get(name)
-            val setLens = set(name)
-            return BiDiLens(
-                Meta(true, location, ParamMeta.ArrayParam(paramMeta), name, description),
-                {
-                    getLens(it).run {
-                        if (isEmpty()) throw LensFailure(
-                            Missing(
-                                Meta(
-                                    true,
-                                    location,
-                                    ParamMeta.ArrayParam(paramMeta),
-                                    name,
-                                    description
-                                )
-                            ), target = it
-                        ) else this
-                    }
-                },
-                { out: List<OUT>, target: IN -> setLens(out, target) })
-        }
-    }
 }
 
 val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = meta.name
