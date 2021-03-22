@@ -92,8 +92,8 @@ abstract class DynamoDbContract(
                 )
             ).successValue()
 
-            assertThat(attrS[result.responses[0]], equalTo("hello2"))
-            assertThat(attrS[result.responses[1]], equalTo("hello3"))
+            assertThat(attrS(result.responses[0]), equalTo("hello2"))
+            assertThat(attrS(result.responses[1]), equalTo("hello3"))
         }
     }
 
@@ -139,17 +139,17 @@ abstract class DynamoDbContract(
 
             val item = getItem(table, mapOf(attrS to "hello")).successValue().item
 
-            assertThat(attrS[item], equalTo("hello"))
-            assertThat(attrBool[item], equalTo(true))
-            assertThat(attrB[item], equalTo(Base64Blob.encode("foo")))
-            assertThat(attrBS[item], equalTo(setOf(Base64Blob.encode("bar"))))
-            assertThat(attrN[item], equalTo(BigDecimal(123)))
-            assertThat(attrNS[item], equalTo(setOf(BigDecimal(123), BigDecimal("12.34"))))
-            assertThat(attrL[item], equalTo(listOf(List(listOf(Str("foo"))), Num(123), Null())))
-            assertThat(attrM[item], equalTo(mapOf(attrS to "foo", attrBool to false)))
-            assertThat(attrSS[item], equalTo(setOf("345", "567")))
-            assertThat(attrNL[item], absent())
-            assertThat(attrMissing[item], absent())
+            assertThat(attrS(item), equalTo("hello"))
+            assertThat(attrBool(item), equalTo(true))
+            assertThat(attrB(item), equalTo(Base64Blob.encode("foo")))
+            assertThat(attrBS(item), equalTo(setOf(Base64Blob.encode("bar"))))
+            assertThat(attrN(item), equalTo(BigDecimal(123)))
+            assertThat(attrNS(item), equalTo(setOf(BigDecimal(123), BigDecimal("12.34"))))
+            assertThat(attrL(item), equalTo(listOf(List(listOf(Str("foo"))), Num(123), Null())))
+            assertThat(attrM(item), equalTo(mapOf(attrS to "foo", attrBool to false)))
+            assertThat(attrSS(item), equalTo(setOf("345", "567")))
+            assertThat(attrNL(item), absent())
+            assertThat(attrMissing(item), absent())
 
             updateItem(
                 table,
@@ -160,7 +160,7 @@ abstract class DynamoDbContract(
             ).successValue()
 
             val updatedItem = getItem(table, mapOf(attrS to "hello"), consistentRead = true).successValue().item
-            assertThat(attrN[updatedItem], equalTo(BigDecimal(321)))
+            assertThat(attrN(updatedItem), equalTo(BigDecimal(321)))
 
             val query = query(
                 table,

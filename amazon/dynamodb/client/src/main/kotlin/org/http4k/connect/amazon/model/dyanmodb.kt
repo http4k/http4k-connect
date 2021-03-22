@@ -16,15 +16,18 @@ import org.http4k.connect.amazon.model.DynamoDataType.N
 import org.http4k.connect.amazon.model.DynamoDataType.NS
 import org.http4k.connect.amazon.model.DynamoDataType.S
 import org.http4k.connect.amazon.model.DynamoDataType.SS
+import org.http4k.lens.LensExtractor
 import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
+
+fun Item(): ItemAttributes = mapOf()
 
 data class Attribute<IN, OUT>(
     val name: AttributeName,
     val type: DynamoDataType,
     private val toVal: (IN) -> AttributeValue,
     private val fromValue: (AttributeValue) -> OUT?
-) {
+) : LensExtractor<ItemAttributes, OUT?> {
     /**
      * Create a typed binding for this attribute
      */
@@ -45,18 +48,20 @@ data class Attribute<IN, OUT>(
     /**
      * Lookup this attribute from a queried Item
      */
-    operator fun get(item: ItemAttributes): OUT? = item[name]?.let { fromValue(it) }
+    override fun invoke(target: ItemAttributes) = target[name]?.let { fromValue(it) }
 
     companion object {
         fun boolean(name: String) = Attribute(AttributeName.of(name), BOOL, AttributeValue::Bool, AttributeValue::BOOL)
         fun base64Blob(name: String) = Attribute(AttributeName.of(name), B, AttributeValue::Base64, AttributeValue::B)
         fun base64Blobs(name: String) =
             Attribute(AttributeName.of(name), BS, AttributeValue::Base64Set, AttributeValue::BS)
+
         fun list(name: String) = Attribute(AttributeName.of(name), L, AttributeValue::List, AttributeValue::L)
         fun map(name: String) = Attribute(AttributeName.of(name), M, AttributeValue::Map, AttributeValue::M)
         fun number(name: String) = Attribute(AttributeName.of(name), N, AttributeValue::Num) { BigDecimal(it.N) }
         fun numbers(name: String) =
             Attribute(AttributeName.of(name), NS, AttributeValue::NumSet) { it.NS?.map(::BigDecimal)?.toSet() }
+
         fun string(name: String) = Attribute(AttributeName.of(name), S, AttributeValue::Str, AttributeValue::S)
         fun strings(name: String) = Attribute(AttributeName.of(name), SS, AttributeValue::StrSet, AttributeValue::SS)
     }
