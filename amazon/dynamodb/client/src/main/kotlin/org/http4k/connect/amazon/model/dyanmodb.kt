@@ -7,26 +7,20 @@ import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
-import org.http4k.connect.amazon.dynamodb.action.KeySchema
 import org.http4k.connect.amazon.model.DynamoDataType.B
 import org.http4k.connect.amazon.model.DynamoDataType.BOOL
 import org.http4k.connect.amazon.model.DynamoDataType.BS
-import org.http4k.connect.amazon.model.DynamoDataType.L
-import org.http4k.connect.amazon.model.DynamoDataType.M
 import org.http4k.connect.amazon.model.DynamoDataType.N
 import org.http4k.connect.amazon.model.DynamoDataType.NS
-import org.http4k.connect.amazon.model.DynamoDataType.S
-import org.http4k.connect.amazon.model.DynamoDataType.SS
+import org.http4k.connect.amazon.model.DynamoDataType.NULL
 import org.http4k.lens.BiDiLens
 import org.http4k.lens.BiDiLensSpec
-import org.http4k.lens.LensExtractor
 import org.http4k.lens.LensGet
 import org.http4k.lens.LensSet
 import org.http4k.lens.ParamMeta.StringParam
 import org.http4k.lens.StringBiDiMappings
 import org.http4k.lens.map
 import se.ansman.kotshi.JsonSerializable
-import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
@@ -35,7 +29,11 @@ import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.time.format.DateTimeFormatter.ISO_OFFSET_TIME
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
-fun Item(): ItemAttributes = mapOf()
+fun Item(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
+    mapOf<AttributeName, AttributeValue>().with(*modifiers)
+
+fun ItemAttributes.with(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
+    modifiers.fold(this) { memo, next -> next(memo) }
 
 open class AttrLensSpec<OUT>(
     protected val dataType: DynamoDataType,
@@ -47,7 +45,7 @@ open class AttrLensSpec<OUT>(
     override val multi get() = throw UnsupportedOperationException("")
 }
 
-object Attr : AttrLensSpec<AttributeValue>(S,
+object Attr : AttrLensSpec<AttributeValue>(NULL,
     LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
     LensSet { name, values, target ->
         (values.takeIf { it.isNotEmpty() } ?: listOf(Null()))
@@ -55,12 +53,14 @@ object Attr : AttrLensSpec<AttributeValue>(S,
     }
 ) {
     fun list() = map({ it.L!! }, { AttributeValue.List(it) })
+    fun map() = map({ it.M!! }, { AttributeValue.Map(it) })
     fun string() = map({ it.S!! }, AttributeValue::Str)
     fun strings() = map({ it.SS!! }, { AttributeValue.StrSet(it) })
     fun nonEmptyString() =
         with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("blank string") }, AttributeValue::Str)
 
     fun int() = with(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
+    fun numbers() = with(NS).map({ it.NS!!.map(String::toBigDecimal).toSet() }, AttributeValue::NumSet)
     fun ints() = with(NS).map({ it.NS!!.map(String::toInt).toSet() }, AttributeValue::NumSet)
     fun long() = with(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
     fun longs() = with(NS).map({ it.NS!!.map(String::toLong).toSet() }, AttributeValue::NumSet)
@@ -101,52 +101,7 @@ object Attr : AttrLensSpec<AttributeValue>(S,
     inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
 }
 
-val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = meta.name
-
-data class Attribute<IN, OUT>(
-    val name: AttributeName,
-    val type: DynamoDataType,
-    private val toVal: (IN) -> AttributeValue,
-    private val fromValue: (AttributeValue) -> OUT?
-) : LensExtractor<ItemAttributes, OUT?> {
-    /**
-     * Create a typed binding for this attribute
-     */
-    infix fun to(t: IN) = name to toVal(t)
-
-    /**
-     * Used for creating tables
-     */
-    fun keySchema(keyType: KeyType) = KeySchema(name, keyType)
-
-    /**
-     * Used for creating tables
-     */
-    fun attrDefinition() = AttributeDefinition(name, type)
-
-    override fun toString() = name.toString()
-
-    /**
-     * Lookup this attribute from a queried Item
-     */
-    override fun invoke(target: ItemAttributes) = target[name]?.let { fromValue(it) }
-
-    companion object {
-        fun boolean(name: String) = Attribute(AttributeName.of(name), BOOL, AttributeValue::Bool, AttributeValue::BOOL)
-        fun base64Blob(name: String) = Attribute(AttributeName.of(name), B, AttributeValue::Base64, AttributeValue::B)
-        fun base64Blobs(name: String) =
-            Attribute(AttributeName.of(name), BS, AttributeValue::Base64Set, AttributeValue::BS)
-
-        fun list(name: String) = Attribute(AttributeName.of(name), L, AttributeValue::List, AttributeValue::L)
-        fun map(name: String) = Attribute(AttributeName.of(name), M, AttributeValue::Map, AttributeValue::M)
-        fun number(name: String) = Attribute(AttributeName.of(name), N, AttributeValue::Num) { BigDecimal(it.N) }
-        fun numbers(name: String) =
-            Attribute(AttributeName.of(name), NS, AttributeValue::NumSet) { it.NS?.map(::BigDecimal)?.toSet() }
-
-        fun string(name: String) = Attribute(AttributeName.of(name), S, AttributeValue::Str, AttributeValue::S)
-        fun strings(name: String) = Attribute(AttributeName.of(name), SS, AttributeValue::StrSet, AttributeValue::SS)
-    }
-}
+val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = AttributeName.of(meta.name)
 
 class AttributeName private constructor(value: String) : StringValue(value), Comparable<AttributeName> {
     companion object : NonBlankStringValueFactory<AttributeName>(::AttributeName)

@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Str
+import org.http4k.connect.amazon.dynamodb.action.KeySchema
 import org.http4k.connect.amazon.dynamodb.action.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.action.ReqGetItem
 import org.http4k.connect.amazon.dynamodb.action.ReqStatement
@@ -18,12 +19,17 @@ import org.http4k.connect.amazon.dynamodb.action.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Delete
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Update
-import org.http4k.connect.amazon.model.Attribute
+import org.http4k.connect.amazon.model.Attr
+import org.http4k.connect.amazon.model.AttributeDefinition
+import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.BillingMode.PAY_PER_REQUEST
 import org.http4k.connect.amazon.model.BillingMode.PROVISIONED
+import org.http4k.connect.amazon.model.DynamoDataType.S
+import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.KeyType.HASH
 import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.model.name
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.AfterEach
@@ -45,21 +51,21 @@ abstract class DynamoDbContract(
 
     private val table = TableName.of("http4k-connect" + UUID.randomUUID().toString())
 
-    private val attrBool = Attribute.boolean("theBool")
-    private val attrB = Attribute.base64Blob("theBase64Blob")
-    private val attrBS = Attribute.base64Blobs("theBase64Blobs")
-    private val attrN = Attribute.number("theNum")
-    private val attrNS = Attribute.numbers("theNums")
-    private val attrL = Attribute.list("theList")
-    private val attrM = Attribute.map("theMap")
-    private val attrS = Attribute.string("theString")
-    private val attrSS = Attribute.strings("theStrings")
-    private val attrNL = Attribute.string("theNull")
-    private val attrMissing = Attribute.string("theMissing")
+    private val attrBool = Attr.boolean().required("theBool")
+    private val attrB = Attr.base64Blob().required("theBase64Blob")
+    private val attrBS = Attr.base64Blobs().required("theBase64Blobs")
+    private val attrN = Attr.int().required("theNum")
+    private val attrNS = Attr.ints().required("theNums")
+    private val attrL = Attr.list().required("theList")
+    private val attrM = Attr.map().required("theMap")
+    private val attrS = Attr.string().required("theString")
+    private val attrSS = Attr.strings().required("theStrings")
+    private val attrNL = Attr.string().optional("theNull")
+    private val attrMissing = Attr.string().required("theMissing")
 
     @BeforeEach
     fun create() {
-        assertThat(dynamo.createTable(table, attrS).TableDescription.ItemCount, equalTo(0))
+        assertThat(dynamo.createTable(table, attrS.name).TableDescription.ItemCount, equalTo(0))
         waitForUpdate()
     }
 
@@ -75,20 +81,20 @@ abstract class DynamoDbContract(
                 listOf(
                     Update(
                         table,
-                        mapOf(attrS to "hello"),
+                        Item(attrS of "hello"),
                         "SET $attrBool = :c",
                         ExpressionAttributeValues = mapOf(":c" to Bool(true))
                     ),
                     Put(table, item("hello2")),
                     Put(table, item("hello3")),
-                    Delete(table, mapOf(attrS to "hello4"))
+                    Delete(table, Item(attrS of "hello4"))
                 )
             ).successValue()
 
             val result = transactGetItems(
                 listOf(
-                    Get(table, mapOf(attrS to "hello2")),
-                    Get(table, mapOf(attrS to "hello3"))
+                    Get(table, Item(attrS of "hello2")),
+                    Get(table, Item(attrS of "hello3"))
                 )
             ).successValue()
 
@@ -104,7 +110,7 @@ abstract class DynamoDbContract(
                 mapOf(
                     table to listOf(
                         ReqWriteItem.Put(item("hello2")),
-                        ReqWriteItem.Delete(mapOf(attrS to "hello"))
+                        ReqWriteItem.Delete(Item(attrS of "hello"))
                     )
                 )
             ).successValue()
@@ -112,7 +118,7 @@ abstract class DynamoDbContract(
             assertThat(write.UnprocessedKeys, absent())
 
             val get = batchGetItem(
-                mapOf(table to ReqGetItem.Get(listOf(mapOf(attrS to "hello2"))))
+                mapOf(table to ReqGetItem.Get(listOf(Item(attrS of "hello2"))))
             ).successValue()
 
             assertThat(get.UnprocessedItems, absent())
@@ -133,11 +139,11 @@ abstract class DynamoDbContract(
     }
 
     @Test
-        fun `item lifecycle`() {
+    fun `item lifecycle`() {
         with(dynamo) {
             putItem(table, item("hello")).successValue()
 
-            val item = getItem(table, mapOf(attrS to "hello")).successValue().item
+            val item = getItem(table, Item(attrS of "hello")).successValue().item
 
             assertThat(attrS(item), equalTo("hello"))
             assertThat(attrBool(item), equalTo(true))
@@ -153,13 +159,13 @@ abstract class DynamoDbContract(
 
             updateItem(
                 table,
-                mapOf(attrS to "hello"),
+                Item(attrS of "hello"),
                 null,
                 "set $attrN = :val1",
                 expressionAttributeValues = mapOf(":val1" to Num(321))
             ).successValue()
 
-            val updatedItem = getItem(table, mapOf(attrS to "hello"), consistentRead = true).successValue().item
+            val updatedItem = getItem(table, Item(attrS of "hello"), consistentRead = true).successValue().item
             assertThat(attrN(updatedItem), equalTo(BigDecimal(321)))
 
             val query = query(
@@ -172,21 +178,21 @@ abstract class DynamoDbContract(
 
             assertThat(attrN[query.first()], equalTo(BigDecimal(321)))
 
-            deleteItem(table, mapOf(attrS to "hello")).successValue()
+            deleteItem(table, Item(attrS of "hello")).successValue()
         }
     }
 
-    private fun item(key: String) = mapOf(
-        attrS to key,
-        attrBool to true,
-        attrB to Base64Blob.encode("foo"),
-        attrBS to setOf(Base64Blob.encode("bar")),
-        attrN to 123,
-        attrNS to setOf(123, 12.34),
-        attrL to listOf(List(listOf(Str("foo"))), Num(123), Null()),
-        attrM to mapOf(attrS to "foo", attrBool to false),
-        attrSS to setOf("345", "567"),
-        attrNL to null
+    private fun item(key: String) = Item(
+        attrS of key,
+        attrBool of true,
+        attrB of Base64Blob.encode("foo"),
+        attrBS of setOf(Base64Blob.encode("bar")),
+        attrN of 123,
+        attrNS of setOf(123, 321),
+        attrL of listOf(List(listOf(Str("foo"))), Num(123), Null()),
+        attrM of Item(attrS of "foo", attrBool of false),
+        attrSS of setOf("345", "567"),
+        attrNL of null
     )
 
     @Test
@@ -213,8 +219,8 @@ abstract class DynamoDbContract(
     private fun delete() = """DELETE FROM "$table" WHERE "$attrS" = "hello";"""
     private fun statement() = """SELECT "$attrS" FROM "$table" WHERE "$attrS" = "hello";"""
 
-    private fun DynamoDb.createTable(tableName: TableName, keyAttr: Attribute<*, *>) = createTable(
-        tableName, listOf(keyAttr.keySchema(HASH)), listOf(keyAttr.attrDefinition()),
+    private fun DynamoDb.createTable(tableName: TableName, keyAttr: AttributeName) = createTable(
+        tableName, listOf(KeySchema(keyAttr, HASH)), listOf(AttributeDefinition(keyAttr, S)),
         billingMode = PAY_PER_REQUEST
     ).successValue()
 
