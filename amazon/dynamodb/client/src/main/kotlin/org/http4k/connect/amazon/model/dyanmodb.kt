@@ -19,8 +19,12 @@ import org.http4k.connect.amazon.model.DynamoDataType.SS
 import org.http4k.lens.BiDiLens
 import org.http4k.lens.BiDiLensSpec
 import org.http4k.lens.LensExtractor
+import org.http4k.lens.LensFailure
 import org.http4k.lens.LensGet
 import org.http4k.lens.LensSet
+import org.http4k.lens.Meta
+import org.http4k.lens.Missing
+import org.http4k.lens.ParamMeta
 import org.http4k.lens.ParamMeta.StringParam
 import org.http4k.lens.StringBiDiMappings
 import org.http4k.lens.map
@@ -41,16 +45,20 @@ object Attr : BiDiLensSpec<ItemAttributes, AttributeValue>("item", StringParam,
     LensGet { name, target -> target[AttributeName.of(name)]?.let { listOf(it) } ?: emptyList() },
     LensSet { name, values, target -> values.fold(target) { m, next -> m + (AttributeName.of(name) to next) } }
 ) {
+    fun with(dataType: DynamoDataType) = AttrLensSpec(dataType)
+}
+
+object Attr : AttrLensSpec(S) {
     fun string() = map({ it.S!! }, AttributeValue::Str)
-    fun nonEmptyString() = map({ it.S!!.takeIf(String::isNotBlank) ?: error("missing") }, AttributeValue::Str)
-    fun int() = map({ it.N!!.toString().toInt() }, AttributeValue::Num)
-    fun long() = map({ it.N!!.toString().toLong() }, AttributeValue::Num)
-    fun double() = map({ it.N!!.toString().toDouble() }, AttributeValue::Num)
-    fun float() = map({ it.N!!.toString().toFloat() }, AttributeValue::Num)
-    fun boolean() = map({ it.BOOL!! }, AttributeValue::Bool)
-    fun base64Blob() = map({ it.B!! }, { AttributeValue.Base64(it) })
-    fun bigDecimal() = map({ BigDecimal(it.N!!.toString()) }, AttributeValue::Num)
-    fun bigInteger() = map({ BigInteger(it.N!!.toString()) }, AttributeValue::Num)
+    fun nonEmptyString() = with(N).map({ it.S!!.takeIf(String::isNotBlank) ?: error("missing") }, AttributeValue::Str)
+    fun int() = with(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
+    fun long() = with(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
+    fun double() = with(N).map({ it.N!!.toString().toDouble() }, AttributeValue::Num)
+    fun float() = with(N).map({ it.N!!.toString().toFloat() }, AttributeValue::Num)
+    fun boolean() = with(BOOL).map({ it.BOOL!! }, AttributeValue::Bool)
+    fun base64Blob() = with(B).map({ it.B!! }, { AttributeValue.Base64(it) })
+    fun bigDecimal() = with(N).map({ BigDecimal(it.N!!.toString()) }, AttributeValue::Num)
+    fun bigInteger() = with(N).map({ BigInteger(it.N!!.toString()) }, AttributeValue::Num)
     fun uuid() = string().map(StringBiDiMappings.uuid())
     fun uri() = string().map(StringBiDiMappings.uri())
     fun duration() = string().map(StringBiDiMappings.duration())
@@ -76,7 +84,40 @@ object Attr : BiDiLensSpec<ItemAttributes, AttributeValue>("item", StringParam,
 
     inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
 
-    override val multi = error("unsupported at the moment")
+    override val multi = object : AttrLensSpec(dataType) {
+        override fun optional(name: String, description: String?): AttrLensSpec<IN, List<OUT>?> {
+            val getLens = get(name)
+            val setLens = set(name)
+            return BiDiLens(
+                Meta(false, location, ParamMeta.ArrayParam(paramMeta), name, description),
+                { getLens(it).run { if (isEmpty()) null else this } },
+                { out: List<OUT>?, target: IN -> setLens(out ?: emptyList(), target) }
+            )
+        }
+
+        override fun required(name: String, description: String?): BiDiLens<IN, List<OUT>> {
+            val getLens = get(name)
+            val setLens = set(name)
+            return BiDiLens(
+                Meta(true, location, ParamMeta.ArrayParam(paramMeta), name, description),
+                {
+                    getLens(it).run {
+                        if (isEmpty()) throw LensFailure(
+                            Missing(
+                                Meta(
+                                    true,
+                                    location,
+                                    ParamMeta.ArrayParam(paramMeta),
+                                    name,
+                                    description
+                                )
+                            ), target = it
+                        ) else this
+                    }
+                },
+                { out: List<OUT>, target: IN -> setLens(out, target) })
+        }
+    }
 }
 
 val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = meta.name
