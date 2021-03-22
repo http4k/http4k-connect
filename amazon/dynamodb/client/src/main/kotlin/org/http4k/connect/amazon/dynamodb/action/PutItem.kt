@@ -12,7 +12,7 @@ data class PutItem(
     val ConditionExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
     val ExpressionAttributeValues: TokensToValues? = null,
-    val Item: NamesToValues? = null,
+    val Item: ItemAttributes? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ReturnItemCollectionMetrics: ReturnItemCollectionMetrics? = null,
     val ReturnValues: ReturnValues? = null

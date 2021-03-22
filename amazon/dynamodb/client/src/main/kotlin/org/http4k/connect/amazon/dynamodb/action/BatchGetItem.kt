@@ -14,14 +14,14 @@ data class BatchGetItem(
 
 @JsonSerializable
 data class ReqGetItem internal constructor(
-    val Keys: List<NamesToValues>,
+    val Keys: List<ItemAttributes>,
     val ProjectionExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
     val ConsistentRead: Boolean? = null
 ) {
     companion object {
         fun Get(
-            Keys: List<NamesToValues>,
+            Keys: List<ItemAttributes>,
             ProjectionExpression: String? = null,
             ExpressionAttributeNames: TokensToNames? = null,
             ConsistentRead: Boolean? = null
@@ -32,6 +32,6 @@ data class ReqGetItem internal constructor(
 @JsonSerializable
 data class BatchGetItems(
     val ConsumedCapacity: List<ConsumedCapacity>?,
-    val Responses: Map<String, List<NamesToValues>>?,
+    val Responses: Map<String, List<ItemAttributes>>?,
     val UnprocessedItems: Map<String, ReqGetItem>?
 )

@@ -9,7 +9,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class GetItem(
     val TableName: TableName,
-    val Key: NamesToValues,
+    val Key: ItemAttributes,
     val ProjectionExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
     val ConsistentRead: Boolean? = null,

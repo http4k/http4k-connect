@@ -18,7 +18,7 @@ data class Query(
     val ExpressionAttributeValues: TokensToValues? = null,
     val Select: Select? = null,
     val ConsistentRead: Boolean? = null,
-    val ExclusiveStartKey: NamesToValues? = null,
+    val ExclusiveStartKey: ItemAttributes? = null,
     val Limit: Int? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ScanIndexForward: Boolean? = null,
@@ -29,7 +29,7 @@ data class QueryResponse(
     internal val Items: List<ItemResult>?,
     val ConsumedCapacity: ConsumedCapacity?,
     val Count: Int?,
-    val LastEvaluatedKey: NamesToValues?,
+    val LastEvaluatedKey: ItemAttributes?,
     val ScannedCount: Int?
 ) {
     val items = Items?.map(ItemResult::toItem) ?: emptyList()

@@ -15,12 +15,12 @@ data class BatchWriteItem(
 
 @JsonSerializable
 data class ReqWriteItem internal constructor(
-    val DeleteRequest: Map<String, NamesToValues>? = null,
-    val PutRequest: Map<String, NamesToValues>? = null
+    val DeleteRequest: Map<String, ItemAttributes>? = null,
+    val PutRequest: Map<String, ItemAttributes>? = null
 ) {
     companion object {
-        fun Delete(Key: NamesToValues) = ReqWriteItem(DeleteRequest = mapOf("Key" to Key))
-        fun Put(Item: NamesToValues) = ReqWriteItem(PutRequest = mapOf("Item" to Item))
+        fun Delete(Key: ItemAttributes) = ReqWriteItem(DeleteRequest = mapOf("Key" to Key))
+        fun Put(Item: ItemAttributes) = ReqWriteItem(PutRequest = mapOf("Item" to Item))
     }
 }
 

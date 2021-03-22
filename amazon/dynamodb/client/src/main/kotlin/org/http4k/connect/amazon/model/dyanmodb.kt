@@ -5,8 +5,8 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
+import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
 import org.http4k.connect.amazon.dynamodb.action.KeySchema
-import org.http4k.connect.amazon.dynamodb.action.NamesToValues
 import org.http4k.connect.amazon.model.DynamoDataType.B
 import org.http4k.connect.amazon.model.DynamoDataType.BOOL
 import org.http4k.connect.amazon.model.DynamoDataType.BS
@@ -45,7 +45,7 @@ data class Attribute<IN, OUT>(
     /**
      * Lookup this attribute from a queried Item
      */
-    operator fun get(item: NamesToValues): OUT? = item[name]?.let { fromValue(it) }
+    operator fun get(item: ItemAttributes): OUT? = item[name]?.let { fromValue(it) }
 
     companion object {
         fun boolean(name: String) = Attribute(AttributeName.of(name), BOOL, AttributeValue::Bool, AttributeValue::BOOL)
