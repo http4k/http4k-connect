@@ -20,7 +20,11 @@ object Attribute {
 
     private val base = AttrLensSpec(
         LensGet { name, target ->
-            target[AttributeName.of(name)]?.takeIf { it.NULL != true }?.let { listOf(it) } ?: emptyList() },
+            target[AttributeName.of(name)]
+                ?.takeIf { it.NULL != true }
+                ?.let { listOf(it) }
+                ?: emptyList() },
+
         LensSet { name, values, target ->
             (values.takeIf { it.isNotEmpty() } ?: listOf(AttributeValue.Null()))
                 .fold(target) { m, next -> m + (AttributeName.of(name) to next) }
@@ -28,7 +32,10 @@ object Attribute {
     )
 
     fun list() = base.map({ it.L!! }, { AttributeValue.List(it) })
-    fun map() = base.map({ it.M!! }, { AttributeValue.Map(it) })
+    fun map() = base.map({ it.M!! }, {
+        println(it)
+        println(AttributeValue.Map(it))
+        AttributeValue.Map(it) })
     fun string() = base.map({ it.S!! }, AttributeValue.Companion::Str)
     fun strings() = base.map({ it.SS!! }, { AttributeValue.StrSet(it) })
     fun nonEmptyString() =
