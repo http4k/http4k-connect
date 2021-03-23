@@ -59,7 +59,7 @@ abstract class DynamoDbContract(
     private val attrM = Attribute.map().required("theMap")
     private val attrS = Attribute.string().required("theString")
     private val attrSS = Attribute.strings().required("theStrings")
-    private val attrNL = Attribute.optional("theNull")
+    private val attrNL = Attribute.string().optional("theNull")
     private val attrMissing = Attribute.string().optional("theMissing")
 
     @BeforeEach
@@ -155,8 +155,8 @@ abstract class DynamoDbContract(
             assertThat(attrL(item), equalTo(listOf(List(listOf(Str("foo"))), Num(123), Null())))
             assertThat(attrSS(item), equalTo(setOf("345", "567")))
             assertThat(attrMissing(item), absent())
-//            assertThat(attrM(item), equalTo(mapOf(attrS to "foo", attrBool to false)))
-//            assertThat(attrNL(item), absent())
+            assertThat(attrNL(item), absent())
+            assertThat(attrM(item), equalTo(mapOf(attrS to "foo", attrBool to false)))
 
             updateItem(
                 table,
