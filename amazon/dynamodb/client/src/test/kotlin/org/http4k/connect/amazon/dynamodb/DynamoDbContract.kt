@@ -74,7 +74,6 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    @Disabled
     fun `transactional items`() {
         with(dynamo) {
             transactWriteItems(
@@ -82,7 +81,7 @@ abstract class DynamoDbContract(
                     Update(
                         table,
                         Item(attrS of "hello"),
-                        "SET $attrBool = :c",
+                        "SET ${attrBool.name} = :c",
                         ExpressionAttributeValues = mapOf(":c" to Bool(true))
                     ),
                     Put(table, item("hello2")),
@@ -104,7 +103,6 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    @Disabled
     fun `batch operations`() {
         with(dynamo) {
             val write = batchWriteItem(
@@ -127,7 +125,6 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    @Disabled
     fun `partiSQL operations`() {
         with(dynamo) {
             putItem(table, item("hello")).successValue()
@@ -202,7 +199,6 @@ abstract class DynamoDbContract(
     )
 
     @Test
-    @Disabled
     fun `table lifecycle`() {
         with(dynamo) {
             assertThat(listTables().successValue().TableNames, hasElement(table))
