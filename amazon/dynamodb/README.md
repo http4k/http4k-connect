@@ -12,6 +12,7 @@ The DynamoDb connector provides the following Actions:
     * GetItem
     * PutItem
     * Query
+    * Scan
     * UpdateItem
 
     * TransactGetItems

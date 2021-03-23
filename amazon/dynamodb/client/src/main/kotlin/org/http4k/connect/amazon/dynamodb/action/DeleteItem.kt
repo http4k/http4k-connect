@@ -9,7 +9,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class DeleteItem(
     val TableName: TableName,
-    val Key: NamesToValues,
+    val Key: ItemAttributes,
     val ConditionExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
     val ExpressionAttributeValues: TokensToValues? = null,

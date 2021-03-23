@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Str
+import org.http4k.connect.amazon.dynamodb.action.KeySchema
 import org.http4k.connect.amazon.dynamodb.action.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.action.ReqGetItem
 import org.http4k.connect.amazon.dynamodb.action.ReqStatement
@@ -19,18 +20,22 @@ import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Del
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Update
 import org.http4k.connect.amazon.model.Attribute
+import org.http4k.connect.amazon.model.AttributeDefinition
+import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.BillingMode.PAY_PER_REQUEST
 import org.http4k.connect.amazon.model.BillingMode.PROVISIONED
+import org.http4k.connect.amazon.model.DynamoDataType.S
+import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.KeyType.HASH
 import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.model.name
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.math.BigDecimal
 import java.time.Duration
 import java.util.UUID
 
@@ -45,21 +50,21 @@ abstract class DynamoDbContract(
 
     private val table = TableName.of("http4k-connect" + UUID.randomUUID().toString())
 
-    private val attrBool = Attribute.boolean("theBool")
-    private val attrB = Attribute.base64Blob("theBase64Blob")
-    private val attrBS = Attribute.base64Blobs("theBase64Blobs")
-    private val attrN = Attribute.number("theNum")
-    private val attrNS = Attribute.numbers("theNums")
-    private val attrL = Attribute.list("theList")
-    private val attrM = Attribute.map("theMap")
-    private val attrS = Attribute.string("theString")
-    private val attrSS = Attribute.strings("theStrings")
-    private val attrNL = Attribute.string("theNull")
-    private val attrMissing = Attribute.string("theMissing")
+    private val attrBool = Attribute.boolean().required("theBool")
+    private val attrB = Attribute.base64Blob().required("theBase64Blob")
+    private val attrBS = Attribute.base64Blobs().required("theBase64Blobs")
+    private val attrN = Attribute.int().required("theNum")
+    private val attrNS = Attribute.ints().required("theNums")
+    private val attrL = Attribute.list().required("theList")
+    private val attrM = Attribute.map().required("theMap")
+    private val attrS = Attribute.string().required("theString")
+    private val attrSS = Attribute.strings().required("theStrings")
+    private val attrNL = Attribute.string().optional("theNull")
+    private val attrMissing = Attribute.string().optional("theMissing")
 
     @BeforeEach
     fun create() {
-        assertThat(dynamo.createTable(table, attrS).TableDescription.ItemCount, equalTo(0))
+        assertThat(dynamo.createTable(table, attrS.name).TableDescription.ItemCount, equalTo(0))
         waitForUpdate()
     }
 
@@ -75,25 +80,25 @@ abstract class DynamoDbContract(
                 listOf(
                     Update(
                         table,
-                        mapOf(attrS to "hello"),
-                        "SET $attrBool = :c",
+                        Item(attrS of "hello"),
+                        "SET ${attrBool.name} = :c",
                         ExpressionAttributeValues = mapOf(":c" to Bool(true))
                     ),
                     Put(table, item("hello2")),
                     Put(table, item("hello3")),
-                    Delete(table, mapOf(attrS to "hello4"))
+                    Delete(table, Item(attrS of "hello4"))
                 )
             ).successValue()
 
             val result = transactGetItems(
                 listOf(
-                    Get(table, mapOf(attrS to "hello2")),
-                    Get(table, mapOf(attrS to "hello3"))
+                    Get(table, Item(attrS of "hello2")),
+                    Get(table, Item(attrS of "hello3"))
                 )
             ).successValue()
 
-            assertThat(attrS[result.responses[0]], equalTo("hello2"))
-            assertThat(attrS[result.responses[1]], equalTo("hello3"))
+            assertThat(attrS(result.responses[0]), equalTo("hello2"))
+            assertThat(attrS(result.responses[1]), equalTo("hello3"))
         }
     }
 
@@ -104,7 +109,7 @@ abstract class DynamoDbContract(
                 mapOf(
                     table to listOf(
                         ReqWriteItem.Put(item("hello2")),
-                        ReqWriteItem.Delete(mapOf(attrS to "hello"))
+                        ReqWriteItem.Delete(Item(attrS of "hello"))
                     )
                 )
             ).successValue()
@@ -112,7 +117,7 @@ abstract class DynamoDbContract(
             assertThat(write.UnprocessedKeys, absent())
 
             val get = batchGetItem(
-                mapOf(table to ReqGetItem.Get(listOf(mapOf(attrS to "hello2"))))
+                mapOf(table to ReqGetItem.Get(listOf(Item(attrS of "hello2"))))
             ).successValue()
 
             assertThat(get.UnprocessedItems, absent())
@@ -122,7 +127,7 @@ abstract class DynamoDbContract(
     @Test
     fun `partiSQL operations`() {
         with(dynamo) {
-            putItem(table, item = item("hello")).successValue()
+            putItem(table, item("hello")).successValue()
 
             executeStatement(statement()).successValue()
 
@@ -133,60 +138,64 @@ abstract class DynamoDbContract(
     }
 
     @Test
-        fun `item lifecycle`() {
+    fun `item lifecycle`() {
         with(dynamo) {
-            putItem(table, item = item("hello")).successValue()
+            putItem(table, item("hello")).successValue()
 
-            val item = getItem(table, mapOf(attrS to "hello")).successValue().item
+            assertThat(getItem(table, Item(attrS of "hello4")).successValue().item, absent())
 
-            assertThat(attrS[item], equalTo("hello"))
-            assertThat(attrBool[item], equalTo(true))
-            assertThat(attrB[item], equalTo(Base64Blob.encode("foo")))
-            assertThat(attrBS[item], equalTo(setOf(Base64Blob.encode("bar"))))
-            assertThat(attrN[item], equalTo(BigDecimal(123)))
-            assertThat(attrNS[item], equalTo(setOf(BigDecimal(123), BigDecimal("12.34"))))
-            assertThat(attrL[item], equalTo(listOf(List(listOf(Str("foo"))), Num(123), Null())))
-            assertThat(attrM[item], equalTo(mapOf(attrS to "foo", attrBool to false)))
-            assertThat(attrSS[item], equalTo(setOf("345", "567")))
-            assertThat(attrNL[item], absent())
-            assertThat(attrMissing[item], absent())
+            val item = getItem(table, Item(attrS of "hello")).successValue().item!!
+
+            assertThat(attrS(item), equalTo("hello"))
+            assertThat(attrBool(item), equalTo(true))
+            assertThat(attrB(item), equalTo(Base64Blob.encode("foo")))
+            assertThat(attrBS(item), equalTo(setOf(Base64Blob.encode("bar"))))
+            assertThat(attrN(item), equalTo(123))
+            assertThat(attrNS(item), equalTo(setOf(123, 321)))
+            assertThat(attrL(item), equalTo(listOf(List(listOf(Str("foo"))), Num(123), Null())))
+            assertThat(attrSS(item), equalTo(setOf("345", "567")))
+            assertThat(attrMissing(item), absent())
+            assertThat(attrNL(item), absent())
+            assertThat(attrM(item), equalTo(Item(attrS of "foo", attrBool of false)))
 
             updateItem(
                 table,
-                mapOf(attrS to "hello"),
+                Item(attrS of "hello"),
                 null,
-                "set $attrN = :val1",
+                "set ${attrN.name} = :val1",
                 expressionAttributeValues = mapOf(":val1" to Num(321))
             ).successValue()
 
-            val updatedItem = getItem(table, mapOf(attrS to "hello"), consistentRead = true).successValue().item
-            assertThat(attrN[updatedItem], equalTo(BigDecimal(321)))
+            val updatedItem = getItem(table, Item(attrS of "hello"), consistentRead = true).successValue().item!!
+            assertThat(attrN(updatedItem), equalTo(321))
 
             val query = query(
                 table,
-                keyConditionExpression = "$attrS = :v1",
-                expressionAttributeValues = mapOf(
-                    ":v1" to Str("hello")
-                )
+                keyConditionExpression = "${attrS.name} = :v1",
+                expressionAttributeValues = mapOf(":v1" to Str("hello"))
             ).successValue().items
 
-            assertThat(attrN[query.first()], equalTo(BigDecimal(321)))
+            assertThat(attrN[query.first()], equalTo(321))
 
-            deleteItem(table, mapOf(attrS to "hello")).successValue()
+            val scan = scan(table).successValue().items
+
+            assertThat(attrN[scan.first()], equalTo(321))
+
+            deleteItem(table, Item(attrS of "hello")).successValue()
         }
     }
 
-    private fun item(key: String) = mapOf(
-        attrS to key,
-        attrBool to true,
-        attrB to Base64Blob.encode("foo"),
-        attrBS to setOf(Base64Blob.encode("bar")),
-        attrN to 123,
-        attrNS to setOf(123, 12.34),
-        attrL to listOf(List(listOf(Str("foo"))), Num(123), Null()),
-        attrM to mapOf(attrS to "foo", attrBool to false),
-        attrSS to setOf("345", "567"),
-        attrNL to null
+    private fun item(key: String) = Item(
+        attrS of key,
+        attrBool of true,
+        attrB of Base64Blob.encode("foo"),
+        attrBS of setOf(Base64Blob.encode("bar")),
+        attrN of 123,
+        attrNS of setOf(123, 321),
+        attrL of listOf(List(listOf(Str("foo"))), Num(123), Null()),
+        attrM of Item(attrS of "foo", attrBool of false),
+        attrSS of setOf("345", "567"),
+        attrNL of null
     )
 
     @Test
@@ -213,8 +222,8 @@ abstract class DynamoDbContract(
     private fun delete() = """DELETE FROM "$table" WHERE "$attrS" = "hello";"""
     private fun statement() = """SELECT "$attrS" FROM "$table" WHERE "$attrS" = "hello";"""
 
-    private fun DynamoDb.createTable(tableName: TableName, keyAttr: Attribute<*, *>) = createTable(
-        tableName, listOf(keyAttr.keySchema(HASH)), listOf(keyAttr.attrDefinition()),
+    private fun DynamoDb.createTable(tableName: TableName, keyAttr: AttributeName) = createTable(
+        tableName, listOf(KeySchema(keyAttr, HASH)), listOf(AttributeDefinition(keyAttr, S)),
         billingMode = PAY_PER_REQUEST
     ).successValue()
 

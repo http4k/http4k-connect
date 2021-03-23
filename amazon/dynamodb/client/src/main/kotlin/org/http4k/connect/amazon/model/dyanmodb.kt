@@ -5,62 +5,17 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
-import org.http4k.connect.amazon.dynamodb.action.KeySchema
-import org.http4k.connect.amazon.dynamodb.action.NamesToValues
-import org.http4k.connect.amazon.model.DynamoDataType.B
-import org.http4k.connect.amazon.model.DynamoDataType.BOOL
-import org.http4k.connect.amazon.model.DynamoDataType.BS
-import org.http4k.connect.amazon.model.DynamoDataType.L
-import org.http4k.connect.amazon.model.DynamoDataType.M
-import org.http4k.connect.amazon.model.DynamoDataType.N
-import org.http4k.connect.amazon.model.DynamoDataType.NS
-import org.http4k.connect.amazon.model.DynamoDataType.S
-import org.http4k.connect.amazon.model.DynamoDataType.SS
+import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
+import org.http4k.lens.BiDiLens
 import se.ansman.kotshi.JsonSerializable
-import java.math.BigDecimal
 
-data class Attribute<IN, OUT>(
-    val name: AttributeName,
-    val type: DynamoDataType,
-    private val toVal: (IN) -> AttributeValue,
-    private val fromValue: (AttributeValue) -> OUT?
-) {
-    /**
-     * Create a typed binding for this attribute
-     */
-    infix fun to(t: IN) = name to toVal(t)
+fun Item(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
+    mapOf<AttributeName, AttributeValue>().with(*modifiers)
 
-    /**
-     * Used for creating tables
-     */
-    fun keySchema(keyType: KeyType) = KeySchema(name, keyType)
+fun ItemAttributes.with(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
+    modifiers.fold(this) { memo, next -> next(memo) }
 
-    /**
-     * Used for creating tables
-     */
-    fun attrDefinition() = AttributeDefinition(name, type)
-
-    override fun toString() = name.toString()
-
-    /**
-     * Lookup this attribute from a queried Item
-     */
-    operator fun get(item: NamesToValues): OUT? = item[name]?.let { fromValue(it) }
-
-    companion object {
-        fun boolean(name: String) = Attribute(AttributeName.of(name), BOOL, AttributeValue::Bool, AttributeValue::BOOL)
-        fun base64Blob(name: String) = Attribute(AttributeName.of(name), B, AttributeValue::Base64, AttributeValue::B)
-        fun base64Blobs(name: String) =
-            Attribute(AttributeName.of(name), BS, AttributeValue::Base64Set, AttributeValue::BS)
-        fun list(name: String) = Attribute(AttributeName.of(name), L, AttributeValue::List, AttributeValue::L)
-        fun map(name: String) = Attribute(AttributeName.of(name), M, AttributeValue::Map, AttributeValue::M)
-        fun number(name: String) = Attribute(AttributeName.of(name), N, AttributeValue::Num) { BigDecimal(it.N) }
-        fun numbers(name: String) =
-            Attribute(AttributeName.of(name), NS, AttributeValue::NumSet) { it.NS?.map(::BigDecimal)?.toSet() }
-        fun string(name: String) = Attribute(AttributeName.of(name), S, AttributeValue::Str, AttributeValue::S)
-        fun strings(name: String) = Attribute(AttributeName.of(name), SS, AttributeValue::StrSet, AttributeValue::SS)
-    }
-}
+val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = AttributeName.of(meta.name)
 
 class AttributeName private constructor(value: String) : StringValue(value), Comparable<AttributeName> {
     companion object : NonBlankStringValueFactory<AttributeName>(::AttributeName)

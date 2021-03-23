@@ -30,7 +30,7 @@ data class TransactWriteItem internal constructor(
     companion object {
         fun ConditionCheck(
             TableName: TableName,
-            Key: NamesToValues,
+            Key: ItemAttributes,
             ConditionExpression: String,
             ExpressionAttributeNames: TokensToNames? = null,
             ExpressionAttributeValues: TokensToValues? = null,
@@ -48,7 +48,7 @@ data class TransactWriteItem internal constructor(
 
         fun Delete(
             TableName: TableName,
-            Key: NamesToValues,
+            Key: ItemAttributes,
             ConditionExpression: String? = null,
             ExpressionAttributeNames: TokensToNames? = null,
             ExpressionAttributeValues: TokensToValues? = null,
@@ -66,7 +66,7 @@ data class TransactWriteItem internal constructor(
 
         fun Put(
             TableName: TableName,
-            Item: NamesToValues,
+            Item: ItemAttributes,
             ConditionExpression: String? = null,
             ExpressionAttributeNames: TokensToNames? = null,
             ExpressionAttributeValues: TokensToValues? = null,
@@ -84,7 +84,7 @@ data class TransactWriteItem internal constructor(
 
         fun Update(
             TableName: TableName,
-            Key: NamesToValues,
+            Key: ItemAttributes,
             UpdateExpression: String,
             ConditionExpression: String? = null,
             ExpressionAttributeNames: TokensToNames? = null,

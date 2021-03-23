@@ -9,7 +9,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class UpdateItem(
     val TableName: TableName,
-    val Key: NamesToValues,
+    val Key: ItemAttributes,
     val ConditionExpression: String? = null,
     val UpdateExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
