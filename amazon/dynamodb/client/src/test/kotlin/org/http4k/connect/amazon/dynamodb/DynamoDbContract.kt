@@ -30,6 +30,7 @@ import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.KeyType.HASH
 import org.http4k.connect.amazon.model.TableName
 import org.http4k.connect.amazon.model.name
+import org.http4k.connect.amazon.model.with
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.AfterEach
@@ -156,7 +157,7 @@ abstract class DynamoDbContract(
             assertThat(attrSS(item), equalTo(setOf("345", "567")))
             assertThat(attrMissing(item), absent())
             assertThat(attrNL(item), absent())
-            assertThat(attrM(item), equalTo(mapOf(attrS to "foo", attrBool to false)))
+            assertThat(attrM(item), equalTo(Item().with(attrS of "foo", attrBool of false)))
 
             updateItem(
                 table,
