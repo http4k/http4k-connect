@@ -75,6 +75,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
+    @Disabled
     fun `transactional items`() {
         with(dynamo) {
             transactWriteItems(
@@ -104,6 +105,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
+    @Disabled
     fun `batch operations`() {
         with(dynamo) {
             val write = batchWriteItem(
@@ -126,6 +128,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
+    @Disabled
     fun `partiSQL operations`() {
         with(dynamo) {
             putItem(table, item("hello")).successValue()
@@ -139,11 +142,14 @@ abstract class DynamoDbContract(
     }
 
     @Test
+    @Disabled
     fun `item lifecycle`() {
         with(dynamo) {
             putItem(table, item("hello")).successValue()
 
-            val item = getItem(table, Item(attrS of "hello")).successValue().item
+            assertThat(getItem(table, Item(attrS of "hello4")).successValue().item, absent())
+
+            val item = getItem(table, Item(attrS of "hello")).successValue().item!!
 
             assertThat(attrS(item), equalTo("hello"))
             assertThat(attrBool(item), equalTo(true))
@@ -165,7 +171,7 @@ abstract class DynamoDbContract(
                 expressionAttributeValues = mapOf(":val1" to Num(321))
             ).successValue()
 
-            val updatedItem = getItem(table, Item(attrS of "hello"), consistentRead = true).successValue().item
+            val updatedItem = getItem(table, Item(attrS of "hello"), consistentRead = true).successValue().item!!
             assertThat(attrN(updatedItem), equalTo(BigDecimal(321)))
 
             val query = query(
@@ -177,6 +183,10 @@ abstract class DynamoDbContract(
             ).successValue().items
 
             assertThat(attrN[query.first()], equalTo(BigDecimal(321)))
+
+            val scan = scan(table).successValue().items
+
+            assertThat(attrN[scan.first()], equalTo(BigDecimal(321)))
 
             deleteItem(table, Item(attrS of "hello")).successValue()
         }
@@ -196,6 +206,7 @@ abstract class DynamoDbContract(
     )
 
     @Test
+    @Disabled
     fun `table lifecycle`() {
         with(dynamo) {
             assertThat(listTables().successValue().TableNames, hasElement(table))

@@ -61,6 +61,8 @@ import org.http4k.connect.amazon.dynamodb.action.KotshiReqWriteItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiRestoreSummaryJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiSSEDescriptionJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiSSESpecificationJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiScanJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiScanResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiStatementResponseJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiStreamSpecificationJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiTableDescriptionJsonAdapter
@@ -109,9 +111,10 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiGetItemJsonAdapter),
     adapter(::KotshiPutItemJsonAdapter),
     adapter(::KotshiQueryJsonAdapter),
-    adapter(::KotshiUpdateItemJsonAdapter),
+    adapter(::KotshiScanJsonAdapter),
     adapter(::KotshiTransactGetItemsJsonAdapter),
     adapter(::KotshiTransactWriteItemsJsonAdapter),
+    adapter(::KotshiUpdateItemJsonAdapter),
 
     // Batch
     adapter(::KotshiBatchGetItemJsonAdapter),
@@ -169,6 +172,7 @@ object DynamoDbJsonAdapterFactory : AwsJsonAdapterFactory(
     adapter(::KotshiReqWriteItemJsonAdapter),
     adapter(::KotshiReqStatementJsonAdapter),
     adapter(::KotshiRestoreSummaryJsonAdapter),
+    adapter(::KotshiScanResponseJsonAdapter),
     adapter(::KotshiSSEDescriptionJsonAdapter),
     adapter(::KotshiSSESpecificationJsonAdapter),
     adapter(::KotshiStatementResponseJsonAdapter),

@@ -64,7 +64,7 @@ fun main() {
     )
 
     // lookup an item from the database
-    val item = client.getItem(table, key = Item(attrS of "hello")).successValue().item
+    val item = client.getItem(table, key = Item(attrS of "hello")).successValue().item!!
     val str: String = attrS(item)
 
     // all operations return a Result monad of the API type

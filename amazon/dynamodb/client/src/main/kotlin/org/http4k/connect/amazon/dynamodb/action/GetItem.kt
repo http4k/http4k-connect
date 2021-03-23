@@ -21,5 +21,5 @@ data class GetResponse(
     val ConsumedCapacity: ConsumedCapacity?,
     internal val Item: ItemResult?
 ) {
-    val item = Item?.toItem() ?: emptyMap()
+    val item = Item?.toItem()
 }
