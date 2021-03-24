@@ -1,33 +1,23 @@
 package org.http4k.connect.amazon.dynamodb.action
 
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.B
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.BOOL
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.BS
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.L
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.M
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.N
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.NS
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.NULL
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.S
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.SS
+import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.valueOf
 import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.AttributeDefinition
 import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.BillingMode
-import org.http4k.connect.amazon.model.DynamoDataType
-import org.http4k.connect.amazon.model.DynamoDataType.B
-import org.http4k.connect.amazon.model.DynamoDataType.BOOL
-import org.http4k.connect.amazon.model.DynamoDataType.BS
-import org.http4k.connect.amazon.model.DynamoDataType.L
-import org.http4k.connect.amazon.model.DynamoDataType.M
-import org.http4k.connect.amazon.model.DynamoDataType.N
-import org.http4k.connect.amazon.model.DynamoDataType.NS
-import org.http4k.connect.amazon.model.DynamoDataType.NULL
-import org.http4k.connect.amazon.model.DynamoDataType.S
-import org.http4k.connect.amazon.model.DynamoDataType.SS
-import org.http4k.connect.amazon.model.DynamoDataType.valueOf
 import org.http4k.connect.amazon.model.IndexName
-import org.http4k.connect.amazon.model.IndexStatus
 import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.KeyType
-import org.http4k.connect.amazon.model.ProjectionType
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.ReplicaStatus
-import org.http4k.connect.amazon.model.SSEType
-import org.http4k.connect.amazon.model.StreamViewType
 import org.http4k.connect.amazon.model.TableName
-import org.http4k.connect.amazon.model.TableStatus
 import org.http4k.connect.amazon.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
@@ -107,17 +97,6 @@ data class ConsumedCapacity(
     val WriteCapacityUnits: Long?
 )
 
-enum class ReturnConsumedCapacity {
-    INDEXES, TOTAL, NONE
-}
-
-enum class ReturnItemCollectionMetrics {
-    SIZE, NONE
-}
-
-enum class ReturnValues {
-    NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW
-}
 
 @JsonSerializable
 data class ModifiedItem(
@@ -352,3 +331,57 @@ data class ReplicaUpdates(
     val Delete: ReplicaDelete?,
     val Update: ReplicaUpdate?
 )
+
+@JsonSerializable
+data class AttributeDefinition(
+    val AttributeName: AttributeName,
+    val AttributeType: DynamoDataType
+)
+
+enum class DynamoDataType {
+    B, BOOL, BS, L, M, N, NS, NULL, S, SS
+}
+
+enum class BillingMode {
+    PROVISIONED, PAY_PER_REQUEST
+}
+
+enum class KeyType {
+    HASH, RANGE
+}
+
+enum class ProjectionType {
+    ALL, KEYS_ONLY, INCLUDE
+}
+
+enum class SSEType {
+    AES256, KMS
+}
+
+enum class StreamViewType {
+    NEW_IMAGE, OLD_IMAGE, NEW_AND_OLD_IMAGES, KEYS_ONLY
+}
+
+enum class IndexStatus {
+    CREATING, UPDATING, DELETING, ACTIVE
+}
+
+enum class ReplicaStatus {
+    CREATING, CREATION_FAILED, UPDATING, DELETING, ACTIVE, REGION_DISABLED, INACCESSIBLE_ENCRYPTION_CREDENTIALS
+}
+
+enum class TableStatus {
+    CREATING, UPDATING, DELETING, ACTIVE, INACCESSIBLE_ENCRYPTION_CREDENTIALS, ARCHIVING, ARCHIVED
+}
+
+enum class ReturnConsumedCapacity {
+    INDEXES, TOTAL, NONE
+}
+
+enum class ReturnItemCollectionMetrics {
+    SIZE, NONE
+}
+
+enum class ReturnValues {
+    NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW
+}

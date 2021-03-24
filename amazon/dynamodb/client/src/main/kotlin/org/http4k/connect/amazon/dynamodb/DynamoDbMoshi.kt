@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.dynamodb
 
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.dynamodb.action.KotshiArchivalSummaryJsonAdapter
+import org.http4k.connect.amazon.dynamodb.action.KotshiAttributeDefinitionJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiAttributeValueJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchExecuteStatementJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiBatchGetItemJsonAdapter
@@ -76,7 +77,6 @@ import org.http4k.connect.amazon.dynamodb.action.KotshiUpdateItemJsonAdapter
 import org.http4k.connect.amazon.dynamodb.action.KotshiUpdateTableJsonAdapter
 import org.http4k.connect.amazon.model.AttributeName
 import org.http4k.connect.amazon.model.IndexName
-import org.http4k.connect.amazon.model.KotshiAttributeDefinitionJsonAdapter
 import org.http4k.connect.amazon.model.TableName
 import org.http4k.format.AwsJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi

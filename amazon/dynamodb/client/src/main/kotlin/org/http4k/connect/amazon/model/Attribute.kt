@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.model
 
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
 import org.http4k.connect.amazon.dynamodb.action.Item
+import org.http4k.lens.BiDiLens
 import org.http4k.lens.BiDiLensSpec
 import org.http4k.lens.BiDiMapping
 import org.http4k.lens.LensGet
@@ -88,3 +89,5 @@ open class AttrLensSpec<OUT>(
 ) : BiDiLensSpec<Item, OUT>("item", ObjectParam, get, setter) {
     override val multi get() = throw UnsupportedOperationException("use other methods")
 }
+
+val <FINAL> BiDiLens<Item, FINAL>.name get() = AttributeName.of(meta.name)
