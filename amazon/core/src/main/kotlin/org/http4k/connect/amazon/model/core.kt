@@ -14,6 +14,7 @@ import org.http4k.base64Decoded
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 import java.io.InputStream
+import java.time.Instant
 import java.util.Base64
 
 class AccessKeyId private constructor(value: String) : StringValue(value) {
@@ -119,5 +120,9 @@ data class Tag(
 )
 
 class Timestamp private constructor(value: Long) : LongValue(value) {
-    companion object : LongValueFactory<Timestamp>(::Timestamp, 0L.minValue)
+    fun toInstant(): Instant = Instant.ofEpochSecond(value)
+
+    companion object : LongValueFactory<Timestamp>(::Timestamp, 0L.minValue) {
+        fun of(value: Instant) = of(value.epochSecond)
+    }
 }

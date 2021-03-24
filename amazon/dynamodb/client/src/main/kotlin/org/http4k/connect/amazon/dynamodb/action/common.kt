@@ -26,6 +26,11 @@ typealias TokensToNames = Map<String, AttributeName>
 typealias TokensToValues = Map<String, AttributeValue>
 typealias ItemResult = Map<String, Map<String, Any>>
 
+/**
+ * Represents the on-the-wire format of an Attribute Value with it's requisite type.
+ * Only one of these fields is ever populated at once in an entry. So you can get
+ * { "S": "hello" } or { "BOOL": true } or { "NS": ["123"] }
+ */
 @JsonSerializable
 data class AttributeValue internal constructor(
     val B: Base64Blob? = null,

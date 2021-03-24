@@ -17,13 +17,18 @@ import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.time.format.DateTimeFormatter.ISO_OFFSET_TIME
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
+/**
+ * Constructs typesafe Lenses for the various Item/Key attributes. The lenses
+ * can be used to inject values with Item(attr of "123") or extract with attr(item).
+ */
 object Attribute {
     private val base = AttrLensSpec(
         LensGet { name, target ->
             target[AttributeName.of(name)]
                 ?.takeIf { it.NULL != true }
                 ?.let { listOf(it) }
-                ?: emptyList() },
+                ?: emptyList()
+        },
 
         LensSet { name, values, target ->
             (values.takeIf { it.isNotEmpty() } ?: listOf(AttributeValue.Null()))
@@ -76,6 +81,8 @@ object Attribute {
 
     fun offsetDateTime(formatter: DateTimeFormatter = ISO_OFFSET_DATE_TIME) =
         string().map(StringBiDiMappings.zonedDateTime(formatter))
+
+    fun timestamp() = long().map(Timestamp.Companion::of, Timestamp::value)
 
     inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
 }

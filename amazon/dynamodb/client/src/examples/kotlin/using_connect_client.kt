@@ -21,6 +21,8 @@ import org.http4k.connect.amazon.model.TableName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
+import org.http4k.lens.LensFailure
+import org.http4k.lens.asResult
 
 private val attrBool = Attribute.boolean().required("theBool")
 private val attrB = Attribute.base64Blob().required("theBase64Blob")
@@ -66,6 +68,7 @@ fun main() {
     // lookup an item from the database
     val item = client.getItem(table, key = Item(attrS of "hello")).successValue().item!!
     val str: String = attrS(item)
+    val boolean: Result<Boolean, LensFailure> = attrBool.asResult()(item)
 
     // all operations return a Result monad of the API type
     val deleteResult: Result<TableDescriptionResponse, RemoteFailure> = client.deleteTable(table)
