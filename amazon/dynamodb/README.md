@@ -28,7 +28,7 @@ The DynamoDb connector provides the following Actions:
 ### Typesafe Items & Keys
 Most of the http4k-connect DynamoDb API is fairly simple, but one addition which may warrant further explanation is the http4k Lens system which is layered on top provide a typesafe API to the Item/Key objects (used for getting/setting record attributes and for defining key structures). This is useful because of the unique way in which Dynamo handles the structure of the stored items.
 
-- `AttributeName` - is just a data class for a named attribute in a
+- `AttributeName` - is just a data class for a named attribute in an item/key
 - `AttributeValue` is the on-the-wire format of an attribute with it's requisite type. Examples of this are: `{ "S": "hello" }` or `{ "BOOL": true }` or `{ "NS": ["123"] }`. Construction of these types can be done using factory functions such as `AttributeValue.Str("string")`. `AttributeValues` can be primitives (BOOL, S, N), Sets (NS, BS), or Collections of other AttributeValues (L, M).
 - `Item` and `Key` are just typealiases for `Map<AttributeName, AttributeValue>`. They have convenience construction methods `Item()` and `Key()`. These are sent to and returned in the messages between a client and DynamoDb.
 
