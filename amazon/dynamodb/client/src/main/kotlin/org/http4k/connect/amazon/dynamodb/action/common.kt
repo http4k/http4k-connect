@@ -33,7 +33,6 @@ import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
 
 typealias TokensToNames = Map<String, AttributeName>
-typealias ItemAttributes = Map<AttributeName, AttributeValue>
 typealias TokensToValues = Map<String, AttributeValue>
 typealias ItemResult = Map<String, Map<String, Any>>
 
@@ -43,7 +42,7 @@ data class AttributeValue internal constructor(
     val BOOL: Boolean? = null,
     val BS: Set<Base64Blob>? = null,
     val L: List<AttributeValue>? = null,
-    val M: ItemAttributes? = null,
+    val M: Item? = null,
     val N: String? = null,
     val NS: Set<String>? = null,
     val NULL: Boolean? = null,
@@ -55,7 +54,7 @@ data class AttributeValue internal constructor(
         fun Bool(value: Boolean?) = value?.let { AttributeValue(BOOL = it) } ?: Null()
         fun Base64Set(value: Set<Base64Blob>?) = value?.let { AttributeValue(BS = it) } ?: Null()
         fun List(value: List<AttributeValue>?) = value?.let { AttributeValue(L = it) } ?: Null()
-        fun Map(value: ItemAttributes?) = value?.let { AttributeValue(M = it) } ?: Null()
+        fun Map(value: Item?) = value?.let { AttributeValue(M = it) } ?: Null()
         fun Num(value: Number?) = value?.let { AttributeValue(N = it.toString()) } ?: Null()
         fun NumSet(value: Set<Number>?) = value?.let { AttributeValue(NS = it.map { it.toString() }.toSet()) } ?: Null()
         fun Null() = AttributeValue(NULL = true)
@@ -86,7 +85,7 @@ data class AttributeValue internal constructor(
 
 @JsonSerializable
 data class ItemCollectionMetrics(
-    val ItemCollectionKey: ItemAttributes?,
+    val ItemCollectionKey: Key?,
     val SizeEstimateRangeGB: List<Long>?
 )
 

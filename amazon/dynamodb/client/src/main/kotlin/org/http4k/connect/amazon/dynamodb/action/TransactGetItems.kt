@@ -15,7 +15,7 @@ data class TransactGetItems(
 @JsonSerializable
 data class Get(
     val TableName: TableName,
-    val Key: ItemAttributes,
+    val Key: Key,
     val ProjectionExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null
 )
@@ -25,7 +25,7 @@ data class TransactGetItem internal constructor(val Get: Map<String, Any?>) {
     companion object {
         fun Get(
             TableName: TableName,
-            Key: ItemAttributes,
+            Key: Key,
             ProjectionExpression: String? = null,
             ExpressionAttributeNames: TokensToNames? = null
         ) = TransactGetItem(

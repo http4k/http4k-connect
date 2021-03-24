@@ -12,7 +12,7 @@ data class Scan(
     val FilterExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
     val ExpressionAttributeValues: TokensToValues? = null,
-    val ExclusiveStartKey: ItemAttributes? = null,
+    val ExclusiveStartKey: Key? = null,
     val IndexName: String? = null,
     val Limit: Int? = null,
     val ConsistentRead: Boolean? = null,
@@ -27,7 +27,7 @@ data class Scan(
 data class ScanResponse(
     val ConsumedCapacity: ConsumedCapacity?,
     val Count: Int?,
-    val LastEvaluatedKey: ItemAttributes?,
+    val LastEvaluatedKey: Key?,
     val ScannedCount: Int?,
     internal val Items: List<ItemResult>?
 ) {

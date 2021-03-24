@@ -9,7 +9,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class PutItem(
     val TableName: TableName,
-    val Item: ItemAttributes,
+    val Item: Item,
     val ConditionExpression: String? = null,
     val ExpressionAttributeNames: TokensToNames? = null,
     val ExpressionAttributeValues: TokensToValues? = null,

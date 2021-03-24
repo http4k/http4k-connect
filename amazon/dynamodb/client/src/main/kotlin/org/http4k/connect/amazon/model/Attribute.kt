@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.model
 
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
-import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
+import org.http4k.connect.amazon.dynamodb.action.Item
 import org.http4k.lens.BiDiLensSpec
 import org.http4k.lens.BiDiMapping
 import org.http4k.lens.LensGet
@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter.ISO_OFFSET_TIME
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 object Attribute {
-
     private val base = AttrLensSpec(
         LensGet { name, target ->
             target[AttributeName.of(name)]
@@ -84,8 +83,8 @@ fun <NEXT, IN : Any, OUT> BiDiLensSpec<IN, OUT>.map(mapping: BiDiMapping<OUT, NE
     map(mapping::invoke, mapping::invoke)
 
 open class AttrLensSpec<OUT>(
-    get: LensGet<ItemAttributes, OUT>,
-    setter: LensSet<ItemAttributes, OUT>
-) : BiDiLensSpec<ItemAttributes, OUT>("item", ObjectParam, get, setter) {
+    get: LensGet<Item, OUT>,
+    setter: LensSet<Item, OUT>
+) : BiDiLensSpec<Item, OUT>("item", ObjectParam, get, setter) {
     override val multi get() = throw UnsupportedOperationException("use other methods")
 }

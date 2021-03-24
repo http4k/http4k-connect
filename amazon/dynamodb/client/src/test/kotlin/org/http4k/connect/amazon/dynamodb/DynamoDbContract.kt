@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Str
+import org.http4k.connect.amazon.dynamodb.action.Item
 import org.http4k.connect.amazon.dynamodb.action.KeySchema
 import org.http4k.connect.amazon.dynamodb.action.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.action.ReqGetItem
@@ -26,7 +27,6 @@ import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.BillingMode.PAY_PER_REQUEST
 import org.http4k.connect.amazon.model.BillingMode.PROVISIONED
 import org.http4k.connect.amazon.model.DynamoDataType.S
-import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.KeyType.HASH
 import org.http4k.connect.amazon.model.TableName
 import org.http4k.connect.amazon.model.name

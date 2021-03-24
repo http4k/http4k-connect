@@ -25,6 +25,10 @@ The DynamoDb connector provides the following Actions:
     * ExecuteStatement
     * BatchExecuteStatement
 
+### Typesafe Item system
+Most of the http4k-connect DynamoDb API is fairly simple, but one addition which may warrant further explanation is the http4k Lens system which is layered on top provide a typesafe API to the Item Attributes objects (used for getting/setting record attributes and for defining key structures).
+
+
 ### Example usage
 
 ```kotlin

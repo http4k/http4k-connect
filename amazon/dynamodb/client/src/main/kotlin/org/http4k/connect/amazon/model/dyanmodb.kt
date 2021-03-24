@@ -4,18 +4,12 @@ import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
-import org.http4k.connect.amazon.dynamodb.action.AttributeValue
-import org.http4k.connect.amazon.dynamodb.action.ItemAttributes
+import org.http4k.connect.amazon.dynamodb.action.Item
 import org.http4k.lens.BiDiLens
 import se.ansman.kotshi.JsonSerializable
 
-fun Item(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
-    mapOf<AttributeName, AttributeValue>().with(*modifiers)
 
-fun ItemAttributes.with(vararg modifiers: (ItemAttributes) -> ItemAttributes): ItemAttributes =
-    modifiers.fold(this) { memo, next -> next(memo) }
-
-val <FINAL> BiDiLens<ItemAttributes, FINAL>.name get() = AttributeName.of(meta.name)
+val <FINAL> BiDiLens<Item, FINAL>.name get() = AttributeName.of(meta.name)
 
 class AttributeName private constructor(value: String) : StringValue(value), Comparable<AttributeName> {
     companion object : NonBlankStringValueFactory<AttributeName>(::AttributeName)
