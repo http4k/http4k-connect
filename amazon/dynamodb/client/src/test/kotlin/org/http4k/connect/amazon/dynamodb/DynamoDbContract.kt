@@ -40,9 +40,10 @@ import java.time.Duration
 import java.util.UUID
 
 abstract class DynamoDbContract(
-    http: HttpHandler,
     private val duration: Duration = Duration.ofSeconds(10)
 ) : AwsContract() {
+
+    abstract val http: HttpHandler
 
     private val dynamo by lazy {
         DynamoDb.Http(aws.region, { aws.credentials }, http)
@@ -64,7 +65,9 @@ abstract class DynamoDbContract(
 
     @BeforeEach
     fun create() {
-        assertThat(dynamo.createTable(table, attrS.name).TableDescription.ItemCount, equalTo(0))
+        assertThat(dynamo.createTable(table, attrS.name
+
+        ).TableDescription.ItemCount, equalTo(0))
         waitForUpdate()
     }
 
@@ -74,7 +77,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    fun `transactional items`() {
+    open fun `transactional items`() {
         with(dynamo) {
             transactWriteItems(
                 listOf(
@@ -125,7 +128,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    fun `partiSQL operations`() {
+    open fun `partiSQL operations`() {
         with(dynamo) {
             putItem(table, item("hello")).successValue()
 
@@ -209,10 +212,10 @@ abstract class DynamoDbContract(
                 updateTable(
                     table,
                     billingMode = PROVISIONED,
-                    provisionedThroughput = ProvisionedThroughput(1, 1)
+                    provisionedThroughput = ProvisionedThroughput(2, 1)
                 ).successValue()
-                    .TableDescription.BillingModeSummary?.BillingMode,
-                equalTo(PROVISIONED)
+                    .TableDescription.TableName,
+                equalTo(table)
             )
 
             waitForUpdate()
@@ -223,8 +226,11 @@ abstract class DynamoDbContract(
     private fun statement() = """SELECT "$attrS" FROM "$table" WHERE "$attrS" = "hello";"""
 
     private fun DynamoDb.createTable(tableName: TableName, keyAttr: AttributeName) = createTable(
-        tableName, listOf(KeySchema(keyAttr, HASH)), listOf(AttributeDefinition(keyAttr, S)),
-        billingMode = PAY_PER_REQUEST
+        tableName,
+        listOf(KeySchema(keyAttr, HASH)),
+        listOf(AttributeDefinition(keyAttr, S)),
+        billingMode = PAY_PER_REQUEST,
+        provisionedThroughput = ProvisionedThroughput(1, 1)
     ).successValue()
 
     private fun waitForUpdate() = Thread.sleep(duration.toMillis())
