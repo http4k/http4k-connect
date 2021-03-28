@@ -16,7 +16,9 @@ import org.http4k.core.Uri
 @Http4kConnectAction
 class ListBuckets : S3Action<Listing<BucketName>> {
 
-    override fun toRequest() = Request(GET, Uri.of("/"))
+    override fun toRequest() = Request(GET, uri())
+
+    private fun uri() = Uri.of("/")
 
     override fun toResult(response: Response) = with(response) {
         when {
@@ -25,7 +27,7 @@ class ListBuckets : S3Action<Listing<BucketName>> {
                 val items = (0 until buckets.length).map { BucketName.of(buckets.item(it).text()) }
                 Success(if (items.isNotEmpty()) Listing.Unpaged(items) else Listing.Empty)
             }
-            else -> Failure(RemoteFailure(GET, Uri.of("/"), status))
+            else -> Failure(RemoteFailure(GET, uri(), status))
         }
     }
 
