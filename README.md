@@ -5,7 +5,7 @@
 <a href="https://github.com/http4k/http4k-connect/actions?query=workflow%3A.github%2Fworkflows%2Fbuild.yaml"><img alt="build" src="https://github.com/http4k/http4k-connect/workflows/.github/workflows/build.yaml/badge.svg"></a>
 <a href="https://mvnrepository.com/artifact/org.http4k"><img alt="download" src="https://img.shields.io/maven-central/v/org.http4k/http4k-connect-core"></a>
 
-[comment]: <> (<img alt="jcenter free" src="https://img.shields.io/badge/JCenter%20free-%3Ev2.18.0.0-success">)
+[comment]: <> (<img alt="jcenter free" src="https://img.shields.io/badge/JCenter%20free-%3Ev2.18.1.0-success">)
 [comment]: <> (<a href="https://codecov.io/gh/http4k/http4k-connect"><img src="https://codecov.io/gh/http4k/http4k-connect/branch/master/graph/badge.svg" /></a>)
 ![http://kotlinlang.org](https://img.shields.io/badge/kotlin-1.4-blue.svg)
 
@@ -75,7 +75,7 @@ FakeExample().start()
 ```groovy
 dependencies {
     // install the platform...
-    implementation platform("org.http4k:http4k-connect-bom:2.18.0.0")
+    implementation platform("org.http4k:http4k-connect-bom:2.18.1.0")
 
     // ...then choose a client
     implementation "org.http4k:http4k-connect-amazon-s3"
