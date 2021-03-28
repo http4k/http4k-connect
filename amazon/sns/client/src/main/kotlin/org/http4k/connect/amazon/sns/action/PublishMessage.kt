@@ -43,7 +43,7 @@ data class PublishMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(PublishedMessage.from(response))
-            else -> Failure(RemoteFailure(POST, uri(), status))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
 }

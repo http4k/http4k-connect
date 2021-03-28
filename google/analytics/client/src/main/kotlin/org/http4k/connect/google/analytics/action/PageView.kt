@@ -31,7 +31,7 @@ data class PageView(
         .form(DOCUMENT_HOST, documentHost)
 
     override fun toResult(response: Response) = with(response) {
-        if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, uri(), status))
+        if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, uri(), status, bodyString()))
     }
 
     private fun uri() = Uri.of("/collect")

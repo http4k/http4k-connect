@@ -67,7 +67,7 @@ data class SendMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SentMessage.from(response))
-            else -> Failure(RemoteFailure(Method.POST, uri(), status))
+            else -> Failure(RemoteFailure(Method.POST, uri(), status, bodyString()))
         }
     }
 

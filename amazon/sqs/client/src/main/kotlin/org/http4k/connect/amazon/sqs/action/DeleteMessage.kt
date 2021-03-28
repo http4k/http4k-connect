@@ -35,7 +35,7 @@ data class DeleteMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(RemoteFailure(Method.POST, uri(), status))
+            else -> Failure(RemoteFailure(Method.POST, uri(), status, bodyString()))
         }
     }
 

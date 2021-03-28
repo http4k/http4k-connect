@@ -69,7 +69,7 @@ data class ReceiveMessage(
                             )
                         }.toList()
                 })
-            else -> Failure(RemoteFailure(POST, uri(), status))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
 

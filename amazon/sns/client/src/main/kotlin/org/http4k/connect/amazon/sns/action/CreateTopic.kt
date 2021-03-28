@@ -39,7 +39,7 @@ data class CreateTopic(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(CreatedTopic.from(response))
-            else -> Failure(RemoteFailure(POST, uri(), status))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
 }
