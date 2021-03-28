@@ -273,6 +273,11 @@ subprojects {
     }
 }
 
+dependencies {
+    implementation platform("software.amazon.awssdk:bom:$aws_sdk_version")
+    implementation "software.amazon.awssdk:cloudfront"
+}
+
 static def hasCodeCoverage(project) {
     return project.name != "http4k-connect-bom" &&
         project.name != "http4k-connect-kapt-adapter"

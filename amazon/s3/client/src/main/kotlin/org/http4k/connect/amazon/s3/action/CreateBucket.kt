@@ -25,7 +25,7 @@ data class CreateBucket(val bucketName: BucketName, val region: Region) : S3Acti
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(RemoteFailure(PUT, uri(), status))
+            else -> Failure(RemoteFailure(PUT, uri(), status, bodyString()))
         }
     }
 }

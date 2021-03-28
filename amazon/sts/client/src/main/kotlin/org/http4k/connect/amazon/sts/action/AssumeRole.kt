@@ -68,17 +68,21 @@ data class AssumeRole(
 
         return listOfNotNull(base, policies, tags, transitiveTags, other)
             .flatten().fold(
-                Request(POST, Uri.of(""))
+                Request(POST, uri())
                     .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
             ) { acc, it ->
                 acc.form(it.first, it.second)
             }
     }
 
-    override fun toResult(response: Response) = when {
-        response.status.successful -> Success(AssumedRole.from(response))
-        else -> Failure(RemoteFailure(POST, Uri.of(""), response.status))
+    override fun toResult(response: Response) = with(response) {
+        when {
+            status.successful -> Success(AssumedRole.from(this))
+            else -> Failure(RemoteFailure(POST, uri(), status))
+        }
     }
+
+    private fun uri() = Uri.of("")
 }
 
 data class AssumedRole(

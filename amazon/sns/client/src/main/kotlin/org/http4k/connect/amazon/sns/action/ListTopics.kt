@@ -27,7 +27,7 @@ class ListTopics : SNSAction<Listing<ARN>>("ListTopics") {
                     } ?: Listing.Unpaged(list)
                 }
             )
-            else -> Failure(RemoteFailure(POST, uri(), status))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
 

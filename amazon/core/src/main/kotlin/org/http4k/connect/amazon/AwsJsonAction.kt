@@ -20,7 +20,7 @@ abstract class AwsJsonAction<R : Any>(
     private val autoMarshalling: AutoMarshalling,
     private val contentType: ContentType = ContentType("application/x-amz-json-1.1")
 ) : Action<Result<R, RemoteFailure>> {
-    override fun toRequest() = Request(POST, Uri.of("/"))
+    override fun toRequest() = Request(POST, uri())
         .header("X-Amz-Target", "${service}.${javaClass.simpleName}")
         .replaceHeader("Content-Type", contentType.value)
         .body(autoMarshalling.asFormatString(this))
@@ -28,7 +28,9 @@ abstract class AwsJsonAction<R : Any>(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
-            else -> Failure(RemoteFailure(POST, Uri.of("/"), status, bodyString()))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
+
+    private fun uri() = Uri.of("/")
 }

@@ -9,6 +9,7 @@ includeStorage("s3")
 includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
+includeSystem("amazon", "cloudfront")
 includeSystem("amazon", "dynamodb")
 includeSystem("amazon", "kms")
 includeSystem("amazon", "lambda")
