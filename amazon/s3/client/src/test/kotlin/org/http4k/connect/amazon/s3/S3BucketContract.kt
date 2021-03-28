@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3BucketContract(http: HttpHandler) : AwsContract(http) {
+abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
 
     private val bucket = BucketName.of(UUID.randomUUID().toString())
 

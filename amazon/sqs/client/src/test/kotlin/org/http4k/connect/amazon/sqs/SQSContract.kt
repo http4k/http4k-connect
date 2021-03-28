@@ -17,7 +17,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-abstract class SQSContract(http: HttpHandler) : AwsContract(http) {
+abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
     private val sqs by lazy {
         SQS.Http(aws.region, { aws.credentials }, http)

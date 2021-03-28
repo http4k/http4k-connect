@@ -11,7 +11,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-abstract class STSContract(http: HttpHandler) : AwsContract(http) {
+abstract class STSContract(http: HttpHandler) : AwsContract() {
 
     protected val clock = Clock.systemUTC()
     private val sts by lazy {

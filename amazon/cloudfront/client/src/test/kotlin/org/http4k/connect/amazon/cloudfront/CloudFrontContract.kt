@@ -7,7 +7,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 
-abstract class CloudFrontContract(http: HttpHandler) : AwsContract(http) {
+abstract class CloudFrontContract(http: HttpHandler) : AwsContract() {
     private val cloudFront by lazy {
         CloudFront.Http({ aws.credentials }, http.debug())
     }

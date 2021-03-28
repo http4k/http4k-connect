@@ -12,7 +12,7 @@ import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class SecretsManagerContract(http: HttpHandler) : AwsContract(http) {
+abstract class SecretsManagerContract(http: HttpHandler) : AwsContract() {
 
     private val sm by lazy {
         SecretsManager.Http(aws.region, { aws.credentials }, http)

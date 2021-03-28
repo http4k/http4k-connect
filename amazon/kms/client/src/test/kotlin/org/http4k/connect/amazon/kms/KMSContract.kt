@@ -19,7 +19,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.junit.jupiter.api.Test
 
-abstract class KMSContract(http: HttpHandler) : AwsContract(http) {
+abstract class KMSContract(http: HttpHandler) : AwsContract() {
     private val kms by lazy {
         KMS.Http(aws.region, { aws.credentials }, http)
     }

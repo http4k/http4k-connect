@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 val reverse = FunctionName("reverse")
 
-abstract class LambdaContract(http: HttpHandler) : AwsContract(http) {
+abstract class LambdaContract(http: HttpHandler) : AwsContract() {
 
     private val lambda by lazy {
         Lambda.Http(aws.region, { aws.credentials }, http)
