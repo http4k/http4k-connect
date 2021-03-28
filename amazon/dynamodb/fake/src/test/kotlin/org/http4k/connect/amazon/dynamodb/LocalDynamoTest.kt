@@ -1,7 +1,6 @@
-package org.http4k.connect.amazon.cloudfront
+package org.http4k.connect.amazon.dynamodb
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.dynamodb.DynamoDbContract
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.assumeDockerDaemonRunning
 import org.http4k.core.Uri

@@ -6,12 +6,12 @@ import org.http4k.connect.amazon.cloudfront.CloudFront
 import org.http4k.connect.amazon.cloudfront.FakeCloudFront
 import org.http4k.connect.amazon.cloudfront.Http
 import org.http4k.connect.amazon.cloudfront.createInvalidation
-import org.http4k.connect.amazon.model.CallerReference
+import org.http4k.connect.amazon.model.CallerReference.Companion.random
 import org.http4k.connect.amazon.model.DistributionId
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 
-const val USE_REAL_CLIENT = true
+const val USE_REAL_CLIENT = false
 
 fun main() {
     // we can connect to the real service or the fake (drop in replacement)
@@ -21,15 +21,7 @@ fun main() {
     val client =
         CloudFront.Http({ AwsCredentials("accessKeyId", "secretKey") }, http.debug())
 
-    val distId = DistributionId.of("a-distribution-id")
-
     // all operations return a Result monad of the API type
-    val r: Result<Unit, RemoteFailure> = client
-        .createInvalidation(distId, listOf("/path"), 1, CallerReference.random())
-//    val createdSecretResult: Result<CreatedSecret, RemoteFailure> =
-//        client.createSecret(secretId.value, UUID.randomUUID(), "value")
-//    println(createdSecretResult.valueOrNull())
-//
-//    // get the secret value back
-//    println(client.getSecretValue(secretId).valueOrNull())
+    val result: Result<Unit, RemoteFailure> = client
+        .createInvalidation(DistributionId.of("a-distribution-id"), listOf("/path"), 1, random())
 }
