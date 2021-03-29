@@ -50,7 +50,7 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
             .forEach {
                 println(it.asType())
                 println("ERASURE" + processingEnv.typeUtils.erasure(actionType.asType()).toString())
-                val map = processingEnv.typeUtils.directSupertypes(it.asType())
+                val map = foo(it)
                     .map { processingEnv.typeUtils.erasure(it).toString() }
                 val element = processingEnv.typeUtils.erasure(actionType.asType()).toString()
                 println(element)
@@ -67,8 +67,14 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
             .apply { functions.forEach(::addFunction) }
             .build()
     }
-    fun superTypesOf(it: TypeMirror): List<TypeMirror> =
-        processingEnv.typeUtils.directSupertypes(it).flatMap { superTypesOf(it) }
+
+    private fun foo(it: TypeElement): List<TypeMirror> {
+        fun superTypesOf(type: TypeMirror): List<TypeMirror> =
+            processingEnv.typeUtils.directSupertypes(type)
+                .flatMap { superTypesOf(it) + it }
+
+        return superTypesOf(it.asType())
+    }
 }
 
 @KotlinPoetMetadataPreview
