@@ -35,10 +35,10 @@ fun main() {
 
     // we can encrypt some text...
     val encrypted: Encrypted =
-        client.encrypt(keyId = key.KeyMetadata.KeyId, Base64Blob.encode("hello")).valueOrNull()!!
+        client.encrypt(KeyId = key.KeyMetadata.KeyId, Base64Blob.encode("hello")).valueOrNull()!!
     println(encrypted.CiphertextBlob.decoded())
 
     // and decrypt it again!
-    val decrypted: Decrypted = client.decrypt(keyId = key.KeyMetadata.KeyId, encrypted.CiphertextBlob).valueOrNull()!!
+    val decrypted: Decrypted = client.decrypt(KeyId = key.KeyMetadata.KeyId, encrypted.CiphertextBlob).valueOrNull()!!
     println(decrypted.Plaintext.decoded())
 }

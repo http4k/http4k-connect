@@ -55,13 +55,13 @@ private fun ImmutableKmClass.generateActionFunctions(clazz: ImmutableKmClass) = 
             .receiver(name.asClassName())
             .addCode(
                 CodeBlock.of(
-                    "return this(%T(${it.valueParameters.joinToString(", ") { it.name.decapitalize() }}))",
+                    "return this(%T(${it.valueParameters.joinToString(", ") { it.name }}))",
                     clazz.name.asClassName()
                 )
             )
 
         it.valueParameters.forEach {
-            val base = ParameterSpec.builder(it.name.decapitalize(), it.type!!.generifiedType())
+            val base = ParameterSpec.builder(it.name, it.type!!.generifiedType())
             if (it.type!!.isNullable) base.defaultValue(CodeBlock.of("null"))
             baseFunction.addParameter(base.build())
         }

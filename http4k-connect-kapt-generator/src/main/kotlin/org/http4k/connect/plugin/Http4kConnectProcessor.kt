@@ -44,13 +44,6 @@ internal inline fun <reified T : Annotation> RoundEnvironment.annotated() =
 
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmClass.explodeName() = name.pkg() to name.name()
-
-@KotlinPoetMetadataPreview
-internal fun ImmutableKmClass.poetClassName() = ClassName(name.pkg(), name.name())
-
-@KotlinPoetMetadataPreview
-internal fun ImmutableKmType.poetClassName() = ClassName(toString(), toString())
-
 internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
 internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
 internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())

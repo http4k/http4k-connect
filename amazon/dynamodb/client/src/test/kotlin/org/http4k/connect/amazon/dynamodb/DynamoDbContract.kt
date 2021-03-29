@@ -166,16 +166,16 @@ abstract class DynamoDbContract(
                 Item(attrS of "hello"),
                 null,
                 "set ${attrN.name} = :val1",
-                expressionAttributeValues = mapOf(":val1" to Num(321))
+                ExpressionAttributeValues = mapOf(":val1" to Num(321))
             ).successValue()
 
-            val updatedItem = getItem(table, Item(attrS of "hello"), consistentRead = true).successValue().item!!
+            val updatedItem = getItem(table, Item(attrS of "hello"), ConsistentRead = true).successValue().item!!
             assertThat(attrN(updatedItem), equalTo(321))
 
             val query = query(
                 table,
-                keyConditionExpression = "${attrS.name} = :v1",
-                expressionAttributeValues = mapOf(":v1" to Str("hello"))
+                KeyConditionExpression = "${attrS.name} = :v1",
+                ExpressionAttributeValues = mapOf(":v1" to Str("hello"))
             ).successValue().items
 
             assertThat(attrN[query.first()], equalTo(321))
@@ -211,8 +211,8 @@ abstract class DynamoDbContract(
             assertThat(
                 updateTable(
                     table,
-                    billingMode = PROVISIONED,
-                    provisionedThroughput = ProvisionedThroughput(2, 1)
+                    BillingMode = PROVISIONED,
+                    ProvisionedThroughput = ProvisionedThroughput(2, 1)
                 ).successValue()
                     .TableDescription.TableName,
                 equalTo(table)
@@ -229,8 +229,8 @@ abstract class DynamoDbContract(
         tableName,
         listOf(KeySchema(keyAttr, HASH)),
         listOf(AttributeDefinition(keyAttr, S)),
-        billingMode = PAY_PER_REQUEST,
-        provisionedThroughput = ProvisionedThroughput(1, 1)
+        BillingMode = PAY_PER_REQUEST,
+        ProvisionedThroughput = ProvisionedThroughput(1, 1)
     ).successValue()
 
     private fun waitForUpdate() = Thread.sleep(duration.toMillis())

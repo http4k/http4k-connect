@@ -23,7 +23,7 @@ abstract class STSContract(http: HttpHandler) : AwsContract() {
         val result = sts.assumeRole(
             ARN.of("arn:aws:iam::169766454405:role/ROLETEST"),
             UUID.randomUUID().toString(),
-            durationSeconds = Duration.ofHours(1)
+            DurationSeconds = Duration.ofHours(1)
         )
 
         assertTrue(

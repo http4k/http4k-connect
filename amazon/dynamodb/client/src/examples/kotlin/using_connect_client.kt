@@ -47,7 +47,7 @@ fun main() {
     // we can bind typed values to the attributes of an item
     client.putItem(
         table,
-        item = Item(
+        Item = Item(
             attrS of "foobar",
             attrBool of true,
             attrB of Base64Blob.encode("foo"),
@@ -66,7 +66,7 @@ fun main() {
     )
 
     // lookup an item from the database
-    val item = client.getItem(table, key = Item(attrS of "hello")).successValue().item!!
+    val item = client.getItem(table, Key = Item(attrS of "hello")).successValue().item!!
     val str: String = attrS(item)
     val boolean: Result<Boolean, LensFailure> = attrBool.asResult()(item)
 
