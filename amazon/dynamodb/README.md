@@ -85,7 +85,7 @@ val table = TableName.of("myTable")
 // we can bind values to the attributes
 client.putItem(
     table,
-    item = mapOf(
+    Item = mapOf(
         attrS to "foobar",
         attrBool to true,
         attrB to Base64Blob.encode("foo"),
