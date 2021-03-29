@@ -171,7 +171,7 @@ abstract class DynamoDbContract(
             val updatedItem = getItem(table, Item(attrS of "hello"), ConsistentRead = true).successValue().item!!
             assertThat(attrN(updatedItem), equalTo(321))
 
-            val query = query(
+            val query = dynamo.query(
                 table,
                 KeyConditionExpression = "$attrS = :v1",
                 ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello"))
@@ -179,7 +179,7 @@ abstract class DynamoDbContract(
 
             assertThat(attrN[query.first()], equalTo(321))
 
-            val scan = scan(table).successValue().items
+            val scan = dynamo.scan(table).successValue().items
 
             assertThat(attrN[scan.first()], equalTo(321))
 

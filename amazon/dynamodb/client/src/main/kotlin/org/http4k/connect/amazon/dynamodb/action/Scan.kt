@@ -21,17 +21,18 @@ data class Scan(
     val Select: String? = null,
     val TotalSegments: Int? = null,
     val ReturnConsumedCapacity: String? = null,
-): PagedAction<ScanResponse>(ScanResponse::class, DynamoDbMoshi) {
-    override fun next(lastKey: Key) = copy(ExclusiveStartKey = lastKey)
+): PagedAction<Key, Item, ScanResponse>(ScanResponse::class, DynamoDbMoshi) {
+    override fun next(token: Key) = copy(ExclusiveStartKey = token)
 }
 
 @JsonSerializable
 data class ScanResponse(
     val ConsumedCapacity: ConsumedCapacity?,
     val Count: Int?,
-    override val LastEvaluatedKey: Key?,
+    val LastEvaluatedKey: Key?,
     val ScannedCount: Int?,
     internal val Items: List<ItemResult>?
-) :Paged {
+) : Paged<Key, Item> {
     override val items = Items?.map(ItemResult::toItem) ?: emptyList()
+    override fun token() = LastEvaluatedKey
 }

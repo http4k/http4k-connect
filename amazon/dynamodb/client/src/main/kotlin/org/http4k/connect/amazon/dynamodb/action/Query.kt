@@ -22,8 +22,8 @@ data class Query(
     val Limit: Int? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ScanIndexForward: Boolean? = null,
-) : PagedAction<QueryResponse>(QueryResponse::class, DynamoDbMoshi) {
-    override fun next(lastKey: Key) = copy(ExclusiveStartKey = lastKey)
+) : PagedAction<Key, Item, QueryResponse>(QueryResponse::class, DynamoDbMoshi) {
+    override fun next(token: Key) = copy(ExclusiveStartKey = token)
 }
 
 @JsonSerializable
@@ -31,10 +31,11 @@ data class QueryResponse(
     internal val Items: List<ItemResult>?,
     val ConsumedCapacity: ConsumedCapacity?,
     val Count: Int?,
-    override val LastEvaluatedKey: Key?,
+    val LastEvaluatedKey: Key?,
     val ScannedCount: Int?
-) : Paged {
+) : Paged<Key, Item> {
     override val items = Items?.map(ItemResult::toItem) ?: emptyList()
+    override fun token() = LastEvaluatedKey
 }
 
 enum class Select {

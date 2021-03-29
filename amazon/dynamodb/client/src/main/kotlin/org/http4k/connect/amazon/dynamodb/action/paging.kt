@@ -4,12 +4,18 @@ import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.format.AutoMarshalling
 import kotlin.reflect.KClass
 
-interface Paged {
-    val LastEvaluatedKey: Key?
-    val items: List<Item>
+/**
+ * Represents a Paged response
+ */
+interface Paged<Token, ItemType> {
+    fun token(): Token?
+    val items: List<ItemType>
 }
 
-abstract class PagedAction<R : Paged>(clazz: KClass<R>, autoMarshalling: AutoMarshalling = DynamoDbMoshi)
-    : DynamoDbAction<R>(clazz, autoMarshalling) {
-    abstract fun next(lastKey: Key): PagedAction<R>
+/**
+ * Superclass for all Paged actions
+ */
+abstract class PagedAction<Token, ItemType, Rsp : Paged<Token, ItemType>>(clazz: KClass<Rsp>, autoMarshalling: AutoMarshalling = DynamoDbMoshi)
+    : DynamoDbAction<Rsp>(clazz, autoMarshalling) {
+    abstract fun next(token: Token): PagedAction<Token ,ItemType, Rsp>
 }
