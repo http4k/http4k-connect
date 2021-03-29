@@ -121,7 +121,19 @@ allprojects {
         enabled = false
     }
 
+    dependencies {
+        dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
+    }
+}
+
+subprojects {
     sourceSets {
+        main {
+            kotlin {
+                srcDirs += "build/generated/source/kapt/main"
+                srcDirs += "build/generated/source/kaptKotlin/main"
+            }
+        }
         test {
             kotlin {
                 srcDirs "src/examples/kotlin"
@@ -129,12 +141,6 @@ allprojects {
         }
     }
 
-    dependencies {
-        dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
-    }
-}
-
-subprojects {
     task sourcesJar(type: Jar, dependsOn: classes) {
         archiveClassifier = "sources"
         from sourceSets.main.allSource

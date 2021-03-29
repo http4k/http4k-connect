@@ -23,6 +23,7 @@ import javax.lang.model.element.TypeElement
 @SupportedSourceVersion(RELEASE_8)
 @SupportedAnnotationTypes("org.http4k.connect.Http4kConnectAdapter")
 @SupportedOptions(KAPT_KOTLIN_GENERATED_OPTION_NAME)
+
 class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
 
     override fun generate(annotations: Set<TypeElement>, roundEnv: RoundEnvironment, outputDir: File): Boolean {
