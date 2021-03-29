@@ -17,11 +17,9 @@ fun <Token, ItemType, Rsp : Paged<Token, ItemType>> DynamoDb.paginate(action: Pa
         when {
             done -> null
             else -> when (val result = this(nextRequest)) {
-                is Success -> {
-                    with(result.value) {
-                        token()?.also { nextRequest = nextRequest.next(it) } ?: run { done = true }
-                        items
-                    }
+                is Success -> with(result.value) {
+                    token()?.also { nextRequest = nextRequest.next(it) } ?: run { done = true }
+                    items
                 }
                 is Failure -> error(result.reason.message ?: result.reason.toString())
             }
