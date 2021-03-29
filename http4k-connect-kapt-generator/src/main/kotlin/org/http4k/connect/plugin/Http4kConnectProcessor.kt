@@ -8,7 +8,6 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.KmClassifier
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
@@ -36,11 +35,9 @@ abstract class Http4kConnectProcessor : AbstractProcessor() {
 }
 
 @KotlinPoetMetadataPreview
-internal inline fun <reified T : Annotation> RoundEnvironment.annotated() =
-    rootElements.filter { it.getAnnotation(T::class.java) != null }
-        .filterIsInstance<TypeElement>()
-        .map { it.toImmutableKmClass() }
-
+internal inline fun <reified T : Annotation> RoundEnvironment.annotated(): List<TypeElement> = rootElements
+    .filter { it.getAnnotation(T::class.java) != null }
+    .filterIsInstance<TypeElement>()
 
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmClass.explodeName() = name.pkg() to name.name()
