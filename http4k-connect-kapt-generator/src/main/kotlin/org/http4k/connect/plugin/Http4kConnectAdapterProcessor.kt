@@ -46,20 +46,12 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
             (actionVP.type!!.classifier as KmClassifier.Class).name.replace('/', '.')
         )
 
-        roundEnv.annotated<Http4kConnectAction>()
-            .forEach {
-                println(it.asType())
-                println("ERASURE" + processingEnv.typeUtils.erasure(actionType.asType()).toString())
-                val map = superTypesOf(it.asType())
-                    .map { processingEnv.typeUtils.erasure(it).toString() }
-                val element = processingEnv.typeUtils.erasure(actionType.asType()).toString()
-                println(element)
-                println(map)
-            }
-
-        if (true) error("")
-
         val functions = roundEnv.annotated<Http4kConnectAction>()
+            .filter {
+                superTypesOf(it.asType())
+                    .map(::rawType)
+                    .contains(rawType(actionType.asType()))
+            }
             .map { it.toImmutableKmClass() }
             .flatMap(::generateActionFunctions)
 
@@ -67,6 +59,9 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
             .apply { functions.forEach(::addFunction) }
             .build()
     }
+
+    private fun rawType(typeMirror: TypeMirror) =
+        processingEnv.typeUtils.erasure(typeMirror).toString()
 
     private fun superTypesOf(type: TypeMirror): List<TypeMirror> =
         processingEnv.typeUtils.directSupertypes(type).flatMap { superTypesOf(it) + it }
