@@ -8,10 +8,15 @@ import se.ansman.kotshi.JsonSerializable
 @Http4kConnectAction
 @JsonSerializable
 data class ListTables(val ExclusiveStartTableName: TableName? = null, val Limit: Int? = null) :
-    DynamoDbAction<TableList>(TableList::class, DynamoDbMoshi)
+    PagedAction<TableName, TableName, TableList>(TableList::class, DynamoDbMoshi) {
+    override fun next(token: TableName) = copy(ExclusiveStartTableName = token)
+}
 
 @JsonSerializable
 data class TableList(
     val LastEvaluatedTableName: TableName?,
     val TableNames: List<TableName>
-)
+) : Paged<TableName, TableName> {
+    override fun token() = LastEvaluatedTableName
+    override val items = TableNames
+}
