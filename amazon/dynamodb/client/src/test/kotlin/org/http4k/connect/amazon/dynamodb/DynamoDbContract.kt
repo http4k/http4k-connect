@@ -4,8 +4,9 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasElement
+import dev.forkhandles.values.UUIDValue
+import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Bool
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
@@ -34,6 +35,10 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.UUID
 
+class MyValueType(value: UUID) : UUIDValue(value) {
+    companion object : UUIDValueFactory<MyValueType>(::MyValueType)
+}
+
 abstract class DynamoDbContract(
     private val duration: Duration = Duration.ofSeconds(10)
 ) : AwsContract() {
@@ -54,6 +59,7 @@ abstract class DynamoDbContract(
     private val attrL = Attribute.list().required("theList")
     private val attrM = Attribute.map().required("theMap")
     private val attrS = Attribute.string().required("theString")
+    private val attrU = Attribute.value(MyValueType).required("theUuid")
     private val attrSS = Attribute.strings().required("theStrings")
     private val attrNL = Attribute.string().optional("theNull")
     private val attrMissing = Attribute.string().optional("theMissing")
@@ -78,7 +84,7 @@ abstract class DynamoDbContract(
                         table,
                         Item(attrS of "hello"),
                         "SET $attrBool = :c",
-                        ExpressionAttributeValues = mapOf(":c" to Bool(true))
+                        ExpressionAttributeValues = mapOf(":c" to attrBool.asValue(true))
                     ),
                     Put(table, createItem("hello2")),
                     Put(table, createItem("hello3")),
@@ -191,6 +197,7 @@ abstract class DynamoDbContract(
         attrL of listOf(List(listOf(Str("foo"))), Num(123), Null()),
         attrM of Item(attrS of "foo", attrBool of false),
         attrSS of setOf("345", "567"),
+        attrU of MyValueType(UUID(0, 1)),
         attrNL of null
     )
 
@@ -222,8 +229,7 @@ abstract class DynamoDbContract(
         tableName,
         listOf(keyAttr.asKeySchema(HASH)),
         listOf(keyAttr.asAttributeDefinition()),
-        BillingMode = PAY_PER_REQUEST,
-        ProvisionedThroughput = ProvisionedThroughput(1, 1)
+        BillingMode = PAY_PER_REQUEST
     ).successValue()
 
     private fun waitForUpdate() = Thread.sleep(duration.toMillis())

@@ -1,5 +1,7 @@
 package org.http4k.connect.amazon.model
 
+import dev.forkhandles.values.Value
+import dev.forkhandles.values.ValueFactory
 import org.http4k.connect.amazon.dynamodb.action.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue
 import org.http4k.connect.amazon.dynamodb.action.DynamoDataType
@@ -131,6 +133,8 @@ class Attribute<FINAL>(
         fun timestamp() = long().map(Timestamp::of, Timestamp::value)
 
         inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
+
+        fun <VALUE : Value<T>, T : Any> value(vf: ValueFactory<VALUE, T>) = string().map(vf::parse, vf::show)
     }
 
     open class AttrLensSpec<OUT>(
