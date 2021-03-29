@@ -53,6 +53,7 @@ private fun ImmutableKmClass.generateActionFunctions(clazz: ImmutableKmClass) = 
     .filterNot { it.isPrivate }
     .map {
         val baseFunction = FunSpec.builder(clazz.name.name().decapitalize())
+            .addKdoc("@see ${clazz.name.replace('/', '.')}")
             .receiver(name.asClassName())
             .addCode(
                 CodeBlock.of(
