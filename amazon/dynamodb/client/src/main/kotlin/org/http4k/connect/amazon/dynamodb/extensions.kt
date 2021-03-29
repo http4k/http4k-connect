@@ -5,11 +5,12 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.Paged
 import org.http4k.connect.amazon.dynamodb.action.PagedAction
 
-fun <Token, ItemType, Rsp : Paged<Token, ItemType>, Out> DynamoDb.paginate(
-    original: PagedAction<Token, ItemType, Rsp>,
-    fn: (ItemType) -> Out
-): Sequence<Out> {
-    var nextRequest = original
+/**
+ * Paginate the response of the passed action
+ */
+fun <Token, ItemType, Rsp : Paged<Token, ItemType>> DynamoDb.paginate(action: PagedAction<Token, ItemType, Rsp>)
+    : Sequence<ItemType> {
+    var nextRequest = action
     var done = false
 
     return generateSequence {
@@ -19,7 +20,7 @@ fun <Token, ItemType, Rsp : Paged<Token, ItemType>, Out> DynamoDb.paginate(
                 is Success -> {
                     with(result.value) {
                         token()?.also { nextRequest = nextRequest.next(it) } ?: run { done = true }
-                        items.map(fn)
+                        items
                     }
                 }
                 is Failure -> error(result.reason.message ?: result.reason.toString())
