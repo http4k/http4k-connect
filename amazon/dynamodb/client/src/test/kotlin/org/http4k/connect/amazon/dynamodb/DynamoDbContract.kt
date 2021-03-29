@@ -159,7 +159,7 @@ abstract class DynamoDbContract(
                 Item(attrS of "hello"),
                 null,
                 "set $attrN = :val1",
-                ExpressionAttributeValues = mapOf(":val1" to Num(321))
+                ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(321))
             ).successValue()
 
             val updatedItem = getItem(table, Item(attrS of "hello"), ConsistentRead = true).successValue().item!!
@@ -168,7 +168,7 @@ abstract class DynamoDbContract(
             val query = query(
                 table,
                 KeyConditionExpression = "$attrS = :v1",
-                ExpressionAttributeValues = mapOf(":v1" to Str("hello"))
+                ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello"))
             ).successValue().items
 
             assertThat(attrN[query.first()], equalTo(321))

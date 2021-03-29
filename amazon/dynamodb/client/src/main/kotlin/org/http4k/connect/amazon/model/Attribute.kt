@@ -56,7 +56,10 @@ class Attribute<FINAL>(
      */
     fun asAttributeDefinition() = AttributeDefinition(name, dataType)
 
-    fun value(value: FINAL): AttributeValue = TODO()
+    /**
+     * Return a correctly typed value for this attribute
+     */
+    fun asValue(value: FINAL): AttributeValue = Item(this of value).getValue(name)
 
     @Suppress("UNCHECKED_CAST")
     override operator fun <R : Item> invoke(value: FINAL, target: R): R = lensSet(value, target) as R
