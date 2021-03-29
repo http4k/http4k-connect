@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v2.20.0.0
+- **http4k-connect-amazon-dynamodb** : More making API nicer and typesafe.
+
 ### v2.19.0.0
 - **http4k-connect-amazon-*** : [Breaking] Changed generated helper functions to not interfere with the names of the parameters. Simple rename will work here.
 - **http4k-connect-*** : Friendlify JavaDocs.
@@ -12,7 +15,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-amazon-cloudfront-fake* : New module.
 
 ### v2.18.0.0
-- **http4k-connect-amazon-dynamodb** : Further tweaking of the Item and Key mapping typealises to make API easier to use.
+- **http4k-connect-amazon-dynamodb** : Further tweaking of the Item and Key mapping typealiases to make API easier to use.
 
 ### v2.17.0.0
 - **http4k-connect-amazon-dynamodb** : Reworked DynamoDb API to be typesafe, tightened up types in responses, added Scan.
