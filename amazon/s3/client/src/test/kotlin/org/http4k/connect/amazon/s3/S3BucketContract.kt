@@ -3,10 +3,10 @@ package org.http4k.connect.amazon.s3
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.Listing
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.s3.action.ObjectList
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.BeforeEach
@@ -40,24 +40,24 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
         try {
             val newKey = BucketKey.of(UUID.randomUUID().toString())
 
-            assertThat(s3Bucket.listKeys().successValue(), equalTo(Listing.Empty))
+            assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(emptyList())))
             assertThat(s3Bucket[key].successValue(), absent())
             assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
-            assertThat(s3Bucket.listKeys().successValue(), equalTo(Listing.Unpaged(listOf(key))))
+            assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(listOf(key))))
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
             assertThat(s3Bucket.copyKey(bucket, key, newKey).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
             assertThat(
-                s3Bucket.listKeys().successValue(),
-                equalTo(Listing.Unpaged(listOf(key, newKey).sortedBy { it.value }))
+                s3Bucket.listObjectsV2().successValue(),
+                equalTo(ObjectList(listOf(key, newKey).sortedBy { it.value }))
             )
             assertThat(s3Bucket.deleteKey(newKey).successValue(), equalTo(Unit))
             assertThat(s3Bucket.deleteKey(key).successValue(), equalTo(Unit))
             assertThat(s3Bucket[key].successValue(), equalTo(null))
-            assertThat(s3Bucket.listKeys().successValue(), equalTo(Listing.Empty))
+            assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(emptyList())))
         } finally {
             s3Bucket.deleteKey(key)
             s3Bucket.deleteBucket()

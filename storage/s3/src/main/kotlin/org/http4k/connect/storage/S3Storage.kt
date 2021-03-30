@@ -7,7 +7,7 @@ import dev.forkhandles.result4k.recover
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.s3.S3Bucket
 import org.http4k.connect.amazon.s3.action.DeleteKey
-import org.http4k.connect.amazon.s3.action.ListKeys
+import org.http4k.connect.amazon.s3.action.ListObjectsV2
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
 
@@ -30,8 +30,8 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling:
                 .recover { it.throwIt() }
 
         override fun keySet(keyPrefix: String) =
-            when (val result = s3(ListKeys())) {
-                is Success -> result.value
+            when (val result = s3(ListObjectsV2())) {
+                is Success -> result.value.items
                     .filter { it.value.startsWith(keyPrefix) }
                     .map { it.value }
                     .toSet()
