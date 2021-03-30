@@ -26,7 +26,7 @@ class FakeS3(
 
     override val app = routes(
         isS3 bind routes(
-            globalListBucketKeys(buckets, bucketContent),
+            globalListObjectsV2(buckets, bucketContent),
             globalPutBucket(buckets),
             globalListBuckets(buckets)
         ),
@@ -37,7 +37,7 @@ class FakeS3(
             bucketDeleteKey(buckets, bucketContent),
             bucketPutBucket(buckets),
             bucketDeleteBucket(buckets),
-            bucketListKeys(buckets, bucketContent)
+            bucketListObjectsV2(buckets, bucketContent)
         )
     )
 

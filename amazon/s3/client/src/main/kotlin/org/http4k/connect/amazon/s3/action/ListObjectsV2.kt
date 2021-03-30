@@ -39,7 +39,7 @@ data class ListObjectsV2(val continuationToken: String? = null) : S3BucketAction
                                 ObjectSummary(
                                     it.firstChildText("ETag"),
                                     BucketKey.of(it.firstChildText("Key")!!),
-                                    it.firstChildText("Key")?.toLong()?.let { Timestamp.of(it) },
+                                    it.firstChildText("Timestamp")?.toLong()?.let { Timestamp.of(it) },
                                     it.firstChildText("DisplayName"),
                                     it.firstChildText("ID"),
                                     it.firstChild("Owner")?.let {

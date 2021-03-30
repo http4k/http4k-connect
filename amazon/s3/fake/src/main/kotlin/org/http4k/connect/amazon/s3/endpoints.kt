@@ -25,8 +25,8 @@ import java.time.ZonedDateTime
 import java.util.Base64
 
 
-fun bucketListKeys(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
-    "/" bind GET to { listKeys(it.subdomain(buckets), buckets, bucketContent) }
+fun bucketListObjectsV2(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+    "/" bind GET to { listObjectsV2(it.subdomain(buckets), buckets, bucketContent) }
 
 fun bucketDeleteBucket(buckets: Storage<Unit>) =
     "/" bind DELETE to {
@@ -89,15 +89,15 @@ fun globalListBuckets(buckets: Storage<Unit>) = "/" bind GET to {
 
 fun globalPutBucket(buckets: Storage<Unit>) = "/{id:.+}" bind PUT to { putBucket(it.path("id")!!, buckets) }
 
-fun globalListBucketKeys(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+fun globalListObjectsV2(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
     "/{id:.+}" bind GET to {
-        listKeys(
+        listObjectsV2(
             "s3",
             buckets, bucketContent
         )
     }
 
-fun listKeys(bucket: String, buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+fun listObjectsV2(bucket: String, buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
     buckets[bucket]
         ?.let {
             Response(OK)
