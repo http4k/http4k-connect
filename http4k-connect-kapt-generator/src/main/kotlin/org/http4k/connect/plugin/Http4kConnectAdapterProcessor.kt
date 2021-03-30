@@ -6,7 +6,6 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
-import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrivate
@@ -41,8 +40,8 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
     private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment): FileSpec {
         val (packageName, className) = explodeName()
 
-        val actionVP: ImmutableKmValueParameter = functions.find { it.name == "invoke" }!!.valueParameters.first()
-        val actionType: TypeElement = processingEnv.elementUtils.getTypeElement(
+        val actionVP = functions.find { it.name == "invoke" }!!.valueParameters.first()
+        val actionType = processingEnv.elementUtils.getTypeElement(
             (actionVP.type!!.classifier as KmClassifier.Class).name.replace('/', '.')
         )
 
