@@ -29,12 +29,12 @@ abstract class S3GlobalContract(http: HttpHandler) : AwsContract() {
 
     @Test
     fun `bucket lifecycle`() {
-        assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
+        assertThat(s3.listBuckets().successValue().items.contains(bucket), equalTo(false))
         assertThat(s3.createBucket(bucket, aws.region), equalTo(Success(Unit)))
         try {
-            assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(true))
+            assertThat(s3.listBuckets().successValue().items.contains(bucket), equalTo(true))
             assertThat(s3Bucket.deleteBucket(), equalTo(Success(Unit)))
-            assertThat(s3.listBuckets().successValue().contains(bucket), equalTo(false))
+            assertThat(s3.listBuckets().successValue().items.contains(bucket), equalTo(false))
         } finally {
             s3Bucket.deleteBucket().successValue()
         }

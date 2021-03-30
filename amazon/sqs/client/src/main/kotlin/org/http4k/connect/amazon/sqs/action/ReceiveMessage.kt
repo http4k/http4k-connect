@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.model.ReceiptHandle
 import org.http4k.connect.amazon.model.SQSMessage
 import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.amazon.model.children
-import org.http4k.connect.amazon.model.firstChild
+import org.http4k.connect.amazon.model.firstChildText
 import org.http4k.connect.amazon.model.sequenceOfNodes
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.xmlDoc
@@ -64,7 +64,7 @@ data class ReceiveMessage(
                                 text("MD5OfBody"),
                                 ReceiptHandle.of(text("ReceiptHandle")),
                                 it.children("Attributes")
-                                    .map { it.firstChild("Name").textContent to it.firstChild("Value").textContent }
+                                    .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?:"") }
                                     .toMap()
                             )
                         }.toList()

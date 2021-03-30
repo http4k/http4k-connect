@@ -44,15 +44,15 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
             assertThat(s3Bucket[key].successValue(), absent())
             assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
-            assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(listOf(key))))
+            assertThat(s3Bucket.listObjectsV2().successValue().items.map { it.Key }, equalTo(key))
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
             assertThat(s3Bucket.copyKey(bucket, key, newKey).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
             assertThat(
-                s3Bucket.listObjectsV2().successValue(),
-                equalTo(ObjectList(listOf(key, newKey).sortedBy { it.value }))
+                s3Bucket.listObjectsV2().successValue().items.map { it.Key },
+                equalTo(listOf(key, newKey).sortedBy { it.value })
             )
             assertThat(s3Bucket.deleteKey(newKey).successValue(), equalTo(Unit))
             assertThat(s3Bucket.deleteKey(key).successValue(), equalTo(Unit))

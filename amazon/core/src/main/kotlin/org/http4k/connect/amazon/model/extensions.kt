@@ -25,7 +25,8 @@ fun NodeList.sequenceOfNodes(onlyChildrenNamed: String? = null): Sequence<Node> 
     return onlyChildrenNamed?.let { baseSequence.filter { it.nodeName == onlyChildrenNamed } } ?: baseSequence
 }
 
-fun Node.firstChild(name: String) = children(name).first()
+fun Node.firstChildText(name: String) = firstChild(name)?.text()
+fun Node.firstChild(name: String) = children(name).firstOrNull()
 fun Node.children(name: String) = childNodes.sequenceOfNodes(name)
 fun Node.text() = textContent.trim()
 
