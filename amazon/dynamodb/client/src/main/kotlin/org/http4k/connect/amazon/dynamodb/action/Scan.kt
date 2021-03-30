@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.Paged
+import org.http4k.connect.amazon.PagedAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.model.TableName
 import se.ansman.kotshi.JsonSerializable
@@ -22,7 +23,8 @@ data class Scan(
     val Select: String? = null,
     val TotalSegments: Int? = null,
     val ReturnConsumedCapacity: String? = null,
-): PagedAction<Key, Item, ScanResponse>(ScanResponse::class, DynamoDbMoshi) {
+): DynamoDbAction<ScanResponse>(ScanResponse::class, DynamoDbMoshi),
+    PagedAction<Key, Item, ScanResponse, Scan> {
     override fun next(token: Key) = copy(ExclusiveStartKey = token)
 }
 
