@@ -14,7 +14,7 @@ The S3 connector consists of 2 interfaces:
     * DeleteBucket
     * DeleteKey
     * GetKey
-    * ListKeys
+    * ListObjectsV2
     * PutKey
 
 ### Example usage

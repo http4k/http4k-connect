@@ -34,9 +34,9 @@ data class ListObjectsV2(
     override fun toRequest() = Request(GET, uri()).query("list-type", "2")
         .let { rq -> continuationToken?.let { rq.query("continuation-token", it) } ?: rq }
         .let { rq -> maxKeys?.let { rq.query("max-keys", it.toString()) } ?: rq }
-        .let { rq -> prefix?.let { rq.query("continuation-token", it) } ?: rq }
+        .let { rq -> prefix?.let { rq.query("prefix", it) } ?: rq }
         .let { rq -> delimiter?.let { rq.query("delimiter", it) } ?: rq }
-        .let { rq -> encodingType?.let { rq.query("encodin-type", it) } ?: rq }
+        .let { rq -> encodingType?.let { rq.query("encoding-type", it) } ?: rq }
         .let { rq -> expectedBucketOwner?.let { rq.header("x-amz-expected-bucket-owner", it) } ?: rq }
         .let { rq -> requestPayer?.let { rq.header("x-amz-request-payer", it) } ?: rq }
 
