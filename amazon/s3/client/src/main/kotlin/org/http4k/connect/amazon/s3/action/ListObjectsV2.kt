@@ -3,9 +3,9 @@ package org.http4k.connect.amazon.s3.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.Paged
+import org.http4k.connect.PagedAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.Paged
-import org.http4k.connect.amazon.PagedAction
 import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.xmlDoc

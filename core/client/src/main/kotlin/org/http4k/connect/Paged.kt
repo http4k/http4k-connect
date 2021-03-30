@@ -1,9 +1,7 @@
-package org.http4k.connect.amazon
+package org.http4k.connect
 
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
-import org.http4k.connect.Action
-import org.http4k.connect.RemoteFailure
 
 /**
  * Represents a Paged response

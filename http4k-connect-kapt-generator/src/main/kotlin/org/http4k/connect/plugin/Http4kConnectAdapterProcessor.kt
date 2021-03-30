@@ -13,7 +13,7 @@ import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.KmClassifier
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
-import org.http4k.connect.amazon.PagedAction
+import org.http4k.connect.PagedAction
 import org.http4k.connect.plugin.Http4kConnectProcessor.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
 import java.io.File
 import javax.annotation.processing.RoundEnvironment
@@ -79,7 +79,7 @@ private fun generatePagedActionFunctionFor(
     ctr: ImmutableKmConstructor
 ) = generateExtensionFunction(
     actionClazz, adapterClazz, ctr, "Paginated", CodeBlock.of(
-        "return org.http4k.connect.amazon.paginated(::invoke, %T(${ctr.valueParameters.joinToString(", ") { it.name }}))",
+        "return org.http4k.connect.paginated(::invoke, %T(${ctr.valueParameters.joinToString(", ") { it.name }}))",
         actionClazz.name.asClassName()
     )
 )
