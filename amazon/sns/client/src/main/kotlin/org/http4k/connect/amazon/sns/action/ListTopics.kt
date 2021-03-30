@@ -14,7 +14,9 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Response
 
 @Http4kConnectAction
-data class ListTopics(val NextToken: String? = null) : SNSAction<TopicList>("ListTopics"),
+data class ListTopics(val NextToken: String? = null) : SNSAction<TopicList>("ListTopics",
+    NextToken?.let { "NextToken" to NextToken }
+),
     PagedAction<String, ARN, TopicList, ListTopics> {
 
     override fun next(token: String) = copy(NextToken = token)
