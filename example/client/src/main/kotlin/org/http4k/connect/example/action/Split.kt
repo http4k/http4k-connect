@@ -8,10 +8,13 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 
+/**
+ * This example is to show how to construct a paginated action
+ */
 @Http4kConnectAction
 data class Split(val value: String, val token: Int? = null) : ExampleAction<SplitChunk>,
     PagedAction<Int, Char, SplitChunk, Split> {
-    override fun toRequest() = Request(POST, "/echo").body(value)
+    override fun toRequest() = Request(POST, "/split").header("token", token?.toString()).body(value)
 
     override fun toResult(response: Response): Success<SplitChunk> {
         val items = response.bodyString().split(":")

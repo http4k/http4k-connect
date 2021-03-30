@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.hasElement
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
@@ -207,7 +208,7 @@ abstract class DynamoDbContract(
                 assertThat(it.successValue().size, equalTo(1))
             }
             listTablesPaginated().forEach {
-                assertThat(it.successValue().size, equalTo(1))
+                assertThat(it.successValue().size, greaterThan(0))
             }
         }
     }
