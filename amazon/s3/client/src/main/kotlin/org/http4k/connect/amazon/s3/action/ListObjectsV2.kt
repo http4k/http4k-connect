@@ -21,10 +21,24 @@ import org.http4k.core.Uri
  * List items in a bucket. Note that the S3 API maxes out at 1000 items.
  */
 @Http4kConnectAction
-data class ListObjectsV2(val continuationToken: String? = null) : S3BucketAction<ObjectList>,
+data class ListObjectsV2(
+    val continuationToken: String? = null,
+    val maxKeys: Int? = null,
+    val prefix: String? = null,
+    val delimiter: String? = null,
+    val encodingType: String? = null,
+    val expectedBucketOwner: String? = null,
+    val requestPayer: String? = null,
+) : S3BucketAction<ObjectList>,
     PagedAction<String, ObjectSummary, ObjectList, ListObjectsV2> {
     override fun toRequest() = Request(GET, uri()).query("list-type", "2")
         .let { rq -> continuationToken?.let { rq.query("continuation-token", it) } ?: rq }
+        .let { rq -> maxKeys?.let { rq.query("max-keys", it.toString()) } ?: rq }
+        .let { rq -> prefix?.let { rq.query("continuation-token", it) } ?: rq }
+        .let { rq -> delimiter?.let { rq.query("delimiter", it) } ?: rq }
+        .let { rq -> encodingType?.let { rq.query("encodin-type", it) } ?: rq }
+        .let { rq -> expectedBucketOwner?.let { rq.header("x-amz-expected-bucket-owner", it) } ?: rq }
+        .let { rq -> requestPayer?.let { rq.header("x-amz-request-payer", it) } ?: rq }
 
     override fun toResult(response: Response) = with(response) {
         when {

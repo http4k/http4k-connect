@@ -32,8 +32,8 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling:
         override fun keySet(keyPrefix: String) =
             when (val result = s3(ListObjectsV2())) {
                 is Success -> result.value.items
-                    .filter { it.value.startsWith(keyPrefix) }
-                    .map { it.value }
+                    .filter { it.Key.value.startsWith(keyPrefix) }
+                    .map { it.Key.value }
                     .toSet()
                 is Failure -> result.reason.throwIt()
             }
