@@ -29,7 +29,7 @@ abstract class SNSContract(http: HttpHandler) : AwsContract() {
                 mapOf("foo" to "bar")
             ).successValue().topicArn
             try {
-                assertThat(listTopics().successValue().contains(topicArn), equalTo(true))
+                assertThat(listTopics().successValue().items.contains(topicArn), equalTo(true))
 
                 publishMessage(
                     "hello world", "subject", topicArn = topicArn,
