@@ -16,7 +16,7 @@ data class ListSecrets(
     val SortOrder: SortOrder? = null,
     val Filters: List<Filter>? = null
 ) : SecretsManagerAction<Secrets>(Secrets::class),
-PagedAction<String, Secret, Secrets, ListSecrets> {
+    PagedAction<String, Secret, Secrets, ListSecrets> {
     override fun next(token: String) = copy(NextToken = token)
 }
 
