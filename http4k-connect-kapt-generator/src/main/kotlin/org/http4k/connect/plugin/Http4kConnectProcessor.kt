@@ -13,7 +13,9 @@ import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
+import javax.lang.model.type.TypeMirror
 import javax.tools.Diagnostic.Kind.ERROR
+import kotlin.reflect.KClass
 
 @KotlinPoetMetadataPreview
 abstract class Http4kConnectProcessor : AbstractProcessor() {
@@ -28,6 +30,12 @@ abstract class Http4kConnectProcessor : AbstractProcessor() {
         }
 
     private fun outputDir() = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
+
+    protected fun rawType(typeMirror: TypeMirror) =
+        processingEnv.typeUtils.erasure(typeMirror).toString()
+
+    protected fun superTypesOf(type: TypeMirror): List<TypeMirror> =
+        processingEnv.typeUtils.directSupertypes(type).flatMap { superTypesOf(it) + it }
 
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
@@ -45,8 +53,6 @@ internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace
 internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
 internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
 
-internal inline fun <reified T> className() = T::class.asClassName()
-
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmType.generifiedType(): TypeName {
     val base = (classifier as KmClassifier.Class).name.asClassName()
@@ -55,3 +61,8 @@ internal fun ImmutableKmType.generifiedType(): TypeName {
         else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable)
     }
 }
+
+@KotlinPoetMetadataPreview
+fun ImmutableKmClass.isSubTypeOf(kClass: KClass<*>) =
+    supertypes.map { it.classifier }.filterIsInstance<KmClassifier.Class>().map { it.name.asClassName() }
+        .contains(kClass.asClassName())

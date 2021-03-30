@@ -187,6 +187,31 @@ abstract class DynamoDbContract(
         }
     }
 
+    @Test
+    fun `pagination of results`() {
+        with(dynamo) {
+            putItem(table, createItem("hello")).successValue()
+            putItem(table, createItem("hello2")).successValue()
+            putItem(table, createItem("hello3")).successValue()
+            putItem(table, createItem("hello4")).successValue()
+            putItem(table, createItem("hello5")).successValue()
+
+            scanPaginated(table).forEach {
+                assertThat(it.successValue().size, equalTo(5))
+            }
+            queryPaginated(
+                table,
+                KeyConditionExpression = "$attrS = :v1",
+                ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello"))
+            ).forEach {
+                assertThat(it.successValue().size, equalTo(1))
+            }
+            listTablesPaginated().forEach {
+                assertThat(it.successValue().size, equalTo(1))
+            }
+        }
+    }
+
     private fun createItem(key: String) = Item(
         attrS of key,
         attrBool of true,
