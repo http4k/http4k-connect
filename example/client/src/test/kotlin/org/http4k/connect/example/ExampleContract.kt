@@ -26,4 +26,9 @@ interface ExampleContract {
     fun `can double reverse`() {
         assertThat(Example.Http(http).doubleReverse("hello"), equalTo(Success(Reversed("hello"))))
     }
+
+    @Test
+    fun `can split`() {
+        assertThat(Example.Http(http).splitPaginated("splitme").toList(), equalTo(listOf(Success("splitme".toList()))))
+    }
 }

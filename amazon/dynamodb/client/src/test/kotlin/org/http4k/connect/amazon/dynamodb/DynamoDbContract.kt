@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.hasElement
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
@@ -171,7 +172,7 @@ abstract class DynamoDbContract(
             val updatedItem = getItem(table, Item(attrS of "hello"), ConsistentRead = true).successValue().item!!
             assertThat(attrN(updatedItem), equalTo(321))
 
-            val query = query(
+            val query = dynamo.query(
                 table,
                 KeyConditionExpression = "$attrS = :v1",
                 ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello"))
@@ -179,11 +180,36 @@ abstract class DynamoDbContract(
 
             assertThat(attrN[query.first()], equalTo(321))
 
-            val scan = scan(table).successValue().items
+            val scan = dynamo.scan(table).successValue().items
 
             assertThat(attrN[scan.first()], equalTo(321))
 
             deleteItem(table, Item(attrS of "hello")).successValue()
+        }
+    }
+
+    @Test
+    fun `pagination of results`() {
+        with(dynamo) {
+            putItem(table, createItem("hello")).successValue()
+            putItem(table, createItem("hello2")).successValue()
+            putItem(table, createItem("hello3")).successValue()
+            putItem(table, createItem("hello4")).successValue()
+            putItem(table, createItem("hello5")).successValue()
+
+            scanPaginated(table).forEach {
+                assertThat(it.successValue().size, equalTo(5))
+            }
+            queryPaginated(
+                table,
+                KeyConditionExpression = "$attrS = :v1",
+                ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello"))
+            ).forEach {
+                assertThat(it.successValue().size, equalTo(1))
+            }
+            listTablesPaginated().forEach {
+                assertThat(it.successValue().size, greaterThan(0))
+            }
         }
     }
 

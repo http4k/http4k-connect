@@ -1,6 +1,8 @@
 package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.Paged
+import org.http4k.connect.amazon.PagedAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.model.IndexName
 import org.http4k.connect.amazon.model.TableName
@@ -22,7 +24,10 @@ data class Query(
     val Limit: Int? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ScanIndexForward: Boolean? = null,
-) : DynamoDbAction<QueryResponse>(QueryResponse::class, DynamoDbMoshi)
+) : DynamoDbAction<QueryResponse>(QueryResponse::class, DynamoDbMoshi),
+    PagedAction<Key, Item, QueryResponse, Query> {
+    override fun next(token: Key) = copy(ExclusiveStartKey = token)
+}
 
 @JsonSerializable
 data class QueryResponse(
@@ -31,8 +36,9 @@ data class QueryResponse(
     val Count: Int?,
     val LastEvaluatedKey: Key?,
     val ScannedCount: Int?
-) {
-    val items = Items?.map(ItemResult::toItem) ?: emptyList()
+) : Paged<Key, Item> {
+    override val items = Items?.map(ItemResult::toItem) ?: emptyList()
+    override fun token() = LastEvaluatedKey
 }
 
 enum class Select {

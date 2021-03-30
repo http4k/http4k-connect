@@ -8,13 +8,14 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.KmClassifier
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
+import javax.lang.model.type.TypeMirror
 import javax.tools.Diagnostic.Kind.ERROR
+import kotlin.reflect.KClass
 
 @KotlinPoetMetadataPreview
 abstract class Http4kConnectProcessor : AbstractProcessor() {
@@ -30,25 +31,27 @@ abstract class Http4kConnectProcessor : AbstractProcessor() {
 
     private fun outputDir() = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
 
+    protected fun rawType(typeMirror: TypeMirror) =
+        processingEnv.typeUtils.erasure(typeMirror).toString()
+
+    protected fun superTypesOf(type: TypeMirror): List<TypeMirror> =
+        processingEnv.typeUtils.directSupertypes(type).flatMap { superTypesOf(it) + it }
+
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
     }
 }
 
 @KotlinPoetMetadataPreview
-internal inline fun <reified T : Annotation> RoundEnvironment.annotated() =
-    rootElements.filter { it.getAnnotation(T::class.java) != null }
-        .filterIsInstance<TypeElement>()
-        .map { it.toImmutableKmClass() }
-
+internal inline fun <reified T : Annotation> RoundEnvironment.annotated(): List<TypeElement> = rootElements
+    .filter { it.getAnnotation(T::class.java) != null }
+    .filterIsInstance<TypeElement>()
 
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmClass.explodeName() = name.pkg() to name.name()
 internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
 internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
 internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
-
-internal inline fun <reified T> className() = T::class.asClassName()
 
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmType.generifiedType(): TypeName {
@@ -58,3 +61,8 @@ internal fun ImmutableKmType.generifiedType(): TypeName {
         else -> base.parameterizedBy(arguments.map { it.type!!.generifiedType() }).copy(nullable = isNullable)
     }
 }
+
+@KotlinPoetMetadataPreview
+fun ImmutableKmClass.isSubTypeOf(kClass: KClass<*>) =
+    supertypes.map { it.classifier }.filterIsInstance<KmClassifier.Class>().map { it.name.asClassName() }
+        .contains(kClass.asClassName())
