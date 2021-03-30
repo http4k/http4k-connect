@@ -11,16 +11,16 @@ import org.http4k.connect.amazon.dynamodb.action.PagedAction
  */
 fun <Token, ItemType, Rsp : Paged<Token, ItemType>> DynamoDb.paginate(action: PagedAction<Token, ItemType, Rsp>)
     : Sequence<Result<List<ItemType>, RemoteFailure>> {
-    var nextRequest = action
-    var done = false
+
+    var nextRequest: PagedAction<Token, ItemType, Rsp>? = action
 
     return generateSequence {
-        when {
-            done -> null
-            else -> this(nextRequest).map {
-                it.token()?.also { nextRequest = nextRequest.next(it) } ?: run { done = true }
-                it.items
+        nextRequest
+            ?.let {
+                this(it).map { rsp ->
+                    nextRequest = rsp.token()?.let(it::next)
+                    rsp.items
+                }
             }
-        }
     }
 }
