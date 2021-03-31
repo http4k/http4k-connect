@@ -77,8 +77,7 @@ data class SendMessage(
 data class SentMessage(
     val MD5OfMessageBody: String,
     val MessageId: SQSMessageId,
-    val MD5OfMessageAttributes: String?
-) {
+    val MD5OfMessageAttributes: String? = null) {
     companion object {
         fun from(response: Response) =
             with(response.xmlDoc()) {

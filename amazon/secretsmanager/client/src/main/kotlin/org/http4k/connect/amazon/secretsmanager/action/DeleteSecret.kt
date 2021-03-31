@@ -10,7 +10,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class DeleteSecret(
     val SecretId: SecretId,
-    val ForceDeleteWithoutRecovery: Boolean?,
+    val ForceDeleteWithoutRecovery: Boolean? = null,
     val RecoveryWindowInDays: Int? = null
 ) : SecretsManagerAction<DeletedSecret>(DeletedSecret::class)
 

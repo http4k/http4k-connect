@@ -80,35 +80,31 @@ data class AttributeValue internal constructor(
 
 @JsonSerializable
 data class ItemCollectionMetrics(
-    val ItemCollectionKey: Key?,
-    val SizeEstimateRangeGB: List<Long>?
-)
+    val ItemCollectionKey: Key? = null,
+    val SizeEstimateRangeGB: List<Long>? = null)
 
 @JsonSerializable
 data class Capacity(
-    val CapacityUnits: Long?,
-    val ReadCapacityUnits: Long?,
-    val WriteCapacityUnits: Long?
-)
+    val CapacityUnits: Long? = null,
+    val ReadCapacityUnits: Long? = null,
+    val WriteCapacityUnits: Long? = null)
 
 @JsonSerializable
 data class ConsumedCapacity(
-    val TableName: TableName?,
-    val CapacityUnits: Long?,
+    val TableName: TableName? = null,
+    val CapacityUnits: Long? = null,
     val GlobalSecondaryIndexes: Map<String, Capacity>,
-    val LocalSecondaryIndexes: Map<String, Capacity>?,
-    val ReadCapacityUnits: Long?,
-    val Table: Capacity?,
-    val WriteCapacityUnits: Long?
-)
+    val LocalSecondaryIndexes: Map<String, Capacity>? = null,
+    val ReadCapacityUnits: Long? = null,
+    val Table: Capacity? = null,
+    val WriteCapacityUnits: Long? = null)
 
 
 @JsonSerializable
 data class ModifiedItem(
-    val Attributes: ItemResult?,
-    val ConsumedCapacity: ConsumedCapacity?,
-    val ItemCollectionMetrics: ItemCollectionMetrics?
-)
+    val Attributes: ItemResult? = null,
+    val ConsumedCapacity: ConsumedCapacity? = null,
+    val ItemCollectionMetrics: ItemCollectionMetrics? = null)
 
 fun ItemResult.toItem() =
     map {
@@ -141,8 +137,7 @@ data class GlobalSecondaryIndex(
     val IndexName: IndexName,
     val KeySchema: List<KeySchema>,
     val Projection: Projection,
-    val ProvisionedThroughput: ProvisionedThroughput?
-)
+    val ProvisionedThroughput: ProvisionedThroughput? = null)
 
 @JsonSerializable
 data class LocalSecondaryIndexes(
@@ -166,113 +161,102 @@ data class StreamSpecification(
 
 @JsonSerializable
 data class ArchivalSummary(
-    val ArchivalBackupArn: ARN?,
-    val ArchivalDateTime: Timestamp?,
-    val ArchivalReason: String?
-)
+    val ArchivalBackupArn: ARN? = null,
+    val ArchivalDateTime: Timestamp? = null,
+    val ArchivalReason: String? = null)
 
 @JsonSerializable
 data class BillingModeSummary(
-    val BillingMode: BillingMode?,
-    val LastUpdateToPayPerRequestDateTime: Timestamp?
-)
+    val BillingMode: BillingMode? = null,
+    val LastUpdateToPayPerRequestDateTime: Timestamp? = null)
 
 @JsonSerializable
 data class ProvisionedThroughputResponse(
-    val LastDecreaseDateTime: Timestamp?,
-    val LastIncreaseDateTime: Timestamp?,
-    val NumberOfDecreasesToday: Long?,
-    val ReadCapacityUnits: Long?,
-    val WriteCapacityUnits: Long?
-)
+    val LastDecreaseDateTime: Timestamp? = null,
+    val LastIncreaseDateTime: Timestamp? = null,
+    val NumberOfDecreasesToday: Long? = null,
+    val ReadCapacityUnits: Long? = null,
+    val WriteCapacityUnits: Long? = null)
 
 @JsonSerializable
 data class GlobalSecondaryIndexResponse(
-    val Backfilling: Boolean?,
-    val IndexArn: ARN?,
-    val IndexName: String?,
-    val IndexSizeBytes: Long?,
-    val IndexStatus: IndexStatus?,
-    val ItemCount: Long?,
-    val KeySchema: List<KeySchema>?,
-    val Projection: Projection?,
-    val ProvisionedThroughput: ProvisionedThroughputResponse?
-
+    val Backfilling: Boolean? = null,
+    val IndexArn: ARN? = null,
+    val IndexName: String? = null,
+    val IndexSizeBytes: Long? = null,
+    val IndexStatus: IndexStatus? = null,
+    val ItemCount: Long? = null,
+    val KeySchema: List<KeySchema>? = null,
+    val Projection: Projection? = null,
+    val ProvisionedThroughput: ProvisionedThroughputResponse? = null
 )
 
 @JsonSerializable
 data class LocalSecondaryIndexResponse(
-    val IndexArn: ARN?,
-    val IndexName: String?,
-    val IndexSizeBytes: Long?,
-    val ItemCount: Long?,
-    val KeySchema: List<KeySchema>?,
-    val Projection: Projection?
-)
+    val IndexArn: ARN? = null,
+    val IndexName: String? = null,
+    val IndexSizeBytes: Long? = null,
+    val ItemCount: Long? = null,
+    val KeySchema: List<KeySchema>? = null,
+    val Projection: Projection? = null)
 
 @JsonSerializable
 data class ProvisionedThroughputOverride(
-    val ReadCapacityUnits: Long?
-)
+    val ReadCapacityUnits: Long? = null)
 
 @JsonSerializable
 data class GlobalSecondaryIndexReplica(
-    val IndexName: IndexName?,
-    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?
-)
+    val IndexName: IndexName? = null,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride? = null)
 
 @JsonSerializable
 data class Replica(
-    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexReplica>?,
-    val KMSMasterKeyId: KMSKeyId?,
-    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?,
-    val RegionName: String?,
-    val ReplicaInaccessibleDateTime: Timestamp?,
-    val ReplicaStatus: ReplicaStatus?,
-    val ReplicaStatusDescription: String?,
-    val ReplicaStatusPercentProgress: String?
-)
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexReplica>? = null,
+    val KMSMasterKeyId: KMSKeyId? = null,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride? = null,
+    val RegionName: String? = null,
+    val ReplicaInaccessibleDateTime: Timestamp? = null,
+    val ReplicaStatus: ReplicaStatus? = null,
+    val ReplicaStatusDescription: String? = null,
+    val ReplicaStatusPercentProgress: String? = null)
 
 @JsonSerializable
 data class RestoreSummary(
-    val RestoreDateTime: Timestamp?,
-    val RestoreInProgress: Boolean?,
-    val SourceBackupArn: ARN?,
-    val SourceTableArn: ARN?
-)
+    val RestoreDateTime: Timestamp? = null,
+    val RestoreInProgress: Boolean? = null,
+    val SourceBackupArn: ARN? = null,
+    val SourceTableArn: ARN? = null)
 
 @JsonSerializable
 data class SSEDescription(
-    val InaccessibleEncryptionDateTime: Timestamp?,
-    val KMSMasterKeyArn: ARN?,
-    val SSEType: SSEType?,
-    val Status: String?
-)
+    val InaccessibleEncryptionDateTime: Timestamp? = null,
+    val KMSMasterKeyArn: ARN? = null,
+    val SSEType: SSEType? = null,
+    val Status: String? = null)
 
 @JsonSerializable
 data class TableDescription(
-    val ArchivalSummary: ArchivalSummary?,
-    val AttributeDefinitions: List<AttributeDefinition>?,
-    val BillingModeSummary: BillingModeSummary?,
-    val CreationDateTime: Timestamp?,
-    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexResponse>?,
-    val GlobalTableVersion: String?,
-    val ItemCount: Long?,
-    val KeySchema: List<KeySchema>?,
-    val LatestStreamArn: ARN?,
-    val LatestStreamLabel: String?,
-    val LocalSecondaryIndexes: List<LocalSecondaryIndexResponse>?,
-    val ProvisionedThroughput: ProvisionedThroughputResponse?,
-    val Replicas: List<Replica>?,
-    val RestoreSummary: RestoreSummary?,
-    val SSEDescription: SSEDescription?,
-    val StreamSpecification: StreamSpecification?,
-    val TableArn: ARN?,
-    val TableId: String?,
-    val TableName: TableName?,
-    val TableSizeBytes: Long?,
-    val TableStatus: TableStatus?
-)
+    val ArchivalSummary: ArchivalSummary? = null,
+    val AttributeDefinitions: List<AttributeDefinition>? = null,
+    val BillingModeSummary: BillingModeSummary? = null,
+    val CreationDateTime: Timestamp? = null,
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexResponse>? = null,
+    val GlobalTableVersion: String? = null,
+    val ItemCount: Long? = null,
+    val KeySchema: List<KeySchema>? = null,
+    val LatestStreamArn: ARN? = null,
+    val LatestStreamLabel: String? = null,
+    val LocalSecondaryIndexes: List<LocalSecondaryIndexResponse>? = null,
+    val ProvisionedThroughput: ProvisionedThroughputResponse? = null,
+    val Replicas: List<Replica>? = null,
+    val RestoreSummary: RestoreSummary? = null,
+    val SSEDescription: SSEDescription? = null,
+    val StreamSpecification: StreamSpecification? = null,
+    val TableArn: ARN? = null,
+    val TableId: String? = null,
+    val TableName: TableName? = null,
+    val TableSizeBytes: Long? = null,
+    val TableStatus: TableStatus? = null)
 
 @JsonSerializable
 data class TableDescriptionResponse(
@@ -281,61 +265,53 @@ data class TableDescriptionResponse(
 
 @JsonSerializable
 data class GlobalSecondaryIndexCreate(
-    val IndexName: IndexName?,
-    val KeySchema: List<KeySchema>?,
-    val Projection: Projection?,
-    val ProvisionedThroughput: ProvisionedThroughput?
-)
+    val IndexName: IndexName? = null,
+    val KeySchema: List<KeySchema>? = null,
+    val Projection: Projection? = null,
+    val ProvisionedThroughput: ProvisionedThroughput? = null)
 
 @JsonSerializable
 data class GlobalSecondaryIndexDelete(
-    val IndexName: IndexName?
-)
+    val IndexName: IndexName? = null)
 
 @JsonSerializable
 data class GlobalSecondaryIndexUpdate(
-    val IndexName: IndexName?,
-    val ProvisionedThroughput: ProvisionedThroughput?
-)
+    val IndexName: IndexName? = null,
+    val ProvisionedThroughput: ProvisionedThroughput? = null)
 
 @JsonSerializable
 data class GlobalSecondaryIndexUpdates(
-    val Create: GlobalSecondaryIndexCreate?,
-    val Delete: GlobalSecondaryIndexDelete?,
-    val Update: GlobalSecondaryIndexUpdate?
-)
+    val Create: GlobalSecondaryIndexCreate? = null,
+    val Delete: GlobalSecondaryIndexDelete? = null,
+    val Update: GlobalSecondaryIndexUpdate? = null)
 
 @JsonSerializable
 data class GlobalSecondaryIndexesUpdate(
-    val IndexName: IndexName?,
-    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?
-)
+    val IndexName: IndexName? = null,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride? = null)
 
 @JsonSerializable
 data class ReplicaCreate(
-    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexesUpdate>?,
-    val KMSMasterKeyId: KMSKeyId?,
-    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?,
-    val RegionName: Region?
-)
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexesUpdate>? = null,
+    val KMSMasterKeyId: KMSKeyId? = null,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride? = null,
+    val RegionName: Region? = null)
 
 @JsonSerializable
 data class ReplicaDelete(val RegionName: Region?)
 
 @JsonSerializable
 data class ReplicaUpdate(
-    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexesUpdate>?,
-    val KMSMasterKeyId: KMSKeyId?,
-    val ProvisionedThroughputOverride: ProvisionedThroughputOverride?,
-    val RegionName: String?
-)
+    val GlobalSecondaryIndexes: List<GlobalSecondaryIndexesUpdate>? = null,
+    val KMSMasterKeyId: KMSKeyId? = null,
+    val ProvisionedThroughputOverride: ProvisionedThroughputOverride? = null,
+    val RegionName: String? = null)
 
 @JsonSerializable
 data class ReplicaUpdates(
-    val Create: ReplicaCreate?,
-    val Delete: ReplicaDelete?,
-    val Update: ReplicaUpdate?
-)
+    val Create: ReplicaCreate? = null,
+    val Delete: ReplicaDelete? = null,
+    val Update: ReplicaUpdate? = null)
 
 @JsonSerializable
 data class AttributeDefinition(

@@ -14,12 +14,11 @@ import java.util.UUID
 data class CreateSecret internal constructor(
     val Name: String,
     val ClientRequestToken: UUID,
-    val SecretString: String?,
-    val SecretBinary: Base64Blob?,
-    val Description: String?,
-    val KmsKeyId: KMSKeyId?,
-    val Tags: List<Tag>?
-) : SecretsManagerAction<CreatedSecret>(CreatedSecret::class) {
+    val SecretString: String? = null,
+    val SecretBinary: Base64Blob? = null,
+    val Description: String? = null,
+    val KmsKeyId: KMSKeyId? = null,
+    val Tags: List<Tag>? = null) : SecretsManagerAction<CreatedSecret>(CreatedSecret::class) {
     constructor(
         Name: String,
         ClientRequestToken: UUID,

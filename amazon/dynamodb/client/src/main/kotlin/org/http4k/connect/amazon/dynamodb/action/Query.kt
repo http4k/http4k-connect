@@ -31,12 +31,11 @@ data class Query(
 
 @JsonSerializable
 data class QueryResponse(
-    internal val Items: List<ItemResult>?,
-    val ConsumedCapacity: ConsumedCapacity?,
-    val Count: Int?,
-    val LastEvaluatedKey: Key?,
-    val ScannedCount: Int?
-) : Paged<Key, Item> {
+    internal val Items: List<ItemResult>? = null,
+    val ConsumedCapacity: ConsumedCapacity? = null,
+    val Count: Int? = null,
+    val LastEvaluatedKey: Key? = null,
+    val ScannedCount: Int? = null) : Paged<Key, Item> {
     override val items = Items?.map(ItemResult::toItem) ?: emptyList()
     override fun token() = LastEvaluatedKey
 }

@@ -12,10 +12,9 @@ import java.util.UUID
 data class PutSecretValue internal constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,
-    val SecretString: String?,
-    val SecretBinary: Base64Blob?,
-    val VersionStages: List<VersionStage>?
-) : SecretsManagerAction<UpdatedSecretValue>(UpdatedSecretValue::class) {
+    val SecretString: String? = null,
+    val SecretBinary: Base64Blob? = null,
+    val VersionStages: List<VersionStage>? = null) : SecretsManagerAction<UpdatedSecretValue>(UpdatedSecretValue::class) {
     constructor(
         SecretId: SecretId,
         ClientRequestToken: UUID,

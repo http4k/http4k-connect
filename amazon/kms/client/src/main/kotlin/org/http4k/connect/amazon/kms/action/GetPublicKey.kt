@@ -23,5 +23,4 @@ data class PublicKey(
     val EncryptionAlgorithms: List<EncryptionAlgorithm>,
     val KeyUsage: KeyUsage,
     val PublicKey: Base64Blob,
-    val SigningAlgorithms: List<SigningAlgorithm>?
-)
+    val SigningAlgorithms: List<SigningAlgorithm>? = null)

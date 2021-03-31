@@ -16,16 +16,15 @@ data class GetParameter(
 
 @JsonSerializable
 data class Parameter(
-    val ARN: ARN?,
-    val Name: SSMParameterName?,
-    val Value: String?,
-    val Type: ParameterType?,
-    val DataType: String?,
-    val Version: Long?,
-    val LastModifiedDate: Timestamp?,
-    val Selector: String?,
-    val SourceResult: String?
-)
+    val ARN: ARN? = null,
+    val Name: SSMParameterName? = null,
+    val Value: String? = null,
+    val Type: ParameterType? = null,
+    val DataType: String? = null,
+    val Version: Long? = null,
+    val LastModifiedDate: Timestamp? = null,
+    val Selector: String? = null,
+    val SourceResult: String? = null)
 
 @JsonSerializable
 data class ParameterValue(

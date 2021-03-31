@@ -18,7 +18,7 @@ data class TestAction(
 
 @JsonSerializable
 data class TestResponse(
-    val ConsumedCapacity: ConsumedCapacity?,
+    val ConsumedCapacity: ConsumedCapacity? = null,
 ) : Paged<Key, Item> {
     override val items = emptyList<Item>()
     override fun token() = Key()

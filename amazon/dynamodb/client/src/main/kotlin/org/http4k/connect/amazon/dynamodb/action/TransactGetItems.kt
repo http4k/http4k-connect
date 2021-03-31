@@ -41,9 +41,10 @@ data class TransactGetItem internal constructor(val Get: Map<String, Any?>) {
 
 @JsonSerializable
 data class GetItemsResponse(
-    val ConsumedCapacity: ConsumedCapacity?,
-    val ItemCollectionMetrics: ItemCollectionMetrics?,
-    internal val Responses: List<GetItemsResponseItem>) {
+    internal val Responses: List<GetItemsResponseItem>,
+    val ConsumedCapacity: ConsumedCapacity? = null,
+    val ItemCollectionMetrics: ItemCollectionMetrics? = null
+    ) {
     val responses = Responses.map { it.Item }.map(ItemResult::toItem)
 }
 

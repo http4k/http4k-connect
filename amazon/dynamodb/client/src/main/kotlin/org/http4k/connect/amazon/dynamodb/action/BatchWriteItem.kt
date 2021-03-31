@@ -26,7 +26,6 @@ data class ReqWriteItem internal constructor(
 
 @JsonSerializable
 data class BatchWriteItems(
-    val ConsumedCapacity: List<ConsumedCapacity>?,
-    val Responses: Map<TableName, TokensToNames>?,
-    val UnprocessedKeys: Map<String, ReqWriteItem>?
-)
+    val ConsumedCapacity: List<ConsumedCapacity>? = null,
+    val Responses: Map<TableName, TokensToNames>? = null,
+    val UnprocessedKeys: Map<String, ReqWriteItem>? = null)

@@ -37,15 +37,15 @@ enum class ErrorCode {
 
 @JsonSerializable
 data class BatchStatementError(
-    val Code: ErrorCode?,
-    val Message: String?
+    val Code: ErrorCode? = null,
+    val Message: String? = null
 )
 
 @JsonSerializable
 data class StatementResponse(
-    val TableName: TableName?,
-    val Error: BatchStatementError?,
-    internal val Item: ItemResult?
+    val TableName: TableName? = null,
+    val Error: BatchStatementError? = null,
+    internal val Item: ItemResult? = null
 ) {
     val item = Item?.toItem() ?: emptyMap()
 }

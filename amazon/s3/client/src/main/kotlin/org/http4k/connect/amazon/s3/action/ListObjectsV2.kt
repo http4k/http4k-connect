@@ -76,22 +76,21 @@ data class ListObjectsV2(
     override fun next(token: String) = copy(continuationToken = token)
 }
 
-data class Owner(val DisplayName: String?, val ID: String?)
+data class Owner(val DisplayName: String? = null, val ID: String?)
 
 enum class StorageClass {
     STANDARD, REDUCED_REDUNDANCY, GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, OUTPOSTS
 }
 
 data class ObjectSummary(
-    val ETag: String?,
+    val ETag: String? = null,
     val Key: BucketKey,
-    val LastModified: Timestamp?,
-    val DisplayName: String?,
-    val ID: String?,
-    val Owner: Owner?,
-    val Size: Int?,
-    val StorageClass: StorageClass?
-)
+    val LastModified: Timestamp? = null,
+    val DisplayName: String? = null,
+    val ID: String? = null,
+    val Owner: Owner? = null,
+    val Size: Int? = null,
+    val StorageClass: StorageClass? = null)
 
 data class ObjectList(
     override val items: List<ObjectSummary>,

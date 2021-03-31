@@ -16,9 +16,8 @@ data class TransactWriteItems(
 
 @JsonSerializable
 data class ModifiedItems(
-    val ConsumedCapacity: ConsumedCapacity?,
-    val ItemCollectionMetrics: ItemCollectionMetrics?
-)
+    val ConsumedCapacity: ConsumedCapacity? = null,
+    val ItemCollectionMetrics: ItemCollectionMetrics? = null)
 
 @JsonSerializable
 data class TransactWriteItem internal constructor(

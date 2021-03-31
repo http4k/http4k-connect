@@ -17,8 +17,8 @@ data class ListTables(val ExclusiveStartTableName: TableName? = null, val Limit:
 
 @JsonSerializable
 data class TableList(
-    val LastEvaluatedTableName: TableName?,
-    val TableNames: List<TableName>
+    val TableNames: List<TableName>,
+    val LastEvaluatedTableName: TableName? = null
 ) : Paged<TableName, TableName> {
     override fun token() = LastEvaluatedTableName
     override val items = TableNames

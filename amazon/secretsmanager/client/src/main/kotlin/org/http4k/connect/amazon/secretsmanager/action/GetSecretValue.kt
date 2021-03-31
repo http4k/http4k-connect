@@ -22,8 +22,8 @@ data class SecretValue(
     val ARN: ARN,
     val CreatedDate: Timestamp,
     val Name: String,
-    val SecretBinary: Base64Blob?,
-    val SecretString: String?,
+    val SecretBinary: Base64Blob? = null,
+    val SecretString: String? = null,
     val VersionId: VersionId,
     val VersionStages: List<VersionStage>
 )

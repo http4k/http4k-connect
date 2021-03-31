@@ -30,12 +30,11 @@ data class Scan(
 
 @JsonSerializable
 data class ScanResponse(
-    val ConsumedCapacity: ConsumedCapacity?,
-    val Count: Int?,
-    val LastEvaluatedKey: Key?,
-    val ScannedCount: Int?,
-    internal val Items: List<ItemResult>?
-) : Paged<Key, Item> {
+    val ConsumedCapacity: ConsumedCapacity? = null,
+    val Count: Int? = null,
+    val LastEvaluatedKey: Key? = null,
+    val ScannedCount: Int? = null,
+    internal val Items: List<ItemResult>? = null) : Paged<Key, Item> {
     override val items = Items?.map(ItemResult::toItem) ?: emptyList()
     override fun token() = LastEvaluatedKey
 }
