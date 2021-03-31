@@ -1,4 +1,5 @@
 import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.valueOrNull
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
@@ -18,7 +19,6 @@ import org.http4k.connect.amazon.model.Attribute
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.TableName
-import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import org.http4k.lens.LensFailure
@@ -66,7 +66,7 @@ fun main() {
     )
 
     // lookup an item from the database
-    val item = client.getItem(table, Key = Item(attrS of "hello")).successValue().item!!
+    val item = client.getItem(table, Key = Item(attrS of "hello")).valueOrNull()!!.item!!
     val str: String = attrS(item)
     val boolean: Result<Boolean, LensFailure> = attrBool.asResult()(item)
 

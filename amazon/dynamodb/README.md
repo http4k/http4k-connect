@@ -104,7 +104,7 @@ client.putItem(
 )
 
 // lookup an item from the database
-val item = client.getItem(table, key = mapOf(attrS to "hello")).successValue().item
+val item = client.getItem(table, key = mapOf(attrS to "hello")).valueOrNull()!!.item!!
 val str: String? = attrS[item]
 
 // all operations return a Result monad of the API type
