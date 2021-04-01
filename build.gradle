@@ -1,3 +1,5 @@
+import java.text.DecimalFormat
+
 buildscript {
     repositories {
         mavenCentral()
@@ -279,16 +281,6 @@ subprojects {
     }
 }
 
-dependencies {
-    implementation platform("software.amazon.awssdk:bom:$aws_sdk_version")
-    implementation "software.amazon.awssdk:cloudfront"
-}
-
-static def hasCodeCoverage(project) {
-    return project.name != "http4k-connect-bom" &&
-        project.name != "http4k-connect-kapt-adapter"
-}
-
 coveralls {
     sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
     jacocoReportPath = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
@@ -318,4 +310,47 @@ tasks.create("listProjects") {
     doLast {
         subprojects.forEach { System.err.println(it.name) }
     }
+}
+
+tasks.create("weighDependencies") {
+    doLast {
+        [rootProject]
+            .forEach {
+                println it.name.toUpperCase()
+                it.configurations
+                    .runtimeClasspath
+                    .resolvedConfiguration
+                    .firstLevelModuleDependencies.forEach {
+                    def sorted = it.allModuleArtifacts.toSorted()
+                    def sum = sorted.sum { it.file.length() }
+
+                    println "  " + it.name + " = " + (sum ? new DecimalFormat("#.00Mb").format(sum / 1024 / 1000d) : "0Mb")
+                    sorted.forEach { println("    " + it.file.name + " = " + it.file.length()) }
+                }
+            }
+    }
+}
+
+dependencies {
+    subprojects
+        .forEach {
+            implementation project(it.name)
+        }
+
+    implementation platform("software.amazon.awssdk:bom:$aws_sdk_version")
+    implementation "software.amazon.awssdk:cloudfront"
+    implementation "software.amazon.awssdk:dynamodb"
+    implementation "software.amazon.awssdk:kms"
+    implementation "software.amazon.awssdk:lambda"
+    implementation "software.amazon.awssdk:s3"
+    implementation "software.amazon.awssdk:secretsmanager"
+    implementation "software.amazon.awssdk:sns"
+    implementation "software.amazon.awssdk:sqs"
+    implementation "software.amazon.awssdk:ssm"
+    implementation "software.amazon.awssdk:sts"
+}
+
+static def hasCodeCoverage(project) {
+    return project.name != "http4k-connect-bom" &&
+        project.name != "http4k-connect-kapt-adapter"
 }
