@@ -94,7 +94,7 @@ class Attribute<FINAL>(
         fun int() = base(N).map({ it.N!!.toString().toInt() }, AttributeValue::Num)
         fun numbers() = base(N).map({ it.NS!!.map(String::toBigDecimal).toSet() }, AttributeValue::NumSet)
         fun ints() = base(NS).map({ it.NS!!.map(String::toInt).toSet() }, AttributeValue::NumSet)
-        fun long() = base(L).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
+        fun long() = base(N).map({ it.N!!.toString().toLong() }, AttributeValue::Num)
         fun longs() = base(NS).map({ it.NS!!.map(String::toLong).toSet() }, AttributeValue::NumSet)
         fun double() = base(N).map({ it.N!!.toString().toDouble() }, AttributeValue::Num)
         fun doubles() = base(NS).map({ it.NS!!.map(String::toDouble).toSet() }, AttributeValue::NumSet)
