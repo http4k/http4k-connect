@@ -10,7 +10,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-*** : [Breaking] Repackaged Pagination classes (not just Amazon anymore).
 - **http4k-connect-*** : [Breaking] Added pagination of results to relevant actions using `xyzPaginated()` actions. Removed usage of `Listing` classes. This is a more convenient API to use and is consistent throughout all modules.
 
-### v2.20.1.0
+### v2.20.1.1
 - **http4k-connect-amazon-dynamodb** : Fix bug with Long data type. @H/T @ToastShaman for the tip off.
 
 ### v2.20.1.0
