@@ -6,7 +6,7 @@ import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.VersionId
 import org.http4k.connect.amazon.model.VersionStage
 import org.http4k.format.AutoMappingConfiguration
-import org.http4k.format.AwsJsonAdapterFactory
+import org.http4k.format.AwsCoreJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
@@ -17,7 +17,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 object SecretsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KotshiSecretsManagerJsonAdapterFactory)
-        .add(AwsJsonAdapterFactory())
+        .add(AwsCoreJsonAdapterFactory())
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()

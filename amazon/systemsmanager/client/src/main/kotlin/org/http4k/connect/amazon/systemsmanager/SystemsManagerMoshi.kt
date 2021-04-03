@@ -1,25 +1,21 @@
 package org.http4k.connect.amazon.systemsmanager
 
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.model.SSMParameterName
-import org.http4k.connect.amazon.systemsmanager.action.KotshiDeleteParameterJsonAdapter
-import org.http4k.connect.amazon.systemsmanager.action.KotshiGetParameterJsonAdapter
-import org.http4k.connect.amazon.systemsmanager.action.KotshiParameterJsonAdapter
-import org.http4k.connect.amazon.systemsmanager.action.KotshiParameterValueJsonAdapter
-import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterJsonAdapter
-import org.http4k.connect.amazon.systemsmanager.action.KotshiPutParameterResultJsonAdapter
 import org.http4k.format.AutoMappingConfiguration
-import org.http4k.format.AwsJsonAdapterFactory
+import org.http4k.format.AwsCoreJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
-import org.http4k.format.adapter
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
+import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object SystemsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(SystemsManagerJsonAdapterFactory)
+        .add(KotshiSystemsManagerJsonAdapterFactory)
+        .add(AwsCoreJsonAdapterFactory())
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()
@@ -31,11 +27,5 @@ fun <T> AutoMappingConfiguration<T>.withSystemsManagerMappings() = apply {
     value(SSMParameterName)
 }
 
-object SystemsManagerJsonAdapterFactory : AwsJsonAdapterFactory(
-    adapter(::KotshiDeleteParameterJsonAdapter),
-    adapter(::KotshiGetParameterJsonAdapter),
-    adapter(::KotshiParameterJsonAdapter),
-    adapter(::KotshiParameterValueJsonAdapter),
-    adapter(::KotshiPutParameterJsonAdapter),
-    adapter { KotshiPutParameterResultJsonAdapter() }
-)
+@KotshiJsonAdapterFactory
+abstract class SystemsManagerJsonAdapterFactory : JsonAdapter.Factory
