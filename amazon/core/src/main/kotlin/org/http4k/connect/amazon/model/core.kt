@@ -114,10 +114,7 @@ class SessionToken private constructor(value: String) : StringValue(value) {
 }
 
 @JsonSerializable
-data class Tag(
-    val Key: String,
-    val Value: String
-)
+data class Tag(val Key: String, val Value: String)
 
 class Timestamp private constructor(value: Long) : LongValue(value) {
     fun toInstant(): Instant = Instant.ofEpochSecond(value)
