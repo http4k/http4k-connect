@@ -50,6 +50,7 @@ allprojects {
         testImplementation(platform("org.junit:junit-bom:$junit_version"))
         testImplementation(platform("org.testcontainers:testcontainers-bom:$testcontainers_version"))
         testImplementation("org.http4k:http4k-testing-hamkrest")
+        testImplementation("org.http4k:http4k-testing-approval")
         testImplementation("org.http4k:http4k-cloudnative")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api")

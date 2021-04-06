@@ -14,16 +14,16 @@ import java.time.Clock
 fun DynamoDb.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
 ) = object : DynamoDb {
-    private val http = signAwsRequests(region, credentialsProvider, clock, Signed).then(rawHttp)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed).then(http)
 
-    override fun <R : Any> invoke(action: DynamoDbAction<R>) = action.toResult(http(action.toRequest()))
+    override fun <R : Any> invoke(action: DynamoDbAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
 fun DynamoDb.Companion.Http(
     env: Map<String, String> = System.getenv(),
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
-) = Http(env.awsRegion(), env.awsCredentials(), rawHttp, clock)
+) = Http(env.awsRegion(), env.awsCredentials(), http, clock)

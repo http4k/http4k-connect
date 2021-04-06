@@ -19,11 +19,11 @@ import java.time.Clock.systemUTC
 
 fun S3.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3 {
-    val http = SetHostFrom(Uri.of("https://s3.amazonaws.com"))
+    private val signedHttp = SetHostFrom(Uri.of("https://s3.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(
             ClientFilters.AwsAuth(
@@ -31,14 +31,14 @@ fun S3.Companion.Http(
                 credentialsProvider, clock, payloadMode
             )
         )
-        .then(rawHttp)
+        .then(http)
 
-    override fun <R> invoke(action: S3Action<R>) = action.toResult(http(action.toRequest()))
+    override fun <R> invoke(action: S3Action<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
 fun S3.Companion.Http(
     env: Map<String, String> = getenv(),
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
-) = Http(env.awsCredentials(), rawHttp, clock, payloadMode)
+) = Http(env.awsCredentials(), http, clock, payloadMode)

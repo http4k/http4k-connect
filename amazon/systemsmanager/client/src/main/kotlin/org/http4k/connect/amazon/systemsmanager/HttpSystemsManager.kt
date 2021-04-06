@@ -16,15 +16,15 @@ import java.time.Clock.systemUTC
 fun SystemsManager.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
 ) = object : SystemsManager {
-    private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
-    override fun <R : Any> invoke(action: SystemsManagerAction<R>) = action.toResult(http(action.toRequest()))
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(http)
+    override fun <R : Any> invoke(action: SystemsManagerAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
 fun SystemsManager.Companion.Http(
     env: Map<String, String> = getenv(),
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http(env.awsRegion(), env.awsCredentials(), rawHttp, clock)
+) = Http(env.awsRegion(), env.awsCredentials(), http, clock)

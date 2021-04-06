@@ -14,16 +14,16 @@ import java.time.Clock
 fun KMS.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
 ) = object : KMS {
-    private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(http)
 
-    override fun <R : Any> invoke(action: KMSAction<R>) = action.toResult(http(action.toRequest()))
+    override fun <R : Any> invoke(action: KMSAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
 fun KMS.Companion.Http(
     env: Map<String, String> = System.getenv(),
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
-) = Http(env.awsRegion(), env.awsCredentials(), rawHttp, clock)
+) = Http(env.awsRegion(), env.awsCredentials(), http, clock)

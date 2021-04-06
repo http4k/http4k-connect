@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v2.22.1.0
+- **http4k-connect-amazon-dynamodb*** : Support Dynamo Events in marshalling layer.
+
 ### v2.22.0.1
 - **http4k-connect-amazon-dynamodb*** : Fix incorrectly specified data type for OffsetDateTime attributes.
 

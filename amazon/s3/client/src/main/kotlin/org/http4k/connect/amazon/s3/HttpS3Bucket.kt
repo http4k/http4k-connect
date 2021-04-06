@@ -13,22 +13,22 @@ import java.time.Clock
 
 fun S3Bucket.Companion.Http(
     bucketName: BucketName,
-    region: Region,
+    bucketRegion: Region,
     credentialsProvider: () -> AwsCredentials,
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3Bucket {
-    private val http = signAwsRequests(region, credentialsProvider, clock, payloadMode, "$bucketName.").then(rawHttp)
+    private val signedHttp = signAwsRequests(bucketRegion, credentialsProvider, clock, payloadMode, "$bucketName.").then(http)
 
-    override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(http(action.toRequest()))
+    override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
 fun S3Bucket.Companion.Http(
     bucketName: BucketName,
-    region: Region,
+    bucketRegion: Region,
     env: Map<String, String> = System.getenv(),
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
-) = Http(bucketName, region, env.awsCredentials(), rawHttp, clock, payloadMode)
+) = Http(bucketName, bucketRegion, env.awsCredentials(), http, clock, payloadMode)

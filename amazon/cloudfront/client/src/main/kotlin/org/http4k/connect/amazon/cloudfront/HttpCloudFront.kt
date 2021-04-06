@@ -19,11 +19,11 @@ import java.time.Clock.systemUTC
 
 fun CloudFront.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
 ) = object : CloudFront {
 
-    private val http = ClientFilters.SetHostFrom(Uri.of("https://cloudfront.amazonaws.com"))
+    private val signedHttp = ClientFilters.SetHostFrom(Uri.of("https://cloudfront.amazonaws.com"))
         .then(ClientFilters.SetXForwardedHost())
         .then(SetHeader("Content-Type", APPLICATION_XML.value))
         .then(
@@ -32,13 +32,13 @@ fun CloudFront.Companion.Http(
                 credentialsProvider, clock, Signed
             )
         )
-        .then(rawHttp)
+        .then(http)
 
-    override fun <R> invoke(action: CloudFrontAction<R>) = action.toResult(http(action.toRequest()))
+    override fun <R> invoke(action: CloudFrontAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
 fun CloudFront.Companion.Http(
     env: Map<String, String> = getenv(),
-    rawHttp: HttpHandler = JavaHttpClient(),
+    http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http(env.awsCredentials(), rawHttp, clock)
+) = Http(env.awsCredentials(), http, clock)
