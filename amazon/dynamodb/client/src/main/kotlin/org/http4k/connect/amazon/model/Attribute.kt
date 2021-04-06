@@ -128,13 +128,11 @@ class Attribute<FINAL>(
             string().map(StringBiDiMappings.offsetTime(formatter))
 
         fun offsetDateTime(formatter: DateTimeFormatter = ISO_OFFSET_DATE_TIME) =
-            string().map(StringBiDiMappings.zonedDateTime(formatter))
+            string().map(StringBiDiMappings.offsetDateTime(formatter))
 
         fun timestamp() = long().map(Timestamp::of, Timestamp::value)
 
         inline fun <reified T : Enum<T>> enum() = string().map(StringBiDiMappings.enum<T>())
-
-        fun <VALUE : Value<T>, T : Any> value(vf: ValueFactory<VALUE, T>) = string().map(vf::parse, vf::show)
     }
 
     open class AttrLensSpec<OUT>(
