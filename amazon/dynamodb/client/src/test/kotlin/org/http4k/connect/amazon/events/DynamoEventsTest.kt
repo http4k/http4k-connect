@@ -9,13 +9,13 @@ import org.http4k.connect.amazon.events.StreamViewType.NEW_AND_OLD_IMAGES
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Attribute
 import org.http4k.connect.amazon.model.Region
+import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
-import org.http4k.testing.JsonApprovalTest
 import org.http4k.testing.assertApproved
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(JsonApprovalTest::class)
+@ExtendWith(ApprovalTest::class)
 class DynamoEventsTest {
 
     @Test
