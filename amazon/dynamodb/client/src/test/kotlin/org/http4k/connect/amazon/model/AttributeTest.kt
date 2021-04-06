@@ -10,7 +10,8 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
-import org.http4k.connect.amazon.dynamodb.action.AttributeValue
+import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
+import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Str
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -20,16 +21,16 @@ class AttributeTest {
     fun `can create value from attributes`() {
         assertThat(
             Attribute.long().value(MyLongType).required("name").asValue(MyLongType.of(1)),
-            equalTo(AttributeValue.Num(1))
+            equalTo(Num(1))
         )
-        assertThat(Attribute.int().value(MyIntType).required("name").asValue(MyIntType.of(1)), equalTo(AttributeValue.Num(1)))
+        assertThat(Attribute.int().value(MyIntType).required("name").asValue(MyIntType.of(1)), equalTo(Num(1)))
         assertThat(
-            Attribute.value(MyStringType).required("name").asValue(MyStringType.of("foo")),
-            equalTo(AttributeValue.Str("foo"))
+            Attribute.string().value(MyStringType).required("name").asValue(MyStringType.of("foo")),
+            equalTo(Str("foo"))
         )
         assertThat(
-            Attribute.value(MyUUIDType).required("name").asValue(MyUUIDType.of(UUID(0, 0))),
-            equalTo(AttributeValue.Str("00000000-0000-0000-0000-000000000000"))
+            Attribute.uuid().value(MyUUIDType).required("name").asValue(MyUUIDType.of(UUID(0, 0))),
+            equalTo(Str("00000000-0000-0000-0000-000000000000"))
         )
     }
 }

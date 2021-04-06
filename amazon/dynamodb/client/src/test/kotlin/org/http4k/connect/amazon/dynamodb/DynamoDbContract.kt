@@ -27,6 +27,7 @@ import org.http4k.connect.amazon.dynamodb.action.TransactWriteItem.Companion.Upd
 import org.http4k.connect.amazon.model.Attribute
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.model.value
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.AfterEach
@@ -60,7 +61,7 @@ abstract class DynamoDbContract(
     private val attrL = Attribute.list().required("theList")
     private val attrM = Attribute.map().required("theMap")
     private val attrS = Attribute.string().required("theString")
-    private val attrU = Attribute.value(MyValueType).required("theUuid")
+    private val attrU = Attribute.uuid().value(MyValueType).required("theUuid")
     private val attrSS = Attribute.strings().required("theStrings")
     private val attrNL = Attribute.string().optional("theNull")
     private val attrMissing = Attribute.string().optional("theMissing")
