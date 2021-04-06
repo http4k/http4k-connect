@@ -17,6 +17,7 @@ class AttributeTest {
     @Test
     fun `can create value from attributes`() {
         assertThat(Attribute.value(MyStringType).required("name").asValue(MyStringType.of("foo")), equalTo(AttributeValue.Str("foo")))
+        assertThat(Attribute.value(MyUUIDType).required("name").asValue(MyUUIDType.of(UUID(0,0))), equalTo(AttributeValue.Str("00000000-0000-0000-0000-000000000000")))
     }
 }
 
