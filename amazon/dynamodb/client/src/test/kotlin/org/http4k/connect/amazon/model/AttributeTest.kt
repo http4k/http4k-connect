@@ -2,6 +2,8 @@ package org.http4k.connect.amazon.model
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.values.InstantValue
+import dev.forkhandles.values.InstantValueFactory
 import dev.forkhandles.values.IntValue
 import dev.forkhandles.values.IntValueFactory
 import dev.forkhandles.values.LongValue
@@ -13,6 +15,7 @@ import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.action.AttributeValue.Companion.Str
 import org.junit.jupiter.api.Test
+import java.time.Instant
 import java.util.UUID
 
 class AttributeTest {
@@ -29,12 +32,15 @@ class AttributeTest {
             equalTo(Str("foo"))
         )
         assertThat(
+            Attribute.instant().value(MyInstantType).required("name").asValue(MyInstantType.of(Instant.EPOCH)),
+            equalTo(Str("1970-01-01T00:00:00Z"))
+        )
+        assertThat(
             Attribute.uuid().value(MyUUIDType).required("name").asValue(MyUUIDType.of(UUID(0, 0))),
             equalTo(Str("00000000-0000-0000-0000-000000000000"))
         )
     }
 }
-
 
 class MyStringType(value: String) : StringValue(value) {
     companion object : StringValueFactory<MyStringType>(::MyStringType)
@@ -50,4 +56,8 @@ class MyIntType(value: Int) : IntValue(value) {
 
 class MyLongType(value: Long) : LongValue(value) {
     companion object : LongValueFactory<MyLongType>(::MyLongType)
+}
+
+class MyInstantType(value: Instant) : InstantValue(value) {
+    companion object : InstantValueFactory<MyInstantType>(::MyInstantType)
 }
