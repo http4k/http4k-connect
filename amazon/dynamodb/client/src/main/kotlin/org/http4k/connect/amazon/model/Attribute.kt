@@ -2,20 +2,14 @@ package org.http4k.connect.amazon.model
 
 import dev.forkhandles.values.Value
 import dev.forkhandles.values.ValueFactory
-import org.http4k.connect.amazon.dynamodb.action.AttributeDefinition
-import org.http4k.connect.amazon.dynamodb.action.AttributeValue
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.B
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.BOOL
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.BS
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.L
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.M
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.N
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.NS
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.S
-import org.http4k.connect.amazon.dynamodb.action.Item
-import org.http4k.connect.amazon.dynamodb.action.KeySchema
-import org.http4k.connect.amazon.dynamodb.action.KeyType
+import org.http4k.connect.amazon.model.DynamoDataType.B
+import org.http4k.connect.amazon.model.DynamoDataType.BOOL
+import org.http4k.connect.amazon.model.DynamoDataType.BS
+import org.http4k.connect.amazon.model.DynamoDataType.L
+import org.http4k.connect.amazon.model.DynamoDataType.M
+import org.http4k.connect.amazon.model.DynamoDataType.N
+import org.http4k.connect.amazon.model.DynamoDataType.NS
+import org.http4k.connect.amazon.model.DynamoDataType.S
 import org.http4k.lens.BiDiMapping
 import org.http4k.lens.Lens
 import org.http4k.lens.LensFailure
@@ -40,23 +34,13 @@ import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
  * can be used to inject values with Item(attr of "123") or extract with attr(item).
  */
 class Attribute<FINAL>(
-    private val dataType: DynamoDataType,
+    val dataType: DynamoDataType,
     meta: Meta,
     get: (Item) -> FINAL,
     private val lensSet: (FINAL, Item) -> Item
 ) : LensInjector<FINAL, Item>, Lens<Item, FINAL>(meta, get) {
 
     val name = AttributeName.of(meta.name)
-
-    /**
-     * Used for creating tables
-     */
-    fun asKeySchema(keyType: KeyType) = KeySchema(name, keyType)
-
-    /**
-     * Used for creating tables
-     */
-    fun asAttributeDefinition() = AttributeDefinition(name, dataType)
 
     /**
      * Return a correctly typed value for this attribute

@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.events
 
-import org.http4k.connect.amazon.dynamodb.action.Item
 import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.Region
 import se.ansman.kotshi.JsonSerializable
 

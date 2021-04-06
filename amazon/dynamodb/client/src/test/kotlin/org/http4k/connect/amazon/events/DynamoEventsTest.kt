@@ -3,11 +3,11 @@ package org.http4k.connect.amazon.events
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.dynamodb.action.Item
 import org.http4k.connect.amazon.events.EventName.MODIFY
 import org.http4k.connect.amazon.events.StreamViewType.NEW_AND_OLD_IMAGES
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.Attribute
+import org.http4k.connect.amazon.model.Item
 import org.http4k.connect.amazon.model.Region
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver

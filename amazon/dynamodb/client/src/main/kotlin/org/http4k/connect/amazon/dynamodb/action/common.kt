@@ -1,82 +1,22 @@
 package org.http4k.connect.amazon.dynamodb.action
 
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.B
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.BOOL
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.BS
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.L
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.M
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.N
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.NS
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.NULL
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.S
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.SS
-import org.http4k.connect.amazon.dynamodb.action.DynamoDataType.valueOf
 import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.model.Attribute
 import org.http4k.connect.amazon.model.AttributeName
-import org.http4k.connect.amazon.model.Base64Blob
+import org.http4k.connect.amazon.model.AttributeValue
+import org.http4k.connect.amazon.model.DynamoDataType
+import org.http4k.connect.amazon.model.DynamoDataType.valueOf
 import org.http4k.connect.amazon.model.IndexName
 import org.http4k.connect.amazon.model.KMSKeyId
+import org.http4k.connect.amazon.model.Key
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.TableName
 import org.http4k.connect.amazon.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
-import java.math.BigDecimal
 
 typealias TokensToNames = Map<String, AttributeName>
 typealias TokensToValues = Map<String, AttributeValue>
 typealias ItemResult = Map<String, Map<String, Any>>
-
-/**
- * Represents the on-the-wire format of an Attribute Value with it's requisite type.
- * Only one of these fields is ever populated at once in an entry. So you can get
- * { "S": "hello" } or { "BOOL": true } or { "NS": ["123"] }
- */
-@JsonSerializable
-data class AttributeValue internal constructor(
-    val B: Base64Blob? = null,
-    val BOOL: Boolean? = null,
-    val BS: Set<Base64Blob>? = null,
-    val L: List<AttributeValue>? = null,
-    val M: Item? = null,
-    val N: String? = null,
-    val NS: Set<String>? = null,
-    val NULL: Boolean? = null,
-    val S: String? = null,
-    val SS: Set<String>? = null
-) {
-    companion object {
-        fun Base64(value: Base64Blob?) = value?.let { AttributeValue(B = it) } ?: Null()
-        fun Bool(value: Boolean?) = value?.let { AttributeValue(BOOL = it) } ?: Null()
-        fun Base64Set(value: Set<Base64Blob>?) = value?.let { AttributeValue(BS = it) } ?: Null()
-        fun List(value: List<AttributeValue>?) = value?.let { AttributeValue(L = it) } ?: Null()
-        fun Map(value: Item?) = value?.let { AttributeValue(M = it) } ?: Null()
-        fun Num(value: Number?) = value?.let { AttributeValue(N = it.toString()) } ?: Null()
-        fun NumSet(value: Set<Number>?) = value?.let { AttributeValue(NS = it.map { it.toString() }.toSet()) } ?: Null()
-        fun Null() = AttributeValue(NULL = true)
-        fun Str(value: String?) = value?.let { AttributeValue(S = it) } ?: Null()
-        fun StrSet(value: Set<String>?) = value?.let { AttributeValue(SS = it.map { it }.toSet()) } ?: Null()
-
-        @Suppress("UNCHECKED_CAST")
-        fun from(key: DynamoDataType, value: Any): AttributeValue = when (key) {
-            B -> Base64(Base64Blob.of(value as String))
-            BOOL -> Bool(value.toString().toBoolean())
-            BS -> Base64Set((value as List<String>).map(Base64Blob::of).toSet())
-            L -> List((value as List<Map<String, Any>>).map { it.toAttributeValue() })
-            M -> Map(
-                (value as Map<String, Map<String, Any>>)
-                    .map { AttributeName.of(it.key) to it.value.toAttributeValue() }.toMap()
-            )
-            N -> Num(BigDecimal(value as String))
-            NS -> NumSet((value as List<String>).map(::BigDecimal).toSet())
-            NULL -> Null()
-            S -> Str(value as String)
-            SS -> StrSet((value as List<String>).toSet())
-        }
-
-        private fun Map<String, Any>.toAttributeValue(): AttributeValue =
-            entries.first().let { (k, v) -> from(valueOf(k), v) }
-    }
-}
 
 @JsonSerializable
 data class ItemCollectionMetrics(
@@ -319,10 +259,6 @@ data class AttributeDefinition(
     val AttributeType: DynamoDataType
 )
 
-enum class DynamoDataType {
-    B, BOOL, BS, L, M, N, NS, NULL, S, SS
-}
-
 enum class BillingMode {
     PROVISIONED, PAY_PER_REQUEST
 }
@@ -366,3 +302,14 @@ enum class ReturnItemCollectionMetrics {
 enum class ReturnValues {
     NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW
 }
+
+/**
+ * Used for creating tables
+ */
+fun <T> Attribute<T>.asKeySchema(keyType: KeyType) = KeySchema(name, keyType)
+
+/**
+ * Used for creating tables
+ */
+fun <T> Attribute<T>.asAttributeDefinition() = AttributeDefinition(name, dataType)
+

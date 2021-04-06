@@ -1,6 +1,4 @@
-package org.http4k.connect.amazon.dynamodb.action
-
-import org.http4k.connect.amazon.model.AttributeName
+package org.http4k.connect.amazon.model
 
 typealias Item = Map<AttributeName, AttributeValue>
 typealias Key = Item
