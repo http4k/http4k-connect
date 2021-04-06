@@ -172,3 +172,5 @@ class Attribute<FINAL>(
         }
     }
 }
+
+fun <P : Any, VALUE : Value<P>> Attribute.AttrLensSpec<P>.value(vf: ValueFactory<VALUE, P>) = map(vf::of, vf::unwrap)
