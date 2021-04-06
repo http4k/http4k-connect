@@ -35,6 +35,6 @@ data class StreamRecord(
 )
 
 @JsonSerializable
-data class DynamodbEvent(
+data class DynamoDbEvent(
     val Records: List<StreamRecord>? = null
 )

@@ -20,7 +20,7 @@ class DynamoEventsTest {
 
     @Test
     fun `can roundtrip event`(approver: Approver) {
-        val event = DynamodbEvent(
+        val event = DynamoDbEvent(
             listOf(
                 StreamRecord(
                     "id", MODIFY, "version", "source", Region.of("us-east-1"),
