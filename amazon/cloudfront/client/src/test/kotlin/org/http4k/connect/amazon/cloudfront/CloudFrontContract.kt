@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.cloudfront
 
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.model.DistributionId
+import org.http4k.connect.amazon.cloudfront.model.DistributionId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug

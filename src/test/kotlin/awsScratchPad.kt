@@ -2,7 +2,7 @@ import org.http4k.aws.AwsSdkClient
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.cloudfront.CloudFront
 import org.http4k.connect.amazon.cloudfront.FakeCloudFront
-import org.http4k.connect.amazon.model.DistributionId
+import org.http4k.connect.amazon.cloudfront.model.DistributionId
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
