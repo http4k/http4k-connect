@@ -3,8 +3,7 @@ package org.http4k.connect.amazon.kms.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.KMSKeyId
+import org.http4k.connect.amazon.kms.model.KeyEntry
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
@@ -22,7 +21,3 @@ data class KeyList(val Keys: List<KeyEntry>, val NextMarker: String? = null) : P
     override fun token() = NextMarker
     override val items = Keys
 }
-
-@JsonSerializable
-data class KeyEntry(val KeyId: KMSKeyId, val KeyArn: ARN)
-

@@ -12,9 +12,9 @@ import org.http4k.connect.amazon.kms.action.KeyCreated
 import org.http4k.connect.amazon.kms.createKey
 import org.http4k.connect.amazon.kms.decrypt
 import org.http4k.connect.amazon.kms.encrypt
+import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.ECC_NIST_P384
+import org.http4k.connect.amazon.kms.model.KeyUsage.ENCRYPT_DECRYPT
 import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.CustomerMasterKeySpec.ECC_NIST_P384
-import org.http4k.connect.amazon.model.KeyUsage.ENCRYPT_DECRYPT
 import org.http4k.connect.amazon.model.Region
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug

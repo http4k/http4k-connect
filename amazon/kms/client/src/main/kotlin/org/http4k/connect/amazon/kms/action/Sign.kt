@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.kms.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.SigningAlgorithm
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

@@ -11,7 +11,6 @@ import org.http4k.connect.amazon.kms.action.GetPublicKey
 import org.http4k.connect.amazon.kms.action.KeyCreated
 import org.http4k.connect.amazon.kms.action.KeyDeletionSchedule
 import org.http4k.connect.amazon.kms.action.KeyDescription
-import org.http4k.connect.amazon.kms.action.KeyEntry
 import org.http4k.connect.amazon.kms.action.KeyList
 import org.http4k.connect.amazon.kms.action.ListKeys
 import org.http4k.connect.amazon.kms.action.PublicKey
@@ -20,15 +19,16 @@ import org.http4k.connect.amazon.kms.action.Sign
 import org.http4k.connect.amazon.kms.action.Signed
 import org.http4k.connect.amazon.kms.action.Verify
 import org.http4k.connect.amazon.kms.action.VerifyResult
+import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.SYMMETRIC_DEFAULT
+import org.http4k.connect.amazon.kms.model.EncryptionAlgorithm
+import org.http4k.connect.amazon.kms.model.KeyEntry
+import org.http4k.connect.amazon.kms.model.KeyMetadata
+import org.http4k.connect.amazon.kms.model.KeyUsage
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.AwsService
 import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.CustomerMasterKeySpec
-import org.http4k.connect.amazon.model.EncryptionAlgorithm
 import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.KeyMetadata
-import org.http4k.connect.amazon.model.KeyUsage
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.storage.Storage
@@ -39,7 +39,7 @@ fun AmazonJsonFake.createKey(keys: Storage<StoredCMK>) = route<CreateKey> {
     val keyId = KMSKeyId.of(UUID.randomUUID().toString())
     val storedCMK = StoredCMK(
         keyId, keyId.toArn(), it.KeyUsage ?: KeyUsage.ENCRYPT_DECRYPT, it.CustomerMasterKeySpec
-            ?: CustomerMasterKeySpec.SYMMETRIC_DEFAULT
+            ?: SYMMETRIC_DEFAULT
     )
 
     keys[storedCMK.arn.value] = storedCMK

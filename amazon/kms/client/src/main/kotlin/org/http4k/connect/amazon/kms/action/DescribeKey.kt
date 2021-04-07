@@ -1,8 +1,8 @@
 package org.http4k.connect.amazon.kms.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.kms.model.KeyMetadata
 import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.KeyMetadata
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
