@@ -4,13 +4,13 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.secretsmanager.FakeSecretsManager
 import org.http4k.connect.amazon.secretsmanager.Http
 import org.http4k.connect.amazon.secretsmanager.SecretsManager
 import org.http4k.connect.amazon.secretsmanager.action.CreatedSecret
 import org.http4k.connect.amazon.secretsmanager.createSecret
 import org.http4k.connect.amazon.secretsmanager.getSecretValue
+import org.http4k.connect.amazon.secretsmanager.model.SecretId
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import java.util.UUID

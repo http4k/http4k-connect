@@ -2,8 +2,8 @@ package org.http4k.connect.amazon.secretsmanager.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.SecretId
 import org.http4k.connect.amazon.model.Timestamp
+import org.http4k.connect.amazon.secretsmanager.model.SecretId
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

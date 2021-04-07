@@ -3,9 +3,9 @@ package org.http4k.connect.amazon.secretsmanager.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.Timestamp
+import org.http4k.connect.amazon.secretsmanager.model.Filter
+import org.http4k.connect.amazon.secretsmanager.model.Secret
+import org.http4k.connect.amazon.secretsmanager.model.SortOrder
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
@@ -29,27 +29,3 @@ data class Secrets(
     override val items = SecretList
 }
 
-@JsonSerializable
-data class Filter(val Key: String, val Values: List<String>)
-
-enum class SortOrder { asc, desc }
-
-@JsonSerializable
-data class RotationRules(val AutomaticallyAfterDays: Int? = null)
-
-@JsonSerializable
-data class Secret(
-    val ARN: ARN? = null,
-    val Name: String? = null,
-    val CreatedDate: Timestamp? = null,
-    val DeletedDate: Timestamp? = null,
-    val Description: String? = null,
-    val KmsKeyId: KMSKeyId? = null,
-    val LastAccessedDate: Timestamp? = null,
-    val LastChangedDate: Timestamp? = null,
-    val LastRotatedDate: Timestamp? = null,
-    val OwningService: String? = null,
-    val RotationEnabled: Boolean? = null,
-    val RotationLambdaARN: ARN? = null,
-    val RotationRules: RotationRules? = null
-)
