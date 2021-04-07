@@ -5,13 +5,10 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
+import org.http4k.connect.amazon.dynamodb.events.EventName.MODIFY
+import org.http4k.connect.amazon.dynamodb.events.StreamViewType.NEW_AND_OLD_IMAGES
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.Item
-import org.http4k.connect.amazon.events.DynamoDbEvent
-import org.http4k.connect.amazon.events.Dynamodb
-import org.http4k.connect.amazon.events.EventName.MODIFY
-import org.http4k.connect.amazon.events.StreamRecord
-import org.http4k.connect.amazon.events.StreamViewType.NEW_AND_OLD_IMAGES
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
 import org.http4k.testing.assertApproved
