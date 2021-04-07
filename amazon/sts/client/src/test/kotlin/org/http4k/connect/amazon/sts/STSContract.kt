@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.sts
 
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
