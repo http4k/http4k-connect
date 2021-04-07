@@ -1,15 +1,13 @@
-package org.http4k.connect.amazon.model
+package org.http4k.connect.amazon.s3.model
 
 import dev.forkhandles.values.NonBlankStringValueFactory
-import dev.forkhandles.values.StringValue
+import org.http4k.connect.amazon.model.AwsService
+import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.model.ResourceId
 
 class BucketName private constructor(value: String) : ResourceId(value) {
 
     fun toUri(region: Region) = AwsService.of("$this.s3").toUri(region)
 
     companion object : NonBlankStringValueFactory<BucketName>(::BucketName)
-}
-
-class BucketKey private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<BucketKey>(::BucketKey)
 }

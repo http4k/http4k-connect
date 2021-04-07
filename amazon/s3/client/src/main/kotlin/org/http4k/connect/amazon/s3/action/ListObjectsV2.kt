@@ -6,12 +6,15 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.connect.amazon.model.firstChild
 import org.http4k.connect.amazon.model.firstChildText
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.xmlDoc
+import org.http4k.connect.amazon.s3.model.BucketKey
+import org.http4k.connect.amazon.s3.model.ObjectSummary
+import org.http4k.connect.amazon.s3.model.Owner
+import org.http4k.connect.amazon.s3.model.StorageClass
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -75,22 +78,6 @@ data class ListObjectsV2(
 
     override fun next(token: String) = copy(continuationToken = token)
 }
-
-data class Owner(val DisplayName: String? = null, val ID: String?)
-
-enum class StorageClass {
-    STANDARD, REDUCED_REDUNDANCY, GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, OUTPOSTS
-}
-
-data class ObjectSummary(
-    val ETag: String? = null,
-    val Key: BucketKey,
-    val LastModified: Timestamp? = null,
-    val DisplayName: String? = null,
-    val ID: String? = null,
-    val Owner: Owner? = null,
-    val Size: Int? = null,
-    val StorageClass: StorageClass? = null)
 
 data class ObjectList(
     override val items: List<ObjectSummary>,

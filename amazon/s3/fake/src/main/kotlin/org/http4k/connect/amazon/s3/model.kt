@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.s3
 
-import org.http4k.connect.amazon.model.BucketKey
-import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.s3.model.BucketKey
+import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.template.ViewModel
 import java.time.ZonedDateTime
 

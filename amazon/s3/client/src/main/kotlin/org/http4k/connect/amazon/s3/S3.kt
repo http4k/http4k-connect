@@ -4,11 +4,11 @@ import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsServiceCompanion
-import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.s3.action.GetKey
 import org.http4k.connect.amazon.s3.action.PutKey
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.connect.amazon.s3.action.S3BucketAction
+import org.http4k.connect.amazon.s3.model.BucketKey
 import java.io.InputStream
 
 /**

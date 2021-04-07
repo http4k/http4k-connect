@@ -4,10 +4,10 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
-import org.http4k.connect.amazon.model.BucketKey
 import org.http4k.connect.amazon.s3.S3Bucket
 import org.http4k.connect.amazon.s3.action.DeleteKey
 import org.http4k.connect.amazon.s3.action.ListObjectsV2
+import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
 

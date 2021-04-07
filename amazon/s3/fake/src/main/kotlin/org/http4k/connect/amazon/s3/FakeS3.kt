@@ -2,8 +2,8 @@ package org.http4k.connect.amazon.s3
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
-import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Request

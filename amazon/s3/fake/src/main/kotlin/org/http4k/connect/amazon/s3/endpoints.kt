@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.s3
 
-import org.http4k.connect.amazon.model.BucketKey
-import org.http4k.connect.amazon.model.BucketName
+import org.http4k.connect.amazon.s3.model.BucketKey
+import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.APPLICATION_XML

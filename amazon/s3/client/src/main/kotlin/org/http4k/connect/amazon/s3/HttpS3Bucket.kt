@@ -3,9 +3,9 @@ package org.http4k.connect.amazon.s3
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.awsCredentials
-import org.http4k.connect.amazon.model.BucketName
 import org.http4k.connect.amazon.model.Region
 import org.http4k.connect.amazon.s3.action.S3BucketAction
+import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.Payload
