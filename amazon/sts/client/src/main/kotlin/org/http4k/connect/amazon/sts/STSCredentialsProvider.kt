@@ -4,9 +4,9 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.Credentials
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
+import org.http4k.connect.amazon.sts.model.Credentials
 import java.time.Clock
 import java.time.Duration
 import java.time.Duration.ofSeconds
