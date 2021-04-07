@@ -10,8 +10,8 @@ import org.http4k.connect.google.analytics.action.DOCUMENT_PATH
 import org.http4k.connect.google.analytics.action.DOCUMENT_TITLE
 import org.http4k.connect.google.analytics.action.MEASUREMENT_ID
 import org.http4k.connect.google.analytics.action.VERSION
-import org.http4k.connect.google.model.ClientId
-import org.http4k.connect.google.model.TrackingId
+import org.http4k.connect.google.analytics.model.ClientId
+import org.http4k.connect.google.analytics.model.TrackingId
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
