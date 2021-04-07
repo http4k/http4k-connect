@@ -6,11 +6,11 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.Timestamp
-import org.http4k.connect.amazon.model.firstChild
-import org.http4k.connect.amazon.model.firstChildText
-import org.http4k.connect.amazon.model.text
-import org.http4k.connect.amazon.model.xmlDoc
+import org.http4k.connect.amazon.core.firstChild
+import org.http4k.connect.amazon.core.firstChildText
+import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.text
+import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.ObjectSummary
 import org.http4k.connect.amazon.s3.model.Owner

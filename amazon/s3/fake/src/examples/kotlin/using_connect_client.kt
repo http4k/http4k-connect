@@ -5,7 +5,7 @@ import dev.forkhandles.result4k.valueOrNull
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.core.HttpHandler

@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.sns.model
 
-import org.http4k.connect.amazon.model.DataType
-import org.http4k.connect.amazon.model.MessageFields
+import org.http4k.connect.amazon.core.model.DataType
+import org.http4k.connect.amazon.core.model.MessageFields
 
 sealed class SNSMessageAttribute(
     private val name: String,

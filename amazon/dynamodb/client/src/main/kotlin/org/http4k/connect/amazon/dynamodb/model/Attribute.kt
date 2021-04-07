@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.dynamodb.model
 
 import dev.forkhandles.values.Value
 import dev.forkhandles.values.ValueFactory
+import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.B
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.BOOL
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.BS
@@ -10,7 +11,6 @@ import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.M
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.N
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.NS
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.S
-import org.http4k.connect.amazon.model.Timestamp
 import org.http4k.lens.BiDiMapping
 import org.http4k.lens.Lens
 import org.http4k.lens.LensFailure

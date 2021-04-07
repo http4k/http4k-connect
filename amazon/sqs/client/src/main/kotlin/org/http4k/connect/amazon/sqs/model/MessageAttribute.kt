@@ -1,8 +1,8 @@
 package org.http4k.connect.amazon.sqs.model
 
-import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.DataType
-import org.http4k.connect.amazon.model.MessageFields
+import org.http4k.connect.amazon.core.model.Base64Blob
+import org.http4k.connect.amazon.core.model.DataType
+import org.http4k.connect.amazon.core.model.MessageFields
 
 interface MessageAttribute : MessageFields
 

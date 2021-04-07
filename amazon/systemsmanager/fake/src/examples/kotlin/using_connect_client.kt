@@ -2,15 +2,13 @@ import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.systemsmanager.FakeSystemsManager
 import org.http4k.connect.amazon.systemsmanager.Http
 import org.http4k.connect.amazon.systemsmanager.SystemsManager
 import org.http4k.connect.amazon.systemsmanager.action.PutParameterResult
-import org.http4k.connect.amazon.systemsmanager.getParameter
 import org.http4k.connect.amazon.systemsmanager.model.ParameterType
 import org.http4k.connect.amazon.systemsmanager.model.SSMParameterName
-import org.http4k.connect.amazon.systemsmanager.putParameter
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 

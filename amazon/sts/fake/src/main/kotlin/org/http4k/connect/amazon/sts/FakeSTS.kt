@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.sts
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes

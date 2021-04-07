@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.kms.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec
 import org.http4k.connect.amazon.kms.model.KeyMetadata
 import org.http4k.connect.amazon.kms.model.KeyUsage
-import org.http4k.connect.amazon.model.Tag
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

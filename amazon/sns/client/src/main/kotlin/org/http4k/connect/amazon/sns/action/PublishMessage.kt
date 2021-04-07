@@ -4,11 +4,11 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.asList
-import org.http4k.connect.amazon.model.text
-import org.http4k.connect.amazon.model.textOptional
-import org.http4k.connect.amazon.model.xmlDoc
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.asList
+import org.http4k.connect.amazon.core.text
+import org.http4k.connect.amazon.core.textOptional
+import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.PhoneNumber
 import org.http4k.connect.amazon.sns.model.SNSMessageId

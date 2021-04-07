@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.s3.model
 
 import dev.forkhandles.values.NonBlankStringValueFactory
-import org.http4k.connect.amazon.model.AwsService
-import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.ResourceId
+import org.http4k.connect.amazon.core.model.AwsService
+import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.core.model.ResourceId
 
 class BucketName private constructor(value: String) : ResourceId(value) {
 

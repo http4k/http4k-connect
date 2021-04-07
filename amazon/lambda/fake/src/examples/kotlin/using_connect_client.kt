@@ -2,12 +2,12 @@ import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.core.model.FunctionName
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.lambda.FakeLambda
 import org.http4k.connect.amazon.lambda.Http
 import org.http4k.connect.amazon.lambda.Lambda
 import org.http4k.connect.amazon.lambda.action.invokeFunction
-import org.http4k.connect.amazon.model.FunctionName
-import org.http4k.connect.amazon.model.Region
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Response

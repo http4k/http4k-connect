@@ -4,7 +4,7 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.awsCredentials
 import org.http4k.connect.amazon.awsRegion
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then

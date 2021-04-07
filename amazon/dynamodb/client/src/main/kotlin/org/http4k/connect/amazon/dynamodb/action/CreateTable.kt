@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
@@ -11,7 +12,6 @@ import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.SSESpecification
 import org.http4k.connect.amazon.dynamodb.model.StreamSpecification
 import org.http4k.connect.amazon.dynamodb.model.TableName
-import org.http4k.connect.amazon.model.Tag
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

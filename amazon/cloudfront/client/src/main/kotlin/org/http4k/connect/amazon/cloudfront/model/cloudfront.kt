@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.cloudfront.model
 
 import dev.forkhandles.values.NonBlankStringValueFactory
-import org.http4k.connect.amazon.model.ResourceId
+import org.http4k.connect.amazon.core.model.ResourceId
 import java.util.UUID
 
 class CallerReference private constructor(value: String) : ResourceId(value) {

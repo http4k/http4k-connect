@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.systemsmanager
 
 import org.http4k.connect.amazon.AmazonJsonFake
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.Timestamp
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.systemsmanager.action.DeleteParameter
 import org.http4k.connect.amazon.systemsmanager.action.GetParameter
 import org.http4k.connect.amazon.systemsmanager.action.ParameterValue

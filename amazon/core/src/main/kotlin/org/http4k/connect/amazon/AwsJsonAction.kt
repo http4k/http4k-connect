@@ -5,7 +5,7 @@ import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.AwsService
+import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.core.ContentType
 import org.http4k.core.Method.POST
 import org.http4k.core.Request

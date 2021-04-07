@@ -2,9 +2,9 @@ import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sns.FakeSNS
 import org.http4k.connect.amazon.sns.Http
 import org.http4k.connect.amazon.sns.SNS

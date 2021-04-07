@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.secretsmanager.action
 
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.KMSKeyId
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.Base64Blob
+import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.secretsmanager.model.SecretId
 import org.http4k.connect.amazon.secretsmanager.model.VersionId
 import se.ansman.kotshi.JsonSerializable

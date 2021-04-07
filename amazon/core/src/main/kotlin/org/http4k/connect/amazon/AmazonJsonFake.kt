@@ -1,6 +1,6 @@
 package org.http4k.connect.amazon
 
-import org.http4k.connect.amazon.model.AwsService
+import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK

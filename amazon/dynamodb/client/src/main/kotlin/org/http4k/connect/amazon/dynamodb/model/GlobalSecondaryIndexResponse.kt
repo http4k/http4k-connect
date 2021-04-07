@@ -1,6 +1,6 @@
 package org.http4k.connect.amazon.dynamodb.model
 
-import org.http4k.connect.amazon.model.ARN
+import org.http4k.connect.amazon.core.model.ARN
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable

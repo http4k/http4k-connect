@@ -2,8 +2,8 @@ package org.http4k.connect.amazon.sqs
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
-import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage

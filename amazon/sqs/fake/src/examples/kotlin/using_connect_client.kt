@@ -2,17 +2,14 @@ import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sqs.FakeSQS
 import org.http4k.connect.amazon.sqs.Http
 import org.http4k.connect.amazon.sqs.SQS
 import org.http4k.connect.amazon.sqs.action.CreatedQueue
-import org.http4k.connect.amazon.sqs.createQueue
 import org.http4k.connect.amazon.sqs.model.QueueName
-import org.http4k.connect.amazon.sqs.receiveMessage
-import org.http4k.connect.amazon.sqs.sendMessage
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 

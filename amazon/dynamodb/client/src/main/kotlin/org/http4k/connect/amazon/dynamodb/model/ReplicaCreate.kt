@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.model
 
-import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.KMSKeyId
+import org.http4k.connect.amazon.core.model.Region
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable

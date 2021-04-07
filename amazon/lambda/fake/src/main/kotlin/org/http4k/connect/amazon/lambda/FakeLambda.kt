@@ -2,8 +2,8 @@ package org.http4k.connect.amazon.lambda
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
-import org.http4k.connect.amazon.model.FunctionName
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.lambda.model.FunctionName
 import org.http4k.core.HttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes

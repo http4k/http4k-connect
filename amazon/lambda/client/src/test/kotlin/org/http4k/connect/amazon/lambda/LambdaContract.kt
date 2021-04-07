@@ -4,8 +4,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.core.model.FunctionName
 import org.http4k.connect.amazon.lambda.action.invokeFunction
-import org.http4k.connect.amazon.model.FunctionName
 import org.http4k.core.HttpHandler
 import org.http4k.format.Moshi
 import org.junit.jupiter.api.Test

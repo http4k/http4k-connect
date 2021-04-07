@@ -3,6 +3,8 @@ import dev.forkhandles.result4k.valueOrNull
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.core.model.Base64Blob
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.kms.FakeKMS
 import org.http4k.connect.amazon.kms.Http
 import org.http4k.connect.amazon.kms.KMS
@@ -14,8 +16,6 @@ import org.http4k.connect.amazon.kms.decrypt
 import org.http4k.connect.amazon.kms.encrypt
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.ECC_NIST_P384
 import org.http4k.connect.amazon.kms.model.KeyUsage.ENCRYPT_DECRYPT
-import org.http4k.connect.amazon.model.Base64Blob
-import org.http4k.connect.amazon.model.Region
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 

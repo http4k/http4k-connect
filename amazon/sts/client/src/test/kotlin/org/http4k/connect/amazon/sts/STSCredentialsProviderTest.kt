@@ -6,10 +6,10 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.AccessKeyId
-import org.http4k.connect.amazon.model.SecretAccessKey
-import org.http4k.connect.amazon.model.SessionToken
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.SecretAccessKey
+import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
 import org.http4k.connect.amazon.sts.model.AssumedRoleUser

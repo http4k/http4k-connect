@@ -1,8 +1,8 @@
 package org.http4k.connect.amazon.secretsmanager.model
 
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.KMSKeyId
-import org.http4k.connect.amazon.model.Timestamp
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.KMSKeyId
+import org.http4k.connect.amazon.core.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable

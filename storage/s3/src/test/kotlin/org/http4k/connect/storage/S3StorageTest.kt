@@ -1,6 +1,6 @@
 package org.http4k.connect.storage
 
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.FakeS3
 import org.http4k.connect.amazon.s3.action.CreateBucket
 import org.http4k.connect.amazon.s3.model.BucketName

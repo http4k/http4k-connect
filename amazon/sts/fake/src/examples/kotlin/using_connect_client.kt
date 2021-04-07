@@ -2,13 +2,12 @@ import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.ARN
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sts.FakeSTS
 import org.http4k.connect.amazon.sts.Http
 import org.http4k.connect.amazon.sts.STS
 import org.http4k.connect.amazon.sts.action.AssumedRole
-import org.http4k.connect.amazon.sts.assumeRole
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 

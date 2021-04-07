@@ -2,8 +2,8 @@ package org.http4k.connect.amazon
 
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.amazon.model.AwsService
-import org.http4k.connect.amazon.model.Region
+import org.http4k.connect.amazon.core.model.AwsService
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
