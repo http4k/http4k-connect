@@ -4,9 +4,9 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.model.AwsService
-import org.http4k.connect.amazon.model.ParameterType
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.SSMParameterName
+import org.http4k.connect.amazon.systemsmanager.model.ParameterType
+import org.http4k.connect.amazon.systemsmanager.model.SSMParameterName
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.routing.routes

@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.systemsmanager
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import org.http4k.connect.amazon.model.SSMParameterName
+import org.http4k.connect.amazon.systemsmanager.model.SSMParameterName
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.AwsCoreJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi

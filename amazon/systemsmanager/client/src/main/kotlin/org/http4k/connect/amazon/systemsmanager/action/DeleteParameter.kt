@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.systemsmanager.action
 
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.amazon.model.SSMParameterName
+import org.http4k.connect.amazon.systemsmanager.model.SSMParameterName
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
