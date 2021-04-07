@@ -3,8 +3,8 @@ package org.http4k.connect.amazon.sns
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.SNSMessageId
-import org.http4k.connect.amazon.model.TopicName
+import org.http4k.connect.amazon.sns.model.SNSMessageId
+import org.http4k.connect.amazon.sns.model.TopicName
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.ContentType

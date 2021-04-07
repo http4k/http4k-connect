@@ -1,11 +1,7 @@
-package org.http4k.connect.amazon.sns.action
+package org.http4k.connect.amazon.sns.model
 
-import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.DataType
-import org.http4k.connect.amazon.model.DataType.Binary
 import org.http4k.connect.amazon.model.MessageFields
-
-interface MessageAttribute : MessageFields
 
 sealed class SNSMessageAttribute(
     private val name: String,
@@ -43,31 +39,3 @@ sealed class SNSMessageAttribute(
             }.toMap()
     }
 }
-
-fun MessageAttribute(name: String, value: String, dataType: DataType): MessageAttribute =
-    object : MessageAttribute,
-        MessageFields by SNSMessageAttribute.SingularValue(name, "MessageAttributes", "String", value, dataType) {}
-
-@JvmName("MessageAttributeStringList")
-fun MessageAttribute(name: String, value: List<String>, dataType: DataType): MessageAttribute =
-    object : MessageAttribute,
-        MessageFields by SNSMessageAttribute.ListValue(value, "MessageAttributes", "StringList", name, dataType) {}
-
-fun MessageAttribute(name: String, value: Base64Blob): MessageAttribute =
-    object : MessageAttribute,
-        MessageFields by SNSMessageAttribute.SingularValue(
-            name, "MessageAttributes", "Binary", value.value,
-            Binary
-        ) {}
-
-@JvmName("MessageAttributeBinaryList")
-fun MessageAttribute(name: String, value: List<Base64Blob>): MessageAttribute =
-    object : MessageAttribute,
-        MessageFields by SNSMessageAttribute.ListValue(
-            value.map { it.value },
-            "MessageAttributes",
-            "StringList",
-            name,
-            Binary
-        ) {}
-

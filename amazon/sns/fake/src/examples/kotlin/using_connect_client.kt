@@ -5,11 +5,11 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.TopicName
 import org.http4k.connect.amazon.sns.FakeSNS
 import org.http4k.connect.amazon.sns.Http
 import org.http4k.connect.amazon.sns.SNS
 import org.http4k.connect.amazon.sns.action.PublishedMessage
+import org.http4k.connect.amazon.sns.model.TopicName
 import org.http4k.connect.amazon.sns.publishMessage
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug

@@ -6,8 +6,8 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.DataType.Number
 import org.http4k.connect.amazon.model.Tag
-import org.http4k.connect.amazon.model.TopicName
-import org.http4k.connect.amazon.sns.action.MessageAttribute
+import org.http4k.connect.amazon.sns.model.MessageAttribute
+import org.http4k.connect.amazon.sns.model.TopicName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
