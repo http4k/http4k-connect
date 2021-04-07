@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.model
+package org.http4k.connect.amazon.dynamodb.model
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -12,8 +12,8 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
-import org.http4k.connect.amazon.model.AttributeValue.Companion.Num
-import org.http4k.connect.amazon.model.AttributeValue.Companion.Str
+import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
+import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Str
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.UUID

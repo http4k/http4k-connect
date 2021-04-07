@@ -2,8 +2,13 @@ package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.model.Key
-import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity
+import org.http4k.connect.amazon.dynamodb.model.ReturnItemCollectionMetrics
+import org.http4k.connect.amazon.dynamodb.model.ReturnValues
+import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.connect.amazon.dynamodb.model.TokensToNames
+import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

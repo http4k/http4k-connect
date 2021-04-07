@@ -2,8 +2,13 @@ package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.model.Key
-import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.dynamodb.model.ConsumedCapacity
+import org.http4k.connect.amazon.dynamodb.model.GetItemsResponseItem
+import org.http4k.connect.amazon.dynamodb.model.ItemCollectionMetrics
+import org.http4k.connect.amazon.dynamodb.model.ItemResult
+import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity
+import org.http4k.connect.amazon.dynamodb.model.TransactGetItem
+import org.http4k.connect.amazon.dynamodb.model.toItem
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
@@ -14,40 +19,10 @@ data class TransactGetItems(
 ) : DynamoDbAction<GetItemsResponse>(GetItemsResponse::class, DynamoDbMoshi)
 
 @JsonSerializable
-data class Get(
-    val TableName: TableName,
-    val Key: Key,
-    val ProjectionExpression: String? = null,
-    val ExpressionAttributeNames: TokensToNames? = null
-)
-
-@JsonSerializable
-data class TransactGetItem internal constructor(val Get: Map<String, Any?>) {
-    companion object {
-        fun Get(
-            TableName: TableName,
-            Key: Key,
-            ProjectionExpression: String? = null,
-            ExpressionAttributeNames: TokensToNames? = null
-        ) = TransactGetItem(
-            Get = mapOf(
-                "TableName" to TableName,
-                "Key" to Key,
-                "ProjectionExpression" to ProjectionExpression,
-                "ExpressionAttributeNames" to ExpressionAttributeNames
-            )
-        )
-    }
-}
-
-@JsonSerializable
 data class GetItemsResponse(
     internal val Responses: List<GetItemsResponseItem>,
     val ConsumedCapacity: ConsumedCapacity? = null,
     val ItemCollectionMetrics: ItemCollectionMetrics? = null
-    ) {
+) {
     val responses = Responses.map { it.Item }.map(ItemResult::toItem)
 }
-
-@JsonSerializable
-data class GetItemsResponseItem(val Item: ItemResult)

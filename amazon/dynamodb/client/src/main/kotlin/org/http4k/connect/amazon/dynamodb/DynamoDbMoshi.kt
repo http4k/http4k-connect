@@ -2,9 +2,9 @@ package org.http4k.connect.amazon.dynamodb
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import org.http4k.connect.amazon.model.AttributeName
-import org.http4k.connect.amazon.model.IndexName
-import org.http4k.connect.amazon.model.TableName
+import org.http4k.connect.amazon.dynamodb.model.AttributeName
+import org.http4k.connect.amazon.dynamodb.model.IndexName
+import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.format.AwsCoreJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable

@@ -1,5 +1,6 @@
-package org.http4k.connect.amazon.model
+package org.http4k.connect.amazon.dynamodb.model
 
+import org.http4k.connect.amazon.model.Base64Blob
 import se.ansman.kotshi.JsonSerializable
 import java.math.BigDecimal
 
