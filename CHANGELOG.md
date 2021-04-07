@@ -4,7 +4,7 @@ This list is not intended to be all-encompassing - it will document major and br
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
 ### v3.0.0.0
-- **http4k-connect-*** : Major repackage of all model classes. Model package has been normalised to `org.http4k.connect.amazon.<system>.model`. All non-top level message objects have been moved from the `org.http4k.connect.amazon.*.action` package into `org.http4k.connect.amazon.<system>.model`. This is annoying, and apologies in advance - hence the major version uptick. We are not proud of ourselves, but it needed to be done for our future plans..
+- **http4k-connect-*** : Major repackage of all model classes. Model package has been normalised to `org.http4k.connect.amazon.<system>.model`. All non-top level message objects have been moved from the `org.http4k.connect.amazon.*.action` package into `org.http4k.connect.amazon.<system>.model`. This is annoying, and apologies in advance - hence the major version uptick. We are not proud of ourselves, but it needed to be done for our future plans... Also imports of generated adapter methods may need to be altered as some of them were in teh wrong place.
 
 ### v2.23.0.0
 - **http4k-connect-amazon-dynamodb** : [Slight break] Repackaging work of item types to reuse them for Dynamo event marshalling.
