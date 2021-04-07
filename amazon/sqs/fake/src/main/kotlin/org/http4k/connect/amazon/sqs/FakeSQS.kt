@@ -4,7 +4,7 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Region
-import org.http4k.connect.amazon.model.SQSMessage
+import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST

@@ -4,10 +4,10 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.amazon.model.Tag
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.xmlDoc
+import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Uri

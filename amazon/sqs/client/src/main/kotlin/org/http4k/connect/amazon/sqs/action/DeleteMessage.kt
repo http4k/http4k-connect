@@ -6,8 +6,8 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.QueueName
-import org.http4k.connect.amazon.model.ReceiptHandle
+import org.http4k.connect.amazon.sqs.model.QueueName
+import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.core.Method
 import org.http4k.core.Response
 import org.http4k.core.Uri

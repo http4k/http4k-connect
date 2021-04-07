@@ -6,10 +6,10 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.model.AwsAccount
 import org.http4k.connect.amazon.model.Base64Blob
 import org.http4k.connect.amazon.model.DataType
-import org.http4k.connect.amazon.model.QueueName
 import org.http4k.connect.amazon.model.Tag
-import org.http4k.connect.amazon.sqs.action.MessageAttribute
-import org.http4k.connect.amazon.sqs.action.MessageSystemAttribute
+import org.http4k.connect.amazon.sqs.model.MessageAttribute
+import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
+import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test

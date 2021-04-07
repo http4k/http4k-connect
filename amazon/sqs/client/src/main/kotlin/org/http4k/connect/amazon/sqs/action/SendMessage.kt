@@ -6,12 +6,14 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.model.ARN
 import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.QueueName
-import org.http4k.connect.amazon.model.SQSMessageId
 import org.http4k.connect.amazon.model.asList
 import org.http4k.connect.amazon.model.text
 import org.http4k.connect.amazon.model.textOptional
 import org.http4k.connect.amazon.model.xmlDoc
+import org.http4k.connect.amazon.sqs.model.MessageAttribute
+import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
+import org.http4k.connect.amazon.sqs.model.QueueName
+import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Method
 import org.http4k.core.Response
 import org.http4k.core.Uri
@@ -77,7 +79,8 @@ data class SendMessage(
 data class SentMessage(
     val MD5OfMessageBody: String,
     val MessageId: SQSMessageId,
-    val MD5OfMessageAttributes: String? = null) {
+    val MD5OfMessageAttributes: String? = null
+) {
     companion object {
         fun from(response: Response) =
             with(response.xmlDoc()) {

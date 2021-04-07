@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.sqs
 
-import org.http4k.connect.amazon.model.SQSMessage
-import org.http4k.connect.amazon.model.SQSMessageId
+import org.http4k.connect.amazon.sqs.model.SQSMessage
+import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Uri
 import org.http4k.template.ViewModel
 import java.math.BigInteger

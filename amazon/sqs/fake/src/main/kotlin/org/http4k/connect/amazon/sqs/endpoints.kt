@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.sqs
 
 import org.http4k.connect.amazon.model.AwsAccount
-import org.http4k.connect.amazon.model.ReceiptHandle
-import org.http4k.connect.amazon.model.SQSMessage
-import org.http4k.connect.amazon.model.SQSMessageId
+import org.http4k.connect.amazon.sqs.model.ReceiptHandle
+import org.http4k.connect.amazon.sqs.model.SQSMessage
+import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.ContentType
