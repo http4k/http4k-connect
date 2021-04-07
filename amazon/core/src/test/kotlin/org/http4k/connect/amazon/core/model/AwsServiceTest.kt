@@ -1,9 +1,7 @@
-package org.http4k.connect.amazon
+package org.http4k.connect.amazon.core.model
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.core.model.AwsService
-import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 

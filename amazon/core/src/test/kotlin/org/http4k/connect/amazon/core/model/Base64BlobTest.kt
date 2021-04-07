@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.model
+package org.http4k.connect.amazon.core.model
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
