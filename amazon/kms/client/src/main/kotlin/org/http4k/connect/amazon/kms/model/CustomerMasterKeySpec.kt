@@ -1,5 +1,8 @@
 package org.http4k.connect.amazon.kms.model
 
+import se.ansman.kotshi.JsonSerializable
+
+@JsonSerializable
 enum class CustomerMasterKeySpec {
     RSA_2048,
     RSA_3072,

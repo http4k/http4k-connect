@@ -26,6 +26,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
         jcenter() {
             // remove this when exposed migrated to MC
             content {
