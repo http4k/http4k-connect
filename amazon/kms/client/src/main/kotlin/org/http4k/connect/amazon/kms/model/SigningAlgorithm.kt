@@ -1,5 +1,8 @@
 package org.http4k.connect.amazon.kms.model
 
+import se.ansman.kotshi.JsonSerializable
+
+@JsonSerializable
 enum class SigningAlgorithm {
     RSASSA_PSS_SHA_256,
     RSASSA_PSS_SHA_384,
