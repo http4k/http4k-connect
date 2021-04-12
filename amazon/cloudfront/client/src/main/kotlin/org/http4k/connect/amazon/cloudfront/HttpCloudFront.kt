@@ -3,7 +3,8 @@ package org.http4k.connect.amazon.cloudfront
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.awsCredentials
+import org.http4k.cloudnative.env.Environment
+import org.http4k.connect.amazon.AWS_CREDENTIALS
 import org.http4k.connect.amazon.cloudfront.action.CloudFrontAction
 import org.http4k.core.ContentType.Companion.APPLICATION_XML
 import org.http4k.core.HttpHandler
@@ -17,6 +18,9 @@ import java.lang.System.getenv
 import java.time.Clock
 import java.time.Clock.systemUTC
 
+/**
+ * Standard HTTP implementation of CloudFront
+ */
 fun CloudFront.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
     http: HttpHandler = JavaHttpClient(),
@@ -37,8 +41,20 @@ fun CloudFront.Companion.Http(
     override fun <R> invoke(action: CloudFrontAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
+/**
+ * Convenience function to create a CloudFront from a System environment
+ */
 fun CloudFront.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http(env.awsCredentials(), http, clock)
+) = Http(Environment.from(env), http, clock)
+
+/**
+ * Convenience function to create a CloudFront from an http4k Environment
+ */
+fun CloudFront.Companion.Http(
+    env: Environment,
+    http: HttpHandler = JavaHttpClient(),
+    clock: Clock = systemUTC()
+) = Http({ AWS_CREDENTIALS(env) }, http, clock)

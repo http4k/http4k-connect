@@ -2,8 +2,9 @@ package org.http4k.connect.amazon.sts
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.awsCredentials
-import org.http4k.connect.amazon.awsRegion
+import org.http4k.cloudnative.env.Environment
+import org.http4k.connect.amazon.AWS_CREDENTIALS
+import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
@@ -13,6 +14,9 @@ import java.lang.System.getenv
 import java.time.Clock
 import java.time.Clock.systemUTC
 
+/**
+ * Standard HTTP implementation of STS
+ */
 fun STS.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
@@ -24,8 +28,20 @@ fun STS.Companion.Http(
     override fun <R> invoke(action: STSAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
+/**
+ * Convenience function to create a STS from a System environment
+ */
 fun STS.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http(env.awsRegion(), env.awsCredentials(), http, clock)
+) = Http(Environment.from(env), http, clock)
+
+/**
+ * Convenience function to create a STS from an http4k Environment
+ */
+fun STS.Companion.Http(
+    env: Environment,
+    http: HttpHandler = JavaHttpClient(),
+    clock: Clock = systemUTC()
+) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock)

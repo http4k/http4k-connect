@@ -2,17 +2,20 @@ package org.http4k.connect.amazon.lambda
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.awsCredentials
-import org.http4k.connect.amazon.awsRegion
+import org.http4k.cloudnative.env.Environment
+import org.http4k.connect.amazon.AWS_CREDENTIALS
+import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.lambda.action.LambdaAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.Payload
-import java.lang.System.getenv
 import java.time.Clock
 import java.time.Clock.systemUTC
 
+/**
+ * Standard HTTP implementation of Lambda
+ */
 fun Lambda.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
@@ -24,8 +27,20 @@ fun Lambda.Companion.Http(
     override fun <RESP : Any> invoke(action: LambdaAction<RESP>) = action.toResult(signedHttp(action.toRequest()))
 }
 
+/**
+ * Convenience function to create a Lambda from a System environment
+ */
 fun Lambda.Companion.Http(
-    env: Map<String, String> = getenv(),
+    env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http(env.awsRegion(), env.awsCredentials(), http, clock)
+) = Http(Environment.from(env), http, clock)
+
+/**
+ * Convenience function to create a Lambda from an http4k Environment
+ */
+fun Lambda.Companion.Http(
+    env: Environment,
+    http: HttpHandler = JavaHttpClient(),
+    clock: Clock = systemUTC()
+) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock)

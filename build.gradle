@@ -52,7 +52,6 @@ allprojects {
         testImplementation(platform("org.testcontainers:testcontainers-bom:$testcontainers_version"))
         testImplementation("org.http4k:http4k-testing-hamkrest")
         testImplementation("org.http4k:http4k-testing-approval")
-        testImplementation("org.http4k:http4k-cloudnative")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api")
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
@@ -82,6 +81,7 @@ allprojects {
             api(project(":http4k-connect-core"))
         } else if (project.name != "http4k-connect-core") {
             dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
+            api("org.http4k:http4k-cloudnative")
             api(project(":http4k-connect-core"))
             kapt(project(":http4k-connect-kapt-generator"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))

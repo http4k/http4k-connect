@@ -3,7 +3,8 @@ package org.http4k.connect.amazon.s3
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.awsCredentials
+import org.http4k.cloudnative.env.Environment
+import org.http4k.connect.amazon.AWS_CREDENTIALS
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -17,6 +18,9 @@ import java.lang.System.getenv
 import java.time.Clock
 import java.time.Clock.systemUTC
 
+/**
+ * Standard HTTP implementation of S3
+ */
 fun S3.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
     http: HttpHandler = JavaHttpClient(),
@@ -36,9 +40,20 @@ fun S3.Companion.Http(
     override fun <R> invoke(action: S3Action<R>) = action.toResult(signedHttp(action.toRequest()))
 }
 
+/**
+ * Convenience function to create a S3 from a System environment
+ */
 fun S3.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemUTC(),
-    payloadMode: Payload.Mode = Payload.Mode.Signed
-) = Http(env.awsCredentials(), http, clock, payloadMode)
+    clock: Clock = systemUTC()
+) = Http(Environment.from(env), http, clock)
+
+/**
+ * Convenience function to create a S3 from an http4k Environment
+ */
+fun S3.Companion.Http(
+    env: Environment,
+    http: HttpHandler = JavaHttpClient(),
+    clock: Clock = systemUTC()
+) = Http({ AWS_CREDENTIALS(env) }, http, clock)
