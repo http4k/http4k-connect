@@ -37,7 +37,7 @@ fun putKey(
             BucketKey.of(key),
             Base64.getEncoder().encodeToString(bytes),
             ZonedDateTime.now(clock),
-            headers
+            headers.filter { it.first !in setOf("authorization", "x-forwarded-host", "x-amz-content-sha256", "x-amz-date") }
         )
         Response(CREATED)
     }

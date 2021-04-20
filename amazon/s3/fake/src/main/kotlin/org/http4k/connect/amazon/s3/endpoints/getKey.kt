@@ -30,10 +30,11 @@ fun bucketGetKey(
     req: Request
 ) = (buckets[bucket]
     ?.let {
-        bucketContent["${bucket}-${req.path("bucketKey")!!}"]?.let {
-            Response(OK)
-                .headers(it.headers)
-                .body(Base64.getDecoder().decode(it.content).inputStream())
-        } ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
+        bucketContent["${bucket}-${req.path("bucketKey")!!}"]
+            ?.let {
+                Response(OK)
+                    .headers(it.headers)
+                    .body(String(Base64.getDecoder().decode(it.content)))
+            } ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
     }
     ?: invalidBucketNameResponse())
