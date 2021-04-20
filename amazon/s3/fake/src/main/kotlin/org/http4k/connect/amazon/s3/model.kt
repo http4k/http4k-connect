@@ -15,7 +15,7 @@ data class BucketKeyContent(
     val size = content.length
 }
 
-data class ListBucketResult(val keys: List<BucketKeyContent>) : ViewModel {
+data class ListBucketResult(val bucketName: String, val keys: List<BucketKeyContent>) : ViewModel {
     val keyCount = keys.size
     val maxKeys = Integer.MAX_VALUE
 }
