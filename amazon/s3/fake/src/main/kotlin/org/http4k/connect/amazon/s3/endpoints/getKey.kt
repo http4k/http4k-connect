@@ -6,7 +6,8 @@ import org.http4k.connect.storage.Storage
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.routing.bind
 import org.http4k.routing.path
@@ -29,9 +30,10 @@ fun bucketGetKey(
     req: Request
 ) = (buckets[bucket]
     ?.let {
-        bucketContent["${bucket}-${req.path("bucketKey")!!}"]
-            ?.content?.let { Base64.getDecoder().decode(it).inputStream() }
-            ?.let { Response(Status.OK).body(it) }
-            ?: Response(Status.NOT_FOUND).with(lens of S3Error("NoSuchKey"))
+        bucketContent["${bucket}-${req.path("bucketKey")!!}"]?.let {
+            Response(OK)
+                .headers(it.headers)
+                .body(Base64.getDecoder().decode(it.content).inputStream())
+        } ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
     }
     ?: invalidBucketNameResponse())

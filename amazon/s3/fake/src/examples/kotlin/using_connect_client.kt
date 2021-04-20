@@ -31,7 +31,8 @@ fun main() {
     createResult.valueOrNull()!!
 
     // we can store some content in the bucket...
-    val putResult: Result<Unit, RemoteFailure> = s3Bucket.putKey(bucketKey, "hellothere".byteInputStream())
+    val putResult: Result<Unit, RemoteFailure> =
+        s3Bucket.putObject(bucketKey, "hellothere".byteInputStream(), emptyList())
     putResult.valueOrNull()!!
 
     // and get back the content which we stored

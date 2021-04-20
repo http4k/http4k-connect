@@ -38,7 +38,8 @@ private fun copyKey(
             Base64.getDecoder().decode(it.content),
             buckets,
             bucketContent,
-            clock
+            clock,
+            it.headers
         )
         Response(Status.OK)
     } ?: invalidBucketNameResponse()

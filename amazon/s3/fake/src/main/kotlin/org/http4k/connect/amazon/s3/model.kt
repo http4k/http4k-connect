@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.s3
 
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
+import org.http4k.core.Headers
 import org.http4k.template.ViewModel
 import java.time.ZonedDateTime
 
@@ -10,7 +11,8 @@ data class ListAllMyBuckets(val buckets: List<BucketName>) : ViewModel
 data class BucketKeyContent(
     val key: BucketKey,
     val content: String,
-    val modified: ZonedDateTime
+    val modified: ZonedDateTime,
+    val headers: Headers
 ) {
     val size = content.length
 }
