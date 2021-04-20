@@ -16,8 +16,8 @@ import java.time.Clock
  * Global S3 operations (manage buckets)
  */
 class FakeS3(
-    val buckets: Storage<Unit> = Storage.InMemory(),
-    val bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
+    private val buckets: Storage<Unit> = Storage.InMemory(),
+    bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
     private val clock: Clock = Clock.systemUTC()
 ) : ChaosFake() {
 

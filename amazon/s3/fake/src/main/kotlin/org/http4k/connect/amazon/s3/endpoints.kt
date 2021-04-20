@@ -37,29 +37,29 @@ fun bucketDeleteBucket(buckets: Storage<Unit>) =
 fun bucketPutBucket(buckets: Storage<Unit>) = "/" bind PUT to { putBucket(it.subdomain(buckets), buckets) }
 
 fun bucketDeleteKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
-    "/{id:.+}" bind DELETE to { req ->
+    "/{bucketKey:.+}" bind DELETE to { req ->
         val bucket = req.subdomain(buckets)
         buckets[bucket]
             ?.let {
-                if (bucketContent.remove("${bucket}-${req.path("id")!!}")) Response(OK)
+                if (bucketContent.remove("${bucket}-${req.path("bucketKey")!!}")) Response(OK)
                 else Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
             }
             ?: invalidBucketNameResponse()
     }
 
 fun bucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, clock: Clock) =
-    "/{id:.+}" bind PUT to {
-        putKey(it.subdomain(buckets), it.path("id")!!, it.body.payload.array(), buckets, bucketContent, clock)
+    "/{bucketKey:.+}" bind PUT to {
+        putKey(it.subdomain(buckets), it.path("bucketKey")!!, it.body.payload.array(), buckets, bucketContent, clock)
     }
 
 fun copyKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, clock: Clock) =
-    "/{id:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { req ->
+    "/{bucketKey:.+}" bind PUT to routes(headers("x-amz-copy-source") bind { req ->
         bucketContent[req.header("x-amz-copy-source")!!.split("/")
             .let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
             ?.let {
                 putKey(
                     req.subdomain(buckets),
-                    req.path("id")!!,
+                    req.path("bucketKey")!!,
                     Base64.getDecoder().decode(it.content),
                     buckets,
                     bucketContent,
@@ -70,11 +70,11 @@ fun copyKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, cl
     })
 
 fun bucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
-    "/{id:.+}" bind GET to { req ->
+    "/{bucketKey:.+}" bind GET to { req ->
         val bucket = req.subdomain(buckets)
         buckets[bucket]
             ?.let {
-                bucketContent["${bucket}-${req.path("id")!!}"]
+                bucketContent["${bucket}-${req.path("bucketKey")!!}"]
                     ?.content?.let { Base64.getDecoder().decode(it).inputStream() }
                     ?.let { Response(OK).body(it) }
                     ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
@@ -87,12 +87,12 @@ fun globalListBuckets(buckets: Storage<Unit>) = "/" bind GET to {
         .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
 }
 
-fun globalPutBucket(buckets: Storage<Unit>) = "/{id:.+}" bind PUT to { putBucket(it.path("id")!!, buckets) }
+fun globalPutBucket(buckets: Storage<Unit>) = "/{bucketName}" bind PUT to { putBucket(it.path("bucketName")!!, buckets) }
 
 fun globalListObjectsV2(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
-    "/{id:.+}" bind GET to {
+    "/{bucketName}" bind GET to {
         listObjectsV2(
-            "s3",
+            it.path("bucketName")!!,
             buckets, bucketContent
         )
     }
