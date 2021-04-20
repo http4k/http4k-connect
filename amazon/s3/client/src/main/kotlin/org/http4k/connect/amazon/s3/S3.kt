@@ -4,8 +4,8 @@ import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsServiceCompanion
-import org.http4k.connect.amazon.s3.action.GetKey
-import org.http4k.connect.amazon.s3.action.PutKey
+import org.http4k.connect.amazon.s3.action.GetObject
+import org.http4k.connect.amazon.s3.action.PutObject
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
@@ -28,8 +28,8 @@ interface S3 {
 interface S3Bucket {
     operator fun <R> invoke(action: S3BucketAction<R>): Result<R, RemoteFailure>
 
-    operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure> = this(GetKey(key))
-    operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure> = this(PutKey(key, content))
+    operator fun get(key: BucketKey): Result<InputStream?, RemoteFailure> = this(GetObject(key))
+    operator fun set(key: BucketKey, content: InputStream): Result<Unit, RemoteFailure> = this(PutObject(key, content))
 
     companion object : AwsServiceCompanion("s3")
 }

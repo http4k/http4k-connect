@@ -7,7 +7,12 @@ import org.http4k.connect.amazon.core.model.ResourceId
 
 class BucketName private constructor(value: String) : ResourceId(value) {
 
-    fun toUri(region: Region) = AwsService.of("$this.s3").toUri(region)
+    fun requiresPathStyleApi() = value.contains('.')
+
+    fun toUri(region: Region) = when {
+        requiresPathStyleApi() -> AwsService.of("s3").toUri(region).path("/$value")
+        else -> AwsService.of("$this.s3").toUri(region)
+    }
 
     companion object : NonBlankStringValueFactory<BucketName>(::BucketName)
 }

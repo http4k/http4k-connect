@@ -13,7 +13,7 @@ import org.http4k.core.Uri
 import java.io.InputStream
 
 @Http4kConnectAction
-data class GetKey(val key: BucketKey) : S3BucketAction<InputStream?> {
+data class GetObject(val key: BucketKey) : S3BucketAction<InputStream?> {
     override fun toRequest() = Request(GET, uri())
 
     override fun toResult(response: Response) = with(response) {

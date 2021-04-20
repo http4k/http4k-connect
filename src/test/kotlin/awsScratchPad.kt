@@ -1,64 +1,38 @@
 import org.http4k.aws.AwsSdkClient
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.cloudfront.CloudFront
 import org.http4k.connect.amazon.cloudfront.FakeCloudFront
-import org.http4k.connect.amazon.cloudfront.model.DistributionId
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
-import software.amazon.awssdk.services.cloudfront.CloudFrontClient
-import software.amazon.awssdk.services.cloudfront.model.CreateInvalidationRequest
-import software.amazon.awssdk.services.cloudfront.model.InvalidationBatch
-import software.amazon.awssdk.services.cloudfront.model.Paths
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
+import java.util.UUID
 
 const val USE_REAL_CLIENT = true
 
 fun main() {
     val http: HttpHandler = if (USE_REAL_CLIENT) PrintRequestAndResponse().then(JavaHttpClient()) else FakeCloudFront()
 
-    val distributionId = DistributionId.of("E1HHLORGLBAQYP")
-    val client = CloudFrontClient.builder()
+    val client = S3Client.builder()
+        .region(Region.EU_WEST_2)
+        .build()
+
+    val loudClient = S3Client.builder()
+        .region(Region.EU_WEST_2)
         .httpClient(AwsSdkClient(http))
         .build()
 
-    CloudFront
+    val bucketName = UUID.randomUUID().toString().replace('-', '.')
 
+    println(client.createBucket(CreateBucketRequest.builder().bucket(bucketName).build()))
 
-//    println(
-//        client.createDistribution(
-//            CreateDistributionRequest.builder()
-//                .build()
-//        )
-//    )
-//
-//    println(
-//        client.createDistribution(
-//            CreateDistributionRequest.builder()
-//                .build()
-//        )
-//    )
-
-//    CloudFront.Http(
-//        Region.of("eu-west-2"),
-//        { AwsCredentials("", "") },
-//        http
-//    ).createInvalidation(DistributionId.of("123"), "foo")
-//
-    println(
-        client.createInvalidation(
-            CreateInvalidationRequest.builder()
-                .invalidationBatch(
-                    InvalidationBatch.builder()
-                        .paths(
-                            Paths.builder()
-                                .items("123", "456")
-                                .quantity(5)
-                                .build()
-                        )
-                        .build()
-                )
-                .distributionId(distributionId.value).build()
-        )
-    )
+    try {
+        loudClient.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build())
+    } finally {
+        println(client.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build()))
+    }
 
 }
