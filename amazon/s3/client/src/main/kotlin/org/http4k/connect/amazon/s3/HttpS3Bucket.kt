@@ -8,7 +8,9 @@ import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.http4k.core.then
+import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.Payload
 import java.time.Clock
 
@@ -23,8 +25,13 @@ fun S3Bucket.Companion.Http(
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
 ) = object : S3Bucket {
+    private val pathPrefixToUse = if (bucketName.requiresPathStyleApi()) "/$bucketName" else ""
+    private val bucketDomainToUse = if (bucketName.requiresPathStyleApi()) "" else "$bucketName."
+
     private val signedHttp =
-        signAwsRequests(bucketRegion, credentialsProvider, clock, payloadMode, "$bucketName.").then(http)
+        SetBaseUriFrom(Uri.of(pathPrefixToUse))
+            .then(signAwsRequests(bucketRegion, credentialsProvider, clock, payloadMode, bucketDomainToUse))
+            .then(http)
 
     override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
