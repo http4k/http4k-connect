@@ -5,7 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.1.0.0
 - **http4k-connect-amazon-s3*** : Add support for path-based bucket operations (ie. buckets with `.` in the name)
-- **http4k-connect-amazon-s3*** : [Rename break] Renamed `*Key` actions to match S3 API
+- **http4k-connect-amazon-s3*** : [Rename break] Renamed `*Key` actions to match S3 API (now `*Object`)
 
 ### v3.0.3.0
 - **http4k-connect-*** : Add convenience functions for getting AWS environmental variables from an http4k Environment object.
