@@ -15,7 +15,7 @@ import java.util.UUID
 
 abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
 
-    private val bucket = BucketName.of(UUID.randomUUID().toString())
+    abstract val bucket: BucketName
 
     private val s3Bucket by lazy {
         S3Bucket.Http(bucket, aws.region, { aws.credentials }, http)
