@@ -13,7 +13,10 @@ import org.http4k.connect.amazon.s3.endpoints.copyKey
 import org.http4k.connect.amazon.s3.endpoints.globalListBuckets
 import org.http4k.connect.amazon.s3.endpoints.globalListObjectsV2
 import org.http4k.connect.amazon.s3.endpoints.globalPutBucket
+import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketDeleteKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketGetKey
+import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketPutKey
+import org.http4k.connect.amazon.s3.endpoints.pathBasedCopyKey
 import org.http4k.connect.amazon.s3.endpoints.subdomain
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.storage.InMemory
@@ -38,7 +41,10 @@ class FakeS3(
 
     override val app = routes(
         isS3 bind routes(
+            pathBasedCopyKey(buckets, bucketContent, clock),
             pathBasedBucketGetKey(buckets, bucketContent),
+            pathBasedBucketPutKey(buckets, bucketContent, clock),
+            pathBasedBucketDeleteKey(buckets, bucketContent),
             globalListObjectsV2(buckets, bucketContent),
             globalPutBucket(buckets),
             globalListBuckets(buckets)

@@ -14,9 +14,8 @@ import org.http4k.template.viewModel
 
 fun Request.subdomain(buckets: Storage<Unit>): String =
     (header("x-forwarded-host") ?: header("host"))
-        ?.also { System.err.print("SUBDOMAIN: $it") }
         ?.split('.')
-        ?.firstOrNull().also { System.err.print("  is $it\n") }
+        ?.firstOrNull()
         ?: run {
             buckets[GLOBAL_BUCKET] = Unit
             GLOBAL_BUCKET
