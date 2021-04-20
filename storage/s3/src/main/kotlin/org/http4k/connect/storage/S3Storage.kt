@@ -5,7 +5,7 @@ import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
 import org.http4k.connect.amazon.s3.S3Bucket
-import org.http4k.connect.amazon.s3.action.DeleteKey
+import org.http4k.connect.amazon.s3.action.DeleteObject
 import org.http4k.connect.amazon.s3.action.ListObjectsV2
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.format.AutoMarshalling
@@ -25,7 +25,7 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling:
         }
 
         override fun remove(key: String) =
-            s3(DeleteKey(BucketKey.of(key)))
+            s3(DeleteObject(BucketKey.of(key)))
                 .map { true }
                 .recover { it.throwIt() }
 
@@ -42,7 +42,7 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling:
             when {
                 isEmpty() -> false
                 else -> {
-                    forEach { s3(DeleteKey(it)) }
+                    forEach { s3(DeleteObject(it)) }
                     true
                 }
             }

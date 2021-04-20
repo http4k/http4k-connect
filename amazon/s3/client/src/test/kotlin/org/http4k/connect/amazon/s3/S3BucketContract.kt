@@ -28,7 +28,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
 
     @BeforeEach
     fun recreate() {
-        s3Bucket.deleteKey(key)
+        s3Bucket.deleteObject(key)
         s3Bucket.deleteBucket()
         s3.createBucket(bucket, aws.region).successValue()
     }
@@ -47,18 +47,18 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
-            assertThat(s3Bucket.copyKey(bucket, key, newKey).successValue(), equalTo(Unit))
+            assertThat(s3Bucket.copyObject(bucket, key, newKey).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
             assertThat(
                 s3Bucket.listObjectsV2().successValue().items.map { it.Key },
                 equalTo(listOf(key, newKey).sortedBy { it.value })
             )
-            assertThat(s3Bucket.deleteKey(newKey).successValue(), equalTo(Unit))
-            assertThat(s3Bucket.deleteKey(key).successValue(), equalTo(Unit))
+            assertThat(s3Bucket.deleteObject(newKey).successValue(), equalTo(Unit))
+            assertThat(s3Bucket.deleteObject(key).successValue(), equalTo(Unit))
             assertThat(s3Bucket[key].successValue(), equalTo(null))
             assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(emptyList())))
         } finally {
-            s3Bucket.deleteKey(key)
+            s3Bucket.deleteObject(key)
             s3Bucket.deleteBucket()
         }
     }
