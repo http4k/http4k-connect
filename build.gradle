@@ -306,8 +306,6 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     }
 }
 
-tasks["bintrayUpload"].onlyIf { false }
-
 tasks.create("listProjects") {
     doLast {
         subprojects.forEach { System.err.println(it.name) }
