@@ -24,7 +24,8 @@ class FakeDynamoDb(
 
     override val app = routes(
         "/" bind POST to routes(
-            api.createTable(tables)
+            api.createTable(tables),
+            api.deleteTable(tables)
         )
     )
 
