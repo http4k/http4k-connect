@@ -24,8 +24,8 @@ data class GetItem(
 
 @JsonSerializable
 data class GetResponse(
-    val ConsumedCapacity: ConsumedCapacity? = null,
-    internal val Item: ItemResult? = null
+    internal val Item: ItemResult? = null,
+    val ConsumedCapacity: ConsumedCapacity? = null
 ) {
     val item = Item?.toItem()
 }
