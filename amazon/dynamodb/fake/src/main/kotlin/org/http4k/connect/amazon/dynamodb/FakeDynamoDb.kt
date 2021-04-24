@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.dynamodb.endpoints.createTable
 import org.http4k.connect.amazon.dynamodb.endpoints.deleteTable
 import org.http4k.connect.amazon.dynamodb.endpoints.getItem
+import org.http4k.connect.amazon.dynamodb.endpoints.listTables
 import org.http4k.connect.amazon.dynamodb.endpoints.putItem
 import org.http4k.connect.amazon.dynamodb.endpoints.updateItem
 import org.http4k.connect.amazon.dynamodb.model.Item
@@ -32,6 +33,7 @@ class FakeDynamoDb(
             api.createTable(tables),
             api.deleteTable(tables),
             api.getItem(tables),
+            api.listTables(tables),
             api.putItem(tables),
             api.updateItem(tables)
         )
