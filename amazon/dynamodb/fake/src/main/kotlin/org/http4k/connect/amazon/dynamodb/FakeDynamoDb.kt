@@ -12,6 +12,8 @@ import org.http4k.connect.amazon.dynamodb.endpoints.listTables
 import org.http4k.connect.amazon.dynamodb.endpoints.putItem
 import org.http4k.connect.amazon.dynamodb.endpoints.updateItem
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.TableDescription
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
@@ -20,9 +22,14 @@ import org.http4k.routing.routes
 import java.time.Clock
 import java.time.Clock.systemUTC
 
+data class TableDefinition(val table: TableDescription, val items: List<Item>) {
+    fun retrieve(key: Key) = items.firstOrNull { it.toList().containsAll(key.toList()) }
+
+    fun withItem(item: Item) = copy(items = items + item)
+}
 
 class FakeDynamoDb(
-    tables: Storage<List<Item>> = Storage.InMemory(),
+    tables: Storage<TableDefinition> = Storage.InMemory(),
     private val clock: Clock = systemUTC()
 ) : ChaosFake() {
 
