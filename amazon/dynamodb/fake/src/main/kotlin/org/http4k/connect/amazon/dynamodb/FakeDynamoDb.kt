@@ -5,6 +5,7 @@ import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.dynamodb.endpoints.batchGetItem
 import org.http4k.connect.amazon.dynamodb.endpoints.createTable
 import org.http4k.connect.amazon.dynamodb.endpoints.deleteTable
 import org.http4k.connect.amazon.dynamodb.endpoints.getItem
@@ -38,6 +39,7 @@ class FakeDynamoDb(
 
     override val app = routes(
         "/" bind POST to routes(
+            api.batchGetItem(tables),
             api.createTable(tables),
             api.deleteTable(tables),
             api.getItem(tables),
