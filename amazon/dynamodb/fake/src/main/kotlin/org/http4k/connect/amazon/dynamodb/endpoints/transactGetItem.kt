@@ -9,11 +9,12 @@ import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.transactGetItems(tables: Storage<DynamoTable>) = route<TransactGetItems> {
     GetItemsResponse(
-        it.TransactItems.map {
+        it.TransactItems.map { get ->
             GetItemsResponseItem(
-                tables[it.Get["TableName"]!!.toString()]?.let { table ->
-                    emptyMap()
-                } ?: emptyMap()
+                tables[get.Get["TableName"]!!.toString()]
+                    ?.let {
+                        it.retrieve(convert(get.Get["Key"]!!))?.asItemResult()
+                    } ?: emptyMap()
             )
         }
     )
