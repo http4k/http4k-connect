@@ -11,6 +11,7 @@ import org.http4k.connect.amazon.dynamodb.endpoints.getItem
 import org.http4k.connect.amazon.dynamodb.endpoints.listTables
 import org.http4k.connect.amazon.dynamodb.endpoints.putItem
 import org.http4k.connect.amazon.dynamodb.endpoints.updateItem
+import org.http4k.connect.amazon.dynamodb.endpoints.updateTable
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TableDescription
@@ -42,7 +43,8 @@ class FakeDynamoDb(
             api.getItem(tables),
             api.listTables(tables),
             api.putItem(tables),
-            api.updateItem(tables)
+            api.updateItem(tables),
+            api.updateTable(tables)
         )
     )
 
