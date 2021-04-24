@@ -20,6 +20,6 @@ data class BatchWriteItem(
 
 @JsonSerializable
 data class BatchWriteItems(
-    val ConsumedCapacity: List<ConsumedCapacity>? = null,
     val Responses: Map<TableName, TokensToNames>? = null,
+    val ConsumedCapacity: List<ConsumedCapacity>? = null,
     val UnprocessedKeys: Map<String, ReqWriteItem>? = null)
