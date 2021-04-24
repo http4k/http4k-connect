@@ -4,26 +4,22 @@ import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.action.BatchWriteItem
 import org.http4k.connect.amazon.dynamodb.action.BatchWriteItems
-import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.batchWriteItem(tables: Storage<DynamoTable>) = route<BatchWriteItem> {
-    BatchWriteItems(
-        it.RequestItems
-            .mapNotNull { (table, writeItems) ->
-                tables[table.value]
-                    ?.let {
-                        writeItems
-                            .mapNotNull {
-                                when {
-                                    it.PutRequest != null -> null
-                                    it.DeleteRequest != null -> ""
-                                    else -> null
-                                }
+    it.RequestItems
+        .forEach { (tableName, writeItems) ->
+            tables[tableName.value]
+                ?.let { table ->
+                    writeItems
+                        .map {
+                            tables[tableName.value] = when {
+                                it.PutRequest != null -> table.withItem(it.PutRequest!!["Item"]!!)
+                                it.DeleteRequest != null -> table.withoutItem(it.DeleteRequest!!["Key"]!!)
+                                else -> table
                             }
-                        table to emptyMap<String, AttributeName>()
-                    }
-            }
-            .toMap()
-    )
+                        }
+                }
+        }
+    BatchWriteItems()
 }
