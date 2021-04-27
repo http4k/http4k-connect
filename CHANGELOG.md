@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.1.0.1
+- **http4k-connect-amazon-dynamodb** : Removed non-nullable field on ConsumedCapacity.
+
 ### v3.1.0.0
 - **http4k-connect-amazon-s3*** : Add support for path-based bucket operations (ie. buckets with `.` in the name)
 - **http4k-connect-amazon-s3*** : [Rename break] Renamed `*Key` actions to match S3 API (now `*Object`)
