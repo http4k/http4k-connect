@@ -55,17 +55,17 @@ class RefreshToken private constructor(value: String) : StringValue(value) {
 }
 
 data class NewDeviceMetadata(
-    val DeviceGroupKey: String?,
-    val DeviceKey: String?
+    val DeviceGroupKey: String? = null,
+    val DeviceKey: String? = null
 )
 
 data class AuthenticationResult(
-    val AccessToken: AccessToken?,
-    val ExpiresIn: Int?,
-    val IdToken: IdToken?,
-    val NewDeviceMetadata: NewDeviceMetadata?,
-    val RefreshToken: RefreshToken?,
-    val TokenType: String?
+    val AccessToken: AccessToken? = null,
+    val ExpiresIn: Int? = null,
+    val IdToken: IdToken? = null,
+    val NewDeviceMetadata: NewDeviceMetadata? = null,
+    val RefreshToken: RefreshToken? = null,
+    val TokenType: String? = null
 )
 
 enum class ChallengeName {
@@ -351,7 +351,7 @@ data class UserPoolClient(
     val LastModifiedDate: Timestamp,
     val RefreshTokenValidity: Int,
     val TokenValidityUnits: TokenValidityUnits,
-    val AllowedOAuthFlows: List<OAuthFlow> ?= null,
+    val AllowedOAuthFlows: List<OAuthFlow>? = null,
     val ClientSecret: ClientSecret? = null,
     val AccessTokenValidity: Int? = null,
     val AllowedOAuthScopes: List<String>? = null,

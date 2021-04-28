@@ -4,6 +4,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.cognito.model.AnalyticsConfiguration
 import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.ExplicitAuthFlow
+import org.http4k.connect.amazon.cognito.model.OAuthFlow
 import org.http4k.connect.amazon.cognito.model.TokenValidityUnits
 import org.http4k.connect.amazon.cognito.model.UserPoolClient
 import org.http4k.connect.amazon.cognito.model.UserPoolId
@@ -15,8 +16,8 @@ import se.ansman.kotshi.JsonSerializable
 data class CreateUserPoolClient(
     val UserPoolId: UserPoolId,
     val ClientName: ClientName,
+    val AllowedOAuthFlows: List<OAuthFlow>? = null,
     val AccessTokenValidity: Int? = null,
-    val AllowedOAuthFlows: List<String>? = null,
     val AllowedOAuthFlowsUserPoolClient: Boolean? = null,
     val AllowedOAuthScopes: List<String>? = null,
     val AnalyticsConfiguration: AnalyticsConfiguration? = null,

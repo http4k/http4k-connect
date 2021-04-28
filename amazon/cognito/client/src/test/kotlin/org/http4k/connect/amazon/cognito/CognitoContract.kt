@@ -4,7 +4,10 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.cognito.model.AttributeType
+import org.http4k.connect.amazon.cognito.model.AuthFlow.USER_PASSWORD_AUTH
+import org.http4k.connect.amazon.cognito.model.ChallengeName.NEW_PASSWORD_REQUIRED
 import org.http4k.connect.amazon.cognito.model.ClientName
+import org.http4k.connect.amazon.cognito.model.OAuthFlow.client_credentials
 import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.Username
@@ -52,10 +55,10 @@ abstract class CognitoContract(http: HttpHandler) : AwsContract() {
 
     @Test
     fun `user auth lifecycle`() {
+        val username = Username.of(UUID.randomUUID().toString())
         val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!
 
         try {
-            val username = Username.of(UUID.randomUUID().toString())
             cognito.adminCreateUser(
                 username, id, listOf(
                     AttributeType("email", "test@example.com"),
@@ -63,10 +66,23 @@ abstract class CognitoContract(http: HttpHandler) : AwsContract() {
                 )
             ).successValue()
 
-            val client = cognito.createUserPoolClient(id, ClientName.of(username.value)).successValue().UserPoolClient
-            cognito.deleteUserPoolClient(id, client.ClientId).successValue()
+            val client = cognito.createUserPoolClient(id, ClientName.of(username.value), listOf(client_credentials))
+                .successValue().UserPoolClient
 
-//            cognito.initiateAuth(client.ClientId, USER_PASSWORD_AUTH).successValue()
+            val challenge = cognito.initiateAuth(
+                client.ClientId, USER_PASSWORD_AUTH, mapOf(
+                    "USERNAME" to username.value,
+                    "PASSWORD" to "foobar"
+                )
+            ).successValue()
+
+            val nextChallenge = cognito.respondToAuthChallenge(
+                client.ClientId, NEW_PASSWORD_REQUIRED, mapOf(
+                    NEW_PASSWORD_REQUIRED to "",
+                )
+            ).successValue()
+
+            cognito.deleteUserPoolClient(id, client.ClientId).successValue()
 
             cognito.adminDeleteUser(username, id).successValue()
         } finally {
