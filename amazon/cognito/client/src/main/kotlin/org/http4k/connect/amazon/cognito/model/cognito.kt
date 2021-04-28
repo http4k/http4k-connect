@@ -2,6 +2,8 @@ package org.http4k.connect.amazon.cognito.model
 
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
+import dev.forkhandles.values.StringValueFactory
+import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.ResourceId
@@ -46,6 +48,10 @@ class AccessToken private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<AccessToken>(::AccessToken)
 }
 
+class UserCode private constructor(value: String) : StringValue(value) {
+    companion object : StringValueFactory<UserCode>(::UserCode, "\\d{6}".regex)
+}
+
 class IdToken private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<IdToken>(::IdToken)
 }
@@ -71,6 +77,10 @@ data class AuthenticationResult(
     val RefreshToken: RefreshToken? = null,
     val TokenType: String? = null
 )
+
+enum class VerifyStatus {
+    SUCCESS, ERROR
+}
 
 enum class ChallengeName {
     SMS_MFA, SOFTWARE_TOKEN_MFA, SELECT_MFA_TYPE, MFA_SETUP, PASSWORD_VERIFIER, CUSTOM_CHALLENGE, DEVICE_SRP_AUTH, DEVICE_PASSWORD_VERIFIER, ADMIN_NO_SRP_AUTH, NEW_PASSWORD_REQUIRED

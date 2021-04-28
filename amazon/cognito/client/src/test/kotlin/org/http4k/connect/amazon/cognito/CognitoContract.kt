@@ -11,6 +11,7 @@ import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.OAuthFlow.client_credentials
 import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
+import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.Username
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
@@ -78,6 +79,8 @@ abstract class CognitoContract(http: HttpHandler) : AwsContract() {
             ).successValue()
 
             cognito.associateSoftwareToken(AccessToken.of("1234"), challenge.Session).successValue()
+
+            cognito.verifySoftwareToken(UserCode.of("123456"), AccessToken.of("1234"), challenge.Session).successValue()
 
             val nextChallenge = cognito.respondToAuthChallenge(
                 client.ClientId, NEW_PASSWORD_REQUIRED, mapOf(
