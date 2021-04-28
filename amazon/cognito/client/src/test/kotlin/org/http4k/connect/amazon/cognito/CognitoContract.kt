@@ -16,6 +16,7 @@ import org.http4k.connect.amazon.cognito.model.Username
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -56,6 +57,7 @@ abstract class CognitoContract(http: HttpHandler) : AwsContract() {
     }
 
     @Test
+    @Disabled("WIP")
     fun `user auth lifecycle`() {
         val username = Username.of(UUID.randomUUID().toString())
         val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!

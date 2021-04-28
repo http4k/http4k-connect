@@ -2,10 +2,32 @@
 
 The Cognito connector provides the following Actions:
 
-### Default Fake port: 37192
+- AdminCreateUser
+- AdminDeleteUser
+- AdminDisableUser
+- AdminEnableUser
+- AdminGetUser
+- AdminResetUserPassword
+- AdminSetUserPassword
+- AssociateSoftwareToken
+- CognitoAction
+- CreateUserPool
+- CreateUserPoolClient
+- DeleteUserPool
+- DeleteUserPoolClient
+- InitiateAuth
+- RespondToAuthChallenge
+- VerifySoftwareToken
 
-To start:
+## # Fake
+There is currently no Fake implemented for Cognito.
 
-```
-FakeCognito().start()
-```
+[comment]: <> (### Default Fake port: 37192)
+
+[comment]: <> (To start:)
+
+[comment]: <> (```)
+
+[comment]: <> (FakeCognito&#40;&#41;.start&#40;&#41;)
+
+[comment]: <> (```)
