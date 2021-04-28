@@ -28,6 +28,7 @@ abstract class CognitoContract(http: HttpHandler) : AwsContract() {
     private val poolName = PoolName.of(UUID.randomUUID().toString())
 
     @Test
+    @Disabled
     fun `user pool lifecycle`() {
         val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!
 
