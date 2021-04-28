@@ -303,6 +303,7 @@ dependencies {
 
     implementation platform("software.amazon.awssdk:bom:$aws_sdk_version")
     implementation "software.amazon.awssdk:cloudfront"
+    implementation "software.amazon.awssdk:cognitoidentityprovider"
     implementation "software.amazon.awssdk:dynamodb"
     implementation "software.amazon.awssdk:kms"
     implementation "software.amazon.awssdk:lambda"

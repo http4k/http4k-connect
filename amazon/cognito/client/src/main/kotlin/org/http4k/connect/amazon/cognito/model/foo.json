@@ -1,0 +1,36 @@
+{
+    "UserPoolClient": {
+        "AccessTokenValidity": 123,
+        "AllowedOAuthFlows": [ "string" ],
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthScopes": [ "string" ],
+        "AnalyticsConfiguration": {
+            "ApplicationArn": "string",
+            "ApplicationId": "string",
+            "ExternalId": "string",
+            "RoleArn": "string",
+            "UserDataShared": true
+        },
+        "CallbackURLs": [ "string" ],
+        "ClientId": "string",
+        "ClientName": "string",
+        "ClientSecret": "string",
+        "CreationDate": 123,
+        "DefaultRedirectURI": "string",
+        "ExplicitAuthFlows": [ "string" ],
+        "IdTokenValidity": 123,
+        "LastModifiedDate": 123,
+        "LogoutURLs": [ "string" ],
+        "PreventUserExistenceErrors": "string",
+        "ReadAttributes": [ "string" ],
+        "RefreshTokenValidity": 123,
+        "SupportedIdentityProviders": [ "string" ],
+        "TokenValidityUnits": {
+            "AccessToken": "string",
+            "IdToken": "string",
+            "RefreshToken": "string"
+        },
+        "UserPoolId": "string",
+        "WriteAttributes": [ "string" ]
+    }
+}
