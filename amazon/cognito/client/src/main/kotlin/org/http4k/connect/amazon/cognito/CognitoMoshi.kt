@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.cognito.model.IdToken
 import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.RefreshToken
+import org.http4k.connect.amazon.cognito.model.SecretCode
 import org.http4k.connect.amazon.cognito.model.Session
 import org.http4k.connect.amazon.cognito.model.UserPoolId
 import org.http4k.connect.amazon.cognito.model.Username
@@ -36,6 +37,7 @@ object CognitoMoshi : ConfigurableMoshi(
         .value(RefreshToken)
         .value(Password)
         .value(PoolName)
+        .value(SecretCode)
         .value(Session)
         .value(Username)
         .value(UserPoolId)

@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.cognito
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.cognito.model.AccessToken
 import org.http4k.connect.amazon.cognito.model.AttributeType
 import org.http4k.connect.amazon.cognito.model.AuthFlow.USER_PASSWORD_AUTH
 import org.http4k.connect.amazon.cognito.model.ChallengeName.NEW_PASSWORD_REQUIRED
@@ -75,6 +76,8 @@ abstract class CognitoContract(http: HttpHandler) : AwsContract() {
                     "PASSWORD" to "foobar"
                 )
             ).successValue()
+
+            cognito.associateSoftwareToken(AccessToken.of("1234"), challenge.Session).successValue()
 
             val nextChallenge = cognito.respondToAuthChallenge(
                 client.ClientId, NEW_PASSWORD_REQUIRED, mapOf(

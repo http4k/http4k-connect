@@ -54,6 +54,10 @@ class RefreshToken private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<RefreshToken>(::RefreshToken)
 }
 
+class SecretCode private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<SecretCode>(::SecretCode)
+}
+
 data class NewDeviceMetadata(
     val DeviceGroupKey: String? = null,
     val DeviceKey: String? = null
