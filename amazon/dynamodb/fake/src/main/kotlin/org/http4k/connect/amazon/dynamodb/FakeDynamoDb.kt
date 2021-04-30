@@ -17,7 +17,10 @@ import org.http4k.connect.amazon.dynamodb.endpoints.executeTransaction
 import org.http4k.connect.amazon.dynamodb.endpoints.getItem
 import org.http4k.connect.amazon.dynamodb.endpoints.listTables
 import org.http4k.connect.amazon.dynamodb.endpoints.putItem
+import org.http4k.connect.amazon.dynamodb.endpoints.query
+import org.http4k.connect.amazon.dynamodb.endpoints.scan
 import org.http4k.connect.amazon.dynamodb.endpoints.transactGetItems
+import org.http4k.connect.amazon.dynamodb.endpoints.transactWriteItems
 import org.http4k.connect.amazon.dynamodb.endpoints.updateItem
 import org.http4k.connect.amazon.dynamodb.endpoints.updateTable
 import org.http4k.connect.storage.InMemory
@@ -49,10 +52,10 @@ class FakeDynamoDb(
             api.getItem(tables),
             api.listTables(tables),
             api.putItem(tables),
-//            api.query(tables),// todo
-//            api.scan(tables),// todo
+            api.query(tables),// todo
+            api.scan(tables),// todo
             api.transactGetItems(tables),// todo
-//            api.transactWriteItems(tables),// todo
+            api.transactWriteItems(tables),// todo
             api.updateItem(tables),
             api.updateTable(tables)
         )

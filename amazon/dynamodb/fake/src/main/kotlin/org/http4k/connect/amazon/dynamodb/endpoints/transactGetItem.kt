@@ -8,14 +8,16 @@ import org.http4k.connect.amazon.dynamodb.model.GetItemsResponseItem
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.transactGetItems(tables: Storage<DynamoTable>) = route<TransactGetItems> {
-    GetItemsResponse(
-        it.TransactItems.map { get ->
-            GetItemsResponseItem(
-                tables[get.Get["TableName"]!!.toString()]
-                    ?.let {
-                        it.retrieve(convert(get.Get["Key"]!!))?.asItemResult()
-                    } ?: emptyMap()
-            )
-        }
-    )
+    synchronized(tables) {
+        GetItemsResponse(
+            it.TransactItems.map { get ->
+                GetItemsResponseItem(
+                    tables[get.Get["TableName"]!!.toString()]
+                        ?.let {
+                            it.retrieve(convert(get.Get["Key"]!!))?.asItemResult()
+                        } ?: emptyMap()
+                )
+            }
+        )
+    }
 }

@@ -7,7 +7,5 @@ import org.http4k.connect.amazon.dynamodb.action.DescribedTable
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.describeTable(tables: Storage<DynamoTable>) = route<DescribeTable> {
-    tables[it.TableName.value]?.let { current ->
-        DescribedTable(current.table)
-    }
+    tables[it.TableName.value]?.let { DescribedTable(it.table) }
 }

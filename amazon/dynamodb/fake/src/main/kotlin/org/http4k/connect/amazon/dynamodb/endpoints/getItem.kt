@@ -6,7 +6,5 @@ import org.http4k.connect.amazon.dynamodb.action.GetItem
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.getItem(tables: Storage<DynamoTable>) = route<GetItem> {
-    val tableName = it.TableName
-    val key = it.Key
-    tables.getItemByKey(tableName, key)
+    tables.getItemByKey(it.TableName, it.Key)
 }

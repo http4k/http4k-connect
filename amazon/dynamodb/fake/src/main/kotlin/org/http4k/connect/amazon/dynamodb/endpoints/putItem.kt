@@ -6,7 +6,5 @@ import org.http4k.connect.amazon.dynamodb.action.PutItem
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.putItem(tables: Storage<DynamoTable>) = route<PutItem> {
-    val tableName = it.TableName
-    val item = it.Item
-    tables.putItem(tableName, item)
+    tables.putItem(it.TableName, it.Item)
 }
