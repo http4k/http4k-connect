@@ -16,6 +16,7 @@ import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.UserPoolId
 import org.http4k.connect.amazon.cognito.model.Username
 import org.http4k.format.AwsCoreJsonAdapterFactory
+import org.http4k.format.CollectionEdgeCasesAdapter
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
@@ -27,6 +28,7 @@ object CognitoMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KotshiCognitoJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
+        .add(CollectionEdgeCasesAdapter)
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()

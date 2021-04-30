@@ -7,6 +7,7 @@ import org.http4k.connect.amazon.secretsmanager.model.VersionId
 import org.http4k.connect.amazon.secretsmanager.model.VersionStage
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.AwsCoreJsonAdapterFactory
+import org.http4k.format.CollectionEdgeCasesAdapter
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
@@ -18,6 +19,7 @@ object SecretsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KotshiSecretsManagerJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
+        .add(CollectionEdgeCasesAdapter)
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()

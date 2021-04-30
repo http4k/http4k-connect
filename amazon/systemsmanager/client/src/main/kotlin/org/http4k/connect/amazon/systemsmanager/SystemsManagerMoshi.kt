@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.systemsmanager.model.SSMParameterName
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.AwsCoreJsonAdapterFactory
+import org.http4k.format.CollectionEdgeCasesAdapter
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
@@ -16,6 +17,7 @@ object SystemsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KotshiSystemsManagerJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
+        .add(CollectionEdgeCasesAdapter)
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()

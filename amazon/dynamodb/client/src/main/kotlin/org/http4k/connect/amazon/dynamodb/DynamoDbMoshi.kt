@@ -6,6 +6,7 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.format.AwsCoreJsonAdapterFactory
+import org.http4k.format.CollectionEdgeCasesAdapter
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
@@ -17,6 +18,7 @@ object DynamoDbMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KotshiDynamoDbJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
+        .add(CollectionEdgeCasesAdapter)
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()
