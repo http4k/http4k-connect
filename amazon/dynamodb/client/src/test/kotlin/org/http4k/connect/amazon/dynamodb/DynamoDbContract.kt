@@ -120,7 +120,7 @@ abstract class DynamoDbContract(
                 )
             ).successValue()
 
-            assertThat(write.UnprocessedKeys, absent())
+            assertThat(write.UnprocessedItems, absent())
 
             val get = batchGetItem(
                 mapOf(table to ReqGetItem.Get(listOf(Item(attrS of "hello2"))))
