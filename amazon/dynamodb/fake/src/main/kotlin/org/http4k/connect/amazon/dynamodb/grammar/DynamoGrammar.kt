@@ -35,7 +35,10 @@ object DynamoDbGrammar {
             GreaterThan(::expr).with(cache),
             GreaterThanOrEqual(::expr).with(cache)
         ),
-        oneOf(In(::expr).with(cache), Size(::expr).with(cache)),
+        oneOf(
+            In(::expr).with(cache),
+            Size(::expr).with(cache)
+        ),
         oneOf(
             AttributeExists(::expr).with(cache),
             AttributeNotExists(::expr).with(cache),
