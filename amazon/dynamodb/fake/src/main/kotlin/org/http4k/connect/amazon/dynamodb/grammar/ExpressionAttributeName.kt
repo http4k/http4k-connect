@@ -7,11 +7,13 @@ import parser4k.map
 import parser4k.oneOf
 import parser4k.skipFirst
 
-fun ExpressionAttributeName(parser: () -> Parser<Expr>): Parser<Expr> = inOrder(oneOf('#'), Tokens.identifier)
-    .skipFirst().map { value ->
-        Expr { item ->
-            (item.names[value] ?: error("missing name $value")).let {
-                ConditionAttributeValue(it.value).eval(item)
+object ExpressionAttributeName : ExprFactory {
+    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> = inOrder(oneOf('#'), Tokens.identifier)
+        .skipFirst().map { value ->
+            Expr { item ->
+                (item.names[value] ?: error("missing name $value")).let {
+                    ConditionAttributeValue(it.value).eval(item)
+                }
             }
         }
-    }
+}

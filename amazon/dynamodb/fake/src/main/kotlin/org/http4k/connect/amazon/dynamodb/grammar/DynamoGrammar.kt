@@ -27,32 +27,17 @@ object DynamoDbGrammar {
         Not(::expr).with(cache),
         Or(::expr).with(cache),
         Between(::expr).with(cache),
-        oneOf(
-            Equal(::expr).with(cache),
-            NotEqual(::expr).with(cache),
-            LessThan(::expr).with(cache),
-            LessThanOrEqual(::expr).with(cache),
-            GreaterThan(::expr).with(cache),
-            GreaterThanOrEqual(::expr).with(cache)
-        ),
-        oneOf(
-            In(::expr).with(cache),
-            Size(::expr).with(cache)
-        ),
-        oneOf(
-            AttributeExists(::expr).with(cache),
-            AttributeNotExists(::expr).with(cache),
-            AttributeType(::expr).with(cache),
-            BeginsWith(::expr).with(cache),
-            Contains(::expr).with(cache)
-        ),
-        Paren(::expr).nestedPrecedence(),
-        oneOfWithPrecedence(
-            ExpressionAttributeName(::expr).with(cache),
-            MapAttributeValue(::expr).with(cache)
-        ),
+        oneOfWithCache(Equal, NotEqual, LessThan, LessThanOrEqual, GreaterThan, GreaterThanOrEqual),
+        oneOfWithCache(In, Size),
+        oneOfWithCache(AttributeExists, AttributeNotExists, AttributeType, BeginsWith, Contains),
+        Paren(::expr).with(cache).nestedPrecedence(),
+        oneOfWithPrecedenceWithCache(ExpressionAttributeName, MapAttributeValue),
         IndexedAttributeValue(::expr).with(cache),
         ExpressionAttributeValue(::expr).with(cache),
         ConditionAttributeValue(::expr).with(cache)
     ).reset(cache)
+
+    private fun oneOfWithCache(vararg fn: ExprFactory): Parser<Expr> = oneOf(fn.map { it(::expr).with(cache) })
+    private fun oneOfWithPrecedenceWithCache(vararg fn: ExprFactory): Parser<Expr> =
+        oneOfWithPrecedence(fn.map { it(::expr).with(cache) })
 }

@@ -6,10 +6,12 @@ import parser4k.Parser
 import parser4k.commonparsers.Tokens
 import parser4k.map
 
-fun ConditionAttributeValue(parser: () -> Parser<Expr>): Parser<Expr> = Tokens.identifier
-    .map { value ->
-        ConditionAttributeValue(value)
-    }
+object ConditionAttributeValue : ExprFactory {
+    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> = Tokens.identifier
+        .map { value ->
+            ConditionAttributeValue(value)
+        }
+}
 
 fun ConditionAttributeValue(value: String) = Expr { item ->
     item.item[AttributeName.of(value)] ?: AttributeValue.Null()

@@ -8,11 +8,13 @@ import parser4k.inOrder
 import parser4k.map
 import parser4k.skipWrapper
 
-fun AttributeExists(parser: () -> Parser<Expr>) =
-    inOrder(token("attribute_exists"), token("("), Tokens.identifier, token(")"))
-        .skipWrapper()
-        .map { (_, name) ->
-            Expr {
-                it.item.containsKey(AttributeName.of(name))
+object AttributeExists : ExprFactory {
+    override operator fun invoke(parser: () -> Parser<Expr>) =
+        inOrder(token("attribute_exists"), token("("), Tokens.identifier, token(")"))
+            .skipWrapper()
+            .map { (_, name) ->
+                Expr {
+                    it.item.containsKey(AttributeName.of(name))
+                }
             }
-        }
+}

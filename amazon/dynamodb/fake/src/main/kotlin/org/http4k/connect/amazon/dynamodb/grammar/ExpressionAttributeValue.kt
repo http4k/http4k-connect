@@ -7,8 +7,10 @@ import parser4k.map
 import parser4k.oneOf
 import parser4k.skipFirst
 
-fun ExpressionAttributeValue(parser: () -> Parser<Expr>): Parser<Expr> = inOrder(oneOf(':'), Tokens.identifier)
-    .skipFirst().map(::ExpressionAttributeValue)
+object ExpressionAttributeValue : ExprFactory {
+    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> = inOrder(oneOf(':'), Tokens.identifier)
+        .skipFirst().map(::ExpressionAttributeValue)
+}
 
 fun ExpressionAttributeValue(value: String) = Expr { item ->
     item.values[value] ?: error("missing value $value")

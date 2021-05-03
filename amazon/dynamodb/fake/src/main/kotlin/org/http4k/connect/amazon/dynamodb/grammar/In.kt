@@ -7,17 +7,21 @@ import parser4k.inOrder
 import parser4k.map
 import parser4k.ref
 
-fun In(parser: () -> Parser<Expr>): Parser<Expr> =
-    inOrder(
-        ref(parser),
-        token("IN"),
-        token("("),
-        parser4k.repeat(anyCharExcept(')')).map { it.joinToString("") },
-        token(")")
-    ).map { (attr, _, _, values) ->
-        Expr { item ->
-            values.split(",")
-                .map { ExpressionAttributeValue(it.trim().trimStart(':')) }.map { it.eval(item) }
-                .contains(attr.eval(item))
+typealias ExprFactory = (() -> Parser<Expr>) -> Parser<Expr>
+
+object In : ExprFactory {
+    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> =
+        inOrder(
+            ref(parser),
+            token("IN"),
+            token("("),
+            parser4k.repeat(anyCharExcept(')')).map { it.joinToString("") },
+            token(")")
+        ).map { (attr, _, _, values) ->
+            Expr { item ->
+                values.split(",")
+                    .map { ExpressionAttributeValue(it.trim().trimStart(':')) }.map { it.eval(item) }
+                    .contains(attr.eval(item))
+            }
         }
-    }
+}

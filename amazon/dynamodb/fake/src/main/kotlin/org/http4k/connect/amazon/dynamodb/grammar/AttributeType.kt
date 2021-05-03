@@ -10,20 +10,23 @@ import parser4k.map
 import parser4k.ref
 import parser4k.skipWrapper
 
-fun AttributeType(parser: () -> Parser<Expr>): Parser<Expr> =
-    inOrder(
-        token("attribute_type"),
-        token("("),
-        ref(parser),
-        token(","),
-        Tokens.identifier,
-        token(")")
-    ).skipWrapper()
-        .map { (_, attr, _, dynamoType) ->
-            Expr { item ->
-                attr.eval(item).let {
-                    AttributeValue::class.java.methods.find { it.name == "get" + DynamoDataType.valueOf(dynamoType).name }
-                        ?.invoke(it) != null
+object AttributeType : ExprFactory {
+    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> =
+        inOrder(
+            token("attribute_type"),
+            token("("),
+            ref(parser),
+            token(","),
+            Tokens.identifier,
+            token(")")
+        ).skipWrapper()
+            .map { (_, attr, _, dynamoType) ->
+                Expr { item ->
+                    attr.eval(item).let {
+                        AttributeValue::class.java.methods.find { it.name == "get" + DynamoDataType.valueOf(dynamoType).name }
+                            ?.invoke(it) != null
+                    }
                 }
             }
-        }
+
+}
