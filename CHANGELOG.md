@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.2.0.0 (uncut)
+- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-amazon-dynamodb** : [Slight break] `BatchGetItem` and `BatchWriteItem` actions had incorrect key names for response classes.
+
 ### v3.1.1.0
 - **http4k-connect-amazon-cognito** - New module (WIP). Base actions for user client and pool creation are implemented, no fake as yet.
 

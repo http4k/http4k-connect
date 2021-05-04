@@ -18,7 +18,7 @@ data class BatchGetItem(
 
 @JsonSerializable
 data class BatchGetItems(
-    val ConsumedCapacity: List<ConsumedCapacity>? = null,
     val Responses: Map<String, List<Item>>? = null,
-    val UnprocessedItems: Map<String, ReqGetItem>? = null,
+    val UnprocessedKeys: Map<String, ReqGetItem>? = null,
+    val ConsumedCapacity: List<ConsumedCapacity>? = null,
 )
