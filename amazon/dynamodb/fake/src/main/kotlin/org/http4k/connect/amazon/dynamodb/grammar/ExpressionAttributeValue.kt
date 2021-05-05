@@ -13,5 +13,5 @@ object ExpressionAttributeValue : ExprFactory {
 }
 
 fun ExpressionAttributeValue(value: String) = Expr { item ->
-    item.values[value] ?: error("missing value $value")
+    item.values[":$value"] ?: error("missing value $value")
 }

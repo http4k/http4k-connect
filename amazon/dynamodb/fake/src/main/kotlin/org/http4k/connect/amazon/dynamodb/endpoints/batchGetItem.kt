@@ -7,9 +7,14 @@ import org.http4k.connect.amazon.dynamodb.action.BatchGetItems
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.batchGetItem(tables: Storage<DynamoTable>) = route<BatchGetItem> {
-    BatchGetItems(it.RequestItems.flatMap { (table, get) ->
-        get.Keys.mapNotNull {
-            tables.getItemByKey(table, it)?.item?.let { table.value to it }
+    BatchGetItems(it.RequestItems.flatMap { (tableName, get) ->
+        get.Keys.mapNotNull { key ->
+            tables[tableName.value]
+                ?.let { table ->
+                    table.retrieve(key)
+                        ?.project(get.ProjectionExpression, get.ExpressionAttributeNames)
+                }
+                ?.let { tableName.value to it }
         }
     }
         .groupBy { it.first }

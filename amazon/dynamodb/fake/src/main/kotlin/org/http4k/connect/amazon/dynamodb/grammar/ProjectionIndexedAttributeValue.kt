@@ -8,14 +8,16 @@ import parser4k.inOrder
 import parser4k.map
 import parser4k.ref
 
-object IndexedAttributeValue : ExprFactory {
+object ProjectionIndexedAttributeValue : ExprFactory {
     override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> =
         inOrder(ref(parser), token("["), Tokens.number, token("]"))
             .map { (expr, _, index) ->
                 Expr { item ->
-                    (expr.eval(item) as AttributeValue).L
-                        ?.let { AttributeValue.List(listOf(it[index.toInt()])) }
-                        ?: AttributeValue.Null()
+                    (expr.eval(item) as List<AttributeNameValue>).map {
+                        it.first to (it.second.L
+                            ?.let { AttributeValue.List(listOf(it[index.toInt()])) }
+                            ?: AttributeValue.Null())
+                    }
                 }
             }
 }
