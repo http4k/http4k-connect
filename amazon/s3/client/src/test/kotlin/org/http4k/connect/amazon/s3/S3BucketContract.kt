@@ -9,22 +9,24 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+
 
 abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
 
     abstract val bucket: BucketName
 
-    private val s3Bucket by lazy {
-        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http)
+    protected val s3Bucket by lazy {
+        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http.debug())
     }
 
     private val s3 by lazy {
         S3.Http({ aws.credentials }, http)
     }
 
-    private val key = BucketKey.of("originalKey")
+    protected val key = BucketKey.of("originalKey")
 
     @BeforeEach
     fun recreate() {
