@@ -19,6 +19,7 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
+import java.time.Instant
 
 /**
  * List items in a bucket. Note that the S3 API maxes out at 1000 items.
@@ -56,7 +57,7 @@ data class ListObjectsV2(
                                 ObjectSummary(
                                     it.firstChildText("ETag"),
                                     BucketKey.of(it.firstChildText("Key")!!),
-                                    it.firstChildText("Timestamp")?.toLong()?.let { Timestamp.of(it) },
+                                    it.firstChildText("LastModified")?.let { Timestamp.of(Instant.parse(it)) },
                                     it.firstChildText("DisplayName"),
                                     it.firstChildText("ID"),
                                     it.firstChild("Owner")?.let {

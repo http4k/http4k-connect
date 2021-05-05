@@ -33,8 +33,11 @@ fun bucketGetKey(
         bucketContent["${bucket}-${req.path("bucketKey")!!}"]
             ?.let {
                 Response(OK)
-                    .headers(it.headers)
+                    .headers(getHeadersWithoutXHttp4kPrefix(it))
                     .body(String(Base64.getDecoder().decode(it.content)))
             } ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
     }
     ?: invalidBucketNameResponse())
+
+private fun getHeadersWithoutXHttp4kPrefix(it: BucketKeyContent) =
+    it.headers.map { it.first.removePrefix("x-http4k-") to it.second }
