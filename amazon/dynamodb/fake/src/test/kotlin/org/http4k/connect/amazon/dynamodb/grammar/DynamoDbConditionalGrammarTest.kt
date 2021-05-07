@@ -124,6 +124,27 @@ class DynamoDbConditionalGrammarTest {
     }
 
     @Test
+    fun `deeply indexed attribute value`() {
+        assertThat(
+            DynamoDbConditionalGrammar.parse("attrList[0][1]").eval(
+                ItemWithSubstitutions(
+                    Item(
+                        attrList of listOf(
+                            attrList.asValue(
+                                listOf(
+                                    attr1.asValue("123"),
+                                    attrNum.asValue(456)
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            equalTo(attrList.asValue(listOf(attrNum.asValue(456))))
+        )
+    }
+
+    @Test
     fun `nested map attribute value`() {
         assertThat(
             DynamoDbConditionalGrammar.parse("attrMap.attrMap.attr1").eval(
