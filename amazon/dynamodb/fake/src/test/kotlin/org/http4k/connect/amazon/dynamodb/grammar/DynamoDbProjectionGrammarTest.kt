@@ -38,7 +38,7 @@ class DynamoDbProjectionGrammarTest {
                     )
                 )
             ),
-            equalTo(listOf(attrList.name to attrList.asValue(listOf(attrNum.asValue(456)))))
+            equalTo(listOf(attrList.name to attrList.asValue(listOf(attrList.asValue(listOf(attrNum.asValue(456)))))))
         )
     }
 

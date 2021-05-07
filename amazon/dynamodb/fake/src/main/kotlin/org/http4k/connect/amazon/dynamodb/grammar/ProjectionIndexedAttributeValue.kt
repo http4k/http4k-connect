@@ -16,10 +16,8 @@ object ProjectionIndexedAttributeValue : ExprFactory {
                     (expr.eval(item) as List<AttributeNameValue>).map {
                         it.first to (it.second.L
                             ?.let {
-                                val child = it[index.toInt()]
                                 when {
-                                    child.L != null -> child
-                                    else -> AttributeValue.List(listOf(child))
+                                    else -> AttributeValue.List(listOf(it[index.toInt()]))
                                 }
                             }
                             ?: AttributeValue.Null())
