@@ -124,6 +124,16 @@ class DynamoDbConditionalGrammarTest {
     }
 
     @Test
+    fun `nested map attribute value`() {
+        assertThat(
+            DynamoDbConditionalGrammar.parse("attrMap.attrMap.attr1").eval(
+                ItemWithSubstitutions(Item(attrMap of Item(attrMap of Item(attr1 of "123", attrNum of 456))))
+            ),
+            equalTo(attr1.asValue("123"))
+        )
+    }
+
+    @Test
     fun `map attribute value`() {
         assertThat(
             DynamoDbConditionalGrammar.parse("attrMap.attr1").eval(
