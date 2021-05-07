@@ -126,7 +126,7 @@ class DynamoDbConditionalGrammarTest {
     @Test
     fun `deeply indexed attribute value`() {
         assertThat(
-            DynamoDbConditionalGrammar.parse("attrList[0][1][1]").eval(
+            DynamoDbConditionalGrammar.parse("attrList[0][1][2]").eval(
                 ItemWithSubstitutions(
                     Item(
                         attrList of listOf(
@@ -135,6 +135,7 @@ class DynamoDbConditionalGrammarTest {
                                     attr1.asValue("123"),
                                     attrList.asValue(
                                         listOf(
+                                            attr1.asValue("123"),
                                             attr1.asValue("123"),
                                             attrNum.asValue(456)
                                         )

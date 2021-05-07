@@ -26,12 +26,14 @@ class DynamoDbProjectionGrammarTest {
     @Test
     fun `indexed attribute value`() {
         assertThat(
-            DynamoDbProjectionGrammar.parse("attrList[1]").eval(
+            DynamoDbProjectionGrammar.parse("attrList[1][0]").eval(
                 ItemWithSubstitutions(
                     Item(
                         attrList of listOf(
                             attr1.asValue("123"),
-                            attrNum.asValue(456)
+                            attrList.asValue(
+                                listOf(attrNum.asValue(456))
+                            )
                         )
                     )
                 )
