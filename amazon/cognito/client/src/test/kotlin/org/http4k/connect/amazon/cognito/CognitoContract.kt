@@ -15,14 +15,13 @@ import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.Username
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class CognitoContract(http: HttpHandler) : AwsContract() {
     private val cognito by lazy {
-        Cognito.Http(aws.region, { aws.credentials }, http.debug())
+        Cognito.Http(aws.region, { aws.credentials }, http)
     }
 
     private val poolName = PoolName.of(UUID.randomUUID().toString())

@@ -80,6 +80,19 @@ abstract class DynamoDbContract(
     }
 
     @Test
+    fun `asd`() {
+        with(dynamo) {
+            putItem(table, createItem("hello")).successValue()
+            println(query(
+                table,
+                KeyConditionExpression = "$attrS = :v1",
+                ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello")),
+                ProjectionExpression = "theList[0][0], theMap.theString"
+            ).successValue().Items)
+        }
+    }
+
+    @Test
     open fun `transactional items`() {
         with(dynamo) {
             transactWriteItems(

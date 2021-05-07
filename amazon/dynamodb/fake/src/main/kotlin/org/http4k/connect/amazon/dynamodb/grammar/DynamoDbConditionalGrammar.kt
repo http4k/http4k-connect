@@ -9,18 +9,10 @@ import parser4k.parseWith
 import parser4k.reset
 import parser4k.with
 
-object DynamoDbGrammar {
+object DynamoDbConditionalGrammar {
     private val cache = OutputCache<Expr>()
 
     fun parse(expression: String): Expr = expression.parseWith(expr)
-
-    fun parseProjection(expression: String): Expr {
-        expression.split(",").map {
-            it.trim().parseWith(expr)
-        }
-
-        return expression.parseWith(expr)
-    }
 
     private val expr: Parser<Expr> = oneOfWithPrecedence(
         And(::expr).with(cache),
@@ -49,10 +41,10 @@ object DynamoDbGrammar {
         Paren(::expr).with(cache).nestedPrecedence(),
         oneOfWithPrecedence(
             ExpressionAttributeName(::expr).with(cache),
-            MapAttributeValue(::expr).with(cache)
-        ),
-        IndexedAttributeValue(::expr).with(cache),
-        ExpressionAttributeValue(::expr).with(cache),
-        ConditionAttributeValue(::expr).with(cache)
+            MapAttributeValue(::expr).with(cache),
+            IndexedAttributeValue(::expr).with(cache),
+            ExpressionAttributeValue(::expr).with(cache),
+            ConditionAttributeValue(::expr).with(cache)
+        )
     ).reset(cache)
 }

@@ -4,12 +4,11 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.cloudfront.model.DistributionId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 
 abstract class CloudFrontContract(http: HttpHandler) : AwsContract() {
     private val cloudFront by lazy {
-        CloudFront.Http({ aws.credentials }, http.debug())
+        CloudFront.Http({ aws.credentials }, http)
     }
 
     private val distribution = DistributionId.of("E1HHLORGLBAQYP")
