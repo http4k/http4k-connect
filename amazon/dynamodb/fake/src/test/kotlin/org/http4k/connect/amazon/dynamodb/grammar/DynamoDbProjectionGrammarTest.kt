@@ -26,7 +26,7 @@ class DynamoDbProjectionGrammarTest {
     @Test
     fun `indexed attribute value`() {
         assertThat(
-            DynamoDbProjectionGrammar.parse("attrList[1][0]").eval(
+            DynamoDbProjectionGrammar.parse("attrList[1]").eval(
                 ItemWithSubstitutions(
                     Item(
                         attrList of listOf(
@@ -45,21 +45,43 @@ class DynamoDbProjectionGrammarTest {
     @Test
     fun `multiple indexed attribute value`() {
         assertThat(
-            DynamoDbProjectionGrammar.parse("attrList[0], attrList[2]").eval(
+            DynamoDbProjectionGrammar.parse("attrList[0][1]").eval(
                 ItemWithSubstitutions(
                     Item(
                         attrList of listOf(
-                            attr1.asValue("123"),
-                            attr1.asValue("465"),
-                            attrNum.asValue(456)
+                            attrList.asValue( //0
+                                listOf(
+                                    attr1.asValue("123"), //0
+                                    attrList.asValue( //1
+                                        listOf(
+                                            attr1.asValue("123"),
+                                            attr1.asValue("123"),
+                                            attrNum.asValue(456)
+                                        )
+                                    )
+                                )
+                            )
                         )
                     )
                 )
             ),
             equalTo(
                 listOf(
-                    attrList.name to attrList.asValue(listOf(attr1.asValue("123"))),
-                    attrList.name to attrList.asValue(listOf(attrNum.asValue(456)))
+                    attrList.name to attrList.asValue(
+                        listOf(
+                            attrList.asValue(
+                                listOf(
+                                    attrList.asValue(
+                                        listOf(
+                                            attr1.asValue("123"),
+                                            attr1.asValue("123"),
+                                            attrNum.asValue(456)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
                 )
             )
         )

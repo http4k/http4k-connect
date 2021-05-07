@@ -83,12 +83,12 @@ abstract class DynamoDbContract(
     fun `asd`() {
         with(dynamo) {
             putItem(table, createItem("hello")).successValue()
-            query(
+            println(query(
                 table,
                 KeyConditionExpression = "$attrS = :v1",
                 ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello")),
-                ProjectionExpression = "theList[0], theList[1], theMap.theString"
-            ).successValue()
+                ProjectionExpression = "theList[0][0], theMap.theString"
+            ).successValue().Items)
         }
     }
 
