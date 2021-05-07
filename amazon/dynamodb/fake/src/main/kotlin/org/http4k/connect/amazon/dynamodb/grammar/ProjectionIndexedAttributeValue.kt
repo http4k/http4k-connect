@@ -13,24 +13,14 @@ object ProjectionIndexedAttributeValue : ExprFactory {
         inOrder(ref(parser), token("["), number, token("]"))
             .mapLeftAssoc { (expr, _, index) ->
                 Expr { item ->
-                    println(expr)
-                    println("INDEX! " + index)
-                    val list = expr.eval(item) as List<AttributeNameValue> // we know this is true containing a list
-                    val list2 = list.map {
-                        it.first to AttributeValue.List(listOf(it.second.L!![index.toInt()]))
-                    }
-                    println(list2)
-                    list2
-//                    println("indexed! " + list[index.toInt()])
-//                    val map = list.map { it.first to it.second.L!! }[index.toInt()]
-//                    list[index.toInt()]
-//                    println(list.map { it.second.L!! }[index.toInt()])
-//                    val pair = list[index.toInt()]
-//                        pair.first to (pair.second.L
-//                            ?.let {
-//                                AttributeValue.List(it)
-//                            }
-//                            ?: AttributeValue.Null())
+                    (expr.eval(item) as List<AttributeNameValue>)
+                        .map { it.first to filterInward(it, index.toInt()) }
                 }
             }
+
+    private fun filterInward(l: AttributeNameValue, index: Int): AttributeValue = when {
+        l.second.L == null -> l.second
+        l.second.L!!.size > 1 -> AttributeValue.List(listOf(l.second.L!![index]))
+        else -> AttributeValue.List(listOf(filterInward(l.first to l.second.L!![0], index)))
+    }
 }

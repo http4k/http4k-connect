@@ -29,6 +29,7 @@ class DynamoDbProjectionGrammarTest {
             DynamoDbProjectionGrammar.parse("attrList[1]").eval(
                 ItemWithSubstitutions(
                     Item(
+                        attr1 of "DON'T GET ME",
                         attrList of listOf(
                             attr1.asValue("123"),
                             attrList.asValue(
@@ -45,14 +46,15 @@ class DynamoDbProjectionGrammarTest {
     @Test
     fun `multiple indexed attribute value`() {
         assertThat(
-            DynamoDbProjectionGrammar.parse("attrList[0][1]").eval(
+            DynamoDbProjectionGrammar.parse("attrList[0][2][2]").eval(
                 ItemWithSubstitutions(
                     Item(
                         attrList of listOf(
                             attrList.asValue( //0
                                 listOf(
-                                    attr1.asValue("123"), //0
-                                    attrList.asValue( //1
+                                    attr1.asValue("123"),
+                                    attrNum.asValue(456),
+                                    attrList.asValue(
                                         listOf(
                                             attr1.asValue("123"),
                                             attr1.asValue("123"),
@@ -60,9 +62,11 @@ class DynamoDbProjectionGrammarTest {
                                         )
                                     )
                                 )
-                            )
-                        )
-                    )
+                            ),
+                            attr1.asValue("999"), //1
+                        ),
+                        attr1 of "999"
+                    ),
                 )
             ),
             equalTo(
@@ -73,8 +77,6 @@ class DynamoDbProjectionGrammarTest {
                                 listOf(
                                     attrList.asValue(
                                         listOf(
-                                            attr1.asValue("123"),
-                                            attr1.asValue("123"),
                                             attrNum.asValue(456)
                                         )
                                     )

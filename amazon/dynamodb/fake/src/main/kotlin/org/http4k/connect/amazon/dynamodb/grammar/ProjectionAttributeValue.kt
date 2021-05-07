@@ -10,6 +10,17 @@ object ProjectionAttributeValue : ExprFactory {
     override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> = identifier.map(::ProjectionAttributeValue)
 }
 
-fun ProjectionAttributeValue(value: String) = Expr { item ->
-    listOf(AttributeNameValue(AttributeName.of(value), (item.item[AttributeName.of(value)] ?: AttributeValue.Null())))
+fun ProjectionAttributeValue(value: String) = object : Expr {
+    override fun toString(): String {
+        return value
+    }
+
+    override fun eval(item: ItemWithSubstitutions): Any {
+        return listOf(
+            AttributeNameValue(
+                AttributeName.of(value),
+                (item.item[AttributeName.of(value)] ?: AttributeValue.Null())
+            )
+        )
+    }
 }
