@@ -12,8 +12,6 @@ class DynamoDbProjectionGrammarTest {
     private val attr1 = Attribute.string().required("attr1")
     private val attrList = Attribute.list().required("attrList")
     private val attrMap = Attribute.map().required("attrMap")
-    private val attr2 = Attribute.duration().required("attr2")
-    private val attr3 = Attribute.strings().required("attr3")
 
     @Test
     fun `attribute value`() {
@@ -46,26 +44,26 @@ class DynamoDbProjectionGrammarTest {
     @Test
     fun `multiple indexed attribute value`() {
         assertThat(
-            DynamoDbProjectionGrammar.parse("attrList[0][2][2]").eval(
+            DynamoDbProjectionGrammar.parse("attrList[0][1][2]").eval(
                 ItemWithSubstitutions(
                     Item(
                         attrList of listOf(
-                            attrList.asValue( //0
+                            attrList.asValue(
                                 listOf(
-                                    attr1.asValue("123"),
-                                    attrNum.asValue(456),
+                                    attr1.asValue("111"),
                                     attrList.asValue(
                                         listOf(
-                                            attr1.asValue("123"),
-                                            attr1.asValue("123"),
-                                            attrNum.asValue(456)
+                                            attr1.asValue("222"),
+                                            attr1.asValue("333"),
+                                            attrNum.asValue(444)
                                         )
-                                    )
+                                    ),
+                                    attrNum.asValue(555),
                                 )
                             ),
-                            attr1.asValue("999"), //1
+                            attr1.asValue("666"),
                         ),
-                        attr1 of "999"
+                        attr1 of "777"
                     ),
                 )
             ),
@@ -77,7 +75,7 @@ class DynamoDbProjectionGrammarTest {
                                 listOf(
                                     attrList.asValue(
                                         listOf(
-                                            attrNum.asValue(456)
+                                            attrNum.asValue(444)
                                         )
                                     )
                                 )

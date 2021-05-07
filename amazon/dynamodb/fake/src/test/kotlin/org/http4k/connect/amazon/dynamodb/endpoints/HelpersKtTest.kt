@@ -18,7 +18,7 @@ class HelpersKtTest {
     private val item = Item(
         attrNum of 123,
         attrStr of "hello",
-        attrList of listOf(attrNum.asValue(456), attrStr.asValue("there"), attrBoolean.asValue(true)),
+        attrList of listOf(attrNum.asValue(456), attrList.asValue(listOf(attrStr.asValue("there"), attrBoolean.asValue(true)))),
         attrMap of Item(attrNum of 456, attrStr of "there", attrBoolean of true)
     )
 
@@ -46,10 +46,10 @@ class HelpersKtTest {
     @Test
     fun `project from an item`() {
         assertThat(
-            item.project("attrNum, attrList[0], attrMap.attrStr, attrList[2], attrMap.attrBool", emptyMap()),
+            item.project("attrNum, attrList[0], attrMap.attrStr, attrList[1][1], attrMap.attrBool", emptyMap()),
             equalTo(Item(
                 attrNum of 123,
-                attrList of listOf(attrNum.asValue(456), attrBoolean.asValue(true)),
+                attrList of listOf(attrNum.asValue(456), attrList.asValue(listOf(attrBoolean.asValue(true)))),
                 attrMap of Item(attrStr of "there", attrBoolean of true)))
         )
 
