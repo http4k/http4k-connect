@@ -22,6 +22,25 @@ data class AttributeValue internal constructor(
     val S: String? = null,
     val SS: Set<String>? = null
 ) {
+
+    override fun toString(): String {
+        return "AttributeValue(" +
+            when {
+                B != null -> "B=$B"
+                BOOL != null -> "BOOL=$BOOL"
+                BS != null -> "BS=$BS"
+                L != null -> "L=$L"
+                M != null -> "M=$M"
+                N != null -> "N=$N"
+                NS != null -> "NS=$NS"
+                NULL != null -> "NULL=$NULL"
+                S != null -> "S=$S"
+                SS != null -> "SS=$SS"
+                else -> error("illegal!")
+            } +
+            ")"
+    }
+
     companion object {
         fun Base64(value: Base64Blob?) = value?.let { AttributeValue(B = it) } ?: Null()
         fun Bool(value: Boolean?) = value?.let { AttributeValue(BOOL = it) } ?: Null()
