@@ -6,7 +6,6 @@ import org.http4k.connect.assumeDockerDaemonRunning
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
-import org.http4k.filter.debug
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -21,7 +20,7 @@ class LocalDynamoTest : DynamoDbContract(Duration.ofSeconds(1)) {
 
     override val http by lazy {
         SetBaseUriFrom(Uri.of("http://localhost:${dynamo.getMappedPort(8000)}"))
-            .then(JavaHttpClient().debug())
+            .then(JavaHttpClient())
     }
 
     @Container

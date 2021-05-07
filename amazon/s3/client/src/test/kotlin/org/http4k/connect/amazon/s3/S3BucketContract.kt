@@ -9,7 +9,6 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -19,7 +18,7 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
     abstract val bucket: BucketName
 
     protected val s3Bucket by lazy {
-        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http.debug())
+        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http)
     }
 
     private val s3 by lazy {
