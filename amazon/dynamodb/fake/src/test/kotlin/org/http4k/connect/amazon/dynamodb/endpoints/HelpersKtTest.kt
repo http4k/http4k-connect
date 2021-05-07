@@ -46,7 +46,7 @@ class HelpersKtTest {
     @Test
     fun `project from an item`() {
         assertThat(
-            item.project("attrNum, attrList[0], attrMap.attrStr, attrList[1][1], attrMap.attrBool", emptyMap()),
+            item.project("#alias, attrList[0], attrMap.attrStr, attrList[1][1], attrMap.attrBool", mapOf("alias" to AttributeName.of("attrNum"))),
             equalTo(Item(
                 attrNum of 123,
                 attrList of listOf(attrNum.asValue(456), attrList.asValue(listOf(attrBoolean.asValue(true)))),
