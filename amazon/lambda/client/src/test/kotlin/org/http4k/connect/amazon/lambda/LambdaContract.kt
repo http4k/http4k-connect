@@ -15,7 +15,6 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.http4k.filter.debug
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
 import org.http4k.server.SunHttp
@@ -25,7 +24,7 @@ import org.junit.jupiter.api.Test
 abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
 
     private val lambda by lazy {
-        Lambda.Http(aws.region, { aws.credentials }, http.debug())
+        Lambda.Http(aws.region, { aws.credentials }, http)
     }
 
     @Test

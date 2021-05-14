@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.ClientContext
 import com.amazonaws.services.lambda.runtime.CognitoIdentity
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.LambdaLogger
+import com.fasterxml.jackson.databind.util.ByteBufferBackedInputStream
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.ChaosFake
 import org.http4k.connect.amazon.core.model.Region
@@ -21,7 +22,7 @@ import java.time.Clock
 import java.util.UUID
 
 class FakeLambda(
-    functionLoader: FnLoader<Context>,
+    fnLoader: FnLoader<Context>,
     private val clock: Clock = Clock.systemUTC(),
     private val env: Map<String, String> = System.getenv()
 ) : ChaosFake() {
@@ -30,8 +31,8 @@ class FakeLambda(
         val name = req.path("name") ?: "unknown"
         val customEnv = env + (AWS_LAMBDA_FUNCTION_NAME to name)
         Response(OK).body(
-            functionLoader(customEnv)(
-                req.body.stream,
+            fnLoader(customEnv)(
+                ByteBufferBackedInputStream(req.body.payload),
                 FakeContext(name)
             )
         )
