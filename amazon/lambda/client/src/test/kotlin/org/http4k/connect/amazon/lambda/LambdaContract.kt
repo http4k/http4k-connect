@@ -41,7 +41,7 @@ abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
         assertThat(
             lambda.invokeStreamFunction(FunctionName.of("stream"), "hello".byteInputStream())
                 .map { it.reader().readText() },
-            equalTo(Success("olleh"))
+            equalTo(Success("hello"))
         )
     }
 
