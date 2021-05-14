@@ -10,6 +10,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import org.http4k.format.AutoMarshalling
+import org.http4k.format.AwsLambdaMoshi
 import org.http4k.format.Moshi
 import kotlin.reflect.KClass
 
@@ -39,5 +40,5 @@ class InvokeFunction<RESP : Any>(
 inline fun <reified RESP : Any> Lambda.invokeFunction(
     name: FunctionName,
     req: Any,
-    autoMarshalling: AutoMarshalling = Moshi
+    autoMarshalling: AutoMarshalling = AwsLambdaMoshi
 ) = this(InvokeFunction(name, req, RESP::class, autoMarshalling))
