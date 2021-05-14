@@ -1,25 +1,60 @@
 package org.http4k.connect.amazon.lambda
 
+import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
+import com.natpryce.hamkrest.and
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
+import dev.forkhandles.result4k.map
+import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.lambda.action.invokeFunction
+import org.http4k.connect.amazon.lambda.action.invokeStreamFunction
 import org.http4k.connect.amazon.lambda.model.FunctionName
 import org.http4k.core.HttpHandler
-import org.http4k.format.Moshi
+import org.http4k.core.Method.POST
+import org.http4k.core.Request
+import org.http4k.core.Status
+import org.http4k.filter.debug
+import org.http4k.hamkrest.hasBody
+import org.http4k.hamkrest.hasStatus
+import org.http4k.server.SunHttp
+import org.http4k.server.asServer
 import org.junit.jupiter.api.Test
 
-val reverse = FunctionName("reverse")
-
-abstract class LambdaContract(http: HttpHandler) : AwsContract() {
+abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
 
     private val lambda by lazy {
-        Lambda.Http(aws.region, { aws.credentials }, http)
+        Lambda.Http(aws.region, { aws.credentials }, http.debug())
     }
 
     @Test
-    fun `can use echo lambda`() {
-        assertThat(lambda.invokeFunction(reverse, "hello", Moshi), equalTo(Success("olleh")))
+    fun `can use event invoke`() {
+        val input = ScheduledEvent().apply {
+            account = "hello world"
+        }
+        assertThat(lambda.invokeFunction(FunctionName.of("event"), input), equalTo(Success(input)))
+    }
+
+    @Test
+    fun `can use stream invoke`() {
+        assertThat(
+            lambda.invokeStreamFunction(FunctionName.of("stream"), "hello".byteInputStream())
+                .map { it.reader().readText() },
+            equalTo(Success("olleh"))
+        )
+    }
+
+    @Test
+    fun `can use http invoke`() {
+        http.asServer(SunHttp(0)).start().use { it ->
+            assertThat(
+                JavaHttpClient()(
+                    Request(POST, "http://localhost:${it.port()}/2015-03-31/functions/http/invocations")
+                        .body("hello")
+                ),
+                hasStatus(Status.OK).and(hasBody("hellohello"))
+            )
+        }
     }
 }

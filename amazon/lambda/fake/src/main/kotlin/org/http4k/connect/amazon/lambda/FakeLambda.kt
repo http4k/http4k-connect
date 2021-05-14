@@ -73,13 +73,8 @@ internal fun FakeContext(name: String) = object : Context {
     override fun getClientContext(): ClientContext = error("not implemented")
 }
 
-val reverser: FnLoader<Context> = {
-    FnHandler { i: InputStream, _: Context ->
-        i.reader().readText().reversed().byteInputStream()
-    }
-}
-
 fun main() {
-    FakeLambda(reverser).start()
+    FakeLambda(FnLoader {
+        FnHandler { i: InputStream, _: Context -> i }
+    }).start()
 }
-

@@ -22,7 +22,7 @@ data class Resp(val value: String)
 const val USE_REAL_CLIENT = false
 
 fun main() {
-    val deployedLambda = FunctionName("http4kLambda")
+    val deployedLambda = FunctionName.of("http4kLambda")
 
     val fakeLambda = FakeLambda(
         FnLoader {
