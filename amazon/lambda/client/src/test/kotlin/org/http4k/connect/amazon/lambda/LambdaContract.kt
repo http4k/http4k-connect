@@ -14,7 +14,7 @@ import org.http4k.connect.amazon.lambda.model.FunctionName
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.OK
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
 import org.http4k.server.SunHttp
@@ -28,7 +28,7 @@ abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
     }
 
     @Test
-    fun `can use event invoke`() {
+    fun `can use invokeFunction with an automarshalled event`() {
         val input = ScheduledEvent().apply {
             account = "hello world"
         }
@@ -36,7 +36,7 @@ abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
     }
 
     @Test
-    fun `can use stream invoke`() {
+    fun `can use invokeStreamFunction`() {
         assertThat(
             lambda.invokeStreamFunction(FunctionName.of("stream"), "hello".byteInputStream())
                 .map { it.reader().readText() },
@@ -45,14 +45,14 @@ abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
     }
 
     @Test
-    fun `can use http invoke`() {
+    fun `can invoke function over http`() {
         http.asServer(SunHttp(0)).start().use { it ->
             assertThat(
                 JavaHttpClient()(
                     Request(POST, "http://localhost:${it.port()}/2015-03-31/functions/http/invocations")
                         .body("hello")
                 ),
-                hasStatus(Status.OK).and(hasBody("hellohello"))
+                hasStatus(OK).and(hasBody("hellohello"))
             )
         }
     }
