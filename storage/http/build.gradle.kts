@@ -1,5 +1,5 @@
 dependencies {
-    implementation("org.http4k:http4k-contract")
-    implementation("org.http4k:http4k-format-jackson")
+    implementation(Libs.http4k_contract)
+    implementation(Libs.http4k_format_jackson)
     implementation(Libs.swagger_ui)
 }

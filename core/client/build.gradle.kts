@@ -1,7 +1,7 @@
 dependencies {
-    api("dev.forkhandles:values4k")
-    compileOnly("org.http4k:http4k-format-moshi")
-    testCompileOnly("org.http4k:http4k-format-moshi")
+    api(Libs.values4k)
+    compileOnly(Libs.http4k_format_moshi)
+    testCompileOnly(Libs.http4k_format_moshi)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

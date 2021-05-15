@@ -1,5 +1,5 @@
 dependencies {
-    implementation("org.http4k:http4k-format-moshi")
+    implementation(Libs.http4k_format_moshi)
     implementation(Libs.exposed_core)
     implementation(Libs.exposed_jdbc)
 

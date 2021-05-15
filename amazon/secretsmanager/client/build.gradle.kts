@@ -1,6 +1,6 @@
 dependencies {
     api(project(":http4k-connect-amazon-core"))
-    api("org.http4k:http4k-format-moshi") {
+    api(Libs.http4k_format_moshi) {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
     implementation(Libs.api)
