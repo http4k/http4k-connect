@@ -7,8 +7,8 @@ import org.http4k.connect.amazon.cognito.model.MFAOptions
 import org.http4k.connect.amazon.cognito.model.UserMFASetting
 import org.http4k.connect.amazon.cognito.model.UserPoolId
 import org.http4k.connect.amazon.cognito.model.UserStatus
-import org.http4k.connect.amazon.cognito.model.Username
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.Username
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
