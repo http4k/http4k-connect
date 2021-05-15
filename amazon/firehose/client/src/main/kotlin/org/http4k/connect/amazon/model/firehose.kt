@@ -17,7 +17,6 @@ data class Record(
     val Data: Base64Blob
 )
 
-
 @JsonSerializable
 data class DeliveryStreamEncryptionConfigurationInput(
     val KeyARN: ARN? = null,
