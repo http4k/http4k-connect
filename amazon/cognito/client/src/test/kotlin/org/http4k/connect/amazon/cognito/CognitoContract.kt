@@ -9,10 +9,10 @@ import org.http4k.connect.amazon.cognito.model.AuthFlow.USER_PASSWORD_AUTH
 import org.http4k.connect.amazon.cognito.model.ChallengeName.NEW_PASSWORD_REQUIRED
 import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.OAuthFlow.client_credentials
-import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.UserCode
-import org.http4k.connect.amazon.cognito.model.Username
+import org.http4k.connect.amazon.core.model.Password
+import org.http4k.connect.amazon.core.model.Username
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Disabled
