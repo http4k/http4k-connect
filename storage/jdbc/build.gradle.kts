@@ -1,8 +1,8 @@
 dependencies {
     implementation("org.http4k:http4k-format-moshi")
-    implementation("org.jetbrains.exposed:exposed-core:0.29.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.29.1")
+    implementation(Libs.exposed_core)
+    implementation(Libs.exposed_jdbc)
 
-    testImplementation("com.zaxxer:HikariCP:2.7.8")
-    testImplementation("com.h2database:h2:1.4.190")
+    testImplementation(Libs.hikaricp)
+    testImplementation(Libs.h2)
 }

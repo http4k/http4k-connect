@@ -1,3 +1,17 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id("de.fayard.refreshVersions").version("0.10.0")
+}
+
+refreshVersions {
+    enableBuildSrcLibs()
+}
+
 include(":http4k-connect-kapt-generator")
 
 includeWithName("http4k-connect-bom", "bom")
@@ -50,10 +64,4 @@ fun includeWithName(projectName: String, file: String) {
 
 fun includeStorage(name: String) {
     includeWithName("http4k-connect-storage-$name", "storage/$name")
-}
-
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-    }
 }

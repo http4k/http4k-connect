@@ -9,27 +9,22 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
-import org.http4k.format.AutoMarshalling
-import org.http4k.format.AwsLambdaMoshi
-import org.http4k.format.Moshi
-import kotlin.reflect.KClass
+import java.io.InputStream
 
-class InvokeFunction<RESP : Any>(
+class InvokeStreamFunction(
     private val name: FunctionName,
-    private val req: Any,
-    private val respClass: KClass<RESP>,
-    private val autoMarshalling: AutoMarshalling = Moshi
-) : LambdaAction<RESP> {
+    private val req: InputStream,
+) : LambdaAction<InputStream> {
     override fun toRequest() = Request(POST, uri())
         .header("X-Amz-Invocation-Type", "RequestResponse")
         .header("X-Amz-Log-Type", "Tail")
-        .body(autoMarshalling.asFormatString(req))
+        .body(req)
 
     private fun uri() = Uri.of("/2015-03-31/functions/${name.value}/invocations")
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(autoMarshalling.asA(bodyString(), respClass))
+            status.successful -> Success(body.stream)
             else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
@@ -37,8 +32,4 @@ class InvokeFunction<RESP : Any>(
     companion object
 }
 
-inline fun <reified RESP : Any> Lambda.invokeFunction(
-    name: FunctionName,
-    req: Any,
-    autoMarshalling: AutoMarshalling = AwsLambdaMoshi
-) = this(InvokeFunction(name, req, RESP::class, autoMarshalling))
+fun Lambda.invokeStreamFunction(name: FunctionName, req: InputStream) = this(InvokeStreamFunction(name, req))
