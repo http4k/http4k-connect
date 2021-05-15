@@ -17,7 +17,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class CreateDeliveryStream(
+data class CreateDeliveryStream internal constructor(
     val DeliveryStreamName: DeliveryStreamName,
     val DeliveryStreamType: DeliveryStreamType,
     val DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
@@ -29,7 +29,108 @@ data class CreateDeliveryStream(
     val S3DestinationConfiguration: S3DestinationConfiguration? = null,
     val SplunkDestinationConfiguration: SplunkDestinationConfiguration? = null,
     val Tags: List<Tag>? = null
-) : FirehoseAction<CreatedDeliveryStream>(CreatedDeliveryStream::class)
+) : FirehoseAction<CreatedDeliveryStream>(CreatedDeliveryStream::class) {
+
+    companion object {
+        fun ElasticSearch(
+            ElasticsearchDestinationConfiguration: ElasticsearchDestinationConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            ElasticsearchDestinationConfiguration = ElasticsearchDestinationConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+
+        fun ExtendedS3(
+            ExtendedS3DestinationConfiguration: ExtendedS3DestinationConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            ExtendedS3DestinationConfiguration = ExtendedS3DestinationConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+
+        fun Http(
+            HttpEndpointDestinationConfiguration: HttpEndpointDestinationConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            HttpEndpointDestinationConfiguration = HttpEndpointDestinationConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+
+        fun Kinesis(
+            KinesisStreamSourceConfiguration: KinesisStreamSourceConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            KinesisStreamSourceConfiguration = KinesisStreamSourceConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+
+        fun Redshift(
+            RedshiftDestinationConfiguration: RedshiftDestinationConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            RedshiftDestinationConfiguration = RedshiftDestinationConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+
+        fun S3(
+            S3DestinationConfiguration: S3DestinationConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            S3DestinationConfiguration = S3DestinationConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+
+        fun Splunk(
+            SplunkDestinationConfiguration: SplunkDestinationConfiguration,
+            DeliveryStreamName: DeliveryStreamName,
+            DeliveryStreamType: DeliveryStreamType,
+            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+            Tags: List<Tag>? = null
+        ) = CreateDeliveryStream(
+            DeliveryStreamName,
+            DeliveryStreamType,
+            SplunkDestinationConfiguration = SplunkDestinationConfiguration,
+            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+            Tags = Tags
+        )
+    }
+}
 
 @JsonSerializable
 data class CreatedDeliveryStream(val DeliveryStreamARN: ARN)
