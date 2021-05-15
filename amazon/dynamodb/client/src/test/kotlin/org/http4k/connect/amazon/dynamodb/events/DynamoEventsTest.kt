@@ -14,31 +14,51 @@ import org.http4k.testing.Approver
 import org.http4k.testing.assertApproved
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.reflect.Proxy
 
 @ExtendWith(ApprovalTest::class)
 class DynamoEventsTest {
 
-    @Test
-    fun `can roundtrip event`(approver: Approver) {
-        val event = DynamoDbEvent(
-            listOf(
-                StreamRecord(
-                    "id", MODIFY, "version", "source", Region.of("us-east-1"),
-                    Dynamodb(
-                        Item(Attribute.boolean().required("theBool") of true),
-                        Item(Attribute.int().required("theInt") of 123),
-                        Item(Attribute.string().required("theString") of "hello"),
-                        "123",
-                        123,
-                        NEW_AND_OLD_IMAGES
-                    ),
-                    ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
-                )
+    private val event = DynamoDbEvent(
+        listOf(
+            StreamRecord(
+                "id", MODIFY, "version", "source", Region.of("us-east-1"),
+                Dynamodb(
+                    Item(Attribute.boolean().required("theBool") of true),
+                    Item(Attribute.int().required("theInt") of 123),
+                    Item(Attribute.string().required("theString") of "hello"),
+                    "123",
+                    123,
+                    NEW_AND_OLD_IMAGES
+                ),
+                ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
             )
         )
+    )
 
+    @Test
+    fun `can roundtrip event`(approver: Approver) {
         val json = DynamoDbMoshi.asFormatString(event)
         approver.assertApproved(json)
         assertThat(DynamoDbMoshi.asA(json), equalTo(event))
     }
+
+    // TODO uncomment when we have upgrade http4k tp 4.9.1.0
+//    @Test
+//    fun `can launch a function`() {
+//        val a = FnLoader(DynamoDbMoshi) {
+//            FnHandler { e: DynamoDbEvent, c: Context ->
+//                e.Records!![0].eventSourceARN!!
+//            }
+//        }
+//
+//        val result = a(emptyMap())(DynamoDbMoshi.asInputStream(event), proxy())
+//
+//        assertThat(result.reader().readText(), equalTo(event.Records?.get(0)?.eventSourceARN?.value))
+//    }
 }
+
+inline fun <reified T> proxy(): T = Proxy.newProxyInstance(
+    T::class.java.classLoader,
+    arrayOf(T::class.java)
+) { _, _, _ -> TODO("not implemented") } as T
