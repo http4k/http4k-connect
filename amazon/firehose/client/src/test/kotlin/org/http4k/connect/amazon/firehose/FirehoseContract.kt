@@ -29,11 +29,11 @@ abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
         with(firehose) {
             try {
                 createDeliveryStream(
-                    deliveryStreamName, DirectPut,
-                    S3DestinationConfiguration = S3DestinationConfiguration(
+                    S3DestinationConfiguration(
                         BucketARN = ARN.of(""),
                         RoleARN = ARN.of("")
-                    )
+                    ),
+                    deliveryStreamName, DirectPut
                 ).successValue()
                 assertThat(
                     listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName),

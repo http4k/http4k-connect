@@ -31,105 +31,103 @@ data class CreateDeliveryStream internal constructor(
     val Tags: List<Tag>? = null
 ) : FirehoseAction<CreatedDeliveryStream>(CreatedDeliveryStream::class) {
 
-    companion object {
-        fun ElasticSearch(
-            ElasticsearchDestinationConfiguration: ElasticsearchDestinationConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            ElasticsearchDestinationConfiguration = ElasticsearchDestinationConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
+    constructor(
+        ElasticsearchDestinationConfiguration: ElasticsearchDestinationConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        ElasticsearchDestinationConfiguration = ElasticsearchDestinationConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 
-        fun ExtendedS3(
-            ExtendedS3DestinationConfiguration: ExtendedS3DestinationConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            ExtendedS3DestinationConfiguration = ExtendedS3DestinationConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
+    constructor(
+        ExtendedS3DestinationConfiguration: ExtendedS3DestinationConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        ExtendedS3DestinationConfiguration = ExtendedS3DestinationConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 
-        fun Http(
-            HttpEndpointDestinationConfiguration: HttpEndpointDestinationConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            HttpEndpointDestinationConfiguration = HttpEndpointDestinationConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
+    constructor(
+        HttpEndpointDestinationConfiguration: HttpEndpointDestinationConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        HttpEndpointDestinationConfiguration = HttpEndpointDestinationConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 
-        fun Kinesis(
-            KinesisStreamSourceConfiguration: KinesisStreamSourceConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            KinesisStreamSourceConfiguration = KinesisStreamSourceConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
+    constructor(
+        KinesisStreamSourceConfiguration: KinesisStreamSourceConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        KinesisStreamSourceConfiguration = KinesisStreamSourceConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 
-        fun Redshift(
-            RedshiftDestinationConfiguration: RedshiftDestinationConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            RedshiftDestinationConfiguration = RedshiftDestinationConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
+    constructor(
+        RedshiftDestinationConfiguration: RedshiftDestinationConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        RedshiftDestinationConfiguration = RedshiftDestinationConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 
-        fun S3(
-            S3DestinationConfiguration: S3DestinationConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            S3DestinationConfiguration = S3DestinationConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
+    constructor(
+        S3DestinationConfiguration: S3DestinationConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        S3DestinationConfiguration = S3DestinationConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 
-        fun Splunk(
-            SplunkDestinationConfiguration: SplunkDestinationConfiguration,
-            DeliveryStreamName: DeliveryStreamName,
-            DeliveryStreamType: DeliveryStreamType,
-            DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
-            Tags: List<Tag>? = null
-        ) = CreateDeliveryStream(
-            DeliveryStreamName,
-            DeliveryStreamType,
-            SplunkDestinationConfiguration = SplunkDestinationConfiguration,
-            DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
-            Tags = Tags
-        )
-    }
+    constructor(
+        SplunkDestinationConfiguration: SplunkDestinationConfiguration,
+        DeliveryStreamName: DeliveryStreamName,
+        DeliveryStreamType: DeliveryStreamType,
+        DeliveryStreamEncryptionConfigurationInput: DeliveryStreamEncryptionConfigurationInput? = null,
+        Tags: List<Tag>? = null
+    ) : this(
+        DeliveryStreamName,
+        DeliveryStreamType,
+        SplunkDestinationConfiguration = SplunkDestinationConfiguration,
+        DeliveryStreamEncryptionConfigurationInput = DeliveryStreamEncryptionConfigurationInput,
+        Tags = Tags
+    )
 }
 
 @JsonSerializable
