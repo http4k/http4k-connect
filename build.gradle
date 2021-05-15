@@ -42,13 +42,13 @@ allprojects {
     apply plugin: "com.github.kt3k.coveralls"
 
     dependencies {
-        implementation(platform("org.http4k:http4k-bom:$http4k_version"))
-        implementation(platform("dev.forkhandles:forkhandles-bom:$forkhandles_version"))
+        implementation(platform(Libs.http4k_bom))
+        implementation(platform(Libs.forkhandles_bom))
         api("org.http4k:http4k-core")
         api("dev.forkhandles:result4k")
 
-        testImplementation(platform("org.junit:junit-bom:$junit_version"))
-        testImplementation(platform("org.testcontainers:testcontainers-bom:$testcontainers_version"))
+        testImplementation(platform(Libs.junit_bom))
+        testImplementation(platform(Libs.testcontainers_bom))
         testImplementation("org.http4k:http4k-testing-hamkrest")
         testImplementation("org.http4k:http4k-testing-approval")
 
@@ -56,6 +56,8 @@ allprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
         testImplementation("org.testcontainers:junit-jupiter")
         testImplementation("org.testcontainers:testcontainers")
+
+        dokkaHtmlPlugin(Libs.org_jetbrains_dokka_gradle_plugin)
 
         if (project.name.endsWith("core-fake")) {
             api(project(":http4k-connect-core"))
@@ -79,7 +81,6 @@ allprojects {
         } else if (project.name == "http4k-connect-kapt-generator") {
             api(project(":http4k-connect-core"))
         } else if (project.name != "http4k-connect-core") {
-            dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
             api("org.http4k:http4k-cloudnative")
             api(project(":http4k-connect-core"))
             kapt(project(":http4k-connect-kapt-generator"))
@@ -124,9 +125,6 @@ allprojects {
         enabled = false
     }
 
-    dependencies {
-        dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
-    }
 }
 
 subprojects {
