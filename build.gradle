@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath Libs.kotlin_gradle_plugin
     }
 }
 
@@ -22,17 +22,8 @@ plugins {
 apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
-
     repositories {
         mavenCentral()
-        mavenLocal()
-        jcenter() {
-            // remove this when exposed migrated to MC
-            content {
-                includeModule("org.jetbrains.exposed", "exposed-core")
-                includeModule("org.jetbrains.exposed", "exposed-jdbc")
-            }
-        }
     }
 
     apply plugin: "kotlin"
@@ -299,7 +290,7 @@ dependencies {
             implementation project(it.name)
         }
 
-    implementation platform("software.amazon.awssdk:bom:$aws_sdk_version")
+    implementation platform(Libs.bom)
     implementation "software.amazon.awssdk:cloudfront"
     implementation "software.amazon.awssdk:cognitoidentityprovider"
     implementation "software.amazon.awssdk:dynamodb"
