@@ -12,6 +12,7 @@ class RunningFakeFirehoseTest : FirehoseContract(
     SetHostFrom(FakeFirehose::class.defaultLocalUri).then(JavaHttpClient())
 ) {
     override val aws = fakeAwsEnvironment
+
     private lateinit var server: Http4kServer
 
     override fun setUp() {
