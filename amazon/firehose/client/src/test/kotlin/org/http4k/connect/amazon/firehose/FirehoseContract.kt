@@ -6,9 +6,12 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.DeliveryStreamType.DirectPut
 import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.model.DeliveryStreamName
+import org.http4k.connect.amazon.model.EndpointConfiguration
+import org.http4k.connect.amazon.model.HttpEndpointDestinationConfiguration
 import org.http4k.connect.amazon.model.Record
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -26,7 +29,12 @@ abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
         with(firehose) {
             try {
                 createDeliveryStream(
-                    deliveryStreamName, DirectPut
+                    deliveryStreamName, DirectPut,
+                    HttpEndpointDestinationConfiguration = HttpEndpointDestinationConfiguration(
+                        EndpointConfiguration = EndpointConfiguration(
+                            Url = Uri.of("http://localhost:8080")
+                        )
+                    )
 
                 ).successValue()
                 assertThat(

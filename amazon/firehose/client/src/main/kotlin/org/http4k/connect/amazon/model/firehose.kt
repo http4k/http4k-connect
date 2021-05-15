@@ -5,6 +5,7 @@ import dev.forkhandles.values.minLength
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.ResourceId
+import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
 class DeliveryStreamName private constructor(value: String) : ResourceId(value) {
@@ -19,290 +20,285 @@ data class Record(
 
 @JsonSerializable
 data class DeliveryStreamEncryptionConfigurationInput(
-    val KeyARN: ARN?,
-    val KeyType: String?
+    val KeyARN: ARN? = null,
+    val KeyType: String? = null
 )
 
 @JsonSerializable
 data class Parameters(
-    val ParameterName: String?,
-    val ParameterValue: String?
+    val ParameterName: String? = null,
+    val ParameterValue: String? = null
 )
 
 @JsonSerializable
 data class Processor(
-    val Parameters: List<Parameters>?,
-    val Type: String?
+    val Parameters: List<Parameters>? = null,
+    val Type: String? = null
 )
 
 @JsonSerializable
 data class VpcConfiguration(
-    val RoleARN: ARN?,
-    val SecurityGroupIds: List<String>?,
-    val SubnetIds: List<String>?
+    val RoleARN: ARN? = null,
+    val SecurityGroupIds: List<String>? = null,
+    val SubnetIds: List<String>? = null
 )
 
 @JsonSerializable
 data class ElasticsearchDestinationConfiguration(
-    val BufferingHints: BufferingHints?,
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val ClusterEndpoint: String?,
-    val DomainARN: ARN?,
-    val IndexName: String?,
-    val IndexRotationPeriod: String?,
-    val ProcessingConfiguration: ProcessingConfiguration?,
-    val RetryOptions: RetryOptions?,
-    val RoleARN: ARN?,
-    val S3BackupMode: String?,
-    val S3Configuration: S3Configuration?,
-    val TypeName: String?,
-    val VpcConfiguration: VpcConfiguration?
+    val BufferingHints: BufferingHints? = null,
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val ClusterEndpoint: String? = null,
+    val DomainARN: ARN? = null,
+    val IndexName: String? = null,
+    val IndexRotationPeriod: String? = null,
+    val ProcessingConfiguration: ProcessingConfiguration? = null,
+    val RetryOptions: RetryOptions? = null,
+    val RoleARN: ARN? = null,
+    val S3BackupMode: String? = null,
+    val S3Configuration: S3Configuration? = null,
+    val TypeName: String? = null,
+    val VpcConfiguration: VpcConfiguration? = null
 )
 
 @JsonSerializable
 data class HiveJsonSerDe(
-    val TimestampFormats: List<String>?
-)
-
-@JsonSerializable
-data class ColumnToJsonKeyMappings(
-    val string: String?
+    val TimestampFormats: List<String>? = null
 )
 
 @JsonSerializable
 data class OpenXJsonSerDe(
-    val CaseInsensitive: Boolean?,
-    val ColumnToJsonKeyMappings: ColumnToJsonKeyMappings?,
-    val ConvertDotsInJsonKeysToUnderscores: Boolean?
+    val CaseInsensitive: Boolean? = null,
+    val ColumnToJsonKeyMappings: Map<String, String>? = null,
+    val ConvertDotsInJsonKeysToUnderscores: Boolean? = null
 )
 
 @JsonSerializable
 data class Deserializer(
-    val HiveJsonSerDe: HiveJsonSerDe?,
-    val OpenXJsonSerDe: OpenXJsonSerDe?
+    val HiveJsonSerDe: HiveJsonSerDe? = null,
+    val OpenXJsonSerDe: OpenXJsonSerDe? = null
 )
 
 @JsonSerializable
 data class InputFormatConfiguration(
-    val Deserializer: Deserializer?
+    val Deserializer: Deserializer? = null
 )
 
 @JsonSerializable
 data class OrcSerDe(
-    val BlockSizeBytes: Int?,
-    val BloomFilterColumns: List<String>?,
-    val BloomFilterFalsePositiveProbability: Int?,
-    val Compression: String?,
-    val DictionaryKeyThreshold: Int?,
-    val EnablePadding: Boolean?,
-    val FormatVersion: String?,
-    val PaddingTolerance: Int?,
-    val RowIndexStride: Int?,
-    val StripeSizeBytes: Int?
+    val BlockSizeBytes: Int? = null,
+    val BloomFilterColumns: List<String>? = null,
+    val BloomFilterFalsePositiveProbability: Int? = null,
+    val Compression: String? = null,
+    val DictionaryKeyThreshold: Int? = null,
+    val EnablePadding: Boolean? = null,
+    val FormatVersion: String? = null,
+    val PaddingTolerance: Int? = null,
+    val RowIndexStride: Int? = null,
+    val StripeSizeBytes: Int? = null
 )
 
 @JsonSerializable
 data class ParquetSerDe(
-    val BlockSizeBytes: Int?,
-    val Compression: String?,
-    val EnableDictionaryCompression: Boolean?,
-    val MaxPaddingBytes: Int?,
-    val PageSizeBytes: Int?,
-    val WriterVersion: String?
+    val BlockSizeBytes: Int? = null,
+    val Compression: String? = null,
+    val EnableDictionaryCompression: Boolean? = null,
+    val MaxPaddingBytes: Int? = null,
+    val PageSizeBytes: Int? = null,
+    val WriterVersion: String? = null
 )
 
 @JsonSerializable
 data class Serializer(
-    val OrcSerDe: OrcSerDe?,
-    val ParquetSerDe: ParquetSerDe?
+    val OrcSerDe: OrcSerDe? = null,
+    val ParquetSerDe: ParquetSerDe? = null
 )
 
 @JsonSerializable
 data class OutputFormatConfiguration(
-    val Serializer: Serializer?
+    val Serializer: Serializer? = null
 )
 
 @JsonSerializable
 data class SchemaConfiguration(
-    val CatalogId: String?,
-    val DatabaseName: String?,
-    val Region: String?,
-    val RoleARN: ARN?,
-    val TableName: String?,
-    val VersionId: String?
+    val CatalogId: String? = null,
+    val DatabaseName: String? = null,
+    val Region: String? = null,
+    val RoleARN: ARN? = null,
+    val TableName: String? = null,
+    val VersionId: String? = null
 )
 
 @JsonSerializable
 data class DataFormatConversionConfiguration(
-    val Enabled: Boolean?,
-    val InputFormatConfiguration: InputFormatConfiguration?,
-    val OutputFormatConfiguration: OutputFormatConfiguration?,
-    val SchemaConfiguration: SchemaConfiguration?
+    val Enabled: Boolean? = null,
+    val InputFormatConfiguration: InputFormatConfiguration? = null,
+    val OutputFormatConfiguration: OutputFormatConfiguration? = null,
+    val SchemaConfiguration: SchemaConfiguration? = null
 )
 
 @JsonSerializable
 data class ExtendedS3DestinationConfiguration(
-    val BucketARN: ARN?,
-    val BufferingHints: BufferingHints?,
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val CompressionFormat: String?,
-    val DataFormatConversionConfiguration: DataFormatConversionConfiguration?,
-    val EncryptionConfiguration: EncryptionConfiguration?,
-    val ErrorOutputPrefix: String?,
-    val Prefix: String?,
-    val ProcessingConfiguration: ProcessingConfiguration?,
-    val RoleARN: ARN?,
-    val S3BackupConfiguration: S3BackupConfiguration?,
-    val S3BackupMode: String?
+    val BucketARN: ARN? = null,
+    val BufferingHints: BufferingHints? = null,
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val CompressionFormat: String? = null,
+    val DataFormatConversionConfiguration: DataFormatConversionConfiguration? = null,
+    val EncryptionConfiguration: EncryptionConfiguration? = null,
+    val ErrorOutputPrefix: String? = null,
+    val Prefix: String? = null,
+    val ProcessingConfiguration: ProcessingConfiguration? = null,
+    val RoleARN: ARN? = null,
+    val S3BackupConfiguration: S3BackupConfiguration? = null,
+    val S3BackupMode: String? = null
 )
 
 @JsonSerializable
 data class EndpointConfiguration(
-    val AccessKey: String?,
-    val Name: String?,
-    val Url: String?
+    val AccessKey: String? = null,
+    val Name: String? = null,
+    val Url: Uri? = null
 )
 
 @JsonSerializable
 data class CommonAttributes(
-    val AttributeName: String?,
-    val AttributeValue: String?
+    val AttributeName: String? = null,
+    val AttributeValue: String? = null
 )
 
 @JsonSerializable
 data class RequestConfiguration(
-    val CommonAttributes: List<CommonAttributes>?,
-    val ContentEncoding: String?
+    val CommonAttributes: List<CommonAttributes>? = null,
+    val ContentEncoding: String? = null
 )
 
 @JsonSerializable
 data class HttpEndpointDestinationConfiguration(
-    val BufferingHints: BufferingHints?,
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val EndpointConfiguration: EndpointConfiguration?,
-    val ProcessingConfiguration: ProcessingConfiguration?,
-    val RequestConfiguration: RequestConfiguration?,
-    val RetryOptions: RetryOptions?,
-    val RoleARN: ARN?,
-    val S3BackupMode: String?,
-    val S3Configuration: S3Configuration?
+    val BufferingHints: BufferingHints? = null,
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val EndpointConfiguration: EndpointConfiguration? = null,
+    val ProcessingConfiguration: ProcessingConfiguration? = null,
+    val RequestConfiguration: RequestConfiguration? = null,
+    val RetryOptions: RetryOptions? = null,
+    val RoleARN: ARN? = null,
+    val S3BackupMode: String? = null,
+    val S3Configuration: S3Configuration? = null
 )
 
 @JsonSerializable
 data class KinesisStreamSourceConfiguration(
-    val KinesisStreamARN: ARN?,
-    val RoleARN: String?
+    val KinesisStreamARN: ARN? = null,
+    val RoleARN: ARN? = null
 )
 
 @JsonSerializable
 data class CopyCommand(
-    val CopyOptions: String?,
-    val DataTableColumns: String?,
-    val DataTableName: String?
+    val CopyOptions: String? = null,
+    val DataTableColumns: String? = null,
+    val DataTableName: String? = null
 )
 
 @JsonSerializable
 data class RedshiftDestinationConfiguration(
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val ClusterJDBCURL: String?,
-    val CopyCommand: CopyCommand?,
-    val Password: String?,
-    val ProcessingConfiguration: ProcessingConfiguration?,
-    val RetryOptions: RetryOptions?,
-    val RoleARN: ARN?,
-    val S3BackupConfiguration: S3BackupConfiguration?,
-    val S3BackupMode: String?,
-    val S3Configuration: S3Configuration?,
-    val Username: String?
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val ClusterJDBCURL: String? = null,
+    val CopyCommand: CopyCommand? = null,
+    val Password: String? = null,
+    val ProcessingConfiguration: ProcessingConfiguration? = null,
+    val RetryOptions: RetryOptions? = null,
+    val RoleARN: ARN? = null,
+    val S3BackupConfiguration: S3BackupConfiguration? = null,
+    val S3BackupMode: String? = null,
+    val S3Configuration: S3Configuration? = null,
+    val Username: String? = null
 )
 
 @JsonSerializable
 data class S3DestinationConfiguration(
     val BucketARN: ARN,
-    val BufferingHints: BufferingHints?,
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val CompressionFormat: String?,
-    val EncryptionConfiguration: EncryptionConfiguration?,
-    val ErrorOutputPrefix: String?,
-    val Prefix: String?,
-    val RoleARN: String?
+    val BufferingHints: BufferingHints? = null,
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val CompressionFormat: String? = null,
+    val EncryptionConfiguration: EncryptionConfiguration? = null,
+    val ErrorOutputPrefix: String? = null,
+    val Prefix: String? = null,
+    val RoleARN: ARN? = null
 )
 
 @JsonSerializable
 data class SplunkDestinationConfiguration(
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val HECAcknowledgmentTimeoutInSeconds: Int?,
-    val HECEndpoint: String?,
-    val HECEndpointType: String?,
-    val HECToken: String?,
-    val ProcessingConfiguration: ProcessingConfiguration?,
-    val RetryOptions: RetryOptions?,
-    val S3BackupMode: String?,
-    val S3Configuration: S3Configuration?
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val HECAcknowledgmentTimeoutInSeconds: Int? = null,
+    val HECEndpoint: String? = null,
+    val HECEndpointType: String? = null,
+    val HECToken: String? = null,
+    val ProcessingConfiguration: ProcessingConfiguration? = null,
+    val RetryOptions: RetryOptions? = null,
+    val S3BackupMode: String? = null,
+    val S3Configuration: S3Configuration? = null
 )
 
 @JsonSerializable
 data class BufferingHints(
-    val IntervalInSeconds: Int?,
-    val SizeInMBs: Int?
+    val IntervalInSeconds: Int? = null,
+    val SizeInMBs: Int? = null
 )
 
 @JsonSerializable
 data class KMSEncryptionConfig(
-    val AWSKMSKeyARN: String?
+    val AWSKMSKeyARN: ARN? = null
 )
 
 @JsonSerializable
 data class EncryptionConfiguration(
-    val KMSEncryptionConfig: KMSEncryptionConfig?,
-    val NoEncryptionConfig: String?
+    val KMSEncryptionConfig: KMSEncryptionConfig? = null,
+    val NoEncryptionConfig: String? = null
 )
 
 @JsonSerializable
 data class CloudWatchLoggingOptions(
-    val Enabled: Boolean?,
-    val LogGroupName: String?,
-    val LogStreamName: String?
+    val Enabled: Boolean? = null,
+    val LogGroupName: String? = null,
+    val LogStreamName: String? = null
 )
 
 @JsonSerializable
 data class RetryOptions(
-    val DurationInSeconds: Int?
+    val DurationInSeconds: Int? = null
 )
 
 @JsonSerializable
 data class S3Configuration(
-    val BucketARN: ARN?,
-    val BufferingHints: BufferingHints?,
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val CompressionFormat: String?,
-    val EncryptionConfiguration: EncryptionConfiguration?,
-    val ErrorOutputPrefix: String?,
-    val Prefix: String?,
-    val RoleARN: String?
+    val BucketARN: ARN? = null,
+    val BufferingHints: BufferingHints? = null,
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val CompressionFormat: String? = null,
+    val EncryptionConfiguration: EncryptionConfiguration? = null,
+    val ErrorOutputPrefix: String? = null,
+    val Prefix: String? = null,
+    val RoleARN: ARN? = null
 )
 
 @JsonSerializable
 data class ProcessingConfiguration(
-    val Enabled: Boolean?,
-    val Processors: List<Processor>?
+    val Enabled: Boolean? = null,
+    val Processors: List<Processor>? = null
 )
 
 @JsonSerializable
 data class S3BackupConfiguration(
-    val BucketARN: ARN?,
-    val BufferingHints: BufferingHints?,
-    val CloudWatchLoggingOptions: CloudWatchLoggingOptions?,
-    val CompressionFormat: String?,
-    val EncryptionConfiguration: EncryptionConfiguration?,
-    val ErrorOutputPrefix: String?,
-    val Prefix: String?,
-    val RoleARN: String?
+    val BucketARN: ARN? = null,
+    val BufferingHints: BufferingHints? = null,
+    val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
+    val CompressionFormat: String? = null,
+    val EncryptionConfiguration: EncryptionConfiguration? = null,
+    val ErrorOutputPrefix: String? = null,
+    val Prefix: String? = null,
+    val RoleARN: ARN? = null
 )
 
 @JsonSerializable
 data class RequestResponses(
-    val ErrorCode: String?,
-    val ErrorMessage: String?,
-    val RecordId: String
+    val ErrorCode: String? = null,
+    val ErrorMessage: String? = null,
+    val RecordId: String? = null
 )
