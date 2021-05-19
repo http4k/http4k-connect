@@ -10,13 +10,10 @@ buildscript {
 
     dependencies {
         classpath Libs.kotlin_gradle_plugin
+        classpath Libs.org_jetbrains_dokka_gradle_plugin
+        classpath Libs.io_codearte_nexus_staging_gradle_plugin
+        classpath Libs.com_github_kt3k_coveralls_gradle_plugin
     }
-}
-
-plugins {
-    id "com.github.kt3k.coveralls" version "2.10.1"
-    id "org.jetbrains.dokka" version "1.4.32"
-    id "io.codearte.nexus-staging" version '0.22.0'
 }
 
 apply plugin: 'io.codearte.nexus-staging'
