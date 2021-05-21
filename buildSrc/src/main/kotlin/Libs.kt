@@ -43,8 +43,6 @@ object Libs {
 
     const val http4k_aws: String = "org.http4k:http4k-aws"
 
-    const val http4k_bom: String = "org.http4k:http4k-bom:_"
-
     const val http4k_cloudnative: String = "org.http4k:http4k-cloudnative"
 
     const val http4k_contract: String = "org.http4k:http4k-contract"
