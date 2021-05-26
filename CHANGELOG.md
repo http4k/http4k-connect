@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.3.2.0
+- **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.3.1.
+
 ### v3.3.1.0
 - **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.1.0.
 
