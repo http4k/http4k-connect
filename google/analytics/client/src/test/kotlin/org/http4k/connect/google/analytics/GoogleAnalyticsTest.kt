@@ -8,8 +8,6 @@ import org.http4k.connect.google.analytics.action.CLIENT_ID
 import org.http4k.connect.google.analytics.action.DOCUMENT_HOST
 import org.http4k.connect.google.analytics.action.DOCUMENT_PATH
 import org.http4k.connect.google.analytics.action.DOCUMENT_TITLE
-import org.http4k.connect.google.analytics.action.MEASUREMENT_ID
-import org.http4k.connect.google.analytics.action.VERSION
 import org.http4k.connect.google.analytics.model.ClientId
 import org.http4k.connect.google.analytics.model.TrackingId
 import org.http4k.core.Method.GET
@@ -33,9 +31,10 @@ import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalytics.Http(testHttpClient)
+    private val client = GoogleAnalytics.Http(testHttpClient, TrackingId.of("TEST-MEASUREMENT-ID"))
+
     private val analytics =
-        ServerFilters.LogPageView(client, TrackingId.of("TEST-MEASUREMENT-ID")) { ClientId.of("TEST-CLIENT-ID") }.then {
+        ServerFilters.LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
             when {
                 it.uri.path.contains("fail") -> Response(BAD_REQUEST)
                 it.uri.path.contains("informational") -> Response(CONTINUE)
@@ -107,12 +106,12 @@ class GoogleAnalyticsTest {
             testHttpClient.captured, equalTo(
                 Request(POST, "/collect")
                     .header("User-Agent", DEFAULT_USER_AGENT)
-                    .form(VERSION, "1")
-                    .form(MEASUREMENT_ID, "TEST-MEASUREMENT-ID")
                     .form(CLIENT_ID, "TEST-CLIENT-ID")
                     .form(DOCUMENT_TITLE, title)
                     .form(DOCUMENT_PATH, path)
                     .form(DOCUMENT_HOST, host)
+                    .form(VERSION, "1")
+                    .form(MEASUREMENT_ID, "TEST-MEASUREMENT-ID")
             )
         )
     }

@@ -3,6 +3,7 @@
 The GA connector provides the following Actions:
 
      *  PageView
+     *  Event
 
 ### Default Fake port: 35628
 

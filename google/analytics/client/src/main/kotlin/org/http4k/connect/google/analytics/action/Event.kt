@@ -12,19 +12,21 @@ import org.http4k.core.Uri
 import org.http4k.core.body.form
 
 @Http4kConnectAction
-data class PageView(
+data class Event(
     val userAgent: String,
     val clientId: ClientId,
-    val documentTitle: String,
-    val documentPath: String,
-    val documentHost: String
+    val eventType: String,
+    val eventAction: String = "",
+    val eventLabel: String = "",
+    val eventValue: String = ""
 ) : GoogleAnalyticsAction<Unit> {
     override fun toRequest() = Request(POST, uri())
         .header("User-Agent", userAgent)
         .form(CLIENT_ID, clientId.value)
-        .form(DOCUMENT_TITLE, documentTitle)
-        .form(DOCUMENT_PATH, documentPath)
-        .form(DOCUMENT_HOST, documentHost)
+        .form(EVENT_TYPE, eventType)
+        .form(EVENT_ACTION, eventAction)
+        .form(EVENT_LABEL, eventLabel)
+        .form(EVENT_VALUE, eventValue)
 
     override fun toResult(response: Response) = with(response) {
         if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, uri(), status, bodyString()))
@@ -33,7 +35,7 @@ data class PageView(
     private fun uri() = Uri.of("/collect")
 }
 
-const val CLIENT_ID = "cid"
-const val DOCUMENT_TITLE = "dt"
-const val DOCUMENT_PATH = "dp"
-const val DOCUMENT_HOST = "dh"
+const val EVENT_TYPE = "t"
+const val EVENT_ACTION = "ea"
+const val EVENT_LABEL = "el"
+const val EVENT_VALUE = "ev"

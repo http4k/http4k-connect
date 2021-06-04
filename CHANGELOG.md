@@ -3,6 +3,11 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.4.0.0
+- **http4k-connect-amazon-*** - Region is now not reliant on default AWS format. This helps with on-prem installations with non-standard region format.
+- **http4k-connect-google-analytics** - [Breaking] Moved Tracking ID out of pageView and into adapter as is global.
+- **http4k-connect-google-analytics** - Added support for GA events.
+
 ### v3.3.3.0
 - **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.5.0.
 
