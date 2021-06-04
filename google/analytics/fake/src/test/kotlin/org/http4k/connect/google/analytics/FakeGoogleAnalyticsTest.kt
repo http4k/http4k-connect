@@ -24,5 +24,20 @@ class FakeGoogleAnalyticsTest {
             equalTo(Success(Unit))
         )
     }
+
+    @Test
+    fun `can log event`() {
+        assertThat(
+            analytics.event(
+                "some-user-agent",
+                ClientId.of("SOME_CLIENT_ID"),
+                "event",
+                "action",
+                "label",
+                "foobar"
+            ),
+            equalTo(Success(Unit))
+        )
+    }
 }
 
