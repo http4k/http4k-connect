@@ -9,7 +9,7 @@ import org.http4k.connect.google.analytics.model.TrackingId
 import org.junit.jupiter.api.Test
 
 class FakeGoogleAnalyticsTest {
-    private val analytics = GoogleAnalytics.Http(FakeGoogleAnalytics())
+    private val analytics = GoogleAnalytics.Http(FakeGoogleAnalytics(), TrackingId.of("SOME_TRACKING_ID"))
 
     @Test
     fun `can log page view`() {
@@ -19,8 +19,7 @@ class FakeGoogleAnalyticsTest {
                 ClientId.of("SOME_CLIENT_ID"),
                 "title",
                 "/doc/path",
-                "www.http4k.org",
-                TrackingId.of("SOME_TRACKING_ID")
+                "www.http4k.org"
             ),
             equalTo(Success(Unit))
         )
