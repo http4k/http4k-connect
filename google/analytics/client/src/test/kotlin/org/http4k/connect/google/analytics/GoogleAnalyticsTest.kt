@@ -104,8 +104,9 @@ class GoogleAnalyticsTest {
     private fun assertPageView(title: String, path: String, host: String) {
         assertThat(
             testHttpClient.captured, equalTo(
-                Request(POST, "/collect")
+                Request(POST, "https://www.google-analytics.com/collect")
                     .header("User-Agent", DEFAULT_USER_AGENT)
+                    .header("Host", "www.google-analytics.com")
                     .form(CLIENT_ID, "TEST-CLIENT-ID")
                     .form(DOCUMENT_TITLE, title)
                     .form(DOCUMENT_PATH, path)
