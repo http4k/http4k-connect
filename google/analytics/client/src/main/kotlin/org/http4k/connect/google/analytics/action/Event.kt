@@ -15,18 +15,22 @@ import org.http4k.core.body.form
 data class Event(
     val userAgent: String,
     val clientId: ClientId,
-    val eventType: String,
+    val eventCategory: String,
     val eventAction: String = "",
     val eventLabel: String = "",
-    val eventValue: String = ""
+    val eventValue: Int? = null
 ) : GoogleAnalyticsAction<Unit> {
     override fun toRequest() = Request(POST, uri())
         .header("User-Agent", userAgent)
         .form(CLIENT_ID, clientId.value)
-        .form(EVENT_TYPE, eventType)
+        .form(EVENT_TYPE, "event")
+        .form(EVENT_CATEGORY, eventCategory)
         .form(EVENT_ACTION, eventAction)
         .form(EVENT_LABEL, eventLabel)
-        .form(EVENT_VALUE, eventValue)
+        .run {
+            eventValue?.let { form(EVENT_VALUE, it.toString()) } ?: this
+        }
+
 
     override fun toResult(response: Response) = with(response) {
         if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, uri(), status, bodyString()))
@@ -37,5 +41,6 @@ data class Event(
 
 const val EVENT_TYPE = "t"
 const val EVENT_ACTION = "ea"
+const val EVENT_CATEGORY = "ec"
 const val EVENT_LABEL = "el"
 const val EVENT_VALUE = "ev"

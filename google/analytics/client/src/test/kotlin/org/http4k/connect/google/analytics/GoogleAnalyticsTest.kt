@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalytics.Http(testHttpClient, TrackingId.of("TEST-MEASUREMENT-ID"))
+    private val client = GoogleAnalytics.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
 
     private val analytics =
         ServerFilters.LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
