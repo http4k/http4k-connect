@@ -32,9 +32,11 @@ fun bucketGetKey(
     ?.let {
         bucketContent["${bucket}-${req.path("bucketKey")!!}"]
             ?.let {
-                Response(OK)
-                    .headers(getHeadersWithoutXHttp4kPrefix(it))
-                    .body(String(Base64.getDecoder().decode(it.content)))
+                Base64.getDecoder().decode(it.content).let { bytes ->
+                    Response(OK)
+                        .headers(getHeadersWithoutXHttp4kPrefix(it))
+                        .body(bytes.inputStream(), bytes.size.toLong())
+                }
             } ?: Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
     }
     ?: invalidBucketNameResponse())
