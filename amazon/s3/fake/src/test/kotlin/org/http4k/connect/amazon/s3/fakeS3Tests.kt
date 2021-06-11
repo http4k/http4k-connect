@@ -43,6 +43,24 @@ class FakeS3BucketTest : S3BucketContract(FakeS3()) {
         }
     }
 
+    @Test
+    fun `preserve encoding`() {
+        try {
+
+            assertThat(
+                s3Bucket.putObject(
+                    key, "génial".byteInputStream(Charsets.ISO_8859_1), listOf()
+                ).successValue(), equalTo(Unit)
+            )
+
+            assertThat(
+                s3Bucket[key].successValue()!!.reader(Charsets.ISO_8859_1).readText(), equalTo("génial")
+            )
+        } finally {
+            s3Bucket.deleteObject(key)
+            s3Bucket.deleteBucket()
+        }
+    }
 }
 
 class FakeS3BucketPathStyleTest : S3BucketContract(FakeS3()) {
