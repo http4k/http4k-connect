@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.4.2.0 (uncut)
+- **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.7.0.
+- **http4k-connect-amazon-s3-fake** - Fix #56 - S3(Fake): preserve encoding in bucketGetKey - H/T @tkint 
+
 ### v3.4.1.0
 - **http4k-connect-google-analytics** - Added support for GA events.
 
