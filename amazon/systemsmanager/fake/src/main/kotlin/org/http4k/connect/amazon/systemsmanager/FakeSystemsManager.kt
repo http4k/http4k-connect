@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.systemsmanager
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
@@ -15,7 +16,7 @@ data class StoredParameter(val name: SSMParameterName, val value: String, val ty
 
 class FakeSystemsManager(
     parameters: Storage<StoredParameter> = Storage.InMemory()
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(SystemsManagerMoshi, AwsService.of("AmazonSSM"))
 

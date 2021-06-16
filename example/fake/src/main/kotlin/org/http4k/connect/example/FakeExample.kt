@@ -1,11 +1,12 @@
 package org.http4k.connect.example
 
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.routing.routes
 
-class FakeExample(echoes: Storage<String> = Storage.InMemory()) : ChaosFake() {
+class FakeExample(echoes: Storage<String> = Storage.InMemory()) : ChaoticHttpHandler() {
     override val app = routes(
         echo(echoes),
         reverse(),

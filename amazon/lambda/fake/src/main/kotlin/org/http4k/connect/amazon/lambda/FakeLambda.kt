@@ -6,7 +6,8 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.LambdaLogger
 import com.fasterxml.jackson.databind.util.ByteBufferBackedInputStream
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -25,7 +26,7 @@ class FakeLambda(
     fnLoader: FnLoader<Context>,
     private val clock: Clock = Clock.systemUTC(),
     private val env: Map<String, String> = System.getenv()
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     override val app = routes("/2015-03-31/functions/{name}/invocations" bind POST to { req ->
         val name = req.path("name") ?: "unknown"

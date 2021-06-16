@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.sqs
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sqs.model.SQSMessage
@@ -14,7 +15,7 @@ import org.http4k.routing.routes
 class FakeSQS(
     queues: Storage<List<SQSMessage>> = Storage.InMemory(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890")
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     override val app = routes(
         "/{account}/{queueName}" bind POST to routes(

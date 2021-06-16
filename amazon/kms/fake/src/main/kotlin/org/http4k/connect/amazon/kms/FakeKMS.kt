@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.kms
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Base64Blob
@@ -12,7 +13,7 @@ import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaosFake() {
+class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(KMSMoshi, AwsService.of("TrentService"))
 

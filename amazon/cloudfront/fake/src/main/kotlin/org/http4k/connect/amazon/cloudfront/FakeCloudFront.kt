@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.cloudfront
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.routing.routes
 import java.time.Clock
 import java.time.Clock.systemUTC
@@ -9,7 +10,7 @@ import java.time.Clock.systemUTC
 
 class FakeCloudFront(
     private val clock: Clock = systemUTC()
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     override val app = routes(
         CreateInvalidation(clock)

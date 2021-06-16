@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.secretsmanager
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Base64Blob
@@ -26,7 +27,7 @@ data class StoredSecretValue(
 class FakeSecretsManager(
     secrets: Storage<StoredSecretValue> = Storage.InMemory(),
     private val clock: Clock = Clock.systemUTC()
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(SecretsManagerMoshi, AwsService.of("secretsmanager"))
 

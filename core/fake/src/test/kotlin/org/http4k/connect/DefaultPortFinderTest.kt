@@ -2,13 +2,15 @@ package org.http4k.connect
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.defaultPort
 import org.junit.jupiter.api.Test
 
-class FakeSystem1 : ChaosFake() {
+class FakeSystem1 : ChaoticHttpHandler() {
     override val app = TODO()
 }
 
-class FakeSystem2 : ChaosFake() {
+class FakeSystem2 : ChaoticHttpHandler() {
     override val app = TODO()
 }
 

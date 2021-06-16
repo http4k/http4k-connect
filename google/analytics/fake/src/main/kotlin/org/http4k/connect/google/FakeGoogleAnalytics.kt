@@ -1,6 +1,7 @@
 package org.http4k.connect.google
 
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
@@ -12,7 +13,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import java.util.UUID
 
-class FakeGoogleAnalytics(val calls: Storage<Form> = Storage.InMemory()) : ChaosFake() {
+class FakeGoogleAnalytics(val calls: Storage<Form> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     override val app = routes(
         "/collect" bind POST to {

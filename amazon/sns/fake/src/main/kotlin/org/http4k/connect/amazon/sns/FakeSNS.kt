@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.sns
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.storage.InMemory
@@ -13,7 +14,7 @@ import org.http4k.routing.routes
 class FakeSNS(
     topics: Storage<List<SNSMessage>> = Storage.InMemory(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890")
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     override val app = routes(
         "/" bind POST to routes(

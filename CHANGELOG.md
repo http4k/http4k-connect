@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.5.0.0
+- **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.8.0.
+- **http4k-connect-*-fake** [Breaking] Replaced usage of `ChaosFake` with the `ChaoticHttpHandler` from http4k. Nothing massive, but you may need to update some imports as they have moved
+
 ### v3.4.2.0
 - **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.7.0.
 - **http4k-connect-amazon-s3-fake** - Fix #56 - S3(Fake): preserve encoding in bucketGetKey - H/T @tkint 

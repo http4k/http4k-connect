@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.s3
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.endpoints.bucketDeleteBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketDeleteKey
@@ -34,7 +35,7 @@ class FakeS3(
     private val buckets: Storage<Unit> = Storage.InMemory(),
     bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
     private val clock: Clock = Clock.systemUTC()
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     private val isS3 = { it: Request -> it.subdomain(buckets) == "s3" }.asRouter()
     private val isBucket = { it: Request -> it.subdomain(buckets) != "s3" }.asRouter()

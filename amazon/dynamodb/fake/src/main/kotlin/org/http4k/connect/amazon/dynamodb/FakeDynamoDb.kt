@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.dynamodb
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.connect.ChaosFake
+import org.http4k.chaos.ChaoticHttpHandler
+import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
@@ -34,7 +35,7 @@ import java.time.Clock.systemUTC
 class FakeDynamoDb(
     tables: Storage<DynamoTable> = Storage.InMemory(),
     private val clock: Clock = systemUTC()
-) : ChaosFake() {
+) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(DynamoDbMoshi, AwsService.of("DynamoDB_20120810"))
 
