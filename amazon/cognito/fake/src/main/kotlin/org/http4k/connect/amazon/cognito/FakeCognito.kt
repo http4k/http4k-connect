@@ -14,7 +14,7 @@ class FakeCognito(
     private val clock: Clock = systemUTC()
 ) : ChaoticHttpHandler() {
 
-    override val app = { req: Request -> Response(OK).body("{}") }
+    override val app = { _: Request -> Response(OK).body("{}") }
 
     /**
      * Convenience function to get Cognito client
