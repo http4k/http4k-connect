@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.5.1.0
+- **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.9.0.
+- **http4k-connect-github** : Fix token usage and add `authScheme` parameter.
+
 ### v3.5.0.0
 - **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.8.0.
 - **http4k-connect-*-fake** [Breaking] Replaced usage of `ChaosFake` with the `ChaoticHttpHandler` from http4k. Nothing massive, but you may need to update some imports as they have moved
