@@ -29,7 +29,7 @@ private fun copyKey(
     req: Request,
     buckets: Storage<Unit>,
     clock: Clock
-) = bucketContent[req.header("x-amz-copy-source")!!.split("/")
+) = bucketContent[req.header("x-amz-copy-source")!!.split("/", limit = 2)
     .let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
     ?.let {
         putKey(
