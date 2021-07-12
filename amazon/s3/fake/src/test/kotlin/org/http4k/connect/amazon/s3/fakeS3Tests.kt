@@ -2,9 +2,11 @@ package org.http4k.connect.amazon.s3
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.result4k.recover
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.amazon.s3.TestingHeaders.X_HTTP4K_LAST_MODIFIED
+import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.successValue
 import org.http4k.lens.LastModified
@@ -58,6 +60,40 @@ class FakeS3BucketTest : S3BucketContract(FakeS3()) {
             )
         } finally {
             s3Bucket.deleteObject(key)
+            s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `can copy object`() {
+        try {
+            s3Bucket.putObject(key, "hello".byteInputStream(), listOf()).recover { "failed to upload" }
+            assertThat(s3Bucket.copyObject(bucket, key, BucketKey.of("hello-copy.txt")).successValue(), equalTo(Unit))
+        } finally {
+            s3Bucket.deleteObject(key)
+            s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `can copy object with prefix`() {
+        val source = BucketKey.of("source/first/second/hello.txt")
+        val destination = BucketKey.of("destination/hello.txt")
+
+        try {
+            s3Bucket.putObject(source, "hello".byteInputStream(), listOf()).successValue()
+            s3Bucket.copyObject(bucket, source, destination).successValue()
+
+            assertThat(
+                s3Bucket[destination]
+                    .successValue()!!
+                    .reader()
+                    .readText(),
+                equalTo("hello")
+            )
+        } finally {
+            s3Bucket.deleteObject(source)
+            s3Bucket.deleteObject(destination)
             s3Bucket.deleteBucket()
         }
     }
