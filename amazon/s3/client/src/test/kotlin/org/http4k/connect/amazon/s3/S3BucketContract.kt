@@ -38,6 +38,8 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
     fun `bucket key lifecycle`() {
         waitForBucketCreation()
         try {
+            assertThat(s3Bucket.headBucket().successValue(), equalTo(Unit))
+
             val newKey = BucketKey.of("newKey")
 
             assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(emptyList())))

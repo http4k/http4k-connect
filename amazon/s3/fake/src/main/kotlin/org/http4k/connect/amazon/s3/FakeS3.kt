@@ -7,10 +7,12 @@ import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.endpoints.bucketDeleteBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketDeleteKey
 import org.http4k.connect.amazon.s3.endpoints.bucketGetKey
+import org.http4k.connect.amazon.s3.endpoints.bucketHeadBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketListObjectsV2
 import org.http4k.connect.amazon.s3.endpoints.bucketPutBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketPutKey
 import org.http4k.connect.amazon.s3.endpoints.copyKey
+import org.http4k.connect.amazon.s3.endpoints.globalHeadBucket
 import org.http4k.connect.amazon.s3.endpoints.globalListBuckets
 import org.http4k.connect.amazon.s3.endpoints.globalListObjectsV2
 import org.http4k.connect.amazon.s3.endpoints.globalPutBucket
@@ -47,11 +49,13 @@ class FakeS3(
             pathBasedBucketPutKey(buckets, bucketContent, clock),
             pathBasedBucketDeleteKey(buckets, bucketContent),
             globalListObjectsV2(buckets, bucketContent),
+            globalHeadBucket(buckets),
             globalPutBucket(buckets),
             globalListBuckets(buckets)
         ),
         isBucket bind routes(
             copyKey(buckets, bucketContent, clock),
+            bucketHeadBucket(buckets),
             bucketGetKey(buckets, bucketContent),
             bucketPutKey(buckets, bucketContent, clock),
             bucketDeleteKey(buckets, bucketContent),
