@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.s3.endpoints.bucketDeleteBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketDeleteKey
 import org.http4k.connect.amazon.s3.endpoints.bucketGetKey
 import org.http4k.connect.amazon.s3.endpoints.bucketHeadBucket
+import org.http4k.connect.amazon.s3.endpoints.bucketHeadKey
 import org.http4k.connect.amazon.s3.endpoints.bucketListObjectsV2
 import org.http4k.connect.amazon.s3.endpoints.bucketPutBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketPutKey
@@ -18,6 +19,7 @@ import org.http4k.connect.amazon.s3.endpoints.globalListObjectsV2
 import org.http4k.connect.amazon.s3.endpoints.globalPutBucket
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketDeleteKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketGetKey
+import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketHeadKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketPutKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedCopyKey
 import org.http4k.connect.amazon.s3.endpoints.subdomain
@@ -48,6 +50,7 @@ class FakeS3(
             pathBasedBucketGetKey(buckets, bucketContent),
             pathBasedBucketPutKey(buckets, bucketContent, clock),
             pathBasedBucketDeleteKey(buckets, bucketContent),
+            pathBasedBucketHeadKey(buckets, bucketContent),
             globalListObjectsV2(buckets, bucketContent),
             globalHeadBucket(buckets),
             globalPutBucket(buckets),
@@ -56,6 +59,7 @@ class FakeS3(
         isBucket bind routes(
             copyKey(buckets, bucketContent, clock),
             bucketHeadBucket(buckets),
+            bucketHeadKey(buckets, bucketContent),
             bucketGetKey(buckets, bucketContent),
             bucketPutKey(buckets, bucketContent, clock),
             bucketDeleteKey(buckets, bucketContent),

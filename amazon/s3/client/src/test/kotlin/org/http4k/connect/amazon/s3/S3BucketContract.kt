@@ -46,6 +46,8 @@ abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
             assertThat(s3Bucket[key].successValue(), absent())
             assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
+            assertThat(s3Bucket.headObject(key).successValue(), equalTo(Unit))
+
             assertThat(s3Bucket.listObjectsV2().successValue().items.map { it.Key }, equalTo(listOf(key)))
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
