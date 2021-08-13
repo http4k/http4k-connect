@@ -12,6 +12,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
+import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.core.Status.Companion.ACCEPTED
@@ -105,14 +106,14 @@ val keyPrefix = Query.defaulted("keyPrefix", "")
 inline fun <reified T : Any> list(storage: Storage<T>) = "storage" meta {
     queries += keyPrefix
     returning(OK)
-} bindContract GET to {
-    Response(OK).body(storage.keySet(keyPrefix(it)).sorted().joinToString("\n"))
+} bindContract GET to { req: Request ->
+    Response(OK).body(storage.keySet(keyPrefix(req)).sorted().joinToString("\n"))
 }
 
 inline fun <reified T : Any> deletePrefix(storage: Storage<T>) = "storage" meta {
     queries += keyPrefix
     returning(ACCEPTED)
     returning(NOT_FOUND)
-} bindContract DELETE to {
-    Response(if (storage.removeAll(keyPrefix(it))) ACCEPTED else NOT_FOUND)
+} bindContract DELETE to { req: Request ->
+    Response(if (storage.removeAll(keyPrefix(req))) ACCEPTED else NOT_FOUND)
 }
