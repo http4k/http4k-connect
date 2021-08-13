@@ -9,7 +9,7 @@ import org.http4k.core.Body
 import org.http4k.core.ContentType
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.body.form
@@ -40,7 +40,7 @@ fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
     val queueName = req.path("queueName")!!
 
     when {
-        queues.keySet(queueName).isEmpty() -> Response(Status.BAD_REQUEST)
+        queues.keySet(queueName).isEmpty() -> Response(BAD_REQUEST)
         else -> {
             queues.remove(queueName)
             Response(OK).with(viewModelLens of DeleteQueueResponse)
@@ -58,13 +58,13 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
         val receiptHandle = ReceiptHandle.of(queueName + "/" + UUID.randomUUID())
         queues[queueName] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, mapOf())
         Response(OK).with(viewModelLens of SendMessageResponse(message, messageId))
-    } ?: Response(Status.BAD_REQUEST)
+    } ?: Response(BAD_REQUEST)
 }
 
 fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
     .asRouter() bind { req: Request ->
     val queue = queues[req.path("queueName")!!]
-    queue?.let { Response(OK).with(viewModelLens of ReceiveMessageResponse(it)) } ?: Response(Status.BAD_REQUEST)
+    queue?.let { Response(OK).with(viewModelLens of ReceiveMessageResponse(it)) } ?: Response(BAD_REQUEST)
 }
 
 fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessage" }
@@ -74,7 +74,7 @@ fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("A
     queues[queueName]?.let {
         queues[queueName] = it.filterNot { it.receiptHandle == receiptHandle }
         Response(OK).with(viewModelLens of DeleteMessageResponse)
-    } ?: Response(Status.BAD_REQUEST)
+    } ?: Response(BAD_REQUEST)
 }
 
 val viewModelLens by lazy {

@@ -18,6 +18,7 @@ import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Uri
+import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
@@ -28,10 +29,12 @@ data class ReceiveMessage(
     val maxNumberOfMessages: Int? = null,
     val visibilityTimeout: Int? = null,
     val attributeName: String? = null,
-    val expires: ZonedDateTime? = null
+    val expires: ZonedDateTime? = null,
+    val longPollTime: Duration? = null
 ) : SQSAction<List<SQSMessage>>(
     "ReceiveMessage",
     maxNumberOfMessages?.let { "MaxNumberOfMessages" to it.toString() },
+    longPollTime?.let { "WaitTimeSeconds" to it.seconds.toString() },
     visibilityTimeout?.let { "VisibilityTimeout" to it.toString() },
     attributeName?.let { "AttributeName" to it },
     expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
@@ -41,14 +44,16 @@ data class ReceiveMessage(
         maxNumberOfMessages: Int? = null,
         visibilityTimeout: Int? = null,
         attributeName: String? = null,
-        expires: ZonedDateTime? = null
+        expires: ZonedDateTime? = null,
+        longPollTime: Duration? = null
     ) : this(
         queueARN.account,
         queueARN.resourceId(QueueName::of),
         maxNumberOfMessages,
         visibilityTimeout,
         attributeName,
-        expires
+        expires,
+        longPollTime
     )
 
     override fun toResult(response: Response) = with(response) {
@@ -64,7 +69,7 @@ data class ReceiveMessage(
                                 text("MD5OfBody"),
                                 ReceiptHandle.of(text("ReceiptHandle")),
                                 it.children("Attributes")
-                                    .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?:"") }
+                                    .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?: "") }
                                     .toMap()
                             )
                         }.toList()
