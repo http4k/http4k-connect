@@ -9,7 +9,6 @@ import org.http4k.connect.amazon.core.firstChildText
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.sequenceOfNodes
-import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
@@ -64,10 +63,10 @@ data class ReceiveMessage(
                         .sequenceOfNodes()
                         .map {
                             SQSMessage(
-                                SQSMessageId.of(text("MessageId")),
-                                text("Body"),
-                                text("MD5OfBody"),
-                                ReceiptHandle.of(text("ReceiptHandle")),
+                                SQSMessageId.of(it.firstChildText("MessageId")!!),
+                                it.firstChildText("Body") ?: "",
+                                it.firstChildText("MD5OfBody") ?: "",
+                                ReceiptHandle.of(it.firstChildText("ReceiptHandle")!!),
                                 it.children("Attributes")
                                     .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?: "") }
                                     .toMap()
