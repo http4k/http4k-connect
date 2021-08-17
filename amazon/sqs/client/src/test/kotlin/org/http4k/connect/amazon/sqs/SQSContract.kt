@@ -19,12 +19,12 @@ import java.util.UUID
 
 abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
-    private val sqs by lazy {
+    protected val sqs by lazy {
         SQS.Http(aws.region, { aws.credentials }, http)
     }
 
-    private val queueName = QueueName.of(UUID.randomUUID().toString())
-    private val expires = ZonedDateTime.now().plus(Duration.ofMinutes(1))
+    protected val queueName = QueueName.of(UUID.randomUUID().toString())
+    protected val expires = ZonedDateTime.now().plus(Duration.ofMinutes(1))
 
     @Test
     fun `queue lifecycle`() {
@@ -61,35 +61,6 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 deleteMessage(accountId, queueName, received.receiptHandle).successValue()
 
                 assertThat(receiveMessage(accountId, queueName).successValue().size, equalTo(0))
-            } finally {
-                deleteQueue(accountId, queueName, expires).successValue()
-            }
-        }
-    }
-
-    @Test
-    fun `multiple messages are handled correctly`() {
-        with(sqs) {
-            val created = createQueue(
-                queueName,
-                listOf(Tag("tag", "value")),
-                mapOf("MaximumMessageSize" to "10000"),
-                expires
-            ).successValue()
-            val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
-
-            try {
-                val id = sendMessage(
-                    accountId, queueName, "hello world"
-                ).successValue().MessageId
-                val id2 = sendMessage(
-                    accountId, queueName, "hello world 2"
-                ).successValue().MessageId
-
-                val messages = receiveMessage(accountId, queueName).successValue()
-                assertThat(messages.size, equalTo(2))
-                assertThat(messages.first().messageId, equalTo(id))
-                assertThat(messages.drop(1).first().messageId, equalTo(id2))
             } finally {
                 deleteQueue(accountId, queueName, expires).successValue()
             }
