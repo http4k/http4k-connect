@@ -24,18 +24,19 @@ class FakeSQSTest : SQSContract(FakeSQS()) {
             val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
 
             try {
-                val id = sendMessage(
-                    accountId, queueName, "hello world"
-                ).successValue().MessageId
-                val id2 = sendMessage(
-                    accountId, queueName, "hello world 2"
-                ).successValue().MessageId
+                val id = sendMessage(accountId, queueName, "hello world").successValue().MessageId
+                val id1 = sendMessage(accountId, queueName, "hello world 2").successValue().MessageId
+                sendMessage(accountId, queueName, "shouldn't be returned").successValue().MessageId
 
-                val messages = receiveMessage(accountId, queueName,
-                    longPollTime = Duration.ofSeconds(10)).successValue()
+                val messages = receiveMessage(
+                    accountId,
+                    queueName,
+                    maxNumberOfMessages = 2,
+                    longPollTime = Duration.ofSeconds(10)
+                ).successValue()
                 assertThat(messages.size, equalTo(2))
-                assertThat(messages.first().messageId, equalTo(id))
-                assertThat(messages.drop(1).first().messageId, equalTo(id2))
+                assertThat(messages[0].messageId, equalTo(id))
+                assertThat(messages[1].messageId, equalTo(id1))
             } finally {
                 deleteQueue(accountId, queueName, expires).successValue()
             }

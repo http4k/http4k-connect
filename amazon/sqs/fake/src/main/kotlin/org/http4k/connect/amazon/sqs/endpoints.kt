@@ -63,8 +63,12 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
 
 fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
     .asRouter() bind { req: Request ->
+    val maxNumberOfMessages = req.form("MaxNumberOfMessages")?.toInt()
     val queue = queues[req.path("queueName")!!]
-    queue?.let { Response(OK).with(viewModelLens of ReceiveMessageResponse(it)) } ?: Response(BAD_REQUEST)
+    queue?.let { sqsMessages ->
+        val messagesToSend = maxNumberOfMessages?.let { it -> sqsMessages.take(it) } ?: sqsMessages
+        Response(OK).with(viewModelLens of ReceiveMessageResponse(messagesToSend))
+    } ?: Response(BAD_REQUEST)
 }
 
 fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessage" }
