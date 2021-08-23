@@ -35,9 +35,17 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 mapOf("MaximumMessageSize" to "10000"),
                 expires
             ).successValue()
-            val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
+            val queueUrl = created.QueueUrl
+            val accountId = AwsAccount.of(queueUrl.path.split("/")[1])
 
             try {
+                assertThat(
+                    getQueueAttributes(
+                        queueUrl,
+                        listOf("All")
+                    ).successValue().attributes["ApproximateNumberOfMessages"], equalTo("0")
+                )
+
                 val id = sendMessage(
                     accountId, queueName, "hello world", expires = expires,
                     attributes = listOf(

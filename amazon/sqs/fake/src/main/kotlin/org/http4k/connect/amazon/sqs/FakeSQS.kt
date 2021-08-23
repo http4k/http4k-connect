@@ -24,7 +24,10 @@ class FakeSQS(
             receiveMessage(queues),
             sendMessage(queues)
         ),
-        "/" bind POST to createQueue(queues, awsAccount)
+        "/" bind POST to routes(
+            createQueue(queues, awsAccount),
+            getQueueAttributes(queues)
+        )
     )
 
     /**

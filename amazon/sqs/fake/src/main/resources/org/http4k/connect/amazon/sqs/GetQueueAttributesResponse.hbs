@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<GetQueueAttributesResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+    <GetQueueAttributesResult>
+        {{#each attributes}}
+        <Attribute>
+            <Name>{{first}}</Name>
+            <Value>{{second}}</Value>
+        </Attribute>
+        {{/each}}
+    </GetQueueAttributesResult>
+    <ResponseMetadata>
+        <RequestId>1ea71be5-b5a2-4f9d-b85a-945d8d08cd0b</RequestId>
+    </ResponseMetadata>
+</GetQueueAttributesResponse>

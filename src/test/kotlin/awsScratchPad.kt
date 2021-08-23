@@ -1,29 +1,35 @@
 import org.http4k.aws.AwsSdkClient
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.cloudfront.FakeCloudFront
 import org.http4k.core.HttpHandler
+import org.http4k.core.Response
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
-import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateUserPoolRequest
-import software.amazon.awssdk.services.cognitoidentityprovider.model.DeleteUserPoolRequest
+import software.amazon.awssdk.services.sqs.SqsClient
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest
+import software.amazon.awssdk.services.sqs.model.QueueAttributeName
 
 const val USE_REAL_CLIENT = true
 
 fun main() {
-    val http: HttpHandler = if (USE_REAL_CLIENT) PrintRequestAndResponse().then(JavaHttpClient()) else FakeCloudFront()
+    val http: HttpHandler =
+        if (USE_REAL_CLIENT) PrintRequestAndResponse(debugStream = true).then(JavaHttpClient()) else PrintRequestAndResponse().then {
+            Response(
+                OK
+            )
+        }
 
-    val loudClient = CognitoIdentityProviderClient.builder()
+    val sqs = SqsClient.builder()
         .region(Region.EU_WEST_2)
         .httpClient(AwsSdkClient(http))
         .build()
 
-    val id = loudClient.createUserPool(CreateUserPoolRequest.builder().poolName("foobar").build()).userPool().id()
-
-    try {
-    } finally {
-        println(loudClient.deleteUserPool(DeleteUserPoolRequest.builder().userPoolId(id).build()))
-    }
-
+    sqs.getQueueAttributes(
+        GetQueueAttributesRequest
+            .builder()
+            .attributeNames(QueueAttributeName.ALL)
+            .queueUrl("foo")
+            .build()
+    )
 }

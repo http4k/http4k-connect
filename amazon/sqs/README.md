@@ -4,6 +4,7 @@ The SQS connector provides the following Actions:
 
      *  CreateQueue
      *  DeleteQueue
+     *  GetQueueAttributes
      *  SendMessage
      *  ReceiveMessage
      *  DeleteMessage

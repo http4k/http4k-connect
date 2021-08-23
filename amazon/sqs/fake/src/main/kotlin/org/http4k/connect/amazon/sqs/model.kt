@@ -19,6 +19,8 @@ data class SendMessageResponse(
     val md5OfMessageAttributes = md5OfMessageBody
 }
 
+data class GetQueueAttributesResponse(val attributes: List<Pair<String, String>>) : ViewModel
+
 object DeleteQueueResponse : ViewModel
 
 object DeleteMessageResponse : ViewModel

@@ -35,6 +35,34 @@ fun createQueue(queues: Storage<List<SQSMessage>>, awsAccount: AwsAccount) =
         )
     }
 
+fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
+    { r: Request -> r.form("Action") == "GetQueueAttributes" }
+        .asRouter() bind { req: Request ->
+        val queueName = req.form("QueueUrl")!!.split("/").last()
+
+        when (val queue = queues[queueName]) {
+            null -> Response(BAD_REQUEST)
+            else -> {
+                Response(OK).with(
+                    viewModelLens of GetQueueAttributesResponse(
+                        mapOf(
+                            "LastModifiedTimestamp" to "0",
+                            "CreatedTimestamp" to "0",
+                            "MessageRetentionPeriod" to "0",
+                            "DelaySeconds" to "0",
+                            "ReceiveMessageWaitTimeSeconds" to "0",
+                            "MaximumMessageSize" to "0",
+                            "VisibilityTimeout" to "0",
+                            "ApproximateNumberOfMessagesDelayed" to queue.size.toString(),
+                            "ApproximateNumberOfMessages" to queue.size.toString(),
+                            "ApproximateNumberOfMessagesNotVisible" to "0"
+                        ).toList()
+                    )
+                )
+            }
+        }
+    }
+
 fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteQueue" }
     .asRouter() bind { req: Request ->
     val queueName = req.path("queueName")!!
@@ -75,10 +103,12 @@ fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("A
     .asRouter() bind { req: Request ->
     val queueName = req.path("queueName")!!
     val receiptHandle = ReceiptHandle.of(req.form("ReceiptHandle")!!)
-    queues[queueName]?.let {
-        queues[queueName] = it.filterNot { it.receiptHandle == receiptHandle }
-        Response(OK).with(viewModelLens of DeleteMessageResponse)
-    } ?: Response(BAD_REQUEST)
+    queues[queueName]
+        ?.let {
+            queues[queueName] = it.filterNot { it.receiptHandle == receiptHandle }
+            Response(OK).with(viewModelLens of DeleteMessageResponse)
+        }
+        ?: Response(BAD_REQUEST)
 }
 
 val viewModelLens by lazy {
