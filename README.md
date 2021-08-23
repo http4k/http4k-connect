@@ -75,7 +75,7 @@ FakeExample().start()
 ```groovy
 dependencies {
     // install the platform...
-    implementation platform("org.http4k:http4k-connect-bom:3.6.3.2")
+    implementation platform("org.http4k:http4k-connect-bom:3.6.4.0")
 
     // ...then choose a client
     implementation "org.http4k:http4k-connect-amazon-s3"
