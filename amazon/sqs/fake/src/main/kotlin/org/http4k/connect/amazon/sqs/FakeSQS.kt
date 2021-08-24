@@ -18,15 +18,13 @@ class FakeSQS(
 ) : ChaoticHttpHandler() {
 
     override val app = routes(
-        "/{account}/{queueName}" bind POST to routes(
+        "/" bind POST to routes(
             deleteMessage(queues),
             deleteQueue(queues),
             receiveMessage(queues),
-            sendMessage(queues)
-        ),
-        "/" bind POST to routes(
             createQueue(queues, awsAccount),
-            getQueueAttributes(queues)
+            getQueueAttributes(queues),
+            sendMessage(queues)
         )
     )
 

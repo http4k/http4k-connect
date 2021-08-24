@@ -37,12 +37,10 @@ data class CreateQueue(
         )
         ).toTypedArray()
 ) {
-    override fun uri() = Uri.of("")
-
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(CreatedQueue.from(response))
-            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
+            else -> Failure(RemoteFailure(POST, Uri.of(""), status, bodyString()))
         }
     }
 }

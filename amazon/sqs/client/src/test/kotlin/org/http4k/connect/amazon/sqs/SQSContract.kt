@@ -3,7 +3,6 @@ package org.http4k.connect.amazon.sqs
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Tag
@@ -36,7 +35,6 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 expires
             ).successValue()
             val queueUrl = created.QueueUrl
-            val accountId = AwsAccount.of(queueUrl.path.split("/")[1])
 
             try {
                 assertThat(
@@ -47,7 +45,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 )
 
                 val id = sendMessage(
-                    accountId, queueName, "hello world", expires = expires,
+                    queueUrl, "hello world", expires = expires,
                     attributes = listOf(
                         MessageAttribute("foo", "123", DataType.Number),
                         MessageAttribute("bar", "123", DataType.Number),
@@ -62,15 +60,15 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                     )
                 ).successValue().MessageId
 
-                val received = receiveMessage(accountId, queueName).successValue().first()
+                val received = receiveMessage(queueUrl).successValue().first()
                 assertThat(received.messageId, equalTo(id))
                 assertThat(received.body, equalTo("hello world"))
 
-                deleteMessage(accountId, queueName, received.receiptHandle).successValue()
+                deleteMessage(queueUrl, received.receiptHandle).successValue()
 
-                assertThat(receiveMessage(accountId, queueName).successValue().size, equalTo(0))
+                assertThat(receiveMessage(queueUrl).successValue().size, equalTo(0))
             } finally {
-                deleteQueue(accountId, queueName, expires).successValue()
+                deleteQueue(queueUrl, expires).successValue()
             }
         }
     }

@@ -7,8 +7,7 @@ import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsClient
-import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest
-import software.amazon.awssdk.services.sqs.model.QueueAttributeName
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest
 
 const val USE_REAL_CLIENT = true
 
@@ -25,10 +24,9 @@ fun main() {
         .httpClient(AwsSdkClient(http))
         .build()
 
-    sqs.getQueueAttributes(
-        GetQueueAttributesRequest
+    sqs.sendMessage(
+        SendMessageRequest
             .builder()
-            .attributeNames(QueueAttributeName.ALL)
             .queueUrl("foo")
             .build()
     )

@@ -2,8 +2,6 @@ import dev.forkhandles.result4k.Result
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sqs.FakeSQS
 import org.http4k.connect.amazon.sqs.Http
@@ -14,6 +12,7 @@ import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.amazon.sqs.receiveMessage
 import org.http4k.connect.amazon.sqs.sendMessage
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.http4k.filter.debug
 
 const val USE_REAL_CLIENT = false
@@ -21,7 +20,8 @@ const val USE_REAL_CLIENT = false
 fun main() {
     val region = Region.of("us-east-1")
     val queueName = QueueName.of("myqueue")
-    val queueArn = ARN.of(SQS.awsService, region, AwsAccount.of("000000001"), queueName)
+
+    val queueUrl = Uri.of("https://sqs.us-east-1.amazonaws.com/000000001/$queueName")
 
     // we can connect to the real service or the fake (drop in replacement)
     val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeSQS()
@@ -34,8 +34,9 @@ fun main() {
     println(createdQueueResult)
 
     // send a message
-    println(client.sendMessage(queueArn, "hello"))
+
+    println(client.sendMessage(queueUrl, "hello"))
 
     // and receive it..
-    println(client.receiveMessage(queueArn))
+    println(client.receiveMessage(queueUrl))
 }

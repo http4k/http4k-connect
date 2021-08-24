@@ -4,15 +4,12 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.asList
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.textOptional
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
-import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Method
 import org.http4k.core.Response
@@ -20,10 +17,11 @@ import org.http4k.core.Uri
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
+
+// can be QueueUrl
 @Http4kConnectAction
 data class SendMessage(
-    val accountId: AwsAccount,
-    val queueName: QueueName,
+    val queueUrl: Uri,
     val payload: String,
     val delaySeconds: Int? = null,
     val deduplicationId: String? = null,
@@ -38,42 +36,19 @@ data class SendMessage(
             listOfNotNull(
                 ("MessageBody" to payload),
                 expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
+                "QueueUrl" to queueUrl.toString(),
                 delaySeconds?.let { "DelaySeconds" to it.toString() },
                 deduplicationId?.let { "MessageDeduplicationId" to it },
                 messageGroupId?.let { "MessageGroupId" to it }
             )
         ).toTypedArray()
 ) {
-    constructor(
-        queueARN: ARN,
-        payload: String,
-        delaySeconds: Int? = null,
-        deduplicationId: String? = null,
-        messageGroupId: String? = null,
-        expires: ZonedDateTime? = null,
-        attributes: List<MessageAttribute>? = null,
-        systemAttributes: List<MessageSystemAttribute>? = null
-    ) :
-        this(
-            queueARN.account,
-            queueARN.resourceId(QueueName::of),
-            payload,
-            delaySeconds,
-            deduplicationId,
-            messageGroupId,
-            expires,
-            attributes,
-            systemAttributes
-        )
-
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SentMessage.from(response))
-            else -> Failure(RemoteFailure(Method.POST, uri(), status, bodyString()))
+            else -> Failure(RemoteFailure(Method.POST, Uri.of(""), status, bodyString()))
         }
     }
-
-    override fun uri() = Uri.of("/${accountId.value}/${queueName.value}")
 }
 
 data class SentMessage(

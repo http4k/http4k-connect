@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.sqs
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.successValue
@@ -21,16 +20,14 @@ class FakeSQSTest : SQSContract(FakeSQS()) {
                 mapOf("MaximumMessageSize" to "10000"),
                 expires
             ).successValue()
-            val accountId = AwsAccount.of(created.QueueUrl.path.split("/")[1])
 
             try {
-                val id = sendMessage(accountId, queueName, "hello world").successValue().MessageId
-                val id1 = sendMessage(accountId, queueName, "hello world 2").successValue().MessageId
-                sendMessage(accountId, queueName, "shouldn't be returned").successValue().MessageId
+                val id = sendMessage(created.QueueUrl, "hello world").successValue().MessageId
+                val id1 = sendMessage(created.QueueUrl, "hello world 2").successValue().MessageId
+                sendMessage(created.QueueUrl, "shouldn't be returned").successValue().MessageId
 
                 val messages = receiveMessage(
-                    accountId,
-                    queueName,
+                    created.QueueUrl,
                     maxNumberOfMessages = 2,
                     longPollTime = Duration.ofSeconds(10)
                 ).successValue()
@@ -38,7 +35,7 @@ class FakeSQSTest : SQSContract(FakeSQS()) {
                 assertThat(messages[0].messageId, equalTo(id))
                 assertThat(messages[1].messageId, equalTo(id1))
             } finally {
-                deleteQueue(accountId, queueName, expires).successValue()
+                deleteQueue(created.QueueUrl, expires).successValue()
             }
         }
     }
