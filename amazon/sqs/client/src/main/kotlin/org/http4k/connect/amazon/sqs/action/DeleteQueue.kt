@@ -13,6 +13,7 @@ import org.http4k.core.Uri
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
+// can be QueueUrl
 @Http4kConnectAction
 data class DeleteQueue(
     val accountId: AwsAccount,

@@ -21,6 +21,8 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
+// can be QueueUrl
+
 @Http4kConnectAction
 data class ReceiveMessage(
     val accountId: AwsAccount,

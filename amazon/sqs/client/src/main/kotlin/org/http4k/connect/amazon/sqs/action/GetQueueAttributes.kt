@@ -11,6 +11,7 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Uri
 
+// can be QueueUrl
 @Http4kConnectAction
 data class GetQueueAttributes(
     val queueUri: Uri,
