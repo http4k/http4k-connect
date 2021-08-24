@@ -17,7 +17,6 @@ import org.http4k.core.extend
 import org.http4k.core.with
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
-import org.http4k.routing.path
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.util.UUID
@@ -38,9 +37,9 @@ fun createQueue(queues: Storage<List<SQSMessage>>, awsAccount: AwsAccount) =
 fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
     { r: Request -> r.form("Action") == "GetQueueAttributes" }
         .asRouter() bind { req: Request ->
-        val queueName = req.form("QueueUrl")!!.split("/").last()
+        val queueUri = req.form("QueueUrl")!!
 
-        when (val queue = queues[queueName]) {
+        when (val queue = queues[queueUri.queueName()]) {
             null -> Response(BAD_REQUEST)
             else -> {
                 Response(OK).with(
@@ -63,9 +62,11 @@ fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
         }
     }
 
+private fun String.queueName() = substring(lastIndexOf('/') + 1)
+
 fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteQueue" }
     .asRouter() bind { req: Request ->
-    val queueName = req.path("queueName")!!
+    val queueName = req.form("QueueUrl")!!.queueName()
 
     when {
         queues.keySet(queueName).isEmpty() -> Response(BAD_REQUEST)
@@ -78,13 +79,13 @@ fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
 
 fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "SendMessage" }
     .asRouter() bind { req: Request ->
-    val queueName = req.path("queueName")!!
+    val queue = req.form("QueueUrl")!!.queueName()
 
-    queues[queueName]?.let {
+    queues[queue]?.let {
         val message = req.form("MessageBody")!!
-        val messageId = SQSMessageId.of(queueName + "/" + UUID.randomUUID())
-        val receiptHandle = ReceiptHandle.of(queueName + "/" + UUID.randomUUID())
-        queues[queueName] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, mapOf())
+        val messageId = SQSMessageId.of(queue + "/" + UUID.randomUUID())
+        val receiptHandle = ReceiptHandle.of(queue + "/" + UUID.randomUUID())
+        queues[queue] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, mapOf())
         Response(OK).with(viewModelLens of SendMessageResponse(message, messageId))
     } ?: Response(BAD_REQUEST)
 }
@@ -92,7 +93,7 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
 fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
     .asRouter() bind { req: Request ->
     val maxNumberOfMessages = req.form("MaxNumberOfMessages")?.toInt()
-    val queue = queues[req.path("queueName")!!]
+    val queue = queues[req.form("QueueUrl")!!.queueName()]
     queue?.let { sqsMessages ->
         val messagesToSend = maxNumberOfMessages?.let { it -> sqsMessages.take(it) } ?: sqsMessages
         Response(OK).with(viewModelLens of ReceiveMessageResponse(messagesToSend))
@@ -101,11 +102,11 @@ fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("
 
 fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessage" }
     .asRouter() bind { req: Request ->
-    val queueName = req.path("queueName")!!
+    val queue = req.form("QueueUrl")!!.queueName()
     val receiptHandle = ReceiptHandle.of(req.form("ReceiptHandle")!!)
-    queues[queueName]
+    queues[queue]
         ?.let {
-            queues[queueName] = it.filterNot { it.receiptHandle == receiptHandle }
+            queues[queue] = it.filterNot { it.receiptHandle == receiptHandle }
             Response(OK).with(viewModelLens of DeleteMessageResponse)
         }
         ?: Response(BAD_REQUEST)

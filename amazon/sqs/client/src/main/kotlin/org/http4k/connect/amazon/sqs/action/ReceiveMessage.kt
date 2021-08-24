@@ -6,11 +6,8 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.children
 import org.http4k.connect.amazon.core.firstChildText
-import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.sequenceOfNodes
 import org.http4k.connect.amazon.core.xmlDoc
-import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
@@ -25,8 +22,7 @@ import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 @Http4kConnectAction
 data class ReceiveMessage(
-    val accountId: AwsAccount,
-    val queueName: QueueName,
+    val queueUrl: Uri,
     val maxNumberOfMessages: Int? = null,
     val visibilityTimeout: Int? = null,
     val attributeName: String? = null,
@@ -39,23 +35,8 @@ data class ReceiveMessage(
     visibilityTimeout?.let { "VisibilityTimeout" to it.toString() },
     attributeName?.let { "AttributeName" to it },
     expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
+    "QueueUrl" to queueUrl.toString()
 ) {
-    constructor(
-        queueARN: ARN,
-        maxNumberOfMessages: Int? = null,
-        visibilityTimeout: Int? = null,
-        attributeName: String? = null,
-        expires: ZonedDateTime? = null,
-        longPollTime: Duration? = null
-    ) : this(
-        queueARN.account,
-        queueARN.resourceId(QueueName::of),
-        maxNumberOfMessages,
-        visibilityTimeout,
-        attributeName,
-        expires,
-        longPollTime
-    )
 
     override fun toResult(response: Response) = with(response) {
         when {
@@ -75,9 +56,7 @@ data class ReceiveMessage(
                             )
                         }.toList()
                 })
-            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
+            else -> Failure(RemoteFailure(POST, Uri.of(""), status, bodyString()))
         }
     }
-
-    override fun uri() = Uri.of("/${accountId.value}/${queueName.value}")
 }

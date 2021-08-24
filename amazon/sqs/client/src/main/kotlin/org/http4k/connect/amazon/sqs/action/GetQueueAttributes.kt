@@ -14,22 +14,20 @@ import org.http4k.core.Uri
 // can be QueueUrl
 @Http4kConnectAction
 data class GetQueueAttributes(
-    val queueUri: Uri,
+    val queueUrl: Uri,
     val attributes: List<String> = listOf("All"),
 ) : SQSAction<QueueAttributes>(
     "GetQueueAttributes",
     *(
         attributes
             .mapIndexed { i, it -> "AttributeName.${i + 1}" to it }
-            + ("QueueUrl" to queueUri.toString())
+            + ("QueueUrl" to queueUrl.toString())
         ).toTypedArray()
 ) {
-    override fun uri() = Uri.of("")
-
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(QueueAttributes.from(response))
-            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
+            else -> Failure(RemoteFailure(POST, Uri.of(""), status, bodyString()))
         }
     }
 }

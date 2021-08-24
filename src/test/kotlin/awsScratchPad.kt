@@ -7,7 +7,7 @@ import org.http4k.core.then
 import org.http4k.filter.DebuggingFilters.PrintRequestAndResponse
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsClient
-import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest
 
 const val USE_REAL_CLIENT = true
 
@@ -24,8 +24,8 @@ fun main() {
         .httpClient(AwsSdkClient(http))
         .build()
 
-    sqs.deleteMessage(
-        DeleteMessageRequest
+    sqs.sendMessage(
+        SendMessageRequest
             .builder()
             .queueUrl("foo")
             .build()

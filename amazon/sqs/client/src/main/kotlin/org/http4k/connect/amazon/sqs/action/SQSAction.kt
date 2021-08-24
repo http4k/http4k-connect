@@ -17,11 +17,9 @@ abstract class SQSAction<R>(private val action: String, private vararg val mappi
         (listOf("Action" to action, "Version" to "2012-11-05") + mappings)
             .filterNotNull()
             .fold(
-                Request(POST, uri())
+                Request(POST, Uri.of(""))
                     .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
             ) { acc, it ->
                 acc.form(it.first, it.second)
             }
-
-    protected abstract fun uri(): Uri
 }

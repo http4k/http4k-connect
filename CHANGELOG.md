@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.7.0.0
+- **http4k-connect-amazon-sqs*** - [Breaking] Change to use QueueUrl universally. This ia much more consistent and aligns with the behaviour of the standard AWS SDK.
+
 ### v3.6.4.0
 - **http4k-connect-amazon-sqs*** - Support GetQueueAttributes
 
