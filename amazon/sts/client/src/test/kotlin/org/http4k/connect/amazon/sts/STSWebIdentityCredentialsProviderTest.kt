@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.sts
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -19,11 +18,8 @@ import org.http4k.connect.amazon.core.model.Region.Companion.US_EAST_1
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.WebIdentityToken
-import org.http4k.connect.amazon.sts.action.AssumedRoleWithWebIdentityResponse
-import org.http4k.connect.amazon.sts.model.AssumedRoleUser
 import org.http4k.connect.amazon.sts.model.Credentials
 import org.http4k.connect.amazon.sts.model.Expiration
-import org.http4k.connect.amazon.sts.model.RoleId
 import org.http4k.core.HttpHandler
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
@@ -79,10 +75,10 @@ class STSWebIdentityCredentialsProviderTest {
             <AssumedRoleId>roleIdForThisRole</AssumedRoleId>
         </AssumedRoleUser>
         <Credentials>
-            <AccessKeyId>accessKeyId</AccessKeyId>
-            <SecretAccessKey>secretAccessKey</SecretAccessKey>
+            <AccessKeyId>1</AccessKeyId>
+            <SecretAccessKey>SecretAccessKey</SecretAccessKey>
             <SessionToken>
-                sessionToken
+                SessionToken
             </SessionToken>
             <Expiration>2021-08-27T18:26:38.152523Z</Expiration>
         </Credentials>
@@ -104,23 +100,10 @@ class STSWebIdentityCredentialsProviderTest {
         verify(exactly = 1) { http.invoke(any()) }
     }
 
-    private fun assumedRole(credentials: Credentials) = Success(
-        AssumedRoleWithWebIdentityResponse(
-            AssumedRoleUser(arn, RoleId.of("hello")),
-            credentials,
-            "subject",
-            "audience",
-            "source",
-            "provider"
-        )
-    )
-
     private fun credentialsExpiringAt(expiry: Instant, counter: Int) = Credentials(
         SessionToken.of("SessionToken"),
         AccessKeyId.of(counter.toString()),
         SecretAccessKey.of("SecretAccessKey"),
         Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC")))
     )
-
-    private val arn = ARN.of("arn:aws:foobar")
 }
