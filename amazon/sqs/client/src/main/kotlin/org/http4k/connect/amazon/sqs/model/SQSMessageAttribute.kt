@@ -6,7 +6,8 @@ import org.http4k.connect.amazon.core.model.MessageFields
 sealed class SQSMessageAttribute(
     private val name: String,
     private val category: String,
-    private val dataType: DataType? = null) : MessageFields {
+    private val dataType: DataType? = null
+) : MessageFields {
     override fun toFields(index: Int): Map<String, String> =
         (listOfNotNull(
             "$category.$index.Name" to name,

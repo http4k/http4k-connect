@@ -11,7 +11,8 @@ fun ClientFilters.SignGitHubCallbackSha256(secret: () -> Secret) = Filter { next
     {
         next(
             it.with(
-                Header.X_HUB_SIGNATURE_256 of secret().use { s -> hmacSHA256(s.toByteArray(), it.bodyString()) }.toHexString()
+                Header.X_HUB_SIGNATURE_256 of secret().use { s -> hmacSHA256(s.toByteArray(), it.bodyString()) }
+                    .toHexString()
             )
         )
     }

@@ -27,11 +27,11 @@ fun listObjectsV2(bucket: String, buckets: Storage<Unit>, bucketContent: Storage
             Response(Status.OK)
                 .with(
                     lens of ListBucketResult(
-                    bucket,
-                    bucketContent.keySet(bucket)
-                        .map { it.removePrefix("$bucket-") }
-                        .map { bucketContent["$bucket-$it"]!! }
-                        .sortedBy { it.key.value }
-                ))
+                        bucket,
+                        bucketContent.keySet(bucket)
+                            .map { it.removePrefix("$bucket-") }
+                            .map { bucketContent["$bucket-$it"]!! }
+                            .sortedBy { it.key.value }
+                    ))
         }
         ?: Response(Status.NOT_FOUND)

@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon
 
 import org.http4k.aws.AwsCredentialScope
-import org.http4k.aws.AwsCredentials
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.Uri
@@ -21,7 +20,7 @@ open class AwsServiceCompanion(awsServiceName: String) {
 
     fun signAwsRequests(
         region: Region,
-        credentialsProvider: () -> AwsCredentials,
+        credentialsProvider: CredentialsProvider,
         clock: Clock,
         payloadMode: Payload.Mode,
         servicePrefix: String = ""

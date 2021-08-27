@@ -7,7 +7,7 @@ import java.lang.reflect.Type
 @Suppress("unused")
 object LoggingJsonAdapterFactory : JsonAdapter.Factory {
     override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? {
-            println(type.typeName)
+        println(type.typeName)
         return null
     }
 }

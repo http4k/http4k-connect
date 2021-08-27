@@ -24,7 +24,8 @@ class LocalDynamoTest : DynamoDbContract(Duration.ofSeconds(1)) {
     }
 
     @Container
-    val dynamo: GenericContainer<*> = GenericContainer<GenericContainer<*>>(parse("amazon/dynamodb-local:1.15.0")).withExposedPorts(8000)
+    val dynamo: GenericContainer<*> =
+        GenericContainer<GenericContainer<*>>(parse("amazon/dynamodb-local:1.15.0")).withExposedPorts(8000)
 
     override val aws = fakeAwsEnvironment
 }

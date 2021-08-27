@@ -20,8 +20,8 @@ class GitHubCallbackContract {
 
     private val server = ServerFilters.VerifyGitHubSignatureSha256(secret)
         .then {
-        Response(OK)
-    }
+            Response(OK)
+        }
 
     private val callback = GitHubCallback.Http(Uri.of("/foobar"), secret, server)
 

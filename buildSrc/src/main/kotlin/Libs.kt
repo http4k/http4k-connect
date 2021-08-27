@@ -13,7 +13,7 @@ object Libs {
     const val aws_lambda_java_events: String = "com.amazonaws:aws-lambda-java-events:_"
 
     const val com_github_kt3k_coveralls_gradle_plugin: String =
-            "com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_"
+        "com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_"
 
     const val h2: String = "com.h2database:h2:_"
 
@@ -24,7 +24,7 @@ object Libs {
     const val hikaricp: String = "com.zaxxer:HikariCP:_"
 
     const val de_fayard_buildsrclibs_gradle_plugin: String =
-            "de.fayard.buildSrcLibs:de.fayard.buildSrcLibs.gradle.plugin:_"
+        "de.fayard.buildSrcLibs:de.fayard.buildSrcLibs.gradle.plugin:_"
 
     const val forkhandles_bom: String = "dev.forkhandles:forkhandles-bom:_"
 
@@ -35,7 +35,7 @@ object Libs {
     const val values4k: String = "dev.forkhandles:values4k"
 
     const val io_codearte_nexus_staging_gradle_plugin: String =
-            "io.codearte.nexus-staging:io.codearte.nexus-staging.gradle.plugin:_"
+        "io.codearte.nexus-staging:io.codearte.nexus-staging.gradle.plugin:_"
 
     const val lettuce_core: String = "io.lettuce:lettuce-core:_"
 
@@ -68,19 +68,19 @@ object Libs {
     const val kotlin_as_java_plugin: String = "org.jetbrains.dokka:kotlin-as-java-plugin:_"
 
     const val org_jetbrains_dokka_gradle_plugin: String =
-            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:_"
+        "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:_"
 
     const val exposed_core: String = "org.jetbrains.exposed:exposed-core:_"
 
     const val exposed_jdbc: String = "org.jetbrains.exposed:exposed-jdbc:_"
 
     const val kotlin_annotation_processing_gradle: String =
-            "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:_"
+        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:_"
 
     const val kotlin_gradle_plugin: String = "org.jetbrains.kotlin:kotlin-gradle-plugin:_"
 
     const val kotlin_scripting_compiler_embeddable: String =
-            "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:_"
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:_"
 
     const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api"
 

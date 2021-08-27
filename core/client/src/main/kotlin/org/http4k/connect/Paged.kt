@@ -6,7 +6,7 @@ import dev.forkhandles.result4k.map
 /**
  * Represents a Paged response
  */
-interface Paged<Token, ItemType>: Iterable<ItemType> {
+interface Paged<Token, ItemType> : Iterable<ItemType> {
     fun token(): Token?
     val items: List<ItemType>
     override fun iterator() = items.iterator()
