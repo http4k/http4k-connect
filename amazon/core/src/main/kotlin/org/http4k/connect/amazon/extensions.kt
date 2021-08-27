@@ -5,6 +5,7 @@ import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.WebIdentityToken
@@ -36,7 +37,7 @@ val AWS_WEB_IDENTITY_TOKEN =
         ""
     )
 
-val AWS_ROLE_SESSION_NAME = EnvironmentKey.optional("AWS_ROLE_SESSION_NAME")
+val AWS_ROLE_SESSION_NAME = EnvironmentKey.value(RoleSessionName).optional("AWS_ROLE_SESSION_NAME")
 
 val AWS_CREDENTIALS = EnvironmentKey.composite {
     AwsCredentials(

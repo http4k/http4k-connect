@@ -1,6 +1,8 @@
 package org.http4k.connect.amazon.sts
 
 import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.RoleSessionName
+import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,9 +18,9 @@ class FakeSTSTest : STSContract(FakeSTS()) {
     fun `assume role with web identity`() {
         val result = sts.assumeRoleWithWebIdentity(
             ARN.of("arn:aws:iam::169766454405:role/ROLETEST"),
-            UUID.randomUUID().toString(),
+            RoleSessionName.of(UUID.randomUUID().toString()),
             DurationSeconds = Duration.ofHours(1),
-            WebIdentityToken = "token"
+            WebIdentityToken = WebIdentityToken.of("token")
         )
 
         assertTrue(

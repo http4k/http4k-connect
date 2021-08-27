@@ -12,7 +12,7 @@ import org.http4k.connect.amazon.sts.assumeRole
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 
-const val USE_REAL_CLIENT = false
+private const val USE_REAL_CLIENT = false
 
 fun main() {
 

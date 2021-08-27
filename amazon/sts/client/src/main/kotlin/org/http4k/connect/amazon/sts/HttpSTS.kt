@@ -6,6 +6,7 @@ import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
@@ -25,7 +26,13 @@ fun STS.Companion.Http(
 ) = object : STS {
     private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(http)
 
-    override fun <R> invoke(action: STSAction<R>) = action.toResult(signedHttp(action.toRequest()))
+    override fun <R> invoke(action: STSAction<R>) =
+        action.toResult(
+            when (action) {
+                is AssumeRoleWithWebIdentity -> http(action.toRequest())
+                else -> signedHttp(action.toRequest())
+            }
+        )
 }
 
 /**

@@ -3,13 +3,8 @@ package org.http4k.connect.amazon.sts
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentials
-import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.AWS_ROLE_ARN
-import org.http4k.connect.amazon.AWS_ROLE_SESSION_NAME
-import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.AssumedRole
 import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.connect.amazon.sts.model.Credentials
@@ -51,22 +46,6 @@ fun CredentialsProvider.Companion.STS(
         Expiration.value.toInstant()
             .minus(duration)
             .isBefore(clock.instant())
-}
-
-/**
- * Refreshing credentials provider for getting credentials based on assuming a web identity in STS.
- */
-fun CredentialsProvider.Companion.STSWebIdentity(
-    env: Environment,
-    sts: STS,
-    clock: Clock = Clock.systemUTC(),
-    gracePeriod: Duration = ofSeconds(300)
-) = CredentialsProvider.Companion.STS(sts, clock, gracePeriod) {
-    AssumeRoleWithWebIdentity(
-        AWS_ROLE_ARN(env),
-        AWS_ROLE_SESSION_NAME(env) ?: "http4k-connect-" + clock.millis(),
-        AWS_WEB_IDENTITY_TOKEN(env)
-    )
 }
 
 internal fun Credentials.toHttp4k() = AwsCredentials(AccessKeyId.value, SecretAccessKey.value, SessionToken.value)
