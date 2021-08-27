@@ -5,8 +5,8 @@ import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
+import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.connect.amazon.sts.model.Credentials
 import java.time.Clock
 import java.time.Duration
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference
 class STSCredentialsProvider(
     private val sts: STS,
     private val clock: Clock,
-    private val assumeRole: () -> AssumeRole,
+    private val assumeRole: () -> STSAction<out AssumedRole>,
     private val gracePeriod: Duration = ofSeconds(300)
 ) : CredentialsProvider {
     private val credentials = AtomicReference<Credentials>(null)

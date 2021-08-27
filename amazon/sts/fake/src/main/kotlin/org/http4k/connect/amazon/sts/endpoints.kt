@@ -15,7 +15,7 @@ import org.http4k.template.viewModel
 import java.time.Clock
 import java.time.Duration
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 import java.util.UUID
 
 fun assumeRole(defaultSessionValidity: Duration, clock: Clock) = { r: Request -> r.form("Action") == "AssumeRole" }
@@ -31,7 +31,25 @@ fun assumeRole(defaultSessionValidity: Duration, clock: Clock) = { r: Request ->
             "accessKeyId",
             "secretAccessKey",
             UUID.randomUUID().toString().base64Encode(),
-            DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
+            ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
+        )
+    )
+}
+
+fun assumeRoleWithWebIdentity(defaultSessionValidity: Duration, clock: Clock) = { r: Request -> r.form("Action") == "AssumeRoleWithWebIdentity" }
+    .asRouter() bind { req: Request ->
+    val duration = req.form("DurationSeconds")
+        ?.toLong()
+        ?.let(Duration::ofSeconds)
+        ?: defaultSessionValidity
+    Response(Status.OK).with(
+        viewModelLens of AssumeRoleWithWebIdentityResponse(
+            req.form("RoleArn")!!,
+            req.form("RoleSessionName")!!,
+            "accessKeyId",
+            "secretAccessKey",
+            UUID.randomUUID().toString().base64Encode(),
+            ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
         )
     )
 }

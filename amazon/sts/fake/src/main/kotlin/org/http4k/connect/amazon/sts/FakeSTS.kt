@@ -18,7 +18,8 @@ class FakeSTS(
 
     override val app = routes(
         "/" bind POST to routes(
-            assumeRole(defaultSessionValidity, clock)
+            assumeRole(defaultSessionValidity, clock),
+            assumeRoleWithWebIdentity(defaultSessionValidity, clock)
         )
     )
 

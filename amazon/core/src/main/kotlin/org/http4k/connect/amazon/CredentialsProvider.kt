@@ -7,6 +7,4 @@ fun interface CredentialsProvider : () -> AwsCredentials {
     companion object
 }
 
-fun CredentialsProvider.Companion.Environment(env: Environment) = object : CredentialsProvider {
-    override fun invoke(): AwsCredentials = AWS_CREDENTIALS(env)
-}
+fun CredentialsProvider.Companion.Environment(env: Environment) = CredentialsProvider { AWS_CREDENTIALS(env) }
