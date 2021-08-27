@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.s3
 
 import org.http4k.aws.AwsCredentialScope
-import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
-import org.http4k.connect.amazon.AWS_CREDENTIALS
+import org.http4k.connect.amazon.CredentialsProvider
+import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -22,7 +22,7 @@ import java.time.Clock.systemUTC
  * Standard HTTP implementation of S3
  */
 fun S3.Companion.Http(
-    credentialsProvider: () -> AwsCredentials,
+    credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
@@ -56,4 +56,4 @@ fun S3.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http({ AWS_CREDENTIALS(env) }, http, clock)
+) = Http(CredentialsProvider.Environment(env), http, clock)

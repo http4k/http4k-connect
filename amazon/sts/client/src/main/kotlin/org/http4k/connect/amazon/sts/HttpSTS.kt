@@ -1,11 +1,12 @@
 package org.http4k.connect.amazon.sts
 
-import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
-import org.http4k.connect.amazon.AWS_CREDENTIALS
 import org.http4k.connect.amazon.AWS_REGION
+import org.http4k.connect.amazon.CredentialsProvider
+import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
@@ -19,13 +20,19 @@ import java.time.Clock.systemUTC
  */
 fun STS.Companion.Http(
     region: Region,
-    credentialsProvider: () -> AwsCredentials,
+    credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
 ) = object : STS {
     private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(http)
 
-    override fun <R> invoke(action: STSAction<R>) = action.toResult(signedHttp(action.toRequest()))
+    override fun <R> invoke(action: STSAction<R>) =
+        action.toResult(
+            when (action) {
+                is AssumeRoleWithWebIdentity -> http(action.toRequest())
+                else -> signedHttp(action.toRequest())
+            }
+        )
 }
 
 /**
@@ -44,4 +51,4 @@ fun STS.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
-) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock)
+) = Http(AWS_REGION(env), CredentialsProvider.Environment(env), http, clock)

@@ -17,7 +17,8 @@ data class UpdateSecret internal constructor(
     val SecretString: String? = null,
     val SecretBinary: Base64Blob? = null,
     val Description: String? = null,
-    val KmsKeyId: KMSKeyId? = null) : SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
+    val KmsKeyId: KMSKeyId? = null
+) : SecretsManagerAction<UpdatedSecret>(UpdatedSecret::class) {
     constructor(
         SecretId: SecretId,
         ClientRequestToken: UUID,

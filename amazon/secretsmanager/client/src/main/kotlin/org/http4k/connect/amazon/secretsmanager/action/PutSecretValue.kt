@@ -16,7 +16,8 @@ data class PutSecretValue internal constructor(
     val ClientRequestToken: UUID,
     val SecretString: String? = null,
     val SecretBinary: Base64Blob? = null,
-    val VersionStages: List<VersionStage>? = null) : SecretsManagerAction<UpdatedSecretValue>(UpdatedSecretValue::class) {
+    val VersionStages: List<VersionStage>? = null
+) : SecretsManagerAction<UpdatedSecretValue>(UpdatedSecretValue::class) {
     constructor(
         SecretId: SecretId,
         ClientRequestToken: UUID,

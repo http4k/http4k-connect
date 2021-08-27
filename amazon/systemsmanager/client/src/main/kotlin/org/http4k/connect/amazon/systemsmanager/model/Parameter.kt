@@ -14,4 +14,5 @@ data class Parameter(
     val Version: Long? = null,
     val LastModifiedDate: Timestamp? = null,
     val Selector: String? = null,
-    val SourceResult: String? = null)
+    val SourceResult: String? = null
+)

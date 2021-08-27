@@ -6,16 +6,17 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sts.model.AssumedRoleUser
 import org.http4k.connect.amazon.sts.model.Credentials
 import org.http4k.connect.amazon.sts.model.Expiration
 import org.http4k.connect.amazon.sts.model.RoleId
-import org.http4k.connect.amazon.sts.model.TokenCode
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -27,24 +28,23 @@ import org.http4k.lens.Header.CONTENT_TYPE
 import java.time.Duration
 
 @Http4kConnectAction
-data class AssumeRole(
+data class AssumeRoleWithWebIdentity(
     val RoleArn: ARN,
-    val RoleSessionName: String,
-    val TokenCode: TokenCode? = null,
-    val SerialNumber: Long? = null,
+    val RoleSessionName: RoleSessionName,
+    val WebIdentityToken: WebIdentityToken,
     val DurationSeconds: Duration? = null,
-    val ExternalId: String? = null,
     val Policy: String? = null,
     val PolicyArns: List<ARN>? = null,
-    val Tags: List<Tag>? = null,
-    val TransitiveTagKeys: List<String>? = null
-) : STSAction<SimpleAssumedRole> {
+    val ProviderId: String? = null,
+    val Tags: List<Tag>? = null
+) : STSAction<AssumedRoleWithWebIdentityResponse> {
 
     override fun toRequest(): Request {
         val base = listOf(
-            "Action" to "AssumeRole",
-            "RoleSessionName" to RoleSessionName,
+            "Action" to "AssumeRoleWithWebIdentity",
+            "RoleSessionName" to RoleSessionName.value,
             "RoleArn" to RoleArn.value,
+            "WebIdentityToken" to WebIdentityToken.value,
             "Version" to "2011-06-15"
         )
 
@@ -56,17 +56,13 @@ data class AssumeRole(
             listOf("Tags.member.${index}.Key" to next.Key, "Tags.member.${index}.Value" to next.Value)
         }
 
-        val transitiveTags = TransitiveTagKeys?.mapIndexed() { index, next ->
-            "TransitiveTagKeys.member.${index}" to next
-        }
-
         val other = listOfNotNull(
-            ExternalId?.let { "ExternalId" to it },
+            ProviderId?.let { "ProviderId" to it },
             Policy?.let { "Policy" to it },
             DurationSeconds?.let { "DurationSeconds" to it.seconds.toString() },
         )
 
-        return listOfNotNull(base, policies, tags, transitiveTags, other)
+        return listOfNotNull(base, policies, tags, other)
             .flatten().fold(
                 Request(POST, uri())
                     .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
@@ -77,7 +73,7 @@ data class AssumeRole(
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(SimpleAssumedRole.from(this))
+            status.successful -> Success(AssumedRoleWithWebIdentityResponse.from(this))
             else -> Failure(RemoteFailure(POST, uri(), status))
         }
     }
@@ -85,22 +81,31 @@ data class AssumeRole(
     private fun uri() = Uri.of("")
 }
 
-data class SimpleAssumedRole(
+data class AssumedRoleWithWebIdentityResponse(
     override val AssumedRoleUser: AssumedRoleUser,
-    override val Credentials: Credentials
+    override val Credentials: Credentials,
+    val SubjectFromWebIdentityToken: String,
+    val Audience: String,
+    val SourceIdentity: String,
+    val Provider: String
 ) : AssumedRole {
     companion object {
         fun from(response: Response) =
             with(response.xmlDoc()) {
-                SimpleAssumedRole(
+                AssumedRoleWithWebIdentityResponse(
                     AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
                     Credentials(
                         SessionToken.of(text("SessionToken")),
                         AccessKeyId.of(text("AccessKeyId")),
                         SecretAccessKey.of(text("SecretAccessKey")),
                         Expiration.parse(text("Expiration"))
-                    )
+                    ),
+                    text("SubjectFromWebIdentityToken"),
+                    text("Audience"),
+                    text("SourceIdentity"),
+                    text("Provider")
                 )
             }
     }
 }
+

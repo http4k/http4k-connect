@@ -4,8 +4,9 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.sts.action.AssumeRole
+import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.sts.action.AssumedRole
+import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.connect.amazon.sts.model.Credentials
 import java.time.Clock
 import java.time.Duration
@@ -13,14 +14,14 @@ import java.time.Duration.ofSeconds
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Simple, refreshing (and blocking) credentials provider.
+ * Refreshing credentials provider for getting credentials based on assuming a role in STS.
  */
-class STSCredentialsProvider(
-    private val sts: STS,
-    private val clock: Clock,
-    private val assumeRole: () -> AssumeRole,
-    private val gracePeriod: Duration = ofSeconds(300)
-) : () -> AwsCredentials {
+fun CredentialsProvider.Companion.STS(
+    sts: STS,
+    clock: Clock,
+    gracePeriod: Duration = ofSeconds(300),
+    assumeRole: () -> STSAction<out AssumedRole>
+) = object : CredentialsProvider {
     private val credentials = AtomicReference<Credentials>(null)
 
     override fun invoke() = (credentials.get()?.takeIf { !it.expiresWithin(gracePeriod) } ?: refresh()).toHttp4k()

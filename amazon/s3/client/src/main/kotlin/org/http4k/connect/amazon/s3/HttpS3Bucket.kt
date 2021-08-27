@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.s3
 
-import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
-import org.http4k.connect.amazon.AWS_CREDENTIALS
+import org.http4k.connect.amazon.CredentialsProvider
+import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketName
@@ -20,7 +20,7 @@ import java.time.Clock
 fun S3Bucket.Companion.Http(
     bucketName: BucketName,
     bucketRegion: Region,
-    credentialsProvider: () -> AwsCredentials,
+    credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
@@ -58,4 +58,4 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed
-) = Http(bucketName, bucketRegion, { AWS_CREDENTIALS(env) }, http, clock, payloadMode)
+) = Http(bucketName, bucketRegion, CredentialsProvider.Environment(env), http, clock, payloadMode)

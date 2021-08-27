@@ -6,12 +6,15 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
+import org.http4k.connect.amazon.sts.action.STSAction
+import org.http4k.connect.amazon.sts.action.SimpleAssumedRole
 import org.http4k.connect.amazon.sts.model.AssumedRoleUser
 import org.http4k.connect.amazon.sts.model.Credentials
 import org.http4k.connect.amazon.sts.model.Expiration
@@ -27,10 +30,10 @@ class STSCredentialsProviderTest {
 
     private val sts = mockk<STS>()
     private val now = Instant.now()
-    private val requestProvider: () -> AssumeRole = { AssumeRole(arn, "Session") }
+    private val requestProvider: () -> STSAction<out AssumedRole> = { AssumeRole(arn, "Session") }
     private val clock = TestClock(now)
 
-    private val provider = STSCredentialsProvider(sts, clock, requestProvider, Duration.ofSeconds(60))
+    private val provider = CredentialsProvider.STS(sts, clock, Duration.ofSeconds(60), requestProvider)
 
     @Test
     fun `gets credentials first time only`() {
@@ -68,7 +71,7 @@ class STSCredentialsProviderTest {
     }
 
     private fun assumedRole(credentials: Credentials) = Success(
-        AssumedRole(
+        SimpleAssumedRole(
             AssumedRoleUser(arn, RoleId.of("hello")),
             credentials
         )

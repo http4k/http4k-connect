@@ -30,7 +30,7 @@ data class Scan(
     val Select: String? = null,
     val TotalSegments: Int? = null,
     val ReturnConsumedCapacity: String? = null,
-): DynamoDbAction<ScanResponse>(ScanResponse::class, DynamoDbMoshi),
+) : DynamoDbAction<ScanResponse>(ScanResponse::class, DynamoDbMoshi),
     PagedAction<Key, Item, ScanResponse, Scan> {
     override fun next(token: Key) = copy(ExclusiveStartKey = token)
 }
@@ -41,7 +41,8 @@ data class ScanResponse(
     val Count: Int? = null,
     val LastEvaluatedKey: Key? = null,
     val ScannedCount: Int? = null,
-    internal val Items: List<ItemResult>? = null) : Paged<Key, Item> {
+    internal val Items: List<ItemResult>? = null
+) : Paged<Key, Item> {
     override val items = Items?.map(ItemResult::toItem) ?: emptyList()
     override fun token() = LastEvaluatedKey
 }

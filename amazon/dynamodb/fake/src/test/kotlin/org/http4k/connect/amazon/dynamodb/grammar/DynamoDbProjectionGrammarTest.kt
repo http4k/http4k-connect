@@ -25,7 +25,8 @@ class DynamoDbProjectionGrammarTest {
     @Test
     fun `attribute value with expression name`() {
         assertThat(
-            DynamoDbProjectionGrammar.parse("#att").eval(ItemWithSubstitutions(Item(attr1 of "123"), mapOf("#att" to AttributeName.of("attr1")))),
+            DynamoDbProjectionGrammar.parse("#att")
+                .eval(ItemWithSubstitutions(Item(attr1 of "123"), mapOf("#att" to AttributeName.of("attr1")))),
             equalTo(listOf(attr1.name to attr1.asValue("123")))
         )
     }
@@ -131,7 +132,10 @@ class DynamoDbProjectionGrammarTest {
     fun `map attribute value with expression name`() {
         assertThat(
             DynamoDbProjectionGrammar.parse("#map.#att").eval(
-                ItemWithSubstitutions(Item(attrMap of Item(attr1 of "456", attrNum of 456)), mapOf("#map" to AttributeName.of("attrMap"), "#att" to AttributeName.of("attr1")))
+                ItemWithSubstitutions(
+                    Item(attrMap of Item(attr1 of "456", attrNum of 456)),
+                    mapOf("#map" to AttributeName.of("attrMap"), "#att" to AttributeName.of("attr1"))
+                )
             ),
             equalTo(listOf(attrMap.name to attrMap.asValue(Item(attr1 of "456"))))
         )

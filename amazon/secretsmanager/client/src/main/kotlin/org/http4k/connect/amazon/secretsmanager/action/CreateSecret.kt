@@ -18,7 +18,8 @@ data class CreateSecret internal constructor(
     val SecretBinary: Base64Blob? = null,
     val Description: String? = null,
     val KmsKeyId: KMSKeyId? = null,
-    val Tags: List<Tag>? = null) : SecretsManagerAction<CreatedSecret>(CreatedSecret::class) {
+    val Tags: List<Tag>? = null
+) : SecretsManagerAction<CreatedSecret>(CreatedSecret::class) {
     constructor(
         Name: String,
         ClientRequestToken: UUID,

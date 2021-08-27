@@ -10,4 +10,5 @@ data class ObjectSummary(
     val ID: String? = null,
     val Owner: Owner? = null,
     val Size: Int? = null,
-    val StorageClass: StorageClass? = null)
+    val StorageClass: StorageClass? = null
+)

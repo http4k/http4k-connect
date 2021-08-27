@@ -12,9 +12,10 @@ import org.http4k.connect.amazon.sts.assumeRole
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 
-const val USE_REAL_CLIENT = false
+private const val USE_REAL_CLIENT = false
 
 fun main() {
+
     val region = Region.of("us-east-1")
     val roleArn = ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
 

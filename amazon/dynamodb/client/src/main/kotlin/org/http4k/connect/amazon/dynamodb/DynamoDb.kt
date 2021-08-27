@@ -12,5 +12,6 @@ import org.http4k.connect.amazon.dynamodb.action.DynamoDbAction
 @Http4kConnectAdapter
 interface DynamoDb {
     operator fun <R : Any> invoke(action: DynamoDbAction<R>): Result<R, RemoteFailure>
+
     companion object : AwsServiceCompanion("dynamodb")
 }

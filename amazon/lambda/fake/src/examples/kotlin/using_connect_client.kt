@@ -40,7 +40,8 @@ fun main() {
     val client = Lambda.Http(Region.of("us-east-1"), { AwsCredentials("accessKeyId", "secretKey") }, http.debug())
 
     // all operations return a Result monad of the API type
-    val invokeResult: Result<Resp, RemoteFailure> = client.invokeFunction(deployedLambda,
+    val invokeResult: Result<Resp, RemoteFailure> = client.invokeFunction(
+        deployedLambda,
         ScheduledEvent().apply {
             account = "awsAccount"
         }, Moshi
