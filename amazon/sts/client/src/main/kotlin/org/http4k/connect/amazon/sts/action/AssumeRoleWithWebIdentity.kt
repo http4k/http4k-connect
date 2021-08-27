@@ -35,7 +35,7 @@ data class AssumeRoleWithWebIdentity(
     val PolicyArns: List<ARN>? = null,
     val ProviderId: String? = null,
     val Tags: List<Tag>? = null
-) : STSAction<AssumeRoleWithWebIdentityResponse> {
+) : STSAction<AssumedRoleWithWebIdentityResponse> {
 
     override fun toRequest(): Request {
         val base = listOf(
@@ -71,7 +71,7 @@ data class AssumeRoleWithWebIdentity(
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(AssumeRoleWithWebIdentityResponse.from(this))
+            status.successful -> Success(AssumedRoleWithWebIdentityResponse.from(this))
             else -> Failure(RemoteFailure(POST, uri(), status))
         }
     }
@@ -79,7 +79,7 @@ data class AssumeRoleWithWebIdentity(
     private fun uri() = Uri.of("")
 }
 
-data class AssumeRoleWithWebIdentityResponse(
+data class AssumedRoleWithWebIdentityResponse(
     override val AssumedRoleUser: AssumedRoleUser,
     override val Credentials: Credentials,
     val SubjectFromWebIdentityToken: String,
@@ -90,7 +90,7 @@ data class AssumeRoleWithWebIdentityResponse(
     companion object {
         fun from(response: Response) =
             with(response.xmlDoc()) {
-                AssumeRoleWithWebIdentityResponse(
+                AssumedRoleWithWebIdentityResponse(
                     AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
                     Credentials(
                         SessionToken.of(text("SessionToken")),
