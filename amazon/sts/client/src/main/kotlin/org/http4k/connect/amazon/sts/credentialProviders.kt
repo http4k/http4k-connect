@@ -7,7 +7,7 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AWS_ROLE_ARN
 import org.http4k.connect.amazon.AWS_ROLE_SESSION_NAME
-import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN_FILE
+import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.AssumedRole
@@ -65,9 +65,8 @@ fun CredentialsProvider.Companion.STSWebIdentity(
     AssumeRoleWithWebIdentity(
         AWS_ROLE_ARN(env),
         AWS_ROLE_SESSION_NAME(env) ?: "http4k-connect-" + clock.millis(),
-        AWS_WEB_IDENTITY_TOKEN_FILE(env).readText()
+        AWS_WEB_IDENTITY_TOKEN(env)
     )
 }
-
 
 internal fun Credentials.toHttp4k() = AwsCredentials(AccessKeyId.value, SecretAccessKey.value, SessionToken.value)

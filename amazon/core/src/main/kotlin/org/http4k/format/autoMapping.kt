@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.lens.BiDiMapping
 
 fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
@@ -22,5 +23,6 @@ fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     value(Region)
     value(SecretAccessKey)
     value(SessionToken)
+    value(WebIdentityToken)
     double(BiDiMapping({ Timestamp.of(it.toLong()) }, { it.value.toDouble() }))
 }

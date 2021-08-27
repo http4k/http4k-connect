@@ -6,14 +6,17 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.EMPTY
 import org.http4k.connect.amazon.AWS_ROLE_ARN
+import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN
 import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN_FILE
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
+import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.AssumedRoleWithWebIdentityResponse
@@ -35,16 +38,33 @@ class STSWebIdentityCredentialsProviderTest {
     private val now = Instant.now()
     private val clock = TestClock(now)
 
-    private val env = EMPTY
-        .with(
-            AWS_ROLE_ARN of ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole"),
-            AWS_WEB_IDENTITY_TOKEN_FILE of File(javaClass.getResource("/webidentitytoken.txt").file)
+    @Test
+    fun `gets credentials using file`() {
+        checkCanAssumeRole(
+            EMPTY
+                .with(
+                    AWS_ROLE_ARN of ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole"),
+                    AWS_WEB_IDENTITY_TOKEN_FILE of File(javaClass.getResource("/webidentitytoken.txt").file)
+                )
         )
-
-    private val provider = CredentialsProvider.STSWebIdentity(env, sts, clock, Duration.ofSeconds(60))
+    }
 
     @Test
-    fun `gets credentials first time only`() {
+    fun `gets credentials using hardcoded token`() {
+        checkCanAssumeRole(
+            EMPTY
+                .with(
+                    AWS_ROLE_ARN of ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole"),
+                    AWS_WEB_IDENTITY_TOKEN of WebIdentityToken.of("foobar")
+                )
+        )
+    }
+
+    private fun checkCanAssumeRole(env: Environment) {
+        val provider = CredentialsProvider.STSWebIdentity(
+            env, sts, clock, Duration.ofSeconds(60)
+        )
+
         val firstCreds = credentialsExpiringAt(now.plusSeconds(61), 1)
         every { sts.invoke(any<AssumeRoleWithWebIdentity>()) } returns assumedRole(firstCreds)
 

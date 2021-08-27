@@ -9,6 +9,7 @@ import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sts.model.AssumedRoleUser
@@ -29,7 +30,7 @@ import java.time.Duration
 data class AssumeRoleWithWebIdentity(
     val RoleArn: ARN,
     val RoleSessionName: String,
-    val WebIdentityToken: String,
+    val WebIdentityToken: WebIdentityToken,
     val DurationSeconds: Duration? = null,
     val Policy: String? = null,
     val PolicyArns: List<ARN>? = null,
@@ -42,7 +43,7 @@ data class AssumeRoleWithWebIdentity(
             "Action" to "AssumeRoleWithWebIdentity",
             "RoleSessionName" to RoleSessionName,
             "RoleArn" to RoleArn.value,
-            "WebIdentityToken" to WebIdentityToken,
+            "WebIdentityToken" to WebIdentityToken.value,
             "Version" to "2011-06-15"
         )
 
