@@ -32,8 +32,9 @@ fun DynamoDb.Companion.Http(
 fun DynamoDb.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemUTC()
-) = Http(Environment.from(env), http, clock)
+    clock: Clock = Clock.systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(Environment.from(env), http, clock, credentialsProvider)
 
 /**
  * Convenience function to create a DynamoDb from an http4k Environment
@@ -41,5 +42,6 @@ fun DynamoDb.Companion.Http(
 fun DynamoDb.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemUTC()
-) = Http(AWS_REGION(env), CredentialsProvider.Environment(env), http, clock)
+    clock: Clock = Clock.systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(AWS_REGION(env), credentialsProvider, http, clock)

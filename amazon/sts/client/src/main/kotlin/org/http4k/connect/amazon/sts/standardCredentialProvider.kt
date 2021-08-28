@@ -5,7 +5,6 @@ import dev.forkhandles.result4k.Success
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.AWS_ROLE_ARN
@@ -76,7 +75,14 @@ fun CredentialsProvider.Companion.STS(
 }
 
 fun CredentialsProvider.Companion.STS(
-    env: Environment = ENV,
+    env: Map<String, String> = System.getenv(),
+    http: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemUTC(),
+    gracePeriod: Duration = ofSeconds(300)
+): CredentialsProvider = CredentialsProvider.STS(Environment.from(env), http, clock, gracePeriod)
+
+fun CredentialsProvider.Companion.STS(
+    env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = ofSeconds(300)

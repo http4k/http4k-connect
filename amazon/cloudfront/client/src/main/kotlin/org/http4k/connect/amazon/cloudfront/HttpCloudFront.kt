@@ -47,8 +47,9 @@ fun CloudFront.Companion.Http(
 fun CloudFront.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemUTC()
-) = Http(Environment.from(env), http, clock)
+    clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(Environment.from(env), http, clock, credentialsProvider)
 
 /**
  * Convenience function to create a CloudFront from an http4k Environment
@@ -56,5 +57,6 @@ fun CloudFront.Companion.Http(
 fun CloudFront.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemUTC()
-) = Http(CredentialsProvider.Environment(env), http, clock)
+    clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(credentialsProvider, http, clock)

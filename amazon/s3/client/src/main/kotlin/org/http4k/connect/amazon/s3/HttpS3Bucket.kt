@@ -45,8 +45,9 @@ fun S3Bucket.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    payloadMode: Payload.Mode = Payload.Mode.Signed
-) = Http(bucketName, bucketRegion, Environment.from(env), http, clock, payloadMode)
+    payloadMode: Payload.Mode = Payload.Mode.Signed,
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(bucketName, bucketRegion, Environment.from(env), http, clock, payloadMode, credentialsProvider)
 
 /**
  * Convenience function to create a S3Bucket from an http4k Environment
@@ -57,5 +58,6 @@ fun S3Bucket.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    payloadMode: Payload.Mode = Payload.Mode.Signed
-) = Http(bucketName, bucketRegion, CredentialsProvider.Environment(env), http, clock, payloadMode)
+    payloadMode: Payload.Mode = Payload.Mode.Signed,
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode)
