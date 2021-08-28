@@ -9,6 +9,7 @@ import io.mockk.verify
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.sts.action.AssumeRole
@@ -30,7 +31,7 @@ class STSCredentialsProviderTest {
 
     private val sts = mockk<STS>()
     private val now = Instant.now()
-    private val requestProvider: () -> STSAction<out AssumedRole> = { AssumeRole(arn, "Session") }
+    private val requestProvider: () -> STSAction<out AssumedRole> = { AssumeRole(arn, RoleSessionName.of("Session")) }
     private val clock = TestClock(now)
 
     private val provider = CredentialsProvider.STS(sts, clock, Duration.ofSeconds(60), requestProvider)

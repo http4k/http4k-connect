@@ -40,6 +40,13 @@ fun CredentialsProvider.Companion.STSWebIdentity(
 }
 
 fun CredentialsProvider.Companion.STSWebIdentity(
+    env: Map<String, String> = System.getenv(),
+    http: HttpHandler = JavaHttpClient(),
+    clock: Clock = Clock.systemUTC(),
+    gracePeriod: Duration = Duration.ofSeconds(300)
+) = STSWebIdentity(Environment.from(env), http, clock, gracePeriod)
+
+fun CredentialsProvider.Companion.STSWebIdentity(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),

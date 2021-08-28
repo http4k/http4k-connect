@@ -33,8 +33,9 @@ fun Lambda.Companion.Http(
 fun Lambda.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemUTC()
-) = Http(Environment.from(env), http, clock)
+    clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(Environment.from(env), http, clock, credentialsProvider)
 
 /**
  * Convenience function to create a Lambda from an http4k Environment
@@ -42,5 +43,6 @@ fun Lambda.Companion.Http(
 fun Lambda.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemUTC()
-) = Http(AWS_REGION(env), CredentialsProvider.Environment(env), http, clock)
+    clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+) = Http(AWS_REGION(env), credentialsProvider, http, clock)

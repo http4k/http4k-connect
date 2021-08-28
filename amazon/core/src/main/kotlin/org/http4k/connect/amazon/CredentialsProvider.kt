@@ -8,3 +8,6 @@ fun interface CredentialsProvider : () -> AwsCredentials {
 }
 
 fun CredentialsProvider.Companion.Environment(env: Environment) = CredentialsProvider { AWS_CREDENTIALS(env) }
+
+fun CredentialsProvider.Companion.Environment(env: Map<String, String> = System.getenv()) =
+    Environment(Environment.from(env))

@@ -6,6 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Tag
@@ -29,7 +30,7 @@ import java.time.Duration
 @Http4kConnectAction
 data class AssumeRole(
     val RoleArn: ARN,
-    val RoleSessionName: String,
+    val RoleSessionName: RoleSessionName,
     val TokenCode: TokenCode? = null,
     val SerialNumber: Long? = null,
     val DurationSeconds: Duration? = null,
@@ -43,7 +44,7 @@ data class AssumeRole(
     override fun toRequest(): Request {
         val base = listOf(
             "Action" to "AssumeRole",
-            "RoleSessionName" to RoleSessionName,
+            "RoleSessionName" to RoleSessionName.value,
             "RoleArn" to RoleArn.value,
             "Version" to "2011-06-15"
         )
