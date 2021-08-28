@@ -4,6 +4,7 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.sts.FakeSTS
 import org.http4k.connect.amazon.sts.Http
 import org.http4k.connect.amazon.sts.STS
@@ -26,6 +27,7 @@ fun main() {
     val client = STS.Http(region, { AwsCredentials("accessKeyId", "secretKey") }, http.debug())
 
     // all operations return a Result monad of the API type
-    val assumeRoleResult: Result<AssumedRole, RemoteFailure> = client.assumeRole(roleArn, "sessionId")
+    val assumeRoleResult: Result<AssumedRole, RemoteFailure> =
+        client.assumeRole(roleArn, RoleSessionName.of("sessionId"))
     println(assumeRoleResult)
 }

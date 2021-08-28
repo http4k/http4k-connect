@@ -94,8 +94,6 @@ class STSWebIdentityCredentialsProviderTest {
 """)
 
         assertThat(provider(), equalTo(firstCreds.toHttp4k()))
-        clock.tickBy(Duration.ofSeconds(1))
-        assertThat(provider(), equalTo(firstCreds.toHttp4k()))
 
         verify(exactly = 1) { http.invoke(any()) }
     }
