@@ -4,6 +4,7 @@ import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Uri
 import org.http4k.template.ViewModel
+import java.math.BigInteger
 import java.security.MessageDigest
 
 data class CreateQueueResponse(val url: Uri) : ViewModel
@@ -24,7 +25,7 @@ object DeleteQueueResponse : ViewModel
 
 object DeleteMessageResponse : ViewModel
 
-internal fun String.md5() = BigIntegHer(
+internal fun String.md5() = BigInteger(
     1,
     MessageDigest.getInstance("MD5").digest(toByteArray())
 ).toString(16).padStart(32, '0')
