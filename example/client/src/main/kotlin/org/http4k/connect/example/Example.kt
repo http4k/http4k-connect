@@ -7,7 +7,7 @@ import org.http4k.connect.example.action.ExampleAction
 
 @Http4kConnectAdapter
 interface Example {
-    operator fun <R : Any> invoke(action: ExampleAction<R>): Result<R, RemoteFailure>
+    operator fun <R> invoke(action: ExampleAction<R>): Result<R, RemoteFailure>
 
     companion object
 }

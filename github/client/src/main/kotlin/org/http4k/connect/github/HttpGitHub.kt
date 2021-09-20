@@ -13,7 +13,7 @@ fun GitHub.Companion.Http(token: () -> Secret, http: HttpHandler = JavaHttpClien
         private val routedHttp = SetBaseUriFrom(Uri.of("https://api.github.com"))
             .then(http)
 
-        override fun <R : Any> invoke(action: GitHubAction<R>) = action.toResult(
+        override fun <R> invoke(action: GitHubAction<R>) = action.toResult(
             routedHttp(
                 action.toRequest()
                     .header("Authorization", "$authScheme ${token().use { it }}")

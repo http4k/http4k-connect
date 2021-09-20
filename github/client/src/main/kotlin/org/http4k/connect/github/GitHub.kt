@@ -7,8 +7,7 @@ import org.http4k.connect.github.action.GitHubAction
 
 @Http4kConnectAdapter
 interface GitHub {
-    operator fun <R : Any> invoke(action: GitHubAction<R>): Result<R, RemoteFailure>
+    operator fun <R> invoke(action: GitHubAction<R>): Result<R, RemoteFailure>
 
     companion object
 }
-

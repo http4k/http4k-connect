@@ -16,6 +16,7 @@ import org.http4k.core.with
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
 import org.http4k.lens.Header
+import org.http4k.lens.Header.CONTENT_TYPE
 import org.http4k.lens.X_GITHUB_EVENT
 
 @Http4kConnectAction
@@ -24,7 +25,7 @@ abstract class GitHubCallbackAction(
     private val autoMarshalling: AutoMarshalling = Moshi
 ) : Action<Result<Unit, RemoteFailure>> {
     override fun toRequest() = Request(POST, Uri.of(""))
-        .with(Header.CONTENT_TYPE of APPLICATION_JSON, Header.X_GITHUB_EVENT of event)
+        .with(CONTENT_TYPE of APPLICATION_JSON, Header.X_GITHUB_EVENT of event)
         .body(autoMarshalling.asFormatString(this))
 
     override fun toResult(response: Response) = with(response) {

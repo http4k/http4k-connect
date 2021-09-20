@@ -5,15 +5,17 @@ import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import org.http4k.cloudnative.env.Secret
 import org.http4k.connect.github.action.GitHubAction
-import org.http4k.connect.kClass
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
+import org.http4k.format.Moshi
 import org.junit.jupiter.api.Test
 
-class TestAction : GitHubAction<Map<String, String>>(kClass()) {
+class TestAction : GitHubAction<Map<String, String>> {
     override fun toRequest(): Request = Request(POST, "")
+    override fun toResult(response: Response) =
+        Success(Moshi.asA<Map<String, String>>(response.bodyString()))
 }
 
 class GitHubContract {

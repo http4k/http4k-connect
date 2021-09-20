@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.8.2.0
+- **http4k-connect-*** - Upgrade dependencies, - **http4k-connect-github** - Fixing up to make 404s possible in the GitHub action.
+
 ### v3.8.1.1
 - **http4k-connect-amazon-sqs-fake** - Make MD5 of SQS messages pad right to 32 chars.
 
