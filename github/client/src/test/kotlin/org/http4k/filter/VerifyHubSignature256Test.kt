@@ -5,8 +5,8 @@ import org.http4k.cloudnative.env.Secret
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status.Companion.FORBIDDEN
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.hamkrest.hasStatus
@@ -36,7 +36,7 @@ class VerifyHubSignature256Test {
                 Request(POST, "")
                     .body("goodbye cruel world")
                     .with(Header.X_HUB_SIGNATURE_256 of "734cc62f32841568f45715aeb9f4d7891324e6d948e4c6c60c0621cdac48623a")
-            ), hasStatus(FORBIDDEN)
+            ), hasStatus(UNAUTHORIZED)
         )
     }
 }

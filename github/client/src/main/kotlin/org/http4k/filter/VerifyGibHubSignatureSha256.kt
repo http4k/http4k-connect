@@ -4,7 +4,7 @@ import org.http4k.cloudnative.env.Secret
 import org.http4k.connect.github.filter.HmacSha256.hmacSHA256
 import org.http4k.core.Filter
 import org.http4k.core.Response
-import org.http4k.core.Status.Companion.FORBIDDEN
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.lens.Header
 import org.http4k.lens.X_HUB_SIGNATURE_256
 
@@ -12,7 +12,7 @@ fun ServerFilters.VerifyGitHubSignatureSha256(secret: () -> Secret) = Filter { n
     {
         when (Header.X_HUB_SIGNATURE_256(it)) {
             hmacSHA256(secret().use { it.toByteArray() }, it.bodyString()).toHexString() -> next(it)
-            else -> Response(FORBIDDEN)
+            else -> Response(UNAUTHORIZED)
         }
     }
 }
