@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.sqs
 
 import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
@@ -62,32 +63,13 @@ fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
         }
     }
 
-fun listQueues(queues: Storage<List<SQSMessage>>) =
+fun listQueues(region: Region, account: AwsAccount, queues: Storage<List<SQSMessage>>) =
     { r: Request -> r.form("Action") == "ListQueues" }
         .asRouter() bind { req: Request ->
-        val queueUri = req.form("QueueUrl")!!
-
-        when (val queue = queues[queueUri.queueName()]) {
-            null -> Response(BAD_REQUEST)
-            else -> {
-                Response(OK).with(
-                    viewModelLens of GetQueueAttributesResponse(
-                        mapOf(
-                            "LastModifiedTimestamp" to "0",
-                            "CreatedTimestamp" to "0",
-                            "MessageRetentionPeriod" to "0",
-                            "DelaySeconds" to "0",
-                            "ReceiveMessageWaitTimeSeconds" to "0",
-                            "MaximumMessageSize" to "0",
-                            "VisibilityTimeout" to "0",
-                            "ApproximateNumberOfMessagesDelayed" to queue.size.toString(),
-                            "ApproximateNumberOfMessages" to queue.size.toString(),
-                            "ApproximateNumberOfMessagesNotVisible" to "0"
-                        ).toList()
-                    )
-                )
-            }
-        }
+        Response(OK).with(
+            viewModelLens of ListQueuesResponse(
+                queues.keySet().map { "https://sqs.${region}.amazonaws.com/${account}/$it" })
+        )
     }
 
 private fun String.queueName() = substring(lastIndexOf('/') + 1)
