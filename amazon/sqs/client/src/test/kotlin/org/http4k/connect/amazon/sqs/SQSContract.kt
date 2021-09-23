@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.sqs
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasElement
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.DataType
@@ -11,6 +12,7 @@ import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -19,7 +21,7 @@ import java.util.UUID
 abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
     protected val sqs by lazy {
-        SQS.Http(aws.region, { aws.credentials }, http)
+        SQS.Http(aws.region, { aws.credentials }, http.debug())
     }
 
     protected val queueName = QueueName.of(UUID.randomUUID().toString())
@@ -42,6 +44,10 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                         queueUrl,
                         listOf("All")
                     ).successValue().attributes["ApproximateNumberOfMessages"], equalTo("0")
+                )
+
+                assertThat(
+                    listQueues().successValue(), hasElement(queueUrl)
                 )
 
                 val id = sendMessage(

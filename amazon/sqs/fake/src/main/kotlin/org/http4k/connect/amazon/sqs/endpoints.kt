@@ -62,6 +62,34 @@ fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
         }
     }
 
+fun listQueues(queues: Storage<List<SQSMessage>>) =
+    { r: Request -> r.form("Action") == "ListQueues" }
+        .asRouter() bind { req: Request ->
+        val queueUri = req.form("QueueUrl")!!
+
+        when (val queue = queues[queueUri.queueName()]) {
+            null -> Response(BAD_REQUEST)
+            else -> {
+                Response(OK).with(
+                    viewModelLens of GetQueueAttributesResponse(
+                        mapOf(
+                            "LastModifiedTimestamp" to "0",
+                            "CreatedTimestamp" to "0",
+                            "MessageRetentionPeriod" to "0",
+                            "DelaySeconds" to "0",
+                            "ReceiveMessageWaitTimeSeconds" to "0",
+                            "MaximumMessageSize" to "0",
+                            "VisibilityTimeout" to "0",
+                            "ApproximateNumberOfMessagesDelayed" to queue.size.toString(),
+                            "ApproximateNumberOfMessages" to queue.size.toString(),
+                            "ApproximateNumberOfMessagesNotVisible" to "0"
+                        ).toList()
+                    )
+                )
+            }
+        }
+    }
+
 private fun String.queueName() = substring(lastIndexOf('/') + 1)
 
 fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteQueue" }

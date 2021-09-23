@@ -24,7 +24,8 @@ class FakeSQS(
             receiveMessage(queues),
             createQueue(queues, awsAccount),
             getQueueAttributes(queues),
-            sendMessage(queues)
+            sendMessage(queues),
+            listQueues(queues)
         )
     )
 
