@@ -2,7 +2,7 @@ package org.http4k.filter
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.cloudnative.env.Secret
+import org.http4k.connect.github.GitHubToken
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 
 class SignGitHubCallbackSha256Test {
 
-    private val app = ClientFilters.SignGitHubCallbackSha256 { Secret("secret") }
+    private val app = ClientFilters.SignGitHubCallbackSha256 { GitHubToken.of("secret") }
         .then {
             assertThat(
                 Header.X_HUB_SIGNATURE_256(it),

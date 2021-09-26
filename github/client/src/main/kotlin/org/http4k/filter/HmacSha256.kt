@@ -1,4 +1,4 @@
-package org.http4k.connect.github.filter
+package org.http4k.filter
 
 import org.http4k.util.Hex
 import java.security.MessageDigest

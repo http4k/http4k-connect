@@ -1,5 +1,8 @@
 package org.http4k.connect.github
 
+import dev.forkhandles.values.NonBlankStringValueFactory
+import dev.forkhandles.values.StringValue
+
 enum class CallbackEvent {
     check_run,
     check_suite,
@@ -52,4 +55,8 @@ enum class CallbackEvent {
     watch,
     workflow_dispatch,
     workflow_run
+}
+
+class GitHubToken private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<GitHubToken>(::GitHubToken)
 }
