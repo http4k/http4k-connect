@@ -30,7 +30,17 @@ class VerifyHubSignature256Test {
     }
 
     @Test
-    fun `if invalid gives 403`() {
+    fun `if missing gives 401`() {
+        assertThat(
+            app(
+                Request(POST, "")
+                    .body("hello world")
+            ), hasStatus(UNAUTHORIZED)
+        )
+    }
+
+    @Test
+    fun `if invalid gives 401`() {
         assertThat(
             app(
                 Request(POST, "")

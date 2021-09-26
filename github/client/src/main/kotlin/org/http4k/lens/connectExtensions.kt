@@ -8,4 +8,4 @@ val Header.X_GITHUB_EVENT get() = Header.enum<HttpMessage, CallbackEvent>().requ
 val Header.X_HUB_SIGNATURE_256
     get() = Header
         .map({ it.split("sha256=")[1] }, { "sha256=$it" })
-        .required("X-Hub-Signature-256")
+        .optional("X-Hub-Signature-256")
