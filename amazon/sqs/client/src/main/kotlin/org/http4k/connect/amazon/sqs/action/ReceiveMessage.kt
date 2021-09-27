@@ -5,6 +5,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.children
+import org.http4k.connect.amazon.core.firstChild
 import org.http4k.connect.amazon.core.firstChildText
 import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.sequenceOfNodes
@@ -58,12 +59,13 @@ data class ReceiveMessage(
                                 ReceiptHandle.of(it.firstChildText("ReceiptHandle")!!),
                                 it.children("MessageAttribute")
                                     .map {
-                                        val firstChildText = it.firstChildText("DataType")
-                                        println(firstChildText)
+                                        val value = it.firstChild("Value")!!
                                         MessageAttribute(
                                             (it.firstChildText("Name") ?: ""),
-                                            (it.firstChildText("Value") ?: ""),
-                                            DataType.valueOf(firstChildText ?: "")
+                                            (value.firstChildText("StringValue")
+                                                ?: value.firstChildText("BinaryValue")
+                                                ?: ""),
+                                            DataType.valueOf(value.firstChildText("DataType") ?: "")
                                         )
                                     }.toList()
                             )

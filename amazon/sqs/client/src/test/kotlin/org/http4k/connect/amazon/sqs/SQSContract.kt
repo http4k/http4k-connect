@@ -20,12 +20,12 @@ import java.util.UUID
 
 abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
-    protected val sqs by lazy {
+    val sqs by lazy {
         SQS.Http(aws.region, { aws.credentials }, http.debug())
     }
 
-    protected val queueName = QueueName.of(UUID.randomUUID().toString())
-    protected val expires = ZonedDateTime.now().plus(Duration.ofMinutes(1))
+    val queueName = QueueName.of(UUID.randomUUID().toString())
+    val expires = ZonedDateTime.now().plus(Duration.ofMinutes(1))
 
     @Test
     fun `queue lifecycle`() {

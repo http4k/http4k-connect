@@ -10,8 +10,11 @@
                 {{#each attributes}}
                     <MessageAttribute>
                         <Name>{{name}}</Name>
-                        <Value>{{value}}</Value>
-                        <DataType>{{dataType}}</DataType>
+                        <Value>
+                            <DataType>{{dataType}}</DataType>
+                            <StringValue>{{value}}</StringValue>
+                            <BinaryValue>{{value}}</BinaryValue>
+                        </Value>
                     </MessageAttribute>
                 {{/each}}
             </Message>
