@@ -4,9 +4,9 @@ import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.MessageFields
 
 sealed class SQSMessageAttribute(
-    private val name: String,
+    override val name: String,
     private val category: String,
-    private val dataType: DataType? = null
+    override val dataType: DataType
 ) : MessageFields {
     override fun toFields(index: Int): Map<String, String> =
         (listOfNotNull(
@@ -20,8 +20,8 @@ sealed class SQSMessageAttribute(
         name: String,
         private val category: String,
         private val typePrefix: String,
-        private val value: String,
-        dataType: DataType?
+        override val value: String,
+        dataType: DataType
     ) : SQSMessageAttribute(name, category, dataType) {
         override fun toCustomFields(index: Int) =
             mapOf("$category.$index.Value.${typePrefix}Value" to value)
@@ -32,8 +32,10 @@ sealed class SQSMessageAttribute(
         private val category: String,
         private val typePrefix: String,
         name: String,
-        dataType: DataType?
+        dataType: DataType
     ) : SQSMessageAttribute(name, category, dataType) {
+        override val value = values.joinToString(",")
+
         override fun toCustomFields(index: Int) =
             values.mapIndexed { i, it ->
                 "$category.$index.Value.${typePrefix}Value.${i + 1}" to it

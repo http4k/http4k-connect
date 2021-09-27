@@ -1,7 +1,9 @@
 package org.http4k.connect.amazon.sqs
 
 import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
@@ -96,19 +98,20 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
         val message = req.form("MessageBody")!!
         val messageId = SQSMessageId.of(queue + "/" + UUID.randomUUID())
         val receiptHandle = ReceiptHandle.of(queue + "/" + UUID.randomUUID())
+
         queues[queue] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
         Response(OK).with(viewModelLens of SendMessageResponse(message, messageId))
     } ?: Response(BAD_REQUEST)
 }
 
-private fun attributesFrom(req: Request): Map<String, String> {
+private fun attributesFrom(req: Request): List<MessageAttribute> {
     val names = req.formAsMap()
         .filter { it.key.startsWith("MessageAttribute") }
         .filter { it.key.endsWith(".Name") }
         .map {
             it.value.first()!!.removePrefix("[").removeSuffix("]") to
                 it.key.removePrefix("MessageAttribute.").removeSuffix(".Name")
-        }.toMap()
+        }
 
     val cleanedValues = req.formAsMap().mapKeys {
         it.key
@@ -116,15 +119,15 @@ private fun attributesFrom(req: Request): Map<String, String> {
             .removeSuffix(".BinaryValue")
     }
 
-    return names
-        .map { (k, v) ->
-            k to cleanedValues["MessageAttribute.$v.Value"]!!.toString()
-                .removePrefix("[")
-                .removeSuffix("]")
-        }
-        .toMap()
+    return names.map {
+        MessageAttribute(
+            it.first,
+            cleanedValues["MessageAttribute.${it.second}.Value"]
+            !!.toString().removePrefix("[").removeSuffix("]"),
+            DataType.valueOf(cleanedValues["MessageAttribute.${it.second}.Value.DataType"]!![0]!!)
+        )
+    }
 }
-
 
 fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
     .asRouter() bind { req: Request ->

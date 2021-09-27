@@ -6,8 +6,10 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.children
 import org.http4k.connect.amazon.core.firstChildText
+import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.sequenceOfNodes
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
@@ -30,7 +32,7 @@ data class ReceiveMessage(
 ) : SQSAction<List<SQSMessage>>(
     "ReceiveMessage",
     *(
-        (messageAttributes?.mapIndexed { i, n -> "MessageAttributeName.${(i+1)}" to n } ?: emptyList()) +
+        (messageAttributes?.mapIndexed { i, n -> "MessageAttributeName.${(i + 1)}" to n } ?: emptyList()) +
             listOfNotNull(
                 maxNumberOfMessages?.let { "MaxNumberOfMessages" to it.toString() },
                 longPollTime?.let { "WaitTimeSeconds" to it.seconds.toString() },
@@ -55,8 +57,15 @@ data class ReceiveMessage(
                                 it.firstChildText("MD5OfBody") ?: "",
                                 ReceiptHandle.of(it.firstChildText("ReceiptHandle")!!),
                                 it.children("MessageAttribute")
-                                    .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?: "") }
-                                    .toMap()
+                                    .map {
+                                        val firstChildText = it.firstChildText("DataType")
+                                        println(firstChildText)
+                                        MessageAttribute(
+                                            (it.firstChildText("Name") ?: ""),
+                                            (it.firstChildText("Value") ?: ""),
+                                            DataType.valueOf(firstChildText ?: "")
+                                        )
+                                    }.toList()
                             )
                         }.toList()
                 })

@@ -39,5 +39,4 @@ class FakeSQSTest : SQSContract(FakeSQS()) {
             }
         }
     }
-
 }

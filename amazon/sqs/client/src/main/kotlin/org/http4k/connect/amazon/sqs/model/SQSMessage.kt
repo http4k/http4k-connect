@@ -5,5 +5,5 @@ data class SQSMessage(
     val body: String,
     val md5OfBody: String,
     val receiptHandle: ReceiptHandle,
-    val attributes: Map<String, String>
+    val attributes: List<MessageAttribute>
 )
