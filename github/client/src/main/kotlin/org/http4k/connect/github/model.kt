@@ -54,6 +54,7 @@ enum class CallbackEvent {
     team_add,
     watch,
     workflow_dispatch,
+    workflow_job,
     workflow_run
 }
 
