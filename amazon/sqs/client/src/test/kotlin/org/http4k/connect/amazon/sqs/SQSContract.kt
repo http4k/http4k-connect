@@ -77,8 +77,8 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
                 assertThat(received.messageId, equalTo(id))
                 assertThat(
-                    received.attributes.map { Triple(it.name, it.value, it.dataType) }, equalTo(
-                        listOf(
+                    received.attributes.map { Triple(it.name, it.value, it.dataType) }.toSet(), equalTo(
+                        setOf(
                             Triple("foo", "123", DataType.Number),
                             Triple("bar", "123", DataType.Number),
                             Triple("binaryfoo", "Zm9vYmFy", DataType.Binary)
