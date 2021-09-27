@@ -6,7 +6,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v3.10.0.0
 - **http4k-connect-amazon-sqs** - [Breaking] Parsing of message attributes in ReceiveMessage is corrected. SQS docs are wrong... 
 
-### v3.8.0.0
+### v3.9.0.0
 - **http4k-connect-*** - Upgrade dependencies
 - **http4k-connect-github** - [Break] Replace Secret with GitHubToken in filters.
 
