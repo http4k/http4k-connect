@@ -70,7 +70,15 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
                 val received = receiveMessage(queueUrl).successValue().first()
                 assertThat(received.messageId, equalTo(id))
-                assertThat(received.attributes, equalTo(attributes))
+                assertThat(
+                    received.attributes, equalTo(
+                        mapOf(
+                            "foo" to "123",
+                            "bar" to "123",
+                            "binaryfoo" to "Zm9vYmFy"
+                        )
+                    )
+                )
                 assertThat(received.body, equalTo("hello world"))
 
                 deleteMessage(queueUrl, received.receiptHandle).successValue()

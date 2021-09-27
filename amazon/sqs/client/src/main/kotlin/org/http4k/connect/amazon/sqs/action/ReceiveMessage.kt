@@ -48,7 +48,7 @@ data class ReceiveMessage(
                                 it.firstChildText("Body") ?: "",
                                 it.firstChildText("MD5OfBody") ?: "",
                                 ReceiptHandle.of(it.firstChildText("ReceiptHandle")!!),
-                                it.children("Attributes")
+                                it.children("Attribute")
                                     .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?: "") }
                                     .toMap()
                             )
