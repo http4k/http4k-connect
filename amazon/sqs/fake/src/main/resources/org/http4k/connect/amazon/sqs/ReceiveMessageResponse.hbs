@@ -8,10 +8,11 @@
                 <MD5OfBody>{{md5OfBody}}</MD5OfBody>
                 <Body>{{body}}</Body>
                 {{#each attributes}}
-                    <Attribute>
+                    <MessageAttribute>
                         <Name>{{@key}}</Name>
                         <Value>{{this}}</Value>
-                    </Attribute>
+                        <DataType>{{this}}</DataType>
+                    </MessageAttribute>
                 {{/each}}
             </Message>
         {{/each}}

@@ -25,15 +25,21 @@ data class ReceiveMessage(
     val visibilityTimeout: Int? = null,
     val attributeName: String? = null,
     val expires: ZonedDateTime? = null,
-    val longPollTime: Duration? = null
+    val longPollTime: Duration? = null,
+    val messageAttributes: List<String>? = null
 ) : SQSAction<List<SQSMessage>>(
     "ReceiveMessage",
-    maxNumberOfMessages?.let { "MaxNumberOfMessages" to it.toString() },
-    longPollTime?.let { "WaitTimeSeconds" to it.seconds.toString() },
-    visibilityTimeout?.let { "VisibilityTimeout" to it.toString() },
-    attributeName?.let { "AttributeName" to it },
-    expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
-    "QueueUrl" to queueUrl.toString()
+    *(
+        (messageAttributes?.mapIndexed { i, n -> "MessageAttributeName.${(i+1)}" to n } ?: emptyList()) +
+            listOfNotNull(
+                maxNumberOfMessages?.let { "MaxNumberOfMessages" to it.toString() },
+                longPollTime?.let { "WaitTimeSeconds" to it.seconds.toString() },
+                visibilityTimeout?.let { "VisibilityTimeout" to it.toString() },
+                attributeName?.let { "AttributeName" to it },
+                expires?.let { "Expires" to ISO_ZONED_DATE_TIME.format(it) },
+                "QueueUrl" to queueUrl.toString()
+            )
+        ).toTypedArray()
 ) {
 
     override fun toResult(response: Response) = with(response) {
@@ -48,7 +54,7 @@ data class ReceiveMessage(
                                 it.firstChildText("Body") ?: "",
                                 it.firstChildText("MD5OfBody") ?: "",
                                 ReceiptHandle.of(it.firstChildText("ReceiptHandle")!!),
-                                it.children("Attribute")
+                                it.children("MessageAttribute")
                                     .map { (it.firstChildText("Name") ?: "") to (it.firstChildText("Value") ?: "") }
                                     .toMap()
                             )

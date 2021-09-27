@@ -47,6 +47,8 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                     ).successValue().attributes["ApproximateNumberOfMessages"], equalTo("0")
                 )
 
+                Thread.sleep(10000)
+
                 assertTrue(
                     listQueues().successValue().any { it.toString().endsWith(queueUrl.toString()) }
                 )
@@ -68,7 +70,9 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                     )
                 ).successValue().MessageId
 
-                val received = receiveMessage(queueUrl).successValue().first()
+                val received = receiveMessage(queueUrl,
+                    messageAttributes = listOf("foo", "bar", "binaryfoo")).successValue().first()
+
                 assertThat(received.messageId, equalTo(id))
                 assertThat(
                     received.attributes, equalTo(
