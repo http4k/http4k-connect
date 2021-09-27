@@ -14,6 +14,7 @@ import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.body.form
+import org.http4k.core.body.formAsMap
 import org.http4k.core.extend
 import org.http4k.core.with
 import org.http4k.routing.asRouter
@@ -95,10 +96,35 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
         val message = req.form("MessageBody")!!
         val messageId = SQSMessageId.of(queue + "/" + UUID.randomUUID())
         val receiptHandle = ReceiptHandle.of(queue + "/" + UUID.randomUUID())
-        queues[queue] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, mapOf())
+        queues[queue] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
         Response(OK).with(viewModelLens of SendMessageResponse(message, messageId))
     } ?: Response(BAD_REQUEST)
 }
+
+private fun attributesFrom(req: Request): Map<String, String> {
+    val names = req.formAsMap()
+        .filter { it.key.startsWith("MessageAttribute") }
+        .filter { it.key.endsWith(".Name") }
+        .map {
+            it.value.first()!!.removePrefix("[").removeSuffix("]") to
+                it.key.removePrefix("MessageAttribute.").removeSuffix(".Name")
+        }.toMap()
+
+    val cleanedValues = req.formAsMap().mapKeys {
+        it.key
+            .removeSuffix(".StringValue")
+            .removeSuffix(".BinaryValue")
+    }
+
+    return names
+        .map { (k, v) ->
+            k to cleanedValues["MessageAttribute.$v.Value"]!!.toString()
+                .removePrefix("[")
+                .removeSuffix("]")
+        }
+        .toMap()
+}
+
 
 fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
     .asRouter() bind { req: Request ->

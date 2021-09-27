@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -20,7 +21,7 @@ import java.util.UUID
 abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
     protected val sqs by lazy {
-        SQS.Http(aws.region, { aws.credentials }, http)
+        SQS.Http(aws.region, { aws.credentials }, http.debug())
     }
 
     protected val queueName = QueueName.of(UUID.randomUUID().toString())
@@ -35,6 +36,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 mapOf("MaximumMessageSize" to "10000"),
                 expires
             ).successValue()
+
             val queueUrl = created.QueueUrl
 
             try {
@@ -49,13 +51,14 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                     listQueues().successValue().any { it.toString().endsWith(queueUrl.toString()) }
                 )
 
+                val attributes = listOf(
+                    MessageAttribute("foo", "123", DataType.Number),
+                    MessageAttribute("bar", "123", DataType.Number),
+                    MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
+                )
                 val id = sendMessage(
                     queueUrl, "hello world", expires = expires,
-                    attributes = listOf(
-                        MessageAttribute("foo", "123", DataType.Number),
-                        MessageAttribute("bar", "123", DataType.Number),
-                        MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
-                    ),
+                    attributes = attributes,
                     systemAttributes = listOf(
                         MessageSystemAttribute(
                             "AWSTraceHeader",
@@ -67,6 +70,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
                 val received = receiveMessage(queueUrl).successValue().first()
                 assertThat(received.messageId, equalTo(id))
+                assertThat(received.attributes, equalTo(attributes))
                 assertThat(received.body, equalTo("hello world"))
 
                 deleteMessage(queueUrl, received.receiptHandle).successValue()
