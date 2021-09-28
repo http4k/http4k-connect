@@ -117,12 +117,6 @@ allprojects {
 
 subprojects {
     sourceSets {
-        main {
-            kotlin {
-                srcDirs += "build/generated/source/kapt/main"
-                srcDirs += "build/generated/source/kaptKotlin/main"
-            }
-        }
         test {
             kotlin {
                 srcDirs "src/examples/kotlin"
