@@ -12,7 +12,6 @@ import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -21,7 +20,7 @@ import java.util.UUID
 abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
     val sqs by lazy {
-        SQS.Http(aws.region, { aws.credentials }, http.debug())
+        SQS.Http(aws.region, { aws.credentials }, http)
     }
 
     val queueName = QueueName.of(UUID.randomUUID().toString())
@@ -90,6 +89,9 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 deleteMessage(queueUrl, received.receiptHandle).successValue()
 
                 assertThat(receiveMessage(queueUrl).successValue().size, equalTo(0))
+
+                sendMessage(queueUrl, "hello world", expires = expires).successValue()
+
             } finally {
                 deleteQueue(queueUrl, expires).successValue()
             }

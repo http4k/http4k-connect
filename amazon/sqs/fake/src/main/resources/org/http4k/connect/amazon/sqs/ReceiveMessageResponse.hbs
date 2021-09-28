@@ -3,11 +3,12 @@
     <ReceiveMessageResult>
         {{#each messages}}
             <Message>
-                <MessageId>{{messageId}}</MessageId>
-                <ReceiptHandle>{{receiptHandle}}</ReceiptHandle>
-                <MD5OfBody>{{md5OfBody}}</MD5OfBody>
-                <Body>{{body}}</Body>
-                {{#each attributes}}
+                <MessageId>{{message.messageId}}</MessageId>
+                <ReceiptHandle>{{message.receiptHandle}}</ReceiptHandle>
+                <MD5OfBody>{{message.md5OfBody}}</MD5OfBody>
+                <MD5OfMessageAttributes>{{md5OfMessageAttributes}}</MD5OfMessageAttributes>
+                <Body>{{message.body}}</Body>
+                {{#each message.attributes}}
                     <MessageAttribute>
                         <Name>{{name}}</Name>
                         <Value>

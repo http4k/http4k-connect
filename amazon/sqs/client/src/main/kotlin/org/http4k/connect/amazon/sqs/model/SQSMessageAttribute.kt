@@ -16,7 +16,7 @@ sealed class SQSMessageAttribute(
 
     protected abstract fun toCustomFields(index: Int): Map<String, String>
 
-    internal class SingularValue(
+    class SingularValue(
         name: String,
         private val category: String,
         private val typePrefix: String,
@@ -27,14 +27,14 @@ sealed class SQSMessageAttribute(
             mapOf("$category.$index.Value.${typePrefix}Value" to value)
     }
 
-    internal class ListValue(
+    class ListValue(
         private val values: List<String>,
         private val category: String,
         private val typePrefix: String,
         name: String,
         dataType: DataType
     ) : SQSMessageAttribute(name, category, dataType) {
-        override val value = values.joinToString(",")
+        override val value = values.joinToString("~http4k~")
 
         override fun toCustomFields(index: Int) =
             values.mapIndexed { i, it ->

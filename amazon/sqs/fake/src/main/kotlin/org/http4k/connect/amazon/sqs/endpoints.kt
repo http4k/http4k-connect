@@ -99,8 +99,9 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
         val messageId = SQSMessageId.of(queue + "/" + UUID.randomUUID())
         val receiptHandle = ReceiptHandle.of(queue + "/" + UUID.randomUUID())
 
-        queues[queue] = it + SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
-        Response(OK).with(viewModelLens of SendMessageResponse(message, messageId))
+        val sqsMessage = SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
+        queues[queue] = it + sqsMessage
+        Response(OK).with(viewModelLens of SendMessageResponse(sqsMessage, messageId))
     } ?: Response(BAD_REQUEST)
 }
 
@@ -135,7 +136,9 @@ fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("
     val queue = queues[req.form("QueueUrl")!!.queueName()]
     queue?.let { sqsMessages ->
         val messagesToSend = maxNumberOfMessages?.let { it -> sqsMessages.take(it) } ?: sqsMessages
-        Response(OK).with(viewModelLens of ReceiveMessageResponse(messagesToSend))
+        Response(OK).with(viewModelLens of ReceiveMessageResponse(
+            messagesToSend.map { ReceivedMessage(it, it.md5OfAttributes()) }
+        ))
     } ?: Response(BAD_REQUEST)
 }
 

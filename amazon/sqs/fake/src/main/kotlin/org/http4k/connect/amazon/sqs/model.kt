@@ -9,14 +9,16 @@ import java.security.MessageDigest
 
 data class CreateQueueResponse(val url: Uri) : ViewModel
 
-data class ReceiveMessageResponse(val messages: List<SQSMessage>) : ViewModel
+data class ReceivedMessage(val message: SQSMessage, val md5OfMessageAttributes: String)
+data class ReceiveMessageResponse(val messages: List<ReceivedMessage>) : ViewModel
 
 data class SendMessageResponse(
-    val body: String,
-    val messageId: SQSMessageId
+    val message: SQSMessage,
+    val messageId: SQSMessageId,
 ) : ViewModel {
-    val md5OfMessageBody = body.md5()
-    val md5OfMessageAttributes = md5OfMessageBody
+    val body = message.body
+    val md5OfMessageBody = message.md5OfBody()
+    val md5OfMessageAttributes = message.md5OfAttributes()
 }
 
 data class ListQueuesResponse(val queues: List<String>) : ViewModel
@@ -27,7 +29,11 @@ object DeleteQueueResponse : ViewModel
 
 object DeleteMessageResponse : ViewModel
 
-internal fun String.md5() = BigInteger(
+fun SQSMessage.md5OfBody() = body.md5()
+
+fun String.md5() = BigInteger(
     1,
     MessageDigest.getInstance("MD5").digest(toByteArray())
 ).toString(16).padStart(32, '0')
+
+fun SQSMessage.md5OfAttributes() = MessageMD5ChecksumInterceptor.calculateMd5(this.attributes)
