@@ -1,6 +1,7 @@
-package org.http4k.connect.github
+package org.http4k.connect.github.callback
 
-import org.http4k.connect.github.action.GitHubCallbackAction
+import org.http4k.connect.github.GitHubToken
+import org.http4k.connect.github.api.action.GitHubCallbackAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

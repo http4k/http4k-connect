@@ -1,4 +1,4 @@
-package org.http4k.connect.github.action
+package org.http4k.connect.github.api.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
