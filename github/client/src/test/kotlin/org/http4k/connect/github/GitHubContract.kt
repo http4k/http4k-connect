@@ -3,7 +3,6 @@ package org.http4k.connect.github
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
-import org.http4k.cloudnative.env.Secret
 import org.http4k.connect.github.api.GitHub
 import org.http4k.connect.github.api.Http
 import org.http4k.connect.github.api.action.GitHubAction
@@ -22,7 +21,7 @@ class TestAction : GitHubAction<Map<String, String>> {
 
 class GitHubContract {
     private val gitHub = GitHub.Http(
-        { Secret("token") }, { Response(OK).body("""{"hello":"world"}""") }
+        { GitHubToken.of("token") }, { Response(OK).body("""{"hello":"world"}""") }
     )
 
     @Test
