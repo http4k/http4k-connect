@@ -1,6 +1,6 @@
 package org.http4k.lens
 
-import org.http4k.connect.github.CallbackEvent
+import org.http4k.connect.github.callback.CallbackEvent
 import org.http4k.core.ContentType
 import org.http4k.core.HttpMessage
 

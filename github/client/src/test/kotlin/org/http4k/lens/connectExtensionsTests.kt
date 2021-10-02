@@ -2,7 +2,7 @@ package org.http4k.lens
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.github.CallbackEvent
+import org.http4k.connect.github.callback.CallbackEvent
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.with
