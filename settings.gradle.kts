@@ -5,8 +5,7 @@ pluginManagement {
 }
 
 plugins {
-    id("de.fayard.refreshVersions").version("0.20.0")
-////                            # available:"0.21.0")
+    id("de.fayard.refreshVersions").version("0.23.0")
 }
 
 refreshVersions {
