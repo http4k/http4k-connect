@@ -42,6 +42,7 @@ allprojects {
 
         testImplementation("org.junit.jupiter:junit-jupiter-api")
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation("org.junit.jupiter:junit-jupiter-params")
         testImplementation("org.testcontainers:junit-jupiter")
         testImplementation("org.testcontainers:testcontainers")
 
@@ -289,6 +290,7 @@ dependencies {
     implementation "software.amazon.awssdk:lambda"
     implementation "software.amazon.awssdk:s3"
     implementation "software.amazon.awssdk:secretsmanager"
+    implementation "software.amazon.awssdk:ses"
     implementation "software.amazon.awssdk:sns"
     implementation "software.amazon.awssdk:sqs"
     implementation "software.amazon.awssdk:ssm"
