@@ -5,8 +5,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.11.1.0
 - **http4k-connect-*** - Upgrade dependencies
-- **http4k-amazon-ses*** - New module for SES.
-- **http4k-amazon-ses-fake*** - New module for SES.
+- **http4k-amazon-ses*** - New module for SES. @H/T ToastShaman
+- **http4k-amazon-ses-fake*** - New module for SES. @H/T ToastShaman
 
 ### v3.11.0.1
 - **http4k-connect-*** - Upgrade dependencies
