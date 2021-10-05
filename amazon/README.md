@@ -9,6 +9,7 @@ http4k-connect provides a standardised mechanism to connect to the following AWS
 - Lambda
 - S3
 - SecretsManager
+- SES
 - SNS
 - SQS
 - STS
