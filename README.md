@@ -102,11 +102,9 @@ dependencies {
     - [SQS](./amazon/sqs) -> `"org.http4k:http4k-connect-amazon-sqs"` / `"org.http4k:http4k-connect-amazon-sqs-fake"`
     - [STS](./amazon/sts) -> `"org.http4k:http4k-connect-amazon-sts"` / `"org.http4k:http4k-connect-amazon-sts-fake"
     - [SystemsManager](./amazon/systemsmanager) -> `"org.http4k:http4k-connect-amazon-systemsmanager"` / `"org.http4k:http4k-connect-amazon-systemsmanager-fake"`
-- GitHub
-    - [V3 Callback](./github) -> `"org.http4k:http4k-connect-github"`
--- Google
-    - [Analytics](./google/analytics) -> `"org.http4k:http4k-connect-google-analytics"` / `"org.http4k:http4k-connect-google-analytic-fake"`
-- [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
+    - [GitHub V3, App, Callback](./github) -> `"org.http4k:http4k-connect-github"`
+    - [Google Analytics](./google/analytics) -> `"org.http4k:http4k-connect-google-analytics"` / `"org.http4k:http4k-connect-google-analytic-fake"`
+    - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
 ## Supported Storage backends (named http4k-connect-storage-{technology}>)
 
