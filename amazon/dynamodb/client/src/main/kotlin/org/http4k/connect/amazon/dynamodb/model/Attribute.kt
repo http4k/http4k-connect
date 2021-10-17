@@ -141,6 +141,17 @@ class Attribute<FINAL>(
             )
         }
 
+        override fun defaulted(name: String, default: OUT, description: String?): Attribute<OUT> {
+            val getLens = get(name)
+            val setLens = set(name)
+            return Attribute(
+                dataType,
+                Meta(false, location, paramMeta, name, description),
+                { getLens(it).run { if (isEmpty()) default else first() } },
+                { out: OUT?, target -> setLens(out?.let { listOf(it) } ?: emptyList(), target) }
+            )
+        }
+
         override fun required(name: String, description: String?): Attribute<OUT> {
             val getLens = get(name)
             val setLens = set(name)
