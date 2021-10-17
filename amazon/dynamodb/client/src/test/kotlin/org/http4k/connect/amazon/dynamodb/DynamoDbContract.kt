@@ -32,6 +32,7 @@ import org.http4k.connect.amazon.dynamodb.model.asKeySchema
 import org.http4k.connect.amazon.dynamodb.model.value
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -50,7 +51,7 @@ abstract class DynamoDbContract(
     abstract val http: HttpHandler
 
     private val dynamo by lazy {
-        DynamoDb.Http(aws.region, { aws.credentials }, http)
+        DynamoDb.Http(aws.region, { aws.credentials }, http.debug())
     }
 
     private val table = TableName.of("http4k-connect" + UUID.randomUUID().toString())
@@ -99,12 +100,14 @@ abstract class DynamoDbContract(
             val result = transactGetItems(
                 listOf(
                     Get(table, Item(attrS of "hello2")),
-                    Get(table, Item(attrS of "hello3"))
+                    Get(table, Item(attrS of "hello3")),
+                    Get(table, Item(attrS of "hello4"))
                 )
             ).successValue()
 
-            assertThat(attrS(result.responses[0]), equalTo("hello2"))
-            assertThat(attrS(result.responses[1]), equalTo("hello3"))
+            assertThat(attrS(result.responses[0]!!), equalTo("hello2"))
+            assertThat(attrS(result.responses[1]!!), equalTo("hello3"))
+            assertThat(result.responses[2], absent())
         }
     }
 

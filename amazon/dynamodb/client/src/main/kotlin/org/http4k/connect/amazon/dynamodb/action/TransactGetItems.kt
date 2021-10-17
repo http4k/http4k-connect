@@ -5,7 +5,6 @@ import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.dynamodb.model.ConsumedCapacity
 import org.http4k.connect.amazon.dynamodb.model.GetItemsResponseItem
 import org.http4k.connect.amazon.dynamodb.model.ItemCollectionMetrics
-import org.http4k.connect.amazon.dynamodb.model.ItemResult
 import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity
 import org.http4k.connect.amazon.dynamodb.model.TransactGetItem
 import org.http4k.connect.amazon.dynamodb.model.toItem
@@ -24,5 +23,5 @@ data class GetItemsResponse(
     val ConsumedCapacity: ConsumedCapacity? = null,
     val ItemCollectionMetrics: ItemCollectionMetrics? = null
 ) {
-    val responses = Responses.map { it.Item }.map(ItemResult::toItem)
+    val responses = Responses.map { it.Item?.let { it.toItem() } }
 }

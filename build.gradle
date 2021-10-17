@@ -36,12 +36,12 @@ allprojects {
         api("dev.forkhandles:result4k")
 
         testImplementation(platform(Libs.junit_bom))
-        testImplementation(platform(Libs.testcontainers_bom))
         testImplementation("org.http4k:http4k-testing-hamkrest")
         testImplementation("org.http4k:http4k-testing-approval")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api")
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation(platform(Libs.testcontainers_bom))
         testImplementation("org.junit.jupiter:junit-jupiter-params")
         testImplementation("org.testcontainers:junit-jupiter")
         testImplementation("org.testcontainers:testcontainers")
