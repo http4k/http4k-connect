@@ -4,4 +4,4 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest
 import org.http4k.connect.amazon.dynamodb.AmazonDynamoFake
 
-fun AmazonDynamoFake.deleteTable(db: AmazonDynamoDB) = route<DeleteTableRequest>(db::deleteTable)
+fun AmazonDynamoFake.deleteTable() = route<DeleteTableRequest>(AmazonDynamoDB::deleteTable)
