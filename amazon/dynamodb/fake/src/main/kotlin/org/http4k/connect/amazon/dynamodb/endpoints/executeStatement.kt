@@ -1,10 +1,9 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
-import org.http4k.connect.amazon.AmazonJsonFake
-import org.http4k.connect.amazon.dynamodb.DynamoTable
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
+import org.http4k.connect.amazon.dynamodb.AmazonDynamoFake
 import org.http4k.connect.amazon.dynamodb.action.ExecuteStatement
-import org.http4k.connect.storage.Storage
 
-fun AmazonJsonFake.executeStatement(tables: Storage<DynamoTable>) = route<ExecuteStatement> {
+fun AmazonDynamoFake.executeStatement(db: AmazonDynamoDB) = route<ExecuteStatement> {
     null
 }

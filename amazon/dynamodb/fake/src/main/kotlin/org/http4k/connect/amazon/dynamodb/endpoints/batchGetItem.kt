@@ -1,22 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
-import org.http4k.connect.amazon.AmazonJsonFake
-import org.http4k.connect.amazon.dynamodb.DynamoTable
-import org.http4k.connect.amazon.dynamodb.action.BatchGetItem
-import org.http4k.connect.amazon.dynamodb.action.BatchGetItems
-import org.http4k.connect.storage.Storage
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest
+import org.http4k.connect.amazon.dynamodb.AmazonDynamoFake
 
-fun AmazonJsonFake.batchGetItem(tables: Storage<DynamoTable>) = route<BatchGetItem> {
-    BatchGetItems(it.RequestItems.flatMap { (tableName, get) ->
-        get.Keys.mapNotNull { key ->
-            tables[tableName.value]
-                ?.let { table ->
-                    table.retrieve(key)
-                        ?.project(get.ProjectionExpression, get.ExpressionAttributeNames)
-                }
-                ?.let { tableName.value to it }
-        }
-    }
-        .groupBy { it.first }
-        .mapValues { it.value.map { it.second } })
-}
+fun AmazonDynamoFake.batchGetItem(db: AmazonDynamoDB) = route<BatchGetItemRequest>(db::batchGetItem)

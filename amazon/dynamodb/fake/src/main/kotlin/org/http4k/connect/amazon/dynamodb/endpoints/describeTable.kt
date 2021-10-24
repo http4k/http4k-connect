@@ -1,11 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
-import org.http4k.connect.amazon.AmazonJsonFake
-import org.http4k.connect.amazon.dynamodb.DynamoTable
-import org.http4k.connect.amazon.dynamodb.action.DescribeTable
-import org.http4k.connect.amazon.dynamodb.action.DescribedTable
-import org.http4k.connect.storage.Storage
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest
+import org.http4k.connect.amazon.dynamodb.AmazonDynamoFake
 
-fun AmazonJsonFake.describeTable(tables: Storage<DynamoTable>) = route<DescribeTable> {
-    tables[it.TableName.value]?.let { DescribedTable(it.table) }
-}
+fun AmazonDynamoFake.describeTable(db: AmazonDynamoDB) = route<DescribeTableRequest>(db::describeTable)

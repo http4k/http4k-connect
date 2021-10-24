@@ -11,9 +11,6 @@ import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
-fun Item.asItemResult(): Map<String, Map<String, Any>> =
-    mapKeys { it.key.value }.mapValues { convert(it.value) }
-
 inline fun <reified OUT : Any> convert(input: Any) = DynamoDbMoshi.asA<OUT>(DynamoDbMoshi.asFormatString(input))
 
 /**
