@@ -16,18 +16,18 @@ buildscript {
     }
 }
 
-apply plugin: 'io.codearte.nexus-staging'
+apply plugin: "io.codearte.nexus-staging"
 
 allprojects {
     repositories {
         mavenCentral()
     }
 
-    apply plugin: "kotlin"
-    apply plugin: "kotlin-kapt"
-    apply plugin: "jacoco"
-    apply plugin: 'org.jetbrains.dokka'
-    apply plugin: "com.github.kt3k.coveralls"
+    apply(plugin: "kotlin")
+    apply(plugin: "kotlin-kapt")
+    apply(plugin: "jacoco")
+    apply(plugin: "org.jetbrains.dokka")
+    apply(plugin: "com.github.kt3k.coveralls")
 
     dependencies {
         implementation(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
@@ -103,8 +103,8 @@ allprojects {
             }
             afterEvaluate {
                 classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, exclude: '**/Kotshi**/**')
-                    fileTree(dir: it, exclude: '**/**Extensions**')
+                    fileTree(dir: it, exclude: "**/Kotshi**/**")
+                    fileTree(dir: it, exclude: "**/**Extensions**")
                 }))
             }
         }
@@ -139,7 +139,7 @@ subprojects {
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
-        archiveClassifier = 'javadoc'
+        archiveClassifier = "javadoc"
         from javadoc.destinationDir
     }
 
@@ -156,12 +156,12 @@ subprojects {
         testArtifacts testJar
     }
 
-    def enableSigning = project.findProperty('sign') == "true"
+    def enableSigning = project.findProperty("sign") == "true"
 
-    apply plugin: 'maven-publish'
+    apply(plugin: "maven-publish")
 
     if (enableSigning) { // when added it expects signing keys to be configured
-        apply plugin: 'signing'
+        apply(plugin: "signing")
 
         signing {
             def signingKey = findProperty("signingKey")
@@ -172,23 +172,23 @@ subprojects {
         }
     }
 
-    def nexusUsername = project.findProperty('nexusUsername') ?: "notset"
-    def nexusPassword = project.findProperty('nexusPassword') ?: "notset"
+    def nexusUsername = project.findProperty("nexusUsername") ?: "notset"
+    def nexusPassword = project.findProperty("nexusPassword") ?: "notset"
 
     publishing {
 
         repositories {
             maven {
-                name 'SonatypeStaging'
-                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                name "SonatypeStaging"
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                 credentials {
                     username nexusUsername
                     password nexusPassword
                 }
             }
             maven {
-                name 'SonatypeSnapshot'
-                url 'https://oss.sonatype.org/content/repositories/snapshots/'
+                name "SonatypeSnapshot"
+                url "https://oss.sonatype.org/content/repositories/snapshots/"
                 credentials {
                     username nexusUsername
                     password nexusPassword
@@ -278,22 +278,22 @@ tasks.create("weighDependencies") {
 dependencies {
     subprojects
         .forEach {
-            implementation project(it.name)
+            implementation(project(it.name))
         }
 
-    implementation platform(Libs.bom)
-    implementation "software.amazon.awssdk:cloudfront"
-    implementation "software.amazon.awssdk:cognitoidentityprovider"
-    implementation "software.amazon.awssdk:dynamodb"
-    implementation "software.amazon.awssdk:kms"
-    implementation "software.amazon.awssdk:lambda"
-    implementation "software.amazon.awssdk:s3"
-    implementation "software.amazon.awssdk:secretsmanager"
-    implementation "software.amazon.awssdk:ses"
-    implementation "software.amazon.awssdk:sns"
-    implementation "software.amazon.awssdk:sqs"
-    implementation "software.amazon.awssdk:ssm"
-    implementation "software.amazon.awssdk:sts"
+    implementation(platform(Libs.bom))
+    implementation("software.amazon.awssdk:cloudfront")
+    implementation("software.amazon.awssdk:cognitoidentityprovider")
+    implementation("software.amazon.awssdk:dynamodb")
+    implementation("software.amazon.awssdk:kms")
+    implementation("software.amazon.awssdk:lambda")
+    implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:secretsmanager")
+    implementation("software.amazon.awssdk:ses")
+    implementation("software.amazon.awssdk:sns")
+    implementation("software.amazon.awssdk:sqs")
+    implementation("software.amazon.awssdk:ssm")
+    implementation("software.amazon.awssdk:sts")
 }
 
 static def hasCodeCoverage(project) {
