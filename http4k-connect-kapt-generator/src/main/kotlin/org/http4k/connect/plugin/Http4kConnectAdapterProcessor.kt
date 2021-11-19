@@ -4,18 +4,19 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrivate
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import com.squareup.kotlinpoet.metadata.toKmClass
+import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmConstructor
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.PagedAction
 import org.http4k.connect.plugin.Http4kConnectProcessor.Companion.KAPT_KOTLIN_GENERATED_OPTION_NAME
 import java.io.File
+import java.util.Locale.getDefault
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
@@ -31,13 +32,13 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
 
     override fun generate(annotations: Set<TypeElement>, roundEnv: RoundEnvironment, outputDir: File): Boolean {
         roundEnv.annotated<Http4kConnectAdapter>()
-            .map { it.toImmutableKmClass() }
+            .map { it.toKmClass() }
             .map { it.generateActionExtensionsFor(roundEnv) }
             .forEach { it.writeTo(outputDir) }
         return true
     }
 
-    private fun ImmutableKmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment): FileSpec {
+    private fun KmClass.generateActionExtensionsFor(roundEnv: RoundEnvironment): FileSpec {
         val (packageName, className) = explodeName()
 
         val actionVP = functions.find { it.name == "invoke" }!!.valueParameters.first()
@@ -51,19 +52,19 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
                     .map(::rawType)
                     .contains(rawType(actionType.asType()))
             }
-            .map { it.toImmutableKmClass() }
+            .map { it.toKmClass() }
             .flatMap { generateActionFunctions(this, it) }
 
-        return FileSpec.builder(packageName, className.toLowerCase() + "Extensions")
+        return FileSpec.builder(packageName, className.lowercase(getDefault()) + "Extensions")
             .apply { functions.forEach(::addFunction) }
             .build()
     }
 }
 
 @KotlinPoetMetadataPreview
-private fun generateActionFunctions(adapterClazz: ImmutableKmClass, actionClazz: ImmutableKmClass): List<FunSpec> =
+private fun generateActionFunctions(adapterClazz: KmClass, actionClazz: KmClass): List<FunSpec> =
     actionClazz.constructors
-        .filterNot { it.isPrivate }
+        .filterNot { it.flags.isPrivate }
         .flatMap { ctr ->
             listOfNotNull(
                 generateStandardActionFunctionFor(actionClazz, adapterClazz, ctr),
@@ -74,9 +75,9 @@ private fun generateActionFunctions(adapterClazz: ImmutableKmClass, actionClazz:
 
 @KotlinPoetMetadataPreview
 private fun generatePagedActionFunctionFor(
-    actionClazz: ImmutableKmClass,
-    adapterClazz: ImmutableKmClass,
-    ctr: ImmutableKmConstructor
+    actionClazz: KmClass,
+    adapterClazz: KmClass,
+    ctr: KmConstructor
 ) = generateExtensionFunction(
     actionClazz, adapterClazz, ctr, "Paginated", CodeBlock.of(
         "return org.http4k.connect.paginated(::invoke, %T(${ctr.valueParameters.joinToString(", ") { it.name }}))",
@@ -86,9 +87,9 @@ private fun generatePagedActionFunctionFor(
 
 @KotlinPoetMetadataPreview
 private fun generateStandardActionFunctionFor(
-    actionClazz: ImmutableKmClass,
-    adapterClazz: ImmutableKmClass,
-    ctr: ImmutableKmConstructor
+    actionClazz: KmClass,
+    adapterClazz: KmClass,
+    ctr: KmConstructor
 ) = generateExtensionFunction(
     actionClazz, adapterClazz, ctr, "", CodeBlock.of(
         "return invoke(%T(${ctr.valueParameters.joinToString(", ") { it.name }}))",
@@ -98,13 +99,13 @@ private fun generateStandardActionFunctionFor(
 
 @KotlinPoetMetadataPreview
 private fun generateExtensionFunction(
-    actionClazz: ImmutableKmClass,
-    adapterClazz: ImmutableKmClass,
-    ctr: ImmutableKmConstructor,
+    actionClazz: KmClass,
+    adapterClazz: KmClass,
+    ctr: KmConstructor,
     suffix: String,
     codeBlock: CodeBlock
 ): FunSpec {
-    val baseFunction = FunSpec.builder(actionClazz.name.name().decapitalize() + suffix)
+    val baseFunction = FunSpec.builder(actionClazz.name.name().replaceFirstChar { it.lowercase(getDefault()) } + suffix)
         .addKdoc("@see ${actionClazz.name.replace('/', '.')}")
         .receiver(adapterClazz.name.asClassName())
         .addCode(codeBlock)

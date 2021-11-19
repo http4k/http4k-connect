@@ -49,4 +49,4 @@ object CognitoMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-abstract class CognitoJsonAdapterFactory : JsonAdapter.Factory
+interface CognitoJsonAdapterFactory : JsonAdapter.Factory

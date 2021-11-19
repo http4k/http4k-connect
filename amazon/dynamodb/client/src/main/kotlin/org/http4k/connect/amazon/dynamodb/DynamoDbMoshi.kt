@@ -29,4 +29,4 @@ object DynamoDbMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-abstract class DynamoDbJsonAdapterFactory : JsonAdapter.Factory
+interface DynamoDbJsonAdapterFactory : JsonAdapter.Factory

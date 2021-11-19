@@ -30,4 +30,4 @@ fun <T> AutoMappingConfiguration<T>.withSystemsManagerMappings() = apply {
 }
 
 @KotshiJsonAdapterFactory
-abstract class SystemsManagerJsonAdapterFactory : JsonAdapter.Factory
+interface SystemsManagerJsonAdapterFactory : JsonAdapter.Factory

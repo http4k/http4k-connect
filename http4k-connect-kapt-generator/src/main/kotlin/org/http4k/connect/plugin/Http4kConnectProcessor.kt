@@ -4,11 +4,11 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
+import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmType
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -48,13 +48,13 @@ internal inline fun <reified T : Annotation> RoundEnvironment.annotated(): List<
     .filterIsInstance<TypeElement>()
 
 @KotlinPoetMetadataPreview
-internal fun ImmutableKmClass.explodeName() = name.pkg() to name.name()
+internal fun KmClass.explodeName() = name.pkg() to name.name()
 internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
 internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
 internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())
 
 @KotlinPoetMetadataPreview
-internal fun ImmutableKmType.generifiedType(): TypeName {
+internal fun KmType.generifiedType(): TypeName {
     val base = (classifier as KmClassifier.Class).name.asClassName()
     return when {
         arguments.isEmpty() -> base.copy(nullable = isNullable)
@@ -63,6 +63,6 @@ internal fun ImmutableKmType.generifiedType(): TypeName {
 }
 
 @KotlinPoetMetadataPreview
-fun ImmutableKmClass.isSubTypeOf(kClass: KClass<*>) =
+fun KmClass.isSubTypeOf(kClass: KClass<*>) =
     supertypes.map { it.classifier }.filterIsInstance<KmClassifier.Class>().map { it.name.asClassName() }
         .contains(kClass.asClassName())

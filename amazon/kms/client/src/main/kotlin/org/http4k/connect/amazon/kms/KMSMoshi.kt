@@ -22,4 +22,4 @@ object KMSMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-abstract class KMSJsonAdapterFactory : JsonAdapter.Factory
+interface KMSJsonAdapterFactory : JsonAdapter.Factory
