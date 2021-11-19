@@ -11,7 +11,7 @@ sealed class SNSMessageAttribute(
     override fun toFields(index: Int): Map<String, String> =
         (listOfNotNull(
             "$category.entry.$index.Name" to name,
-            dataType?.let { "$category.entry.$index.Value.DataType" to it.name }
+            "$category.entry.$index.Value.DataType" to dataType.name
         ).toMap() + toCustomFields(index))
 
     protected abstract fun toCustomFields(index: Int): Map<String, String>
