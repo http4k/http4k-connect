@@ -33,7 +33,7 @@ fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>, ttl: Dura
     override fun get(key: String): T? = redis.get(key)
 
     override fun set(key: String, data: T) {
-        val result = redis.set(key, data, Builder.keepttl().ex(ttl.toSeconds()))
+        val result = redis.set(key, data, Builder.ex(ttl.toSeconds()))
         if (result != "OK") throw RuntimeException(result)
     }
 
