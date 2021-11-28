@@ -9,7 +9,8 @@ import org.http4k.core.Uri
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
 import java.net.URI
-import java.util.concurrent.TimeUnit.HOURS
+import java.time.Duration
+import java.time.Duration.ofHours
 
 /**
  * Connect to Redis using Automarshalling
@@ -27,18 +28,16 @@ fun <T : Any> Storage.Companion.Redis(uri: Uri, codec: RedisCodec<String, T>) =
 /**
  * Redis-backed storage implementation. You probably want to use one of the builder functions instead of this
  */
-fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>) = object : Storage<T> {
-
-    private val lifetime = HOURS.toSeconds(1)
+fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>, ttl: Duration = ofHours(1)) = object : Storage<T> {
 
     override fun get(key: String): T? = redis.get(key)
 
     override fun set(key: String, data: T) {
-        val result = redis.set(key, data, Builder.ex(lifetime))
+        val result = redis.set(key, data, Builder.ex(ttl.toSeconds()))
         if (result != "OK") throw RuntimeException(result)
     }
 
-    override fun remove(key: String): Boolean = redis.del(key) == 1L
+    override fun remove(key: String): Boolean = redis.del(key) >= 1L
 
     override fun removeAll(keyPrefix: String): Boolean {
         val keys = redis.keys("$keyPrefix*")
