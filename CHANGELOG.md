@@ -3,11 +3,11 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v3.13.2.0
-- **http4k-storage-redis-*** - Retain original lifetime of item in storage if it already exists.
+### v3.13.2.0 (uncut)
+- **http4k-connect-*** - Upgrade dependencies.
 
 ### v3.13.1.0
-- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-*** - Upgrade dependencies.
 - **http4k-storage-redis-*** - Vary lifetime of items.
 
 ### v3.13.0.0
