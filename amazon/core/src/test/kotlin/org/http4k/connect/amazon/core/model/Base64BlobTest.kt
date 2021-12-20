@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.core.model
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import junit.framework.Assert.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import kotlin.random.Random
@@ -30,7 +29,7 @@ class Base64BlobTest {
         val message = Random(0).nextBytes(50)
         val encoded = Base64Blob.encode(message)
         assertThat(encoded.value, equalTo("LMK0jFCu/lOzl07ZHmtOqST5uqjne8wvU38LAu/oYDCsLDFTRqj13MCnlgL5pRMQ2Yg="))
-        assertTrue(encoded.decodedBytes().contentEquals(message))
+        assertThat(encoded.decodedBytes().contentEquals(message), equalTo(true))
     }
 
     @Test
@@ -39,6 +38,6 @@ class Base64BlobTest {
         val stream = ByteArrayInputStream(message)
         val encoded = Base64Blob.encode(stream)
         assertThat(encoded.value, equalTo("LMK0jFCu/lOzl07ZHmtOqST5uqjne8wvU38LAu/oYDCsLDFTRqj13MCnlgL5pRMQ2Yg="))
-        assertTrue(encoded.decodedInputStream().readAllBytes().contentEquals(message))
+        assertThat(encoded.decodedInputStream().readAllBytes().contentEquals(message), equalTo(true))
     }
 }
