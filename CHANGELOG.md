@@ -4,7 +4,7 @@ This list is not intended to be all-encompassing - it will document major and br
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
 ### v3.15.0.0
-- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-*** - [Breaking] Upgrade dependencies. The http4k upgrade must be done in lockstep with this version as there has been a breaking change in http4k.
 
 ### v3.14.0.0
 - **http4k-connect-*** - [Break] Upgrade of Forkhandles to v2.0.0.0 means some unfortunately exposed constructor methods have gone away. Simple to fix - deprecation warnings will take care of it.
