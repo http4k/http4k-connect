@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.dynamodb.model.ConsumedCapacity
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.ItemResult
 import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
@@ -29,7 +30,7 @@ data class Scan(
     val Segment: Int? = null,
     val Select: String? = null,
     val TotalSegments: Int? = null,
-    val ReturnConsumedCapacity: String? = null,
+    val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
 ) : DynamoDbAction<ScanResponse>(ScanResponse::class, DynamoDbMoshi),
     PagedAction<Key, Item, ScanResponse, Scan> {
     override fun next(token: Key) = copy(ExclusiveStartKey = token)

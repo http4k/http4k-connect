@@ -22,6 +22,7 @@ import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.ReqGetItem
 import org.http4k.connect.amazon.dynamodb.model.ReqStatement
 import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
+import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity.TOTAL
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Delete
@@ -181,12 +182,14 @@ abstract class DynamoDbContract(
             val query = dynamo.query(
                 table,
                 KeyConditionExpression = "$attrS = :v1",
-                ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello"))
+                ExpressionAttributeValues = mapOf(":v1" to attrS.asValue("hello")),
+                ReturnConsumedCapacity = TOTAL
             ).successValue().items
 
             assertThat(attrN[query.first()], equalTo(321))
 
-            val scan = dynamo.scan(table).successValue().items
+            val scan = dynamo.scan(table,
+                ReturnConsumedCapacity = TOTAL).successValue().items
 
             assertThat(attrN[scan.first()], equalTo(321))
 
