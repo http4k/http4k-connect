@@ -24,13 +24,15 @@ open class AwsServiceCompanion(awsServiceName: String) {
         clock: Clock,
         payloadMode: Payload.Mode,
         servicePrefix: String = ""
-    ) =
+    ) = setHostForAwsService(region, servicePrefix)
+        .then(
+            ClientFilters.AwsAuth(
+                AwsCredentialScope(region.value, awsService.value),
+                credentialsProvider, clock, payloadMode
+            )
+        )
+
+    fun setHostForAwsService(region: Region, servicePrefix: String = "") =
         SetHostFrom(Uri.of("https://$servicePrefix$awsService.$region.amazonaws.com"))
             .then(SetXForwardedHost())
-            .then(
-                ClientFilters.AwsAuth(
-                    AwsCredentialScope(region.value, awsService.value),
-                    credentialsProvider, clock, payloadMode
-                )
-            )
 }

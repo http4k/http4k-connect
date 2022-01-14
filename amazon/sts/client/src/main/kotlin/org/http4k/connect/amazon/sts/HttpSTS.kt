@@ -10,7 +10,7 @@ import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
-import org.http4k.filter.Payload
+import org.http4k.filter.Payload.Mode.Signed
 import java.lang.System.getenv
 import java.time.Clock
 import java.time.Clock.systemUTC
@@ -24,12 +24,13 @@ fun STS.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC()
 ) = object : STS {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed).then(http)
+    private val unauthedHttp = setHostForAwsService(region).then(http)
 
     override fun <R> invoke(action: STSAction<R>) =
         action.toResult(
             when (action) {
-                is AssumeRoleWithWebIdentity -> http(action.toRequest())
+                is AssumeRoleWithWebIdentity -> unauthedHttp(action.toRequest())
                 else -> signedHttp(action.toRequest())
             }
         )
