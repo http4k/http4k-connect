@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.amazon.core.text
+import org.http4k.connect.amazon.core.textOptional
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sts.model.AssumedRoleUser
 import org.http4k.connect.amazon.sts.model.Credentials
@@ -86,7 +87,7 @@ data class AssumedRoleWithWebIdentityResponse(
     override val Credentials: Credentials,
     val SubjectFromWebIdentityToken: String,
     val Audience: String,
-    val SourceIdentity: String,
+    val SourceIdentity: String?,
     val Provider: String
 ) : AssumedRole {
     companion object {
@@ -102,7 +103,7 @@ data class AssumedRoleWithWebIdentityResponse(
                     ),
                     text("SubjectFromWebIdentityToken"),
                     text("Audience"),
-                    text("SourceIdentity"),
+                    textOptional("SourceIdentity"),
                     text("Provider")
                 )
             }
