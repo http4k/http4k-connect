@@ -40,6 +40,17 @@ class AttributeTest {
             equalTo(Str("00000000-0000-0000-0000-000000000000"))
         )
     }
+
+    @Test
+    fun `defaulted falls back to another lens`() {
+        val fallback: Attribute<UUID> = Attribute.string().map(UUID::fromString, UUID::toString).required("fallback")
+        val primary = Attribute.uuid().defaulted("primary", fallback)
+
+        assertThat(
+            primary(Item(fallback of UUID(0, 0))),
+            equalTo(UUID(0,0))
+        )
+    }
 }
 
 class MyStringType(value: String) : StringValue(value) {
