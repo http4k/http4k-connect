@@ -2,7 +2,7 @@ package org.http4k.connect.storage
 
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
@@ -30,17 +30,17 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
     private val table = StorageTable(tableName)
 
     override fun get(key: String) = tx {
-        table.select { table.key eq key }.firstOrNull()?.let { autoMarshalling.asA<T>(it[table.contents]) }
+        table.select { table.id eq key }.firstOrNull()?.let { autoMarshalling.asA<T>(it[table.contents]) }
     }
 
     override fun set(key: String, data: T) {
         tx {
-            when (table.select { table.key eq key }.count()) {
+            when (table.select { table.id eq key }.count()) {
                 0L -> table.insert {
-                    it[table.key] = key
+                    it[table.id] = key
                     it[contents] = autoMarshalling.asFormatString(data)
                 }
-                else -> table.update({ table.key eq key }) {
+                else -> table.update({ table.id eq key }) {
                     it[contents] = autoMarshalling.asFormatString(data)
                 } > 0
             }
@@ -48,20 +48,20 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
     }
 
     override fun remove(key: String) = tx {
-        table.deleteWhere { table.key eq key } > 0
+        table.deleteWhere { table.id eq key } > 0
     }
 
     override fun keySet(keyPrefix: String) = tx {
         when {
             keyPrefix.isBlank() -> table.selectAll()
-            else -> table.select { table.key like "$keyPrefix%" }
-        }.map { it[table.key] }.toSet()
+            else -> table.select { table.id like "$keyPrefix%" }
+        }.map { it[table.id] }.map { it.value }.toSet()
     }
 
     override fun removeAll(keyPrefix: String) = tx {
         when {
             keyPrefix.isBlank() -> table.deleteAll().run { true }
-            else -> table.deleteWhere { table.key like "$keyPrefix%" } > 0
+            else -> table.deleteWhere { table.id like "$keyPrefix%" } > 0
         }
     }
 
@@ -70,8 +70,8 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
     }
 }
 
-class StorageTable(name: String = "") : IntIdTable(name) {
-    val key: Column<String> = varchar("key", 500)
+open class StorageTable(name: String = "") : IdTable<String>(name) {
+    override val id = varchar("key", 500).entityId()
     val contents: Column<String> = text("contents")
-    override val primaryKey = PrimaryKey(key)
+    override val primaryKey by lazy { super.primaryKey ?: PrimaryKey(id) }
 }
