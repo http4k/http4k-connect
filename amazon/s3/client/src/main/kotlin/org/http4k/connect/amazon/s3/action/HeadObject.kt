@@ -19,7 +19,7 @@ data class HeadObject(val key: BucketKey) : S3BucketAction<Unit?> {
         when {
             status.successful -> Success(Unit)
             status == NOT_FOUND -> Success(null)
-            else -> Failure(RemoteFailure(HEAD, uri(), status))
+            else -> Failure(RemoteFailure(HEAD, uri(), status, bodyString()))
         }
     }
 

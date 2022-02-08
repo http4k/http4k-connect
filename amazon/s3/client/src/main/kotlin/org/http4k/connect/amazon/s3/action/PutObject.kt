@@ -20,7 +20,7 @@ data class PutObject(val key: BucketKey, val content: InputStream, val headers: 
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful || status.redirection -> Success(Unit)
-            else -> Failure(RemoteFailure(PUT, uri(), status))
+            else -> Failure(RemoteFailure(PUT, uri(), status, bodyString()))
         }
     }
 

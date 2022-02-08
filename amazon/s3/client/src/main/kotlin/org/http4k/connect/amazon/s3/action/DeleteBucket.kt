@@ -21,7 +21,7 @@ class DeleteBucket : S3BucketAction<Unit?> {
         when {
             status.successful -> Success(Unit)
             status == NOT_FOUND -> Success(null)
-            else -> Failure(RemoteFailure(DELETE, uri(), status))
+            else -> Failure(RemoteFailure(DELETE, uri(), status, bodyString()))
         }
     }
 

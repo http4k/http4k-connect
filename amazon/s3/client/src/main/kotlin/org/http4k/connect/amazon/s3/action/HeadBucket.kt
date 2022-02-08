@@ -23,7 +23,7 @@ data class HeadBucket(val expectedBucketOwner: String? = null) : S3BucketAction<
         when {
             status.successful -> Success(Unit)
             status == NOT_FOUND -> Success(null)
-            else -> Failure(RemoteFailure(HEAD, uri(), status))
+            else -> Failure(RemoteFailure(HEAD, uri(), status, bodyString()))
         }
     }
 }

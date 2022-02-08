@@ -20,7 +20,7 @@ data class GetObject(val key: BucketKey) : S3BucketAction<InputStream?> {
         when {
             status.successful -> Success(body.stream)
             status == NOT_FOUND -> Success(null)
-            else -> Failure(RemoteFailure(GET, uri(), status))
+            else -> Failure(RemoteFailure(GET, uri(), status, bodyString()))
         }
     }
 

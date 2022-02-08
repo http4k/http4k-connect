@@ -71,7 +71,7 @@ data class ListObjectsV2(
                     )
                 )
             }
-            else -> Failure(RemoteFailure(GET, uri(), status))
+            else -> Failure(RemoteFailure(GET, uri(), status, bodyString()))
         }
     }
 

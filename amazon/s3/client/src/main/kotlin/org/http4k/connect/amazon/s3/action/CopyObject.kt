@@ -20,7 +20,7 @@ data class CopyObject(val sourceBucket: BucketName, val source: BucketKey, val d
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(RemoteFailure(PUT, uri(), status))
+            else -> Failure(RemoteFailure(PUT, uri(), status, bodyString()))
         }
     }
 

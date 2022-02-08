@@ -75,7 +75,7 @@ data class AssumeRoleWithWebIdentity(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(AssumedRoleWithWebIdentityResponse.from(this))
-            else -> Failure(RemoteFailure(POST, uri(), status))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
 

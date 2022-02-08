@@ -79,7 +79,7 @@ data class AssumeRole(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SimpleAssumedRole.from(this))
-            else -> Failure(RemoteFailure(POST, uri(), status))
+            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
         }
     }
 
