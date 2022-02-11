@@ -12,5 +12,4 @@ fun AmazonJsonFake.putItem(tables: Storage<DynamoTable>) = route<PutItem> {
             tables[it.TableName.value] = table.withItem(it.Item)
             ModifiedItem(it.Item.asItemResult())
         }
-    Unit
 }
