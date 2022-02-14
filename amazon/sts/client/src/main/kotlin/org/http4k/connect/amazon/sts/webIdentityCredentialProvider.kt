@@ -23,8 +23,8 @@ import java.time.Duration
 fun CredentialsProvider.Companion.STSWebIdentity(
     region: Region,
     roleArn: ARN,
-    webIdentityToken: WebIdentityToken,
-    roleSessionName: RoleSessionName? = null,
+    webIdentityToken: () -> WebIdentityToken,
+    roleSessionName: () -> RoleSessionName? = { null },
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(300)
@@ -34,8 +34,8 @@ fun CredentialsProvider.Companion.STSWebIdentity(
 ) {
     AssumeRoleWithWebIdentity(
         roleArn,
-        roleSessionName ?: RoleSessionName.of("http4k-connect-" + clock.millis()),
-        webIdentityToken
+        roleSessionName() ?: RoleSessionName.of("http4k-connect-" + clock.millis()),
+        webIdentityToken()
     )
 }
 
@@ -54,7 +54,7 @@ fun CredentialsProvider.Companion.STSWebIdentity(
 ) = STSWebIdentity(
     AWS_REGION(env),
     AWS_ROLE_ARN(env),
-    AWS_WEB_IDENTITY_TOKEN(env),
-    AWS_ROLE_SESSION_NAME(env),
+    { AWS_WEB_IDENTITY_TOKEN(env) },
+    { AWS_ROLE_SESSION_NAME(env) },
     http, clock, gracePeriod
 )
