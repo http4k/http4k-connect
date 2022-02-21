@@ -80,8 +80,8 @@ fun AmazonJsonFake.encrypt(keys: Storage<StoredCMK>) = route<Encrypt> { req ->
 fun AmazonJsonFake.getPublicKey(keys: Storage<StoredCMK>, publicKey: Base64Blob) = route<GetPublicKey> {
     keys[it.KeyId.toArn().value]?.let {
         PublicKey(
-            KMSKeyId.of(it.arn), it.customerMasterKeySpec, emptyList(), it.keyUsage,
-            publicKey, emptyList()
+            KMSKeyId.of(it.arn), it.customerMasterKeySpec, it.keyUsage,
+            publicKey, emptyList(), emptyList()
         )
     }
 }

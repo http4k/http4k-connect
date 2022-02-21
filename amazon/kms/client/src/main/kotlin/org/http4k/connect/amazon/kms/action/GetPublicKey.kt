@@ -20,8 +20,8 @@ data class GetPublicKey(
 data class PublicKey(
     val KeyId: KMSKeyId,
     val CustomerMasterKeySpec: CustomerMasterKeySpec,
-    val EncryptionAlgorithms: List<EncryptionAlgorithm>,
     val KeyUsage: KeyUsage,
     val PublicKey: Base64Blob,
+    val EncryptionAlgorithms: List<EncryptionAlgorithm>? = null,
     val SigningAlgorithms: List<SigningAlgorithm>? = null
 )
