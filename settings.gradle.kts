@@ -10,6 +10,10 @@ plugins {
 
 refreshVersions {
     enableBuildSrcLibs()
+
+    rejectVersionIf {
+        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel)
+    }
 }
 
 include(":http4k-connect-kapt-generator")
