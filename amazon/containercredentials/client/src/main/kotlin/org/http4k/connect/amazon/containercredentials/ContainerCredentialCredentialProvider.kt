@@ -5,7 +5,6 @@ import dev.forkhandles.result4k.Success
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.containercredentials.action.getCredentials
 import org.http4k.connect.amazon.core.model.Credentials

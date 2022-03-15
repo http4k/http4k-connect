@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon
+package org.http4k.connect.amazon.containercredentials
 
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.lens.uri
