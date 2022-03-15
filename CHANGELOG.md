@@ -5,7 +5,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.17.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-amazon-core** -Added loading of credentials from Container Credentials Service.
+- **http4k-connect-amazon-containercredentials** -Added loading of credentials from Container Credentials service.
+- **http4k-connect-amazon-containercredentials-fake** - Fake for the above.
 - **http4k-connect-amazon-sts-*** - [Unlikely break] Repackaged Credentials to core.
 
 ### v3.16.6.0
