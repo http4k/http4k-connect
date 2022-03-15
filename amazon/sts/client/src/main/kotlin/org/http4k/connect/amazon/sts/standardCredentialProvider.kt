@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.sts
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
-import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.RemoteFailure
@@ -12,11 +11,11 @@ import org.http4k.connect.amazon.AWS_ROLE_SESSION_NAME
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
 import org.http4k.connect.amazon.sts.action.STSAction
-import org.http4k.connect.amazon.sts.model.Credentials
 import org.http4k.core.HttpHandler
 import java.time.Clock
 import java.time.Duration
@@ -34,13 +33,13 @@ fun CredentialsProvider.Companion.STS(
 ) = object : CredentialsProvider {
     private val credentials = AtomicReference<Credentials>(null)
 
-    override fun invoke() = (credentials.get()?.takeIf { !it.expiresWithin(gracePeriod) } ?: refresh()).toHttp4k()
+    override fun invoke() = (credentials.get()?.takeIf { !it.expiresWithin(clock, gracePeriod) } ?: refresh()).asHttp4k()
 
     private fun refresh() =
         synchronized(credentials) {
             val current = credentials.get()
             when {
-                current != null && !current.expiresWithin(gracePeriod) -> current
+                current != null && !current.expiresWithin(clock, gracePeriod) -> current
                 else -> when (val refresh = sts(assumeRole())) {
                     is Success<AssumedRole> -> {
                         val newCreds = refresh.value.Credentials
@@ -51,11 +50,6 @@ fun CredentialsProvider.Companion.STS(
                 }
             }
         }
-
-    private fun Credentials.expiresWithin(duration: Duration): Boolean =
-        Expiration.value.toInstant()
-            .minus(duration)
-            .isBefore(clock.instant())
 }
 
 fun CredentialsProvider.Companion.STS(
@@ -92,5 +86,3 @@ fun CredentialsProvider.Companion.STS(
     AWS_ROLE_SESSION_NAME(env),
     clock, gracePeriod
 )
-
-internal fun Credentials.toHttp4k() = AwsCredentials(AccessKeyId.value, SecretAccessKey.value, SessionToken.value)

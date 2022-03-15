@@ -6,15 +6,14 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.Credentials
+import org.http4k.connect.amazon.core.model.Expiration
 import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
-import org.http4k.connect.amazon.sts.model.AssumedRoleUser
-import org.http4k.connect.amazon.sts.model.Credentials
-import org.http4k.connect.amazon.sts.model.Expiration
 import org.http4k.connect.amazon.sts.model.RoleId
 import org.http4k.connect.amazon.sts.model.TokenCode
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
@@ -87,19 +86,20 @@ data class AssumeRole(
 }
 
 data class SimpleAssumedRole(
-    override val AssumedRoleUser: AssumedRoleUser,
+    override val AssumedRoleId: RoleId,
     override val Credentials: Credentials
 ) : AssumedRole {
     companion object {
         fun from(response: Response) =
             with(response.xmlDoc()) {
                 SimpleAssumedRole(
-                    AssumedRoleUser(ARN.of(text("Arn")), RoleId.of(text("AssumedRoleId"))),
+                    RoleId.of(text("AssumedRoleId")),
                     Credentials(
                         SessionToken.of(text("SessionToken")),
                         AccessKeyId.of(text("AccessKeyId")),
                         SecretAccessKey.of(text("SecretAccessKey")),
-                        Expiration.parse(text("Expiration"))
+                        Expiration.parse(text("Expiration")),
+                        ARN.of(text("Arn"))
                     )
                 )
             }

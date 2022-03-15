@@ -5,6 +5,7 @@ import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Base64Blob
+import org.http4k.connect.amazon.core.model.Expiration
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.RoleSessionName
@@ -20,6 +21,7 @@ fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     value(AwsService)
     value(AwsAccount)
     value(Base64Blob)
+    value(Expiration)
     value(KMSKeyId)
     value(Region)
     value(RoleSessionName)

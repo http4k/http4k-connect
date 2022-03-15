@@ -14,12 +14,12 @@ import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN_FILE
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.Credentials
+import org.http4k.connect.amazon.core.model.Expiration
 import org.http4k.connect.amazon.core.model.Region.Companion.US_EAST_1
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.WebIdentityToken
-import org.http4k.connect.amazon.sts.model.Credentials
-import org.http4k.connect.amazon.sts.model.Expiration
 import org.http4k.core.HttpHandler
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
@@ -93,7 +93,7 @@ class STSWebIdentityCredentialsProviderTest {
 </AssumeRoleWithWebIdentityResponse>
 """)
 
-        assertThat(provider(), equalTo(firstCreds.toHttp4k()))
+        assertThat(provider(), equalTo(firstCreds.asHttp4k()))
 
         verify(exactly = 1) { http.invoke(any()) }
     }
@@ -102,6 +102,7 @@ class STSWebIdentityCredentialsProviderTest {
         SessionToken.of("SessionToken"),
         AccessKeyId.of(counter.toString()),
         SecretAccessKey.of("SecretAccessKey"),
-        Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC")))
+        Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC"))),
+        ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
     )
 }

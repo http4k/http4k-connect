@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.sts.model
+package org.http4k.connect.amazon.core.model
 
 import dev.forkhandles.values.ZonedDateTimeValue
 import dev.forkhandles.values.ZonedDateTimeValueFactory

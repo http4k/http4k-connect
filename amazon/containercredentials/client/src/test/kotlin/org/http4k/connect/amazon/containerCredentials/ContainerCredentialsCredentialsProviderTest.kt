@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.sts
+package org.http4k.connect.amazon.containerCredentials
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -7,18 +7,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.http4k.connect.amazon.CredentialsProvider
+import org.http4k.connect.amazon.containercredentials.ContainerCredentials
+import org.http4k.connect.amazon.containercredentials.action.GetCredentials
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.Expiration
-import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
-import org.http4k.connect.amazon.sts.action.AssumeRole
-import org.http4k.connect.amazon.sts.action.AssumedRole
-import org.http4k.connect.amazon.sts.action.STSAction
-import org.http4k.connect.amazon.sts.action.SimpleAssumedRole
-import org.http4k.connect.amazon.sts.model.RoleId
+import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
@@ -26,56 +23,55 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class STSCredentialsProviderTest {
+class ContainerCredentialsCredentialsProviderTest {
 
-    private val sts = mockk<STS>()
+    private val containerCredentials = mockk<ContainerCredentials>()
     private val now = Instant.now()
-    private val requestProvider: () -> STSAction<out AssumedRole> = { AssumeRole(arn, RoleSessionName.of("Session")) }
     private val clock = TestClock(now)
 
-    private val provider = CredentialsProvider.STS(sts, clock, Duration.ofSeconds(60), requestProvider)
+    private val relativePathUri = Uri.of("/hello")
+
+    private val provider = CredentialsProvider.ContainerCredentials(
+        containerCredentials,
+        relativePathUri,
+        clock,
+        Duration.ofSeconds(60)
+    )
 
     @Test
     fun `gets credentials first time only`() {
         val firstCreds = credentialsExpiringAt(now.plusSeconds(61), 1)
-        every { sts.invoke(any<AssumeRole>()) } returns assumedRole(firstCreds)
+        every { containerCredentials(GetCredentials(relativePathUri)) } returns Success(firstCreds)
 
         assertThat(provider(), equalTo(firstCreds.asHttp4k()))
         clock.tickBy(Duration.ofSeconds(1))
         assertThat(provider(), equalTo(firstCreds.asHttp4k()))
 
-        verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
+        verify(exactly = 1) { containerCredentials(GetCredentials(relativePathUri)) }
     }
 
     @Test
     fun `gets credentials when expired time only`() {
         val firstCreds = credentialsExpiringAt(now.plusSeconds(61), 1)
-        every { sts.invoke(any<AssumeRole>()) } returns assumedRole(firstCreds)
+        every { containerCredentials(GetCredentials(relativePathUri)) } returns Success(firstCreds)
 
         assertThat(provider(), equalTo(firstCreds.asHttp4k()))
 
-        verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
+        verify(exactly = 1) { containerCredentials(GetCredentials(relativePathUri)) }
 
         val secondCreds = credentialsExpiringAt(now.plusSeconds(61), 2)
-        every { sts.invoke(any<AssumeRole>()) } returns assumedRole(secondCreds)
+        every { containerCredentials(GetCredentials(relativePathUri)) } returns Success(secondCreds)
 
         clock.tickBy(Duration.ofSeconds(1))
         assertThat(provider(), equalTo(firstCreds.asHttp4k()))
 
-        verify(exactly = 1) { sts.invoke(any<AssumeRole>()) }
+        verify(exactly = 1) { containerCredentials(GetCredentials(relativePathUri)) }
 
         clock.tickBy(Duration.ofMillis(1))
         assertThat(provider(), equalTo(secondCreds.asHttp4k()))
 
-        verify(exactly = 2) { sts.invoke(any<AssumeRole>()) }
+        verify(exactly = 2) { containerCredentials(GetCredentials(relativePathUri)) }
     }
-
-    private fun assumedRole(credentials: Credentials) = Success(
-        SimpleAssumedRole(
-            RoleId.of("hello"),
-            credentials
-        )
-    )
 
     private fun credentialsExpiringAt(expiry: Instant, counter: Int) = Credentials(
         SessionToken.of("SessionToken"),
@@ -84,8 +80,6 @@ class STSCredentialsProviderTest {
         Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC"))),
         ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
     )
-
-    private val arn = ARN.of("arn:aws:foobar")
 }
 
 class TestClock(private var time: Instant) : Clock() {
