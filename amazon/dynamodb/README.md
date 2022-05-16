@@ -39,7 +39,7 @@ Most of the http4k-connect DynamoDb API is fairly simple, but one addition which
 When constructing `Actions` or deconstructing their responses for Items/Keys, we can populate or interrogate the Map returned manually, but we may be unsure of the types. To that end, the http4k Lens system has been used to create a typesafe binding between the names and types of the AttributeValues. This system supports all of [types](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_AttributeValue.html) available in the Dynamo type system, and also provides mapping for both common JDK types (including popular Java Datetime types) and required/optional attributes (ie. `String` vs `String?`).
 
 ### Typesafe lens-based Dynamo Object Mapper
-Using the lens system and http4k automapping facilities, http4k-connect also supports dynamic flattening of objects into the DynamoDB schema with zero boilerplate. Simply create a lens and apply it to your object to inject values into the DynamoDB Item. the structure of maps and lists are preserved by collapsing them into a single DynamoDB field:
+Using the lens system and http4k automapping facilities, http4k-connect also supports dynamic flattening of objects into the DynamoDB schema with zero boilerplate. Simply create a lens and apply it to your object to inject values into the DynamoDB Item. the structure of maps and lists are preserved by collapsing them into a single DynamoDB field. This is implemented as a standard extension function on any of the http4k automarshalling object mappers (Jackson, Moshi, GSON etc..):
 ```
 data class AnObject(val str: String, val num: Int)
 
