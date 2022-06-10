@@ -68,7 +68,7 @@ fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
 
 fun listQueues(region: Region, account: AwsAccount, queues: Storage<List<SQSMessage>>) =
     { r: Request -> r.form("Action") == "ListQueues" }
-        .asRouter() bind { req: Request ->
+        .asRouter() bind { _: Request ->
         Response(OK).with(
             viewModelLens of ListQueuesResponse(
                 queues.keySet().map { "https://sqs.${region}.amazonaws.com/${account}/$it" })

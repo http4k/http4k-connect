@@ -43,7 +43,7 @@ class Http4kConnectAdapterProcessor : Http4kConnectProcessor() {
 
         val actionVP = functions.find { it.name == "invoke" }!!.valueParameters.first()
         val actionType = processingEnv.elementUtils.getTypeElement(
-            (actionVP.type!!.classifier as KmClassifier.Class).name.replace('/', '.')
+            (actionVP.type.classifier as KmClassifier.Class).name.replace('/', '.')
         )
 
         val functions = roundEnv.annotated<Http4kConnectAction>()
@@ -111,8 +111,8 @@ private fun generateExtensionFunction(
         .addCode(codeBlock)
 
     ctr.valueParameters.forEach {
-        val base = ParameterSpec.builder(it.name, it.type!!.generifiedType())
-        if (it.type!!.isNullable) base.defaultValue(CodeBlock.of("null"))
+        val base = ParameterSpec.builder(it.name, it.type.generifiedType())
+        if (it.type.isNullable) base.defaultValue(CodeBlock.of("null"))
         baseFunction.addParameter(base.build())
     }
     return baseFunction.build()

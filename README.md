@@ -7,7 +7,6 @@
 
 [comment]: <> (<img alt="jcenter free" src="https://img.shields.io/badge/JCenter%20free-%3Ev2.21.0.0-success">)
 [comment]: <> (<a href="https://codecov.io/gh/http4k/http4k-connect"><img src="https://codecov.io/gh/http4k/http4k-connect/branch/master/graph/badge.svg" /></a>)
-![http://kotlinlang.org](https://img.shields.io/badge/kotlin-1.5-blue.svg)
 
 ![.github/workflows/release.yaml](https://github.com/http4k/http4k-connect/workflows/.github/workflows/release.yaml/badge.svg)
 
