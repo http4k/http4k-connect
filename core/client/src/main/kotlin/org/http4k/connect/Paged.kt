@@ -61,7 +61,7 @@ abstract class AutomarshalledPagedAction<
 ) : PagedAction<Token, ItemType, PageType, Self>,
     LensExtractor<Response, Token?> {
 
-    override fun toResult(response: Response) = with(response) {
+    override fun toResult(response: Response): Result<PageType, RemoteFailure> = with(response) {
         when {
             status.successful -> Success(
                 toResult(
