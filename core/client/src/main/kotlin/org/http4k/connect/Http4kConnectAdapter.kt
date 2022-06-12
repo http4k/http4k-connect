@@ -4,4 +4,9 @@ package org.http4k.connect
 annotation class Http4kConnectAdapter
 
 @Target(AnnotationTarget.CLASS)
-annotation class Http4kConnectAction
+/**
+ * Marker attached to all actions to drive the adapter code generation.
+ *
+ * link: Optional information for this action
+ */
+annotation class Http4kConnectAction(val docs: String = "")
