@@ -47,13 +47,18 @@ fun <Token, ItemType, Action : PagedAction<Token, ItemType, Rsp, Action>, Rsp : 
 }
 
 /**
- * Superclass for paged actions where the response can be automarshalled
+ * Superclass for paged actions where the response can be auto-marshalled
  */
-abstract class AutomarshalledPagedAction<Token, ItemType : Any, PageType : Paged<Token, ItemType>>(
+abstract class AutomarshalledPagedAction<
+    Token,
+    ItemType : Any,
+    PageType : Paged<Token, ItemType>,
+    Self : AutomarshalledPagedAction<Token, ItemType, PageType, Self>
+    >(
     private val toResult: (List<ItemType>, Token?) -> PageType,
     private val autoMarshalling: AutoMarshalling,
     private val kClass: KClass<PageType>
-) : PagedAction<Token, ItemType, PageType, AutomarshalledPagedAction<Token, ItemType, PageType>>,
+) : PagedAction<Token, ItemType, PageType, Self>,
     LensExtractor<Response, Token?> {
 
     override fun toResult(response: Response) = with(response) {
