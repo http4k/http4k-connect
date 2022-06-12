@@ -35,7 +35,7 @@ fun DynamoDb.createTable(
     tableName: TableName,
     hashKey: Attribute<*>,
     rangeKey: Attribute<*>? = null,
-): TableDescriptionResponse = this@createBasicTable.createTable(
+): TableDescriptionResponse = createTable(
     TableName = tableName,
     KeySchema = KeySchema.compound(hashKey.name, rangeKey?.name),
     AttributeDefinitions = listOfNotNull(hashKey.asAttributeDefinition(), rangeKey?.asAttributeDefinition()),
