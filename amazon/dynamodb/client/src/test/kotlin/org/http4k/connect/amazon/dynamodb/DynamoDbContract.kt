@@ -9,15 +9,12 @@ import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.Base64Blob
-import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Str
-import org.http4k.connect.amazon.dynamodb.model.BillingMode.PAY_PER_REQUEST
 import org.http4k.connect.amazon.dynamodb.model.BillingMode.PROVISIONED
 import org.http4k.connect.amazon.dynamodb.model.Item
-import org.http4k.connect.amazon.dynamodb.model.KeyType.HASH
 import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.ReqGetItem
 import org.http4k.connect.amazon.dynamodb.model.ReqStatement
@@ -28,9 +25,6 @@ import org.http4k.connect.amazon.dynamodb.model.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Delete
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Update
-import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
-import org.http4k.connect.amazon.dynamodb.model.asKeySchema
-import org.http4k.connect.amazon.dynamodb.model.value
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
@@ -55,20 +49,7 @@ abstract class DynamoDbContract(
         DynamoDb.Http(aws.region, { aws.credentials }, http.debug())
     }
 
-    private val table = TableName.of("http4k-connect" + UUID.randomUUID().toString())
-
-    private val attrBool = Attribute.boolean().required("theBool")
-    private val attrB = Attribute.base64Blob().required("theBase64Blob")
-    private val attrBS = Attribute.base64Blobs().required("theBase64Blobs")
-    private val attrN = Attribute.int().required("theNum")
-    private val attrNS = Attribute.ints().required("theNums")
-    private val attrL = Attribute.list().required("theList")
-    private val attrM = Attribute.map().required("theMap")
-    private val attrS = Attribute.string().required("theString")
-    private val attrU = Attribute.uuid().value(MyValueType).required("theUuid")
-    private val attrSS = Attribute.strings().required("theStrings")
-    private val attrNL = Attribute.string().optional("theNull")
-    private val attrMissing = Attribute.string().optional("theMissing")
+    private val table = TableName.sample()
 
     @BeforeEach
     fun create() {
@@ -222,20 +203,6 @@ abstract class DynamoDbContract(
         }
     }
 
-    private fun createItem(key: String) = Item(
-        attrS of key,
-        attrBool of true,
-        attrB of Base64Blob.encode("foo"),
-        attrBS of setOf(Base64Blob.encode("bar")),
-        attrN of 123,
-        attrNS of setOf(123, 321),
-        attrL of listOf(List(listOf(Str("foo"))), Num(123), Null()),
-        attrM of Item(attrS of "foo", attrBool of false),
-        attrSS of setOf("345", "567"),
-        attrU of MyValueType(UUID(0, 1)),
-        attrNL of null
-    )
-
     @Test
     fun `table lifecycle`() {
         with(dynamo) {
@@ -259,13 +226,6 @@ abstract class DynamoDbContract(
 
     private fun delete() = """DELETE FROM "$table" WHERE "$attrS" = "hello";"""
     private fun statement() = """SELECT "$attrS" FROM "$table" WHERE "$attrS" = "hello";"""
-
-    private fun DynamoDb.createTable(tableName: TableName, keyAttr: Attribute<*>) = createTable(
-        tableName,
-        listOf(keyAttr.asKeySchema(HASH)),
-        listOf(keyAttr.asAttributeDefinition()),
-        BillingMode = PAY_PER_REQUEST
-    ).successValue()
 
     private fun waitForUpdate() = Thread.sleep(duration.toMillis())
 

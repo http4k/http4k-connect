@@ -21,7 +21,7 @@ data class AttributeValue internal constructor(
     val NULL: Boolean? = null,
     val S: String? = null,
     val SS: Set<String>? = null
-) {
+): Comparable<AttributeValue> {
 
     override fun toString(): String {
         return "AttributeValue(" +
@@ -39,6 +39,13 @@ data class AttributeValue internal constructor(
                 else -> error("illegal!")
             } +
             ")"
+    }
+
+    override fun compareTo(other: AttributeValue) =  when {
+        S != null && other.S != null -> S.compareTo(other.S)
+        N != null && other.N != null -> N.compareTo(other.N)
+        B != null && other.B != null -> B.decoded().compareTo(other.B.decoded())
+        else -> 0
     }
 
     companion object {
