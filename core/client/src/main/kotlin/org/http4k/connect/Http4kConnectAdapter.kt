@@ -7,6 +7,6 @@ annotation class Http4kConnectAdapter
 /**
  * Marker attached to all actions to drive the adapter code generation.
  *
- * link: Optional information for this action
+ * docs: Optional information for this action. Can be link or other notes.
  */
 annotation class Http4kConnectAction(val docs: String = "")
