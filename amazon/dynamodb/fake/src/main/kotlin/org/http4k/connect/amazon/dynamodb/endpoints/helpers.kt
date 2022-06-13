@@ -1,15 +1,19 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
+import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.grammar.AttributeNameValue
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbConditionalGrammar
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbProjectionGrammar
 import org.http4k.connect.amazon.dynamodb.grammar.ItemWithSubstitutions
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
+import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.KeySchema
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
+import kotlin.Comparator
 
 fun Item.asItemResult(): Map<String, Map<String, Any>> =
     mapKeys { it.key.value }.mapValues { convert(it.value) }
@@ -62,4 +66,31 @@ fun Item.condition(
             )
         ) == true
     }
+}
+
+fun AttributeName?.comparator(ascending: Boolean): Comparator<Item> = object: Comparator<Item> {
+    val attributeName = this@comparator
+    val modifier = if (ascending) 1 else -1
+
+    override fun compare(item1: Item, item2: Item): Int {
+        if (attributeName == null) return 0
+        val value1 = item1[attributeName] ?: return 0
+        val value2 = item2[attributeName] ?: return 0
+
+        return value1.compareTo(value2) * modifier
+    }
+}
+
+fun DynamoTable.keySchema(indexName: IndexName? = null): List<KeySchema>? {
+    if (indexName == null) return table.KeySchema
+
+    for (index in table.GlobalSecondaryIndexes ?: emptyList()) {
+        if (index.IndexName == indexName.value) {
+            return index.KeySchema
+        }
+    }
+
+    return table.LocalSecondaryIndexes
+        ?.find { it.IndexName == indexName.value }
+        ?.KeySchema
 }
