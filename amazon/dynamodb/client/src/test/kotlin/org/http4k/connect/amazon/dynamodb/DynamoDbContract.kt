@@ -139,15 +139,15 @@ abstract class DynamoDbContract(
 
             assertThat(attrS(item), equalTo("hello"))
             assertThat(attrBool(item), equalTo(true))
-            assertThat(attrB(item), equalTo(Base64Blob.encode("foo")))
+            assertThat(attrB(item), equalTo(Base64Blob.encode("bar")))
             assertThat(attrBS(item), equalTo(setOf(Base64Blob.encode("bar"))))
             assertThat(attrN(item), equalTo(123))
             assertThat(attrNS(item), equalTo(setOf(123, 321)))
-            assertThat(attrL(item), equalTo(listOf(List(listOf(Str("foo"))), Num(123), Null())))
+            assertThat(attrL(item), equalTo(listOf(List(listOf(Str("hello"))), Num(123), Null())))
             assertThat(attrSS(item), equalTo(setOf("345", "567")))
             assertThat(attrMissing(item), absent())
             assertThat(attrNL(item), absent())
-            assertThat(attrM(item), equalTo(Item(attrS of "foo", attrBool of false)))
+            assertThat(attrM(item), equalTo(Item(attrS of "hello", attrBool of false)))
 
             updateItem(
                 table,
