@@ -6,7 +6,6 @@ import org.http4k.connect.amazon.dynamodb.action.CreateTable
 import org.http4k.connect.amazon.dynamodb.action.TableDescriptionResponse
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndexResponse
 import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndexResponse
-import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughputResponse
 import org.http4k.connect.amazon.dynamodb.model.TableDescription
 import org.http4k.connect.amazon.dynamodb.model.TableStatus
@@ -26,7 +25,12 @@ fun AmazonJsonFake.createTable(tables: Storage<DynamoTable>) = route<CreateTable
                 IndexName = index.IndexName.value,
                 KeySchema = index.KeySchema,
                 Projection = index.Projection,
-                ProvisionedThroughput = index.ProvisionedThroughput?.toResponse()
+                ProvisionedThroughput = index.ProvisionedThroughput?.let { throughput ->
+                    ProvisionedThroughputResponse(
+                        ReadCapacityUnits = throughput.ReadCapacityUnits,
+                        WriteCapacityUnits = throughput.WriteCapacityUnits
+                    )
+                }
             )
         },
         LocalSecondaryIndexes = it.LocalSecondaryIndexes?.map { index ->
@@ -41,8 +45,3 @@ fun AmazonJsonFake.createTable(tables: Storage<DynamoTable>) = route<CreateTable
 
     TableDescriptionResponse(tableDescription)
 }
-
-private fun ProvisionedThroughput.toResponse() = ProvisionedThroughputResponse(
-    ReadCapacityUnits = ReadCapacityUnits,
-    WriteCapacityUnits = WriteCapacityUnits
-)

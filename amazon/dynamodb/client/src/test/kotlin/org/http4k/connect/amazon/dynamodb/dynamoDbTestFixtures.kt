@@ -43,18 +43,18 @@ fun DynamoDb.createTable(
 ).successValue()
 
 fun createItem(
-    string: String = "string",
+    string: String = "foo",
     number: Int = 123,
-    binary: Base64Blob = Base64Blob.encode("foo")
+    binary: Base64Blob = Base64Blob.encode("bar")
 ) = Item(
     attrS of string,
     attrBool of true,
     attrB of binary,
-    attrBS of setOf(Base64Blob.encode("bar")),
+    attrBS of setOf(binary),
     attrN of number,
-    attrNS of setOf(123, 321),
-    attrL of listOf(AttributeValue.List(listOf(AttributeValue.Str("foo"))), AttributeValue.Num(123), AttributeValue.Null()),
-    attrM of Item(attrS of "foo", attrBool of false),
+    attrNS of setOf(number, 321),
+    attrL of listOf(AttributeValue.List(listOf(AttributeValue.Str(string))), AttributeValue.Num(number), AttributeValue.Null()),
+    attrM of Item(attrS of string, attrBool of false),
     attrSS of setOf("345", "567"),
     attrU of MyValueType(UUID(0, 1)),
     attrNL of null
