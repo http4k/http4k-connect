@@ -3,15 +3,16 @@ package org.http4k.connect.amazon.dynamodb.endpoints
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.core.model.Base64Blob
-import org.http4k.connect.amazon.dynamodb.DynamoDb
-import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
-import org.http4k.connect.amazon.dynamodb.Http
-import org.http4k.connect.amazon.dynamodb.action.QueryResponse
+import org.http4k.connect.amazon.dynamodb.DynamoDbSource
+import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
+import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.attrB
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
+import org.http4k.connect.amazon.dynamodb.deleteTable
+import org.http4k.connect.amazon.dynamodb.model.BillingMode
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
@@ -23,52 +24,61 @@ import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.query
 import org.http4k.connect.amazon.dynamodb.sample
-import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.successValue
-import org.http4k.filter.debug
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class QueryTest {
+abstract class DynamoDbQueryContract: DynamoDbSource {
 
-    private val http = FakeDynamoDb()
-    private val aws = fakeAwsEnvironment
-    private val dynamo by lazy {
-        DynamoDb.Http(aws.region, { aws.credentials }, http.debug())
+    private val table = TableName.sample()
+
+    companion object {
+        private val hash1Val1 = createItem("hash1", 1, Base64Blob.encode("spam"))
+        private val hash1Val2 = createItem("hash1", 2, Base64Blob.encode("ham"))
+        private val hash2Val1 = createItem("hash2", 1, Base64Blob.encode("eggs"))
+
+        private val numbersIndex = IndexName.of("numbers")
+        private val stringAndBinaryIndex = IndexName.of("string-bin")
     }
 
-    private val hash1Val1 = createItem("hash1", 1, Base64Blob.encode("spam"))
-    private val hash1Val2 = createItem("hash1", 2, Base64Blob.encode("ham"))
-    private val hash2Val1 = createItem("hash2", 1, Base64Blob.encode("eggs"))
-
-    private val numbersIndex = IndexName.of("numbers")
-    private val stringAndBinaryIndex = IndexName.of("string-bin")
-
-    private val table = TableName.sample().also {
+    @BeforeEach
+    fun createTable() {
         dynamo.createTable(
-            it,
+            table,
             KeySchema = KeySchema.compound(attrS.name, attrN.name),
             AttributeDefinitions = listOf(
                 attrS.asAttributeDefinition(),
-                attrN.asAttributeDefinition()
+                attrN.asAttributeDefinition(),
+                attrB.asAttributeDefinition()
             ),
             GlobalSecondaryIndexes = listOf(
                 GlobalSecondaryIndex(IndexName = numbersIndex, KeySchema.compound(attrN.name, attrS.name), Projection.all)
             ),
             LocalSecondaryIndexes = listOf(
                 LocalSecondaryIndexes(IndexName = stringAndBinaryIndex, KeySchema.compound(attrS.name, attrB.name), Projection.all)
-            )
-        )
+            ),
+            BillingMode = BillingMode.PAY_PER_REQUEST
+        ).successValue()
+
+        dynamo.waitForExist(table)
     }
 
+    @AfterEach
+    fun deleteTable() {
+        dynamo.deleteTable(table)
+    }
 
     @Test
     fun `query empty table`() {
-        val result = dynamo.query(table).successValue()
-        val expected = QueryResponse(
-            Count = 0,
-            Items = emptyList()
-        )
-        assertThat(result, equalTo(expected))
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1"))
+        ).successValue()
+
+        assertThat(result.Count, equalTo(0))
+        assertThat(result.items, equalTo(emptyList()))
     }
 
     @Test
@@ -215,3 +225,6 @@ class QueryTest {
         )))
     }
 }
+
+class FakeDynamoDbQueryTest: DynamoDbQueryContract(), DynamoDbSource by FakeDynamoDbSource()
+class LocalDynamoDbQueryTest: DynamoDbQueryContract(), DynamoDbSource by LocalDynamoDbSource()
