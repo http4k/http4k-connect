@@ -48,6 +48,21 @@ data class AttributeValue internal constructor(
         else -> 0
     }
 
+    operator fun plus(other: AttributeValue) = when {
+        N != null && other.N != null -> Num(N.toBigDecimal() + other.N.toBigDecimal())
+        NS != null && other.NS != null -> NumSet((NS + other.NS).map { it.toBigDecimal() }.toSet())
+        SS != null && other.SS != null -> StrSet((SS + other.SS))
+        BS != null && other.BS != null -> Base64Set(BS + other.BS)
+        else -> this
+    }
+
+    operator fun minus(other: AttributeValue) = when {
+        SS != null && other.SS != null -> StrSet((SS - other.SS))
+        NS != null && other.NS != null -> NumSet((NS - other.NS).map { it.toBigDecimal() }.toSet())
+        BS != null && other.BS != null -> Base64Set(BS - other.BS)
+        else -> this
+    }
+
     companion object {
         fun Base64(value: Base64Blob?) = value?.let { AttributeValue(B = it) } ?: Null()
         fun Bool(value: Boolean?) = value?.let { AttributeValue(BOOL = it) } ?: Null()

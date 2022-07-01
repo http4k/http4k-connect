@@ -24,7 +24,6 @@ import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.amazon.dynamodb.updateItem
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 abstract class DynamoDbUpdateItemContract {
@@ -148,6 +147,5 @@ abstract class DynamoDbUpdateItemContract {
     ).successValue().item
 }
 
-@Disabled
 class FakeDynamoDbUpdateItemTest: DynamoDbUpdateItemContract(), DynamoDbSource by FakeDynamoDbSource()
 class LocalDynamoDbUpdateItemTest: DynamoDbUpdateItemContract(), DynamoDbSource by LocalDynamoDbSource()

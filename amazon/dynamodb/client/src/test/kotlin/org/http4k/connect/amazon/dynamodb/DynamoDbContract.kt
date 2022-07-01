@@ -94,7 +94,7 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    fun `batch operations`() {
+    open fun `batch operations`() {
         with(dynamo) {
             val write = batchWriteItem(
                 mapOf(
