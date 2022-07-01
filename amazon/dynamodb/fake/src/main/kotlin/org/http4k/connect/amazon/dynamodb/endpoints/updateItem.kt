@@ -7,14 +7,16 @@ import org.http4k.connect.amazon.dynamodb.action.UpdateItem
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.updateItem(tables: Storage<DynamoTable>) = route<UpdateItem> { update ->
-    tables[update.TableName.value]
-        ?.let { current ->
-            current.retrieve(update.Key)?.let { existingItem ->
-                // something to update the values here
-                val updatedItem = existingItem
-                tables[update.TableName.value] = current.withItem(updatedItem)
-                ModifiedItem(updatedItem.asItemResult())
-            }
-        }
+    val table = tables[update.TableName.value] ?: return@route null
+    val existingItem = table.retrieve(update.Key) ?: update.Key
+
+    val updated = existingItem.update(
+        expression = update.UpdateExpression,
+        expressionAttributeNames = update.ExpressionAttributeNames,
+        expressionAttributeValues = update.ExpressionAttributeValues
+    )
+
+    tables[update.TableName.value] = table.withoutItem(existingItem).withItem(updated)
+    ModifiedItem(updated.asItemResult())
 }
 

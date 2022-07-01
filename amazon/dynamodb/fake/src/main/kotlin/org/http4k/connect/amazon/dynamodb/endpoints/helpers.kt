@@ -5,6 +5,7 @@ import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.grammar.AttributeNameValue
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbConditionalGrammar
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbProjectionGrammar
+import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbUpdateExpressionParser
 import org.http4k.connect.amazon.dynamodb.grammar.ItemWithSubstitutions
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
@@ -66,6 +67,22 @@ fun Item.condition(
             )
         ) == true
     }
+}
+
+fun Item.update(
+    expression: String?,
+    expressionAttributeNames: TokensToNames?,
+    expressionAttributeValues: TokensToValues?
+) = when (expression) {
+    null -> this
+    else -> DynamoDbUpdateExpressionParser.parse(expression)
+        .fold(this) { i, update ->
+            update.eval(
+                item = i,
+                names = expressionAttributeNames ?: emptyMap(),
+                values = expressionAttributeValues ?: emptyMap()
+            )
+        }
 }
 
 fun AttributeName?.comparator(ascending: Boolean): Comparator<Item> = object: Comparator<Item> {

@@ -8,8 +8,6 @@ import org.http4k.core.then
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.debug
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 
 interface DynamoDbSource {
