@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.18.1.2
+- **http4k-connect-amazon-dynamodb-fake** - Fix request/response for fake dynamodb batch operations. H/T @oharaandrew314
+
 ### v3.18.1.1
 - **http4k-connect-amazon-dynamodb-fake** - `PutItem` now only replaces items with the correct Primary Key. H/T @oharaandrew314
 
