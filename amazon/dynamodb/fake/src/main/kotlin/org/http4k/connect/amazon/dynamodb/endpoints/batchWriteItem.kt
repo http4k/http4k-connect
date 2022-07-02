@@ -21,5 +21,5 @@ fun AmazonJsonFake.batchWriteItem(tables: Storage<DynamoTable>) = route<BatchWri
                         }
                 }
         }
-    BatchWriteItems()
+    BatchWriteItems(UnprocessedItems = emptyMap())
 }
