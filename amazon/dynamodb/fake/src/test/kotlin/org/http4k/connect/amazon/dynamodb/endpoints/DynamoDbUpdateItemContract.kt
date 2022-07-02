@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.endpoints
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
@@ -26,9 +25,7 @@ import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DynamoDbUpdateItemContract {
-
-    abstract val dynamo: DynamoDb
+abstract class DynamoDbUpdateItemContract: DynamoDbSource {
 
     companion object {
         private val table = TableName.sample()
