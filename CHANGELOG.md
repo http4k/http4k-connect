@@ -3,7 +3,7 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v3.18.1.0 (uncut)
+### v3.18.1.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-*** - Added convienience automarshalling for pagination.
 - **http4k-connect-amazon-dynamodb-fake** - New actions supported: `Query`, `Scan`, `Updateitem`. H/T @oharaandrew314 for the contributions.
