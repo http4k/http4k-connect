@@ -11,14 +11,13 @@ fun AmazonJsonFake.batchWriteItem(tables: Storage<DynamoTable>) = route<BatchWri
         .forEach { (tableName, writeItems) ->
             tables[tableName.value]
                 ?.let { table ->
-                    writeItems
-                        .map {
-                            tables[tableName.value] = when {
-                                it.PutRequest != null -> table.withItem(it.PutRequest!!["Item"]!!)
-                                it.DeleteRequest != null -> table.withoutItem(it.DeleteRequest!!["Key"]!!)
-                                else -> table
-                            }
+                    tables[tableName.value] = writeItems.fold(table) { curTable, req ->
+                        when {
+                            req.PutRequest != null -> curTable.withItem(req.PutRequest!!["Item"]!!)
+                            req.DeleteRequest != null -> curTable.withoutItem(req.DeleteRequest!!["Key"]!!)
+                            else -> curTable
                         }
+                    }
                 }
         }
     BatchWriteItems(UnprocessedItems = emptyMap())
