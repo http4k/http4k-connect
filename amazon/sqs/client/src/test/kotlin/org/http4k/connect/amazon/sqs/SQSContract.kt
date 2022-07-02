@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.sqs
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import junit.framework.Assert.assertTrue
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.DataType
@@ -48,8 +47,9 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
                 waitABit()
 
-                assertTrue(
-                    listQueues().successValue().any { it.toString().endsWith(queueUrl.toString()) }
+                assertThat(
+                    listQueues().successValue().any { it.toString().endsWith(queueUrl.toString()) },
+                    equalTo(true)
                 )
 
                 val attributes = listOf(
