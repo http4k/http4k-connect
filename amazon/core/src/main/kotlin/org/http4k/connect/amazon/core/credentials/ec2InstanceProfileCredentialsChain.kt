@@ -65,9 +65,3 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
         .mapNotNull { profile -> metadataClient.getCredentials(profile) }
         .firstOrNull()
 }
-
-fun main() {
-    val client = Ec2InstanceMetadataClient()
-    val chain = CredentialsChain.Ec2InstanceProfile(client)
-    println(chain())
-}
