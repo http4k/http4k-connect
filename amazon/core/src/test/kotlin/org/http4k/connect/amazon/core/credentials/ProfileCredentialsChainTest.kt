@@ -99,6 +99,7 @@ class ProfileCredentialsChainTest {
 
         val env = Environment.EMPTY
             .with(AWS_PROFILE of ProfileName.of("prod"))
+            .with(AWS_CREDENTIAL_PROFILES_FILE of file)
 
         assertThat(
             CredentialsChain.Profile(env).invoke(),
@@ -112,6 +113,31 @@ class ProfileCredentialsChainTest {
             CredentialsChain.Profile(Environment.EMPTY)(),
             absent()
         )
+    }
+
+    @Test
+    fun `credentials are cached`() {
+        val file = Files.createTempFile("credentials", "ini")
+        file.write("""
+            [default]
+            aws_access_key_id = key123
+            aws_secret_access_key = secret123
+        """)
+
+        val expected = AwsCredentials("key123", "secret123")
+        val chain = CredentialsChain.Profile(
+            Environment.EMPTY.with(AWS_CREDENTIAL_PROFILES_FILE of file)
+        )
+
+        assertThat(chain.invoke(), equalTo(expected))
+
+        file.write("""
+            [default]
+            aws_access_key_id = key1456
+            aws_secret_access_key = secret456
+        """)
+
+        assertThat(chain.invoke(), equalTo(expected))
     }
 
     private fun Path.write(text: String) {
