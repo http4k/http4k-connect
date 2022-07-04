@@ -16,10 +16,10 @@ fun CredentialsProvider.Companion.Environment(env: Environment) = CredentialsCha
 fun CredentialsProvider.Companion.Environment(env: Map<String, String> = System.getenv()) =
     Environment(Environment.from(env))
 
-fun CredentialsProvider.Companion.Default(env: Map<String, String>) =
-    Default(Environment.from(env))
+fun CredentialsProvider.Companion.StandardChain(env: Map<String, String>) =
+    StandardChain(Environment.from(env))
 
-fun CredentialsProvider.Companion.Default(env: Environment) = CredentialsChain.Environment(env)
+fun CredentialsProvider.Companion.StandardChain(env: Environment) = CredentialsChain.Environment(env)
     .orElse(CredentialsChain.Profile(env))
     .orElse(CredentialsChain.Ec2InstanceProfile())
     .provider()
