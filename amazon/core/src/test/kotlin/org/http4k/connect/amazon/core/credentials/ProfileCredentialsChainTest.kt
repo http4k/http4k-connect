@@ -14,7 +14,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.Path
 
 class ProfileCredentialsChainTest {
 
@@ -59,6 +58,35 @@ class ProfileCredentialsChainTest {
         assertThat(
             CredentialsChain.Profile(env)(),
             equalTo(AwsCredentials("key456", "secret456"))
+        )
+    }
+
+    @Test
+    fun `file has no default profile`() {
+        val file = Files.createTempFile("credentials", "ini")
+        file.write("""
+            [dev]
+            aws_access_key_id = key456
+            aws_secret_access_key = secret456
+        """)
+
+        assertThat(
+            CredentialsChain.Profile(Environment.EMPTY)(),
+            absent()
+        )
+    }
+
+    @Test
+    fun `custom profile not found`() {
+        val file = Files.createTempFile("credentials", "ini")
+        file.write(sampleCredentialsIni)
+
+        val env = Environment.EMPTY
+            .with(AWS_PROFILE of ProfileName.of("prod"))
+
+        assertThat(
+            CredentialsChain.Profile(env).invoke(),
+            absent()
         )
     }
 
