@@ -5,15 +5,15 @@ import org.http4k.connect.amazon.containercredentials.action.ContainerCredential
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then
-import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 
 /**
  * Standard HTTP implementation of ContainerCredentials
  */
 fun ContainerCredentials.Companion.Http(http: HttpHandler = JavaHttpClient()) = object : ContainerCredentials {
     private val unauthedHttp = SetBaseUriFrom(Uri.of("http://169.254.170.2"))
-        .then(ClientFilters.SetXForwardedHost())
+        .then(SetXForwardedHost())
         .then(http)
 
     override fun <R> invoke(action: ContainerCredentialsAction<R>) =

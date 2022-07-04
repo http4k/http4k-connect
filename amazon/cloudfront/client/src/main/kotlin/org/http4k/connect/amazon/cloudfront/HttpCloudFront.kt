@@ -12,6 +12,7 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.AwsAuth
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.filter.Payload.Mode.Signed
 import org.http4k.filter.RequestFilters.SetHeader
 import java.lang.System.getenv
@@ -28,7 +29,7 @@ fun CloudFront.Companion.Http(
 ) = object : CloudFront {
 
     private val signedHttp = ClientFilters.SetHostFrom(Uri.of("https://cloudfront.amazonaws.com"))
-        .then(ClientFilters.SetXForwardedHost())
+        .then(SetXForwardedHost())
         .then(SetHeader("Content-Type", APPLICATION_XML.value))
         .then(
             ClientFilters.AwsAuth(
