@@ -16,7 +16,8 @@ The DynamoDb connector provides the following Actions:
     * UpdateItem
 
     * TransactGetItems
-    * TransactWriteItems
+
+[//]: # (    * TransactWriteItems)
 
     * BatchGetItem
     * BatchWriteItem

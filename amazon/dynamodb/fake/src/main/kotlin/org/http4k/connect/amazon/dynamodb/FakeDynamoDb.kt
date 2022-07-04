@@ -53,9 +53,9 @@ class FakeDynamoDb(
             api.getItem(tables),
             api.listTables(tables),
             api.putItem(tables),
-            api.query(tables),// todo
-            api.scan(tables),// todo
-            api.transactGetItems(tables),// todo
+            api.query(tables),
+            api.scan(tables),
+            api.transactGetItems(tables),
             api.transactWriteItems(tables),// todo
             api.updateItem(tables),
             api.updateTable(tables)

@@ -5,7 +5,9 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.KeyType.HASH
 import org.http4k.connect.amazon.dynamodb.model.TableDescription
+import org.http4k.connect.amazon.dynamodb.model.asKeySchema
 import org.junit.jupiter.api.Test
 
 class DynamoTableTest {
@@ -14,7 +16,7 @@ class DynamoTableTest {
 
     @Test
     fun `item lifecycle`() {
-        val table = DynamoTable(TableDescription())
+        val table = DynamoTable(TableDescription(KeySchema = listOf(attS.asKeySchema(HASH))))
 
         val stringKey = Item(attS of "hello")
         val item = stringKey + Item(intS of 123)

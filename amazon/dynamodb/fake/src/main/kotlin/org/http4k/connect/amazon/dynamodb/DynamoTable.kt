@@ -15,8 +15,9 @@ data class DynamoTable(val table: TableDescription, val items: List<Item> = empt
     fun withoutItem(key: Key) = copy(items = items.filterNot { it.matches(key) })
 
     private fun Item.matches(key: Key) = toList().containsAll(key.toList())
+
     private fun Item.key(): Key {
-        val schema = keySchema() ?: return Key()
+        val schema = keySchema() ?: error("No key defined!")
 
         return schema.mapNotNull { key ->
             val value = this[key.AttributeName]
