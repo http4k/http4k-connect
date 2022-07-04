@@ -4,7 +4,7 @@ import org.http4k.aws.AwsCredentialScope
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.Default
+import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -47,7 +47,7 @@ fun S3.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
 ) = Http(Environment.from(env), http, clock, credentialsProvider)
 
 /**
@@ -57,5 +57,5 @@ fun S3.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
 ) = Http(credentialsProvider, http, clock)

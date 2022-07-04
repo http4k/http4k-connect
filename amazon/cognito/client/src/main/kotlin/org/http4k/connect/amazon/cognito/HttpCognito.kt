@@ -4,7 +4,7 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.Default
+import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.cognito.action.CognitoAction
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.HttpHandler
@@ -34,7 +34,7 @@ fun Cognito.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
 ) = Http(Environment.from(env), http, clock, credentialsProvider)
 
 /**
@@ -44,5 +44,5 @@ fun Cognito.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
 ) = Http(AWS_REGION(env), credentialsProvider, http, clock)
