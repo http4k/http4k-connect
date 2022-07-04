@@ -4,7 +4,7 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.Environment
+import org.http4k.connect.amazon.Default
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.connect.amazon.sts.action.STSAction
@@ -43,7 +43,7 @@ fun STS.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
 ) = Http(Environment.from(env), http, clock, credentialsProvider)
 
 
@@ -54,5 +54,5 @@ fun STS.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
 ) = Http(AWS_REGION(env), credentialsProvider, http, clock)

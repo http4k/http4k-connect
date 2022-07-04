@@ -9,7 +9,7 @@ import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.AWS_ROLE_ARN
 import org.http4k.connect.amazon.AWS_ROLE_SESSION_NAME
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.Environment
+import org.http4k.connect.amazon.Default
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.RoleSessionName
@@ -81,7 +81,7 @@ fun CredentialsProvider.Companion.STS(
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = ofSeconds(300)
 ) = CredentialsProvider.Companion.STS(
-    STS.Http(AWS_REGION(env), CredentialsProvider.Environment(env), http, clock),
+    STS.Http(AWS_REGION(env), CredentialsProvider.Default(env), http, clock),
     AWS_ROLE_ARN(env),
     AWS_ROLE_SESSION_NAME(env),
     clock, gracePeriod

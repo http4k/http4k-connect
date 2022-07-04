@@ -3,7 +3,7 @@ package org.http4k.connect.amazon.s3
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.Environment
+import org.http4k.connect.amazon.Default
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketName
@@ -46,7 +46,7 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
 ) = Http(bucketName, bucketRegion, Environment.from(env), http, clock, payloadMode, credentialsProvider)
 
 /**
@@ -59,5 +59,5 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Default(env)
 ) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode)
