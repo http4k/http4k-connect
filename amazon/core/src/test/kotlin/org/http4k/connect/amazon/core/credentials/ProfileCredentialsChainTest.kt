@@ -11,6 +11,7 @@ import org.http4k.connect.amazon.core.model.ProfileName
 import org.http4k.connect.amazon.defaultCredentialsProfilesFile
 import org.http4k.core.with
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Path
@@ -36,12 +37,27 @@ class ProfileCredentialsChainTest {
         }
     }
 
+    @Disabled("Github Actions cannot write to the home directory?")
     @Test
     fun `default profile in default file`() {
         defaultCredentialsProfilesFile.write(sampleCredentialsIni)
 
         assertThat(
             CredentialsChain.Profile(Environment.EMPTY)(),
+            equalTo(AwsCredentials("key123", "secret123"))
+        )
+    }
+
+    @Test
+    fun `default profile in custom file`() {
+        val file = Files.createTempFile("credentials", "ini")
+        file.write(sampleCredentialsIni)
+
+        val env = Environment.EMPTY
+            .with(AWS_CREDENTIAL_PROFILES_FILE of file)
+
+        assertThat(
+            CredentialsChain.Profile(env).invoke(),
             equalTo(AwsCredentials("key123", "secret123"))
         )
     }
