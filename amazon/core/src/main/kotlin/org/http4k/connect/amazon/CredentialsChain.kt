@@ -1,11 +1,7 @@
-package org.http4k.connect.amazon.core.credentials
+package org.http4k.connect.amazon
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
-import org.http4k.connect.amazon.AWS_ACCESS_KEY_ID_OPTIONAL
-import org.http4k.connect.amazon.AWS_SECRET_ACCESS_KEY_OPTIONAL
-import org.http4k.connect.amazon.AWS_SESSION_TOKEN
-import org.http4k.connect.amazon.CredentialsProvider
 
 fun interface CredentialsChain: () -> AwsCredentials? {
     infix fun orElse(next: CredentialsChain) = CredentialsChain { this() ?: next() }

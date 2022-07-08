@@ -4,6 +4,7 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.AwsProfile
 import org.http4k.connect.amazon.core.model.ProfileName
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.RoleSessionName
@@ -13,7 +14,9 @@ import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.lens.composite
 import org.http4k.lens.string
 import org.http4k.lens.value
+import org.ini4j.Ini
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -54,7 +57,30 @@ val AWS_CREDENTIALS = EnvironmentKey.composite {
     )
 }
 
-val defaultCredentialsProfilesFile: Path = Path(System.getProperty("user.home")).resolve(".aws/credentials")
 val AWS_CREDENTIAL_PROFILES_FILE = EnvironmentKey.string()
-    .map(nextIn = { Path(it) }, nextOut = { it.toString() })
-    .defaulted("AWS_CREDENTIAL_PROFILES_FILE", defaultCredentialsProfilesFile)
+    .map({ Path(it) }, { it.toString() })
+    .defaulted(
+        name = "AWS_CREDENTIAL_PROFILES_FILE",
+        default = Path(System.getProperty("user.home")).resolve(".aws/credentials")
+    )
+
+fun AwsProfile.Companion.loadProfiles(path: Path): Map<ProfileName, AwsProfile> {
+    if (!Files.exists(path)) return emptyMap()
+
+    val sections = path.toFile().inputStream().use { content ->
+        Ini().apply { load(content) }
+    }
+
+    return sections.map { (name, section) ->
+        AwsProfile(
+            name = ProfileName.of(name),
+            accessKeyId = section["aws_access_key_id"]?.let { AccessKeyId.of(it) },
+            secretAccessKey = section["aws_secret_access_key"]?.let { SecretAccessKey.of(it) },
+            sessionToken = section["aws_session_token"]?.let { SessionToken.of(it) },
+            roleArn = section["role_arn"]?.let { ARN.of(it) },
+            sourceProfileName = section["source_profile"]?.let { ProfileName.of(it) },
+            roleSessionName = section["role_session_name"]?.let { RoleSessionName.of(it) },
+            region = section["region"]?.let { Region.of(it) }
+        )
+    }.associateBy { it.name }
+}
