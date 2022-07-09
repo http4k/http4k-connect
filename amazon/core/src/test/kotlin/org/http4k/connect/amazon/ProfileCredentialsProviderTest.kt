@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.core.model.ProfileName
-import org.http4k.core.with
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
@@ -25,52 +24,36 @@ class ProfileCredentialsProviderTest {
         """)
     }
 
-    private val env = Environment.EMPTY
-        .with(AWS_CREDENTIAL_PROFILES_FILE of profileFile)
-
     @AfterEach
     fun cleanup() {
         profileFile.toFile().delete()
     }
 
+    private fun getCredentials(name: ProfileName): AwsCredentials? = CredentialsChain.Profile(
+        profileName = name,
+        credentialsPath = profileFile
+    ).invoke()
+
     @Test
     fun `default profile in custom file`() {
         assertThat(
-            CredentialsChain.Profile(env).invoke(),
+            getCredentials(ProfileName.of("default")),
             equalTo(AwsCredentials("key123", "secret123"))
         )
     }
 
     @Test
     fun `custom profile in custom file`() {
-        val env = env.with(AWS_PROFILE of ProfileName.of("dev"))
-
         assertThat(
-            CredentialsChain.Profile(env)(),
+            getCredentials(ProfileName.of("dev")),
             equalTo(AwsCredentials("key456", "secret456"))
         )
     }
 
     @Test
-    fun `file has no default profile`() {
-        profileFile.toFile().writeText("""
-            [dev]
-            aws_access_key_id = key456
-            aws_secret_access_key = secret456
-        """)
-
+    fun `missing profile`() {
         assertThat(
-            CredentialsChain.Profile(Environment.EMPTY)(),
-            absent()
-        )
-    }
-
-    @Test
-    fun `custom profile not found`() {
-        val env = env.with(AWS_PROFILE of ProfileName.of("prod"))
-
-        assertThat(
-            CredentialsChain.Profile(env).invoke(),
+            getCredentials(ProfileName.of("missing")),
             absent()
         )
     }
@@ -85,14 +68,11 @@ class ProfileCredentialsProviderTest {
 
     @Test
     fun `credentials are cached`() {
-        profileFile.toFile().writeText("""
-            [default]
-            aws_access_key_id = key123
-            aws_secret_access_key = secret123
-        """)
-
         val expected = AwsCredentials("key123", "secret123")
-        val chain = CredentialsChain.Profile(env)
+        val chain = CredentialsChain.Profile(
+            profileName = ProfileName.of("default"),
+            credentialsPath = profileFile
+        )
 
         assertThat(chain.invoke(), equalTo(expected))
 
