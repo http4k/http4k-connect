@@ -7,7 +7,7 @@ import org.http4k.format.asConfigurable
 import org.http4k.format.withAwsCoreMappings
 import org.http4k.format.withStandardMappings
 
-object Ec2CredentialsMoshi : ConfigurableMoshi(
+object Ec2InstanceMetadataMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(AwsCoreJsonAdapterFactory())
         .asConfigurable()

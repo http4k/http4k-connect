@@ -54,7 +54,7 @@ class FakeEc2CredentialService(
         )
         generatedCredentials = generatedCredentials + credentials
 
-        return Response(OK).body(Ec2CredentialsMoshi.asFormatString(credentials))
+        return Response(OK).body(Ec2InstanceMetadataMoshi.asFormatString(credentials))
     }
 
     override val app = routes(
