@@ -7,7 +7,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.Ec2Credentials
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
-import org.http4k.connect.amazon.ec2credentials.Ec2CredentialService
+import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadata
 import org.http4k.connect.amazon.ec2credentials.Ec2CredentialsMoshi
 import org.http4k.core.Method
 import org.http4k.core.Request
@@ -30,4 +30,4 @@ data class GetEc2Credentials(private val ec2ProfileName: Ec2ProfileName): Ec2Cre
     }
 }
 
-fun Ec2CredentialService.getCredentials(ec2ProfileName: Ec2ProfileName) = this(GetEc2Credentials(ec2ProfileName))
+fun Ec2InstanceMetadata.getCredentials(ec2ProfileName: Ec2ProfileName) = this(GetEc2Credentials(ec2ProfileName))

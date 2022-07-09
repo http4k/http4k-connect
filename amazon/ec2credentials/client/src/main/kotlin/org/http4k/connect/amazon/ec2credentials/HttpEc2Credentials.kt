@@ -11,7 +11,7 @@ import org.http4k.filter.ClientFilters.SetBaseUriFrom
 /**
  * Standard HTTP implementation of Ec2Credentials
  */
-fun Ec2CredentialService.Companion.Http(http: HttpHandler = JavaHttpClient()) = object : Ec2CredentialService {
+fun Ec2InstanceMetadata.Companion.Http(http: HttpHandler = JavaHttpClient()) = object : Ec2InstanceMetadata {
     private val unauthedHttp = SetBaseUriFrom(Uri.of("http://169.254.169.254"))
         .then(ClientFilters.SetXForwardedHost())
         .then(http)

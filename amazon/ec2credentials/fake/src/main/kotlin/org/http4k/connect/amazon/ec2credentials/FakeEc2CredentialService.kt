@@ -62,7 +62,7 @@ class FakeEc2CredentialService(
         "/latest/meta-data/iam/security-credentials/$profileNameLens" bind GET to ::getCredentials
     )
 
-    fun client() = Ec2CredentialService.Http(this)
+    fun client() = Ec2InstanceMetadata.Http(this)
 }
 
 fun main() {

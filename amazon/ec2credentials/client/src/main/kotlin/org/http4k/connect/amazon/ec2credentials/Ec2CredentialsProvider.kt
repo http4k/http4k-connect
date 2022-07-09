@@ -14,7 +14,7 @@ import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 
 fun CredentialsChain.Companion.Ec2InstanceProfile(
-    ec2CredentialService: Ec2CredentialService,
+    ec2InstanceMetadata: Ec2InstanceMetadata,
     clock: Clock,
     gracePeriod: Duration
 ): CredentialsChain {
@@ -25,11 +25,11 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
         if (current != null && !current.expiresWithin(clock, gracePeriod)) {
             current
         } else {
-            ec2CredentialService
+            ec2InstanceMetadata
                 .listProfiles()
                 .onFailure { it.reason.throwIt() }
                 .asSequence()
-                .map { ec2CredentialService.getCredentials(it) }
+                .map { ec2InstanceMetadata.getCredentials(it) }
                 .mapNotNull { it.valueOrNull() }
                 .firstOrNull()
                 ?.also { cached.set(it) }
@@ -49,7 +49,7 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(30)
 ) = CredentialsChain.Ec2InstanceProfile(
-    ec2CredentialService = Ec2CredentialService.Http(http),
+    ec2InstanceMetadata = Ec2InstanceMetadata.Http(http),
     clock = clock,
     gracePeriod = gracePeriod
 )
@@ -59,7 +59,7 @@ fun CredentialsProvider.Companion.Ec2InstanceProfile(
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(30)
 ) = CredentialsChain.Ec2InstanceProfile(
-    ec2CredentialService = Ec2CredentialService.Http(http),
+    ec2InstanceMetadata = Ec2InstanceMetadata.Http(http),
     clock = clock,
     gracePeriod = gracePeriod
 ).provider()

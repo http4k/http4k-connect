@@ -7,7 +7,7 @@ import dev.forkhandles.result4k.Result
 import org.http4k.connect.amazon.AwsServiceCompanion
 
 @Http4kConnectAdapter
-interface Ec2CredentialService {
+interface Ec2InstanceMetadata {
     operator fun <R> invoke(action: Ec2CredentialsAction<R>): Result<R, RemoteFailure>
 
     companion object : AwsServiceCompanion("ec2credentials")
