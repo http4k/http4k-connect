@@ -10,4 +10,5 @@ dependencies {
     kapt(Libs.se_ansman_kotshi_compiler)
 
     implementation(Libs.http4k_format_core)
+    implementation("org.ini4j:ini4j:0.5.4")
 }
