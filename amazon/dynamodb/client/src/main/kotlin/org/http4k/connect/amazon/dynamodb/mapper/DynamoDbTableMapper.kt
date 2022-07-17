@@ -8,6 +8,8 @@ import org.http4k.connect.amazon.dynamodb.model.*
 import org.http4k.lens.BiDiLens
 import dev.forkhandles.result4k.Result
 
+private const val batchSizeLimit = 25  // as defined by DynamoDB
+
 class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
     private val dynamoDb: DynamoDb,
     private val tableName: TableName,
@@ -33,9 +35,18 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ?.let(itemLens)
     }
 
-    operator fun plusAssign(achievements: Collection<Document>) {
-        return dynamoDb.batchPutItems(tableName, achievements, itemLens)
-            .onFailure { it.reason.throwIt() }
+    operator fun plusAssign(documents: Collection<Document>) {
+        if (documents.isEmpty()) return
+
+        for (chunk in documents.chunked(batchSizeLimit)) {
+            val batch = chunk.map { obj ->
+                val item = Item().with(itemLens of obj)
+                ReqWriteItem.Put(item)
+            }
+
+            dynamoDb.batchWriteItem(mapOf(tableName to batch))
+                .onFailure { it.reason.throwIt() }
+        }
     }
 
     operator fun plusAssign(document: Document) {
@@ -63,10 +74,14 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
     operator fun minusAssign(documents: Collection<Document>) {
         val keys = documents.map { it.key() }
 
-        dynamoDb.batchDeleteItems(
-            TableName = tableName,
-            keys = keys
-        ).onFailure { it.reason.throwIt() }
+        for (chunk in keys.chunked(batchSizeLimit)) {
+            val batch = chunk.map { key ->
+                ReqWriteItem.Delete(key)
+            }
+
+            dynamoDb.batchWriteItem(mapOf(tableName to batch))
+                .onFailure { it.reason.throwIt() }
+        }
     }
 
     fun <NewHashKey: Any, NewSortKey: Any> index(

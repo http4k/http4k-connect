@@ -86,7 +86,7 @@ class DynamoDbTableMapperTest {
     @Test
     fun `query for index`() {
         assertThat(
-            tableMapper.index(byOwner).query(owner2),
+            tableMapper.index(byOwner).query(owner2).toList(),
             equalTo(listOf(bandit, smokie))
         )
     }
@@ -94,7 +94,7 @@ class DynamoDbTableMapperTest {
     @Test
     fun `query for index - reverse order`() {
         assertThat(
-            tableMapper.index(byOwner).query(owner2, scanIndexForward = false),
+            tableMapper.index(byOwner).query(owner2, scanIndexForward = false).toList(),
             equalTo(listOf(smokie, bandit))
         )
     }
