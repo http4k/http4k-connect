@@ -41,9 +41,46 @@ data class AttributeValue internal constructor(
             ")"
     }
 
+    override fun hashCode() = when {
+        B != null -> B.hashCode()
+        BOOL != null -> "bool$BOOL".hashCode()
+        BS != null -> BS.hashCode()
+        L != null -> L.hashCode()
+        M != null -> M.hashCode()
+        N != null -> N.hashCode()
+        NS != null -> NS.hashCode()
+        NULL != null -> "null$NULL".hashCode()
+        S != null -> S.hashCode()
+        SS != null -> SS.hashCode()
+        else -> 0
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return when {
+            other !is AttributeValue -> false
+            B != null && other.B != null -> B == other.B
+            BOOL != null-> BOOL == other.BOOL
+            BS != null -> BS == other.BS
+            L != null -> L == other.L
+            M != null -> M == other.M
+            // N must be equated by comparing as BigDecimal; otherwise 123 != 123.0
+            N != null && other.N != null -> N.toBigDecimal().compareTo(other.N.toBigDecimal()) == 0
+            NS != null && other.NS != null -> {
+                if (NS.size != other.NS.size) return false
+                val thisNumbers = NS.map { it.toBigDecimal() }.sorted()
+                val otherNumbers = other.NS.map { it.toBigDecimal() }.sorted()
+                thisNumbers.zip(otherNumbers).all { it.first.compareTo(it.second) == 0 }
+            }
+            NULL != null -> NULL == other.NULL
+            S != null -> S == other.S
+            SS != null -> SS == other.SS
+            else -> false
+        }
+    }
+
     override fun compareTo(other: AttributeValue) =  when {
         S != null && other.S != null -> S.compareTo(other.S)
-        N != null && other.N != null -> N.compareTo(other.N)
+        N != null && other.N != null -> N.toBigDecimal().compareTo(other.N.toBigDecimal())
         B != null && other.B != null -> B.decoded().compareTo(other.B.decoded())
         else -> 0
     }
