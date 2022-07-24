@@ -35,7 +35,7 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         return dynamoDb.queryPaginated(
             TableName = tableName,
             IndexName = schema.indexName,
-            FilterExpression = filter,
+            KeyConditionExpression = filter,
             ExpressionAttributeNames = names,
             ExpressionAttributeValues = values,
             ScanIndexForward = scanIndexForward
