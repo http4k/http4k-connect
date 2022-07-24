@@ -130,22 +130,22 @@ inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMap
     TableName: TableName,
     hashKeyAttribute: Attribute<HashKey>,
     sortKeyAttribute: Attribute<SortKey>? = null,
-    mapper: AutoMarshalling = DynamoDbMoshi
+    autoMarshalling: AutoMarshalling = DynamoDbMoshi
 ) = tableMapper<Document, HashKey, SortKey>(
     TableName = TableName,
     primarySchema = DynamoDbTableMapperSchema.Primary(hashKeyAttribute, sortKeyAttribute),
-    mapper = mapper
+    autoMarshalling = autoMarshalling
 )
 
 inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMapper(
     TableName: TableName,
     primarySchema: DynamoDbTableMapperSchema.Primary<HashKey, SortKey>,
-    mapper: AutoMarshalling = DynamoDbMoshi
+    autoMarshalling: AutoMarshalling = DynamoDbMoshi
 ): DynamoDbTableMapper<Document, HashKey, SortKey> {
     return DynamoDbTableMapper(
         dynamoDb = this,
         tableName = TableName,
-        itemLens = mapper.autoDynamoLens(),
+        itemLens = autoMarshalling.autoDynamoLens(),
         primarySchema = primarySchema
     )
 }
