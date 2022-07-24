@@ -3,10 +3,10 @@ import org.http4k.connect.amazon.dynamodb.Http
 import java.util.UUID
 
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapperSchema
+import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.TableName
-import org.http4k.connect.amazon.dynamodb.moshiTableMapper
 
 // define our data class
 private data class KittyCat(
@@ -31,7 +31,7 @@ fun main() {
     val dynamoDb = DynamoDb.Http(System.getenv())
 
     // define the table mapper and its primary index
-    val table = dynamoDb.moshiTableMapper<KittyCat, UUID, Unit>(
+    val table = dynamoDb.tableMapper<KittyCat, UUID, Unit>(
         TableName = TableName.of("cats"),
         hashKeyAttribute = idAttr
     )

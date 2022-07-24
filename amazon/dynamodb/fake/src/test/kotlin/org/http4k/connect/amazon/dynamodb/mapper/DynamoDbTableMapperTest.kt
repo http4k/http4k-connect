@@ -7,7 +7,6 @@ import com.natpryce.hamkrest.hasSize
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
 import org.http4k.connect.amazon.dynamodb.model.*
-import org.http4k.connect.amazon.dynamodb.moshiTableMapper
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.successValue
@@ -34,7 +33,7 @@ private val byDob = DynamoDbTableMapperSchema.GlobalSecondary(
 class DynamoDbTableMapperTest {
 
     private val storage: Storage<DynamoTable> = Storage.InMemory()
-    private val tableMapper = FakeDynamoDb(storage).client().moshiTableMapper<Cat, UUID, Unit>(
+    private val tableMapper = FakeDynamoDb(storage).client().tableMapper<Cat, UUID, Unit>(
         TableName = TableName.of("cats"),
         hashKeyAttribute = idAttr
     )

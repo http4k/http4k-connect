@@ -7,6 +7,8 @@ import org.http4k.connect.amazon.dynamodb.action.TableDescriptionResponse
 import org.http4k.connect.amazon.dynamodb.model.*
 import org.http4k.lens.BiDiLens
 import dev.forkhandles.result4k.Result
+import org.http4k.format.AutoMarshalling
+import org.http4k.format.autoDynamoLens
 
 private const val batchSizeLimit = 25  // as defined by DynamoDB
 
@@ -122,4 +124,28 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
     fun deleteTable(): Result<TableDescriptionResponse, RemoteFailure> {
         return dynamoDb.deleteTable(tableName)
     }
+}
+
+inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMapper(
+    TableName: TableName,
+    hashKeyAttribute: Attribute<HashKey>,
+    sortKeyAttribute: Attribute<SortKey>? = null,
+    mapper: AutoMarshalling = DynamoDbMoshi
+) = tableMapper<Document, HashKey, SortKey>(
+    TableName = TableName,
+    primarySchema = DynamoDbTableMapperSchema.Primary(hashKeyAttribute, sortKeyAttribute),
+    mapper = mapper
+)
+
+inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMapper(
+    TableName: TableName,
+    primarySchema: DynamoDbTableMapperSchema.Primary<HashKey, SortKey>,
+    mapper: AutoMarshalling = DynamoDbMoshi
+): DynamoDbTableMapper<Document, HashKey, SortKey> {
+    return DynamoDbTableMapper(
+        dynamoDb = this,
+        tableName = TableName,
+        itemLens = mapper.autoDynamoLens(),
+        primarySchema = primarySchema
+    )
 }
