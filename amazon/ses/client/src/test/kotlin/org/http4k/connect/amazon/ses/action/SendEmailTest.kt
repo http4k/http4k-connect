@@ -4,37 +4,28 @@ package org.http4k.connect.amazon.ses.action
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.ses.action.SendEmailTest.EmailMessageType.HTML
-import org.http4k.connect.amazon.ses.action.SendEmailTest.EmailMessageType.TEXT
 import org.http4k.connect.amazon.ses.action.SendEmailTest.RecipientType.BCC
 import org.http4k.connect.amazon.ses.action.SendEmailTest.RecipientType.CC
 import org.http4k.connect.amazon.ses.action.SendEmailTest.RecipientType.TO
+import org.http4k.connect.amazon.ses.model.Body
 import org.http4k.connect.amazon.ses.model.Destination
 import org.http4k.connect.amazon.ses.model.EmailAddress
-import org.http4k.connect.amazon.ses.model.HtmlMessage
 import org.http4k.connect.amazon.ses.model.Message
 import org.http4k.connect.amazon.ses.model.Subject
-import org.http4k.connect.amazon.ses.model.TextMessage
 import org.http4k.core.body.form
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
 class SendEmailTest {
 
-    enum class EmailMessageType {
-        TEXT, HTML
-    }
-
-    @ParameterizedTest
-    @EnumSource(EmailMessageType::class)
-    fun `creates html or text email message`(messageType: EmailMessageType) {
+    @Test
+    fun `creates email message`() {
         val request = SendEmail().copy(
             message = Message(
                 subject = Subject.of("My Subject"),
-                body = when (messageType) {
-                    TEXT -> TextMessage.of("My Text Message")
-                    HTML -> HtmlMessage.of("My HTML Message")
-                }
+                text = Body.of("My Text Message"),
+                html = Body.of("My HTML Message")
             )
         ).toRequest()
 
@@ -46,22 +37,20 @@ class SendEmailTest {
                     "Destination.ToAddresses.member.1",
                     "ReplyToAddresses.member.1",
                     "Message.Subject.Data",
-                    when (messageType) {
-                        TEXT -> "Message.Body.Text.Data"
-                        HTML -> "Message.Body.Html.Data"
-                    }
+                    "Message.Body.Text.Data",
+                    "Message.Body.Html.Data"
                 )
             )
         )
 
-        assertThat(request.form("Action"), equalTo("SendEmail"))
-        assertThat(request.form("Source"), equalTo("source@example.com"))
-        assertThat(request.form("Destination.ToAddresses.member.1"), equalTo("destination@example.com"))
-        assertThat(request.form("Message.Subject.Data"), equalTo("My Subject"))
-        assertThat(request.form("ReplyToAddresses.member.1"), equalTo("reply@example.com"))
-        when (messageType) {
-            TEXT -> assertThat(request.form("Message.Body.Text.Data"), equalTo("My Text Message"))
-            HTML -> assertThat(request.form("Message.Body.Html.Data"), equalTo("My HTML Message"))
+        with(request) {
+            assertThat(form("Action"), equalTo("SendEmail"))
+            assertThat(form("Source"), equalTo("source@example.com"))
+            assertThat(form("Destination.ToAddresses.member.1"), equalTo("destination@example.com"))
+            assertThat(form("Message.Subject.Data"), equalTo("My Subject"))
+            assertThat(form("ReplyToAddresses.member.1"), equalTo("reply@example.com"))
+            assertThat(form("Message.Body.Text.Data"), equalTo("My Text Message"))
+            assertThat(form("Message.Body.Html.Data"), equalTo("My HTML Message"))
         }
     }
 
@@ -99,7 +88,7 @@ class SendEmailTest {
         ),
         message = Message(
             subject = Subject.of("My Subject"),
-            body = TextMessage.of("My Text Message")
+            html = Body.of("My Text Message")
         ),
         replyToAddresses = setOf(EmailAddress.of("reply@example.com"))
     )

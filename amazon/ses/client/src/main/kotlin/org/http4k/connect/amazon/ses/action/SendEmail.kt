@@ -7,10 +7,8 @@ import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.ses.model.Destination
 import org.http4k.connect.amazon.ses.model.EmailAddress
-import org.http4k.connect.amazon.ses.model.HtmlMessage
 import org.http4k.connect.amazon.ses.model.Message
 import org.http4k.connect.amazon.ses.model.SESMessageId
-import org.http4k.connect.amazon.ses.model.TextMessage
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Uri
@@ -40,10 +38,8 @@ data class SendEmail(
         .mapIndexed { idx, it -> "ReplyToAddresses.member.${idx + 1}" to it.value }
         .toTypedArray(),
     Pair("Message.Subject.Data", message.subject.value),
-    when (message.body) {
-        is HtmlMessage -> Pair("Message.Body.Html.Data", message.body.value)
-        is TextMessage -> Pair("Message.Body.Text.Data", message.body.value)
-    }
+    Pair("Message.Body.Html.Data", message.html.value),
+    message.text?.let { Pair("Message.Body.Text.Data", it.value) }
 ) {
     override fun toResult(response: Response) = with(response) {
         when {
