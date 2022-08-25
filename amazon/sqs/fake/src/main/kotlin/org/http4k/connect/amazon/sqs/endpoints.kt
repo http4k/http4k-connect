@@ -102,7 +102,7 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
         val sqsMessage = SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
         queues[queue] = it + sqsMessage
         Response(OK).with(viewModelLens of SendMessageResponse(sqsMessage, messageId))
-    } ?: Response(BAD_REQUEST)
+    } ?: Response(BAD_REQUEST).body("Queue named $queue not found")
 }
 
 private fun attributesFrom(req: Request): List<MessageAttribute> {
@@ -133,13 +133,13 @@ private fun attributesFrom(req: Request): List<MessageAttribute> {
 fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
     .asRouter() bind { req: Request ->
     val maxNumberOfMessages = req.form("MaxNumberOfMessages")?.toInt()
-    val queue = queues[req.form("QueueUrl")!!.queueName()]
-    queue?.let { sqsMessages ->
-        val messagesToSend = maxNumberOfMessages?.let { it -> sqsMessages.take(it) } ?: sqsMessages
+    val queue = req.form("QueueUrl")!!.queueName()
+    queues[queue]?.let { sqsMessages ->
+        val messagesToSend = maxNumberOfMessages?.let { sqsMessages.take(it) } ?: sqsMessages
         Response(OK).with(viewModelLens of ReceiveMessageResponse(
             messagesToSend.map { ReceivedMessage(it, it.md5OfAttributes()) }
         ))
-    } ?: Response(BAD_REQUEST)
+    } ?: Response(BAD_REQUEST).body("Queue named $queue not found")
 }
 
 fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessage" }
@@ -151,7 +151,7 @@ fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("A
             queues[queue] = it.filterNot { it.receiptHandle == receiptHandle }
             Response(OK).with(viewModelLens of DeleteMessageResponse)
         }
-        ?: Response(BAD_REQUEST)
+        ?: Response(BAD_REQUEST).body("Queue named $queue not found")
 }
 
 val viewModelLens by lazy {
