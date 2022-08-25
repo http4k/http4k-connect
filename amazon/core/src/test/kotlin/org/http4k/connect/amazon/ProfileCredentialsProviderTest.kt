@@ -6,9 +6,11 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.core.model.ProfileName
+import org.http4k.core.with
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
+import kotlin.io.path.Path
 
 class ProfileCredentialsProviderTest {
 
@@ -61,7 +63,7 @@ class ProfileCredentialsProviderTest {
     @Test
     fun `missing file`() {
         assertThat(
-            CredentialsChain.Profile(Environment.EMPTY)(),
+            CredentialsChain.Profile(Environment.EMPTY.with(AWS_CREDENTIAL_PROFILES_FILE of Path("foobar")))(),
             absent()
         )
     }
