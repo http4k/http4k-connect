@@ -3,9 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v3.19.3.0
+### v3.20.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-amazon-sns-fake*** - Enable setting of region.
+- **http4k-connect-amazon-sns-fake*** - [Breaking] Enable setting of region - this now defaults to the test region `ldn-north-1`, but you can override if you need to do so in your testing environment.
 
 ### v3.19.2.0
 - **http4k-connect-*** - Upgrade dependencies.
