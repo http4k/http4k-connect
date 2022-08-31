@@ -15,7 +15,7 @@ import org.http4k.routing.routes
 class FakeSQS(
     queues: Storage<List<SQSMessage>> = Storage.InMemory(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890"),
-    region: Region = Region.of("ldn-north-1")
+    private val region: Region = Region.of("ldn-north-1")
 ) : ChaoticHttpHandler() {
 
     override val app = routes(
@@ -33,7 +33,7 @@ class FakeSQS(
     /**
      * Convenience function to get a SQS client
      */
-    fun client() = SQS.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this)
+    fun client() = SQS.Http(region, { AwsCredentials("accessKey", "secret") }, this)
 }
 
 fun main() {

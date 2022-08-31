@@ -20,16 +20,16 @@ import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 import java.util.UUID
 
-fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount) =
+fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
     { r: Request -> r.form("Action") == "CreateTopic" }
         .asRouter() bind { req: Request ->
         val topicName = req.form("Name")!!
-        val arn = ARN.of(SNS.awsService, Region.of("us-east-1"), awsAccount, TopicName.of(topicName))
+        val arn = ARN.of(SNS.awsService, region, awsAccount, TopicName.of(topicName))
         if (topics.keySet(arn.value).isEmpty()) topics[arn.value] = listOf()
 
         Response(OK).with(
             viewModelLens of CreateTopicResponse(
-                ARN.of(SNS.awsService, Region.of("us-east-1"), awsAccount, TopicName.of(topicName))
+                ARN.of(SNS.awsService, region, awsAccount, TopicName.of(topicName))
             )
         )
     }
@@ -39,7 +39,7 @@ fun deleteTopic(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Act
     val topicArn = req.form("TopicArn")!!
 
     when {
-        topics.keySet(topicArn).isEmpty() -> Response(BAD_REQUEST)
+        topics.keySet(topicArn).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicArn")
         else -> {
             topics.remove(topicArn)
             Response(OK).with(viewModelLens of DeleteTopicResponse)

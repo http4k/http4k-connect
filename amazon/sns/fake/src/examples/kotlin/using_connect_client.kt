@@ -22,7 +22,7 @@ fun main() {
     val topicArn = ARN.of(SNS.awsService, region, AwsAccount.of("000000001"), topic)
 
     // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeSNS()
+    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeSNS(region = Region.of("us-east-1"))
 
     // create a client
     val client = SNS.Http(region, { AwsCredentials("accessKeyId", "secretKey") }, http.debug())

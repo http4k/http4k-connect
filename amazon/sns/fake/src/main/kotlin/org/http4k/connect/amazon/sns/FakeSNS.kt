@@ -13,12 +13,13 @@ import org.http4k.routing.routes
 
 class FakeSNS(
     topics: Storage<List<SNSMessage>> = Storage.InMemory(),
-    awsAccount: AwsAccount = AwsAccount.of("1234567890")
-) : ChaoticHttpHandler() {
+    awsAccount: AwsAccount = AwsAccount.of("1234567890"),
+    private val region: Region = Region.of("ldn-north-1"),
+    ) : ChaoticHttpHandler() {
 
     override val app = routes(
         "/" bind POST to routes(
-            createTopic(topics, awsAccount),
+            createTopic(topics, awsAccount, region),
             deleteTopic(topics),
             listTopics(topics),
             publish(topics)
@@ -28,7 +29,7 @@ class FakeSNS(
     /**
      * Convenience function to get a SNS client
      */
-    fun client() = SNS.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this)
+    fun client() = SNS.Http(region, { AwsCredentials("accessKey", "secret") }, this)
 }
 
 data class SNSMessage(val message: String)
