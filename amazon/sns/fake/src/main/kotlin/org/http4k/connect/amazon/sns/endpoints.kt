@@ -33,12 +33,12 @@ fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, regio
         )
     }
 
-fun deleteTopic(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "DeleteTopic" }
+fun deleteTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) = { r: Request -> r.form("Action") == "DeleteTopic" }
     .asRouter() bind { req: Request ->
     val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
 
     when {
-        topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName. Existing: ${topics.keySet()}")
+        topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
         else -> {
             topics.remove(topicName.value)
             Response(OK).with(viewModelLens of DeleteTopicResponse)
@@ -55,13 +55,13 @@ fun listTopics(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region
         )
     }
 
-fun publish(topics: Storage<List<SNSMessage>>) = { r: Request -> r.form("Action") == "Publish" }
+fun publish(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) = { r: Request -> r.form("Action") == "Publish" }
     .asRouter() bind { req: Request ->
 
     val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
 
     when {
-        topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName. Existing: ${topics.keySet()}")
+        topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
         else -> {
             topics[topicName.value] = topics[topicName.value]!! + SNSMessage(req.form("Message")!!)
             Response(OK).with(viewModelLens of PublishResponse(SNSMessageId.of(UUID.randomUUID().toString())))

@@ -20,9 +20,9 @@ class FakeSNS(
     override val app = routes(
         "/" bind POST to routes(
             createTopic(topics, awsAccount, region),
-            deleteTopic(topics),
+            deleteTopic(topics, awsAccount, region),
             listTopics(topics, awsAccount, region),
-            publish(topics)
+            publish(topics, awsAccount, region)
         )
     )
 
