@@ -24,7 +24,6 @@ class SQSMessageTest {
 
     @Test
     fun getMd5OfMessageAttributes() {
-        println("foobar".md5())
         assertThat(
             SQSMessage(
                 SQSMessageId.of("123"), "helloworld", "helloworld".md5(),

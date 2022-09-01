@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.21.0.0
+- **http4k-connect-amazon-sns-fake*** - [Unlikely Break] FakeSNS now works on a single region only - so published messages need to match the region which the Fake was created with.
+
 ### v3.20.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-sns-fake*** - [Breaking] Enable setting of region - this now defaults to the test region `ldn-north-1`, but you can override if you need to do so in your testing environment.

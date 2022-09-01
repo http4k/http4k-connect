@@ -15,13 +15,13 @@ class FakeSNS(
     topics: Storage<List<SNSMessage>> = Storage.InMemory(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890"),
     private val region: Region = Region.of("ldn-north-1"),
-    ) : ChaoticHttpHandler() {
+) : ChaoticHttpHandler() {
 
     override val app = routes(
         "/" bind POST to routes(
             createTopic(topics, awsAccount, region),
             deleteTopic(topics),
-            listTopics(topics),
+            listTopics(topics, awsAccount, region),
             publish(topics)
         )
     )
