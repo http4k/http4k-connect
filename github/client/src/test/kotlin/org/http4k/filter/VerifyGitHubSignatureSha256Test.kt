@@ -14,7 +14,7 @@ import org.http4k.lens.Header
 import org.http4k.lens.X_HUB_SIGNATURE_256
 import org.junit.jupiter.api.Test
 
-class VerifyGitHubSignature256Test {
+class VerifyGitHubSignatureSha256Test {
 
     private val app = ServerFilters.VerifyGitHubSignatureSha256 { GitHubToken.of("secret") }.then { Response(OK) }
 
