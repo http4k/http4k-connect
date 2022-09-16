@@ -3,9 +3,9 @@ package org.http4k.filter
 import org.http4k.connect.github.GitHubToken
 import org.http4k.core.Filter
 import org.http4k.core.with
-import org.http4k.filter.HmacSha256.hmacSHA256
 import org.http4k.lens.Header
 import org.http4k.lens.X_HUB_SIGNATURE_256
+import org.http4k.security.HmacSha256.hmacSHA256
 
 
 fun ClientFilters.SignGitHubCallbackSha256(token: () -> GitHubToken) = Filter { next ->
