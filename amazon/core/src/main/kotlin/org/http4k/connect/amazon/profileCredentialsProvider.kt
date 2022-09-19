@@ -25,9 +25,9 @@ fun CredentialsChain.Companion.Profile(
     }
 }
 
-fun CredentialsChain.Companion.Profile(env: Environment) = CredentialsChain.Profile(
+fun CredentialsChain.Companion.Profile(env: Environment = Environment.ENV) = CredentialsChain.Profile(
     profileName = AWS_PROFILE(env),
     credentialsPath = AWS_CREDENTIAL_PROFILES_FILE(env)
 )
 
-fun CredentialsProvider.Companion.Profile(env: Environment) = CredentialsChain.Profile(env).provider()
+fun CredentialsProvider.Companion.Profile(env: Environment = Environment.ENV) = CredentialsChain.Profile(env).provider()
