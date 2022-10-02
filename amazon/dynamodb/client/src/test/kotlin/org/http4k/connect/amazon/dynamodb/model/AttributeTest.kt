@@ -23,16 +23,16 @@ class AttributeTest {
     @Test
     fun `can create value from attributes`() {
         assertThat(
-            Attribute.long().value(MyLongType).required("name").asValue(MyLongType.of(1)),
+            Attribute.value(MyLongType).required("name").asValue(MyLongType.of(1)),
             equalTo(Num(1))
         )
-        assertThat(Attribute.int().value(MyIntType).required("name").asValue(MyIntType.of(1)), equalTo(Num(1)))
+        assertThat(Attribute.value(MyIntType).required("name").asValue(MyIntType.of(1)), equalTo(Num(1)))
         assertThat(
-            Attribute.string().value(MyStringType).required("name").asValue(MyStringType.of("foo")),
+            Attribute.value(MyStringType).required("name").asValue(MyStringType.of("foo")),
             equalTo(Str("foo"))
         )
         assertThat(
-            Attribute.instant().value(MyInstantType).required("name").asValue(MyInstantType.of(Instant.EPOCH)),
+            Attribute.value(MyInstantType).required("name").asValue(MyInstantType.of(Instant.EPOCH)),
             equalTo(Str("1970-01-01T00:00:00Z"))
         )
         assertThat(

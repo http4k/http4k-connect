@@ -1,7 +1,5 @@
 package org.http4k.connect.amazon.dynamodb.model
 
-import dev.forkhandles.values.Value
-import dev.forkhandles.values.ValueFactory
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.B
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.BOOL
@@ -177,5 +175,3 @@ class Attribute<FINAL>(
         }
     }
 }
-
-fun <P : Any, VALUE : Value<P>> Attribute.AttrLensSpec<P>.value(vf: ValueFactory<VALUE, P>) = map(vf::of, vf::unwrap)
