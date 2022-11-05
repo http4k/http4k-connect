@@ -2,6 +2,9 @@ package org.http4k.format
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.values.NonEmptyStringValueFactory
+import dev.forkhandles.values.StringValue
+import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
 import org.http4k.connect.amazon.dynamodb.model.Item
@@ -55,5 +58,35 @@ class AutoMarshalingExtensionsTest {
         )
 
         assertThat(lens(item), equalTo(input))
+    }
+
+    class CustomValue(value: String): StringValue(value) {
+        companion object: NonEmptyStringValueFactory<CustomValue>(::CustomValue)
+    }
+
+    data class CustomContainer(
+        val a: CustomValue,
+        val b: CustomValue
+    )
+
+    @Test
+    fun `can create a lens with an updated marshaller`() {
+        val obj = CustomContainer(
+            a = CustomValue("valueA"),
+            b = CustomValue("valueB")
+        )
+
+        val lens = DynamoDbMoshi.update {
+            value(CustomValue)
+        }.autoDynamoLens<CustomContainer>()
+
+        val expectedItem = mapOf(
+            AttributeName.of("a") to AttributeValue.Str("valueA"),
+            AttributeName.of("b") to AttributeValue.Str("valueB")
+        )
+        assertThat(
+            Item().with(lens of obj),
+            equalTo(expectedItem)
+        )
     }
 }
