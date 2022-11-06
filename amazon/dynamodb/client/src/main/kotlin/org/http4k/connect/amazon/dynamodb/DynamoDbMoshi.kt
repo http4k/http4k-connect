@@ -32,8 +32,8 @@ object DynamoDbMoshi : ConfigurableMoshi(
     standardConfig().done()
 ) {
     fun update(
-        fn: AutoMappingConfiguration<Moshi.Builder>.() -> AutoMappingConfiguration<Moshi.Builder>
-    ) = ConfigurableMoshi(standardConfig().let(fn).done())
+        configureFn: AutoMappingConfiguration<Moshi.Builder>.() -> AutoMappingConfiguration<Moshi.Builder>
+    ) = ConfigurableMoshi(standardConfig().let(configureFn).done())
 }
 
 @KotshiJsonAdapterFactory
