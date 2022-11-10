@@ -1,15 +1,20 @@
-package org.http4k.connect.google.analytics
+package org.http4k.connect.google.analytics.ua
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.CapturingHttpHandler
-import org.http4k.connect.google.analytics.action.CLIENT_ID
-import org.http4k.connect.google.analytics.action.DOCUMENT_HOST
-import org.http4k.connect.google.analytics.action.DOCUMENT_PATH
-import org.http4k.connect.google.analytics.action.DOCUMENT_TITLE
-import org.http4k.connect.google.analytics.model.ClientId
-import org.http4k.connect.google.analytics.model.TrackingId
+import org.http4k.connect.google.analytics.Http
+import org.http4k.connect.google.analytics.MEASUREMENT_ID
+import org.http4k.connect.google.analytics.VERSION
+import org.http4k.connect.google.analytics.ua.action.CLIENT_ID
+import org.http4k.connect.google.analytics.ua.action.DOCUMENT_HOST
+import org.http4k.connect.google.analytics.ua.action.DOCUMENT_PATH
+import org.http4k.connect.google.analytics.ua.action.DOCUMENT_TITLE
+import org.http4k.connect.google.analytics.ua.filter.DEFAULT_USER_AGENT
+import org.http4k.connect.google.analytics.ua.filter.LogPageView
+import org.http4k.connect.google.analytics.ua.model.ClientId
+import org.http4k.connect.google.analytics.ua.model.TrackingId
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -22,19 +27,15 @@ import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.core.UriTemplate
 import org.http4k.core.body.form
 import org.http4k.core.then
-import org.http4k.filter.DEFAULT_USER_AGENT
-import org.http4k.filter.LogPageView
-import org.http4k.filter.ServerFilters
 import org.http4k.hamkrest.hasStatus
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalytics.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
+    private val client = GoogleAnalyticsUA.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
 
-    private val analytics =
-        ServerFilters.LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
+    private val analytics = LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
             when {
                 it.uri.path.contains("fail") -> Response(BAD_REQUEST)
                 it.uri.path.contains("informational") -> Response(CONTINUE)

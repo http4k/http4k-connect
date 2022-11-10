@@ -1,8 +1,8 @@
-package org.http4k.filter
+package org.http4k.connect.google.analytics.ua.filter
 
-import org.http4k.connect.google.analytics.GoogleAnalytics
-import org.http4k.connect.google.analytics.model.ClientId
-import org.http4k.connect.google.analytics.pageView
+import org.http4k.connect.google.analytics.ua.GoogleAnalyticsUA
+import org.http4k.connect.google.analytics.ua.model.ClientId
+import org.http4k.connect.google.analytics.ua.pageView
 import org.http4k.core.Filter
 import org.http4k.core.Request
 import org.http4k.routing.RoutedRequest
@@ -11,8 +11,8 @@ import java.util.UUID
 /**
  * Log page view to Google Analytics
  */
-fun ServerFilters.LogPageView(
-    analytics: GoogleAnalytics,
+fun LogPageView(
+    analytics: GoogleAnalyticsUA,
     clientId: (Request) -> ClientId = { ClientId.of(UUID.randomUUID().toString()) }
 ): Filter = Filter { handler ->
     { request ->
