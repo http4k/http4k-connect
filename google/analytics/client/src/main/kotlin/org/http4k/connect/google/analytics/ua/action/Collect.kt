@@ -33,7 +33,6 @@ data class Collect(val data: Analytics) : GoogleAnalyticsAction<Unit> {
                 .form(DOCUMENT_PATH, path)
                 .form(DOCUMENT_HOST, host)
         }
-
     }
 
     override fun toResult(response: Response) = with(response) {
