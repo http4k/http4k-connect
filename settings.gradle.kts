@@ -41,12 +41,12 @@ includeSystem("amazon", "ses")
 includeSystem("amazon", "sqs")
 includeSystem("amazon", "sts")
 includeSystem("amazon", "systemsmanager")
-
 includeSystem("example")
 
 includeSystem("github")
 
-includeSystem("google", "analytics")
+includeCommon("google-analytics-core", "google/analytics-core")
+includeSystem("google", "analytics-ua")
 
 fun includeSystem(system: String) {
     val projectName = "http4k-connect-$system"
