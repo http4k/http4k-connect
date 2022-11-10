@@ -1,17 +1,16 @@
-package org.http4k.connect.google.analytics.ua.filter
+package org.http4k.connect.google.analytics.filter
 
+import org.http4k.connect.google.analytics.model.AnalyticsCollector
 import org.http4k.connect.google.analytics.model.ClientId
 import org.http4k.connect.google.analytics.model.DEFAULT_USER_AGENT
 import org.http4k.connect.google.analytics.model.PageView
-import org.http4k.connect.google.analytics.ua.GoogleAnalytics
-import org.http4k.connect.google.analytics.ua.collect
 import org.http4k.core.Filter
 import org.http4k.core.Request
 import org.http4k.routing.RoutedRequest
 import java.util.UUID
 
 fun CollectPageView(
-    analytics: GoogleAnalytics,
+    collector: AnalyticsCollector,
     clientId: (Request) -> ClientId = { ClientId.of(UUID.randomUUID().toString()) }
 ): Filter = Filter { handler ->
     { request ->
@@ -23,7 +22,7 @@ fun CollectPageView(
                     else -> request.uri.path
                 }
                 val userAgent = it.header("User-Agent") ?: DEFAULT_USER_AGENT
-                analytics.collect(PageView(path, path, host, clientId(request), userAgent))
+                collector(PageView(path, path, host, clientId(request), userAgent))
             }
         }
     }

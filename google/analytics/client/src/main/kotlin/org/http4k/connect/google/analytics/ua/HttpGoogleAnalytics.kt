@@ -18,10 +18,10 @@ fun GoogleAnalytics.Companion.Http(trackingId: TrackingId, rawHttp: HttpHandler 
             http(
                 action.toRequest()
                     .form(VERSION, "1")
-                    .form(MEASUREMENT_ID, trackingId.value)
+                    .form(TRACKING_ID, trackingId.value)
             )
         )
     }
 
 const val VERSION = "v"
-const val MEASUREMENT_ID = "tid"
+const val TRACKING_ID = "tid"

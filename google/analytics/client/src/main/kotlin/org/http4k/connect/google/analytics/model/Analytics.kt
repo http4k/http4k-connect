@@ -1,5 +1,10 @@
 package org.http4k.connect.google.analytics.model
 
+import dev.forkhandles.result4k.Result
+import org.http4k.connect.RemoteFailure
+
+typealias AnalyticsCollector = (Analytics) -> Result<Unit, RemoteFailure>
+
 sealed class Analytics {
     abstract val clientId: ClientId
     abstract val userAgent: String
