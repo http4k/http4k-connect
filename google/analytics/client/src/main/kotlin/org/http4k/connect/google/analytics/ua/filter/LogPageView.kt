@@ -1,6 +1,6 @@
 package org.http4k.connect.google.analytics.ua.filter
 
-import org.http4k.connect.google.analytics.ua.GoogleAnalyticsUA
+import org.http4k.connect.google.analytics.ua.GoogleAnalytics
 import org.http4k.connect.google.analytics.ua.model.ClientId
 import org.http4k.connect.google.analytics.ua.pageView
 import org.http4k.core.Filter
@@ -12,7 +12,7 @@ import java.util.UUID
  * Log page view to Google Analytics
  */
 fun LogPageView(
-    analytics: GoogleAnalyticsUA,
+    analytics: GoogleAnalytics,
     clientId: (Request) -> ClientId = { ClientId.of(UUID.randomUUID().toString()) }
 ): Filter = Filter { handler ->
     { request ->

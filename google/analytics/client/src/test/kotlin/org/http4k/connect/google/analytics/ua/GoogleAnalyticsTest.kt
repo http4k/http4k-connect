@@ -4,9 +4,6 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.CapturingHttpHandler
-import org.http4k.connect.google.analytics.Http
-import org.http4k.connect.google.analytics.MEASUREMENT_ID
-import org.http4k.connect.google.analytics.VERSION
 import org.http4k.connect.google.analytics.ua.action.CLIENT_ID
 import org.http4k.connect.google.analytics.ua.action.DOCUMENT_HOST
 import org.http4k.connect.google.analytics.ua.action.DOCUMENT_PATH
@@ -33,7 +30,7 @@ import org.junit.jupiter.api.Test
 
 class GoogleAnalyticsTest {
     private val testHttpClient = CapturingHttpHandler()
-    private val client = GoogleAnalyticsUA.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
+    private val client = GoogleAnalytics.Http(TrackingId.of("TEST-MEASUREMENT-ID"), testHttpClient)
 
     private val analytics = LogPageView(client) { ClientId.of("TEST-CLIENT-ID") }.then {
             when {
