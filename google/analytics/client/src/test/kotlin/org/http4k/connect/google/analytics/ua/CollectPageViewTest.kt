@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.google.analytics.CollectPageViewContractTest
 import org.http4k.connect.google.analytics.model.AnalyticsCollector
-import org.http4k.connect.google.analytics.model.DEFAULT_USER_AGENT
+import org.http4k.connect.google.analytics.model.UserAgent
 import org.http4k.connect.google.analytics.ua.action.CLIENT_ID
 import org.http4k.connect.google.analytics.ua.action.DOCUMENT_HOST
 import org.http4k.connect.google.analytics.ua.action.DOCUMENT_PATH
@@ -23,7 +23,7 @@ class CollectPageViewTest : CollectPageViewContractTest() {
         assertThat(
             testHttpClient.captured, equalTo(
                 Request(POST, "https://www.google-analytics.com/collect")
-                    .header("User-Agent", DEFAULT_USER_AGENT)
+                    .header("User-Agent", UserAgent.Default.value)
                     .header("Host", "www.google-analytics.com")
                     .form(CLIENT_ID, clientId.value)
                     .form(DOCUMENT_TITLE, title)

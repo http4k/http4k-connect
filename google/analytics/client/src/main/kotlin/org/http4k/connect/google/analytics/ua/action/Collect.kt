@@ -17,7 +17,7 @@ import org.http4k.core.body.form
 data class Collect(val data: Analytics) : GoogleAnalyticsAction<Unit> {
     override fun toRequest() = with(data) {
         val request = Request(POST, uri())
-            .header("User-Agent", userAgent)
+            .header("User-Agent", userAgent.value)
             .form(CLIENT_ID, clientId.value)
 
         when (this) {

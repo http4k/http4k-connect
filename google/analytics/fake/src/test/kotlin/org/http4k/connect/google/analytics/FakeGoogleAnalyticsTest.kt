@@ -7,6 +7,7 @@ import org.http4k.connect.google.FakeGoogleAnalytics
 import org.http4k.connect.google.analytics.model.ClientId
 import org.http4k.connect.google.analytics.model.Event
 import org.http4k.connect.google.analytics.model.PageView
+import org.http4k.connect.google.analytics.model.UserAgent
 import org.http4k.connect.google.analytics.ua.GoogleAnalytics
 import org.http4k.connect.google.analytics.ua.Http
 import org.http4k.connect.google.analytics.ua.collect
@@ -19,7 +20,7 @@ class FakeGoogleAnalyticsTest {
     @Test
     fun `can log page view`() {
         assertThat(
-            analytics.collect(PageView("title", "/doc/path", "www.http4k.org", ClientId.of("SOME_CLIENT_ID"), "some-user-agent")),
+            analytics.collect(PageView("title", "/doc/path", "www.http4k.org", ClientId.of("SOME_CLIENT_ID"), UserAgent.of("some-user-agent"))),
             equalTo(Success(Unit))
         )
     }
@@ -27,7 +28,7 @@ class FakeGoogleAnalyticsTest {
     @Test
     fun `can log event`() {
         assertThat(
-            analytics.collect(Event("event", "action", "label", 1, ClientId.of("SOME_CLIENT_ID"), "some-user-agent")),
+            analytics.collect(Event("event", "action", "label", 1, ClientId.of("SOME_CLIENT_ID"), UserAgent.of("some-user-agent"))),
             equalTo(Success(Unit))
         )
     }

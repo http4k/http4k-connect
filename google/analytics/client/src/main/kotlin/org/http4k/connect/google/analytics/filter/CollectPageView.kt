@@ -2,8 +2,8 @@ package org.http4k.connect.google.analytics.filter
 
 import org.http4k.connect.google.analytics.model.AnalyticsCollector
 import org.http4k.connect.google.analytics.model.ClientId
-import org.http4k.connect.google.analytics.model.DEFAULT_USER_AGENT
 import org.http4k.connect.google.analytics.model.PageView
+import org.http4k.connect.google.analytics.model.UserAgent
 import org.http4k.core.Filter
 import org.http4k.core.Request
 import org.http4k.routing.RoutedRequest
@@ -21,7 +21,7 @@ fun CollectPageView(
                     is RoutedRequest -> request.xUriTemplate.toString()
                     else -> request.uri.path
                 }
-                val userAgent = it.header("User-Agent") ?: DEFAULT_USER_AGENT
+                val userAgent = it.header("User-Agent")?.let(UserAgent::of) ?: UserAgent.Default
                 collector(PageView(path, path, host, clientId(request), userAgent))
             }
         }
