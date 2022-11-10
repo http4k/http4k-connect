@@ -47,6 +47,7 @@ includeSystem("github")
 
 includeCommon("google-analytics-core", "google/analytics-core")
 includeSystem("google", "analytics-ua")
+includeSystem("google", "analytics-ga4")
 
 fun includeSystem(system: String) {
     val projectName = "http4k-connect-$system"

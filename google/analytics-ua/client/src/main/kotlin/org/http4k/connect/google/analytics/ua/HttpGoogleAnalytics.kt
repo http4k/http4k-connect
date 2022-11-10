@@ -1,9 +1,9 @@
-package org.http4k.connect.google.analytics
+package org.http4k.connect.google.analytics.ua
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.google.analytics.action.GoogleAnalyticsAction
 import org.http4k.connect.google.analytics.model.GOOGLE_ANALYTICS_URL
-import org.http4k.connect.google.analytics.model.TrackingId
+import org.http4k.connect.google.analytics.ua.action.GoogleAnalyticsAction
+import org.http4k.connect.google.analytics.ua.model.TrackingId
 import org.http4k.core.HttpHandler
 import org.http4k.core.body.form
 import org.http4k.core.then

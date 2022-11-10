@@ -1,4 +1,4 @@
-package org.http4k.connect.google.analytics.action
+package org.http4k.connect.google.analytics.ua.action
 
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Action

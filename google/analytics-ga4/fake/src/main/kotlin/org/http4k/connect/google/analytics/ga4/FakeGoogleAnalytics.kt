@@ -1,4 +1,4 @@
-package org.http4k.connect.google
+package org.http4k.connect.google.analytics.ga4
 
 import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
@@ -16,7 +16,7 @@ import java.util.UUID
 class FakeGoogleAnalytics(val calls: Storage<Form> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     override val app = routes(
-        "/collect" bind POST to {
+        "/mp/collect" bind POST to {
             calls[UUID.randomUUID().toString()] = it.form()
             Response(OK).body(it.body)
         }

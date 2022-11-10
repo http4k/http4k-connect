@@ -1,17 +1,17 @@
-package org.http4k.connect.google.analytics
+package org.http4k.connect.google.analytics.ua
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.CapturingHttpHandler
-import org.http4k.connect.google.analytics.action.CLIENT_ID
-import org.http4k.connect.google.analytics.action.DOCUMENT_HOST
-import org.http4k.connect.google.analytics.action.DOCUMENT_PATH
-import org.http4k.connect.google.analytics.action.DOCUMENT_TITLE
 import org.http4k.connect.google.analytics.filter.CollectPageView
 import org.http4k.connect.google.analytics.model.ClientId
-import org.http4k.connect.google.analytics.model.TrackingId
 import org.http4k.connect.google.analytics.model.UserAgent
+import org.http4k.connect.google.analytics.ua.action.CLIENT_ID
+import org.http4k.connect.google.analytics.ua.action.DOCUMENT_HOST
+import org.http4k.connect.google.analytics.ua.action.DOCUMENT_PATH
+import org.http4k.connect.google.analytics.ua.action.DOCUMENT_TITLE
+import org.http4k.connect.google.analytics.ua.model.TrackingId
 import org.http4k.core.Method
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
