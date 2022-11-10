@@ -1,4 +1,4 @@
-package org.http4k.connect.google.analytics.ua.model
+package org.http4k.connect.google.analytics.model
 
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
