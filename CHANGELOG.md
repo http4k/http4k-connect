@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.25.0.0
+- **http4k-connect-*** - Upgrade dependencies.
+
 ### v3.24.0.0
 - **http4k-connect-google-analytics*** - Split Google Analytics clients to support UA and GA4.
 
