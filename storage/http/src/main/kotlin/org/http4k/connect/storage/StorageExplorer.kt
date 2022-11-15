@@ -37,7 +37,7 @@ inline fun <reified T : Any> Storage<T>.asHttpHandler(
     storageSecurity: Security = NoSecurity
 ): HttpHandler {
 
-    val static = static(Classpath("/META-INF/resources/webjars/swagger-ui/3.35.1"))
+    val static = static(Classpath("/META-INF/resources/webjars/swagger-ui/4.15.5"))
 
     return ServerFilters.Cors(UnsafeGlobalPermissive).then(
         routes(
