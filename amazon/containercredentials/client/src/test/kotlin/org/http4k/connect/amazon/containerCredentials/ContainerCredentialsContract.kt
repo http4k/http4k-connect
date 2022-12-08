@@ -16,11 +16,11 @@ abstract class ContainerCredentialsContract(http: HttpHandler) : AwsContract() {
 
     protected val clock = Clock.systemUTC()!!
     private val containerCredentials by lazy { ContainerCredentials.Http(http) }
-    protected abstract val relativePathUri: Uri
+    protected abstract val fullUri: Uri
 
     @Test
     fun `get credentials`() {
-        val result = containerCredentials.getCredentials(relativePathUri)
+        val result = containerCredentials.getCredentials(fullUri)
 
         assertTrue(
             result.successValue()

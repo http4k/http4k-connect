@@ -5,6 +5,6 @@ import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.core.Uri
 
 class FakeContainerCredentialsTest : ContainerCredentialsContract(FakeContainerCredentials()) {
-    override val relativePathUri = Uri.of("/foobar")
+    override val fullUri = Uri.of("http://localhost:80/foobar")
     override val aws = fakeAwsEnvironment
 }

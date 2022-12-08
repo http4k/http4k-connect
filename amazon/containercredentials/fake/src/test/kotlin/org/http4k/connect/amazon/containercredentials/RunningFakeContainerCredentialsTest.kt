@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterEach
 class RunningFakeContainerCredentialsTest : ContainerCredentialsContract(
     SetHostFrom(FakeContainerCredentials::class.defaultLocalUri).then(JavaHttpClient())
 ) {
-    override val relativePathUri = Uri.of("/foobar")
+    override val fullUri = Uri.of("http://localhost:80/foobar")
 
     override val aws = fakeAwsEnvironment
     private lateinit var server: Http4kServer

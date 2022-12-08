@@ -13,15 +13,15 @@ import org.http4k.core.Response
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-data class GetCredentials(private val relativePathUri: Uri) : ContainerCredentialsAction<Credentials> {
-    override fun toRequest() = Request(GET, relativePathUri)
+data class GetCredentials(private val uri: Uri) : ContainerCredentialsAction<Credentials> {
+    override fun toRequest() = Request(GET, uri)
 
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(ContainerCredentialsMoshi.asA<Credentials>(bodyString()))
-            else -> Failure(RemoteFailure(GET, relativePathUri, status, bodyString()))
+            else -> Failure(RemoteFailure(GET, uri, status, bodyString()))
         }
     }
 }
 
-fun ContainerCredentials.getCredentials(relativePathUri: Uri) = this(GetCredentials(relativePathUri))
+fun ContainerCredentials.getCredentials(uri: Uri) = this(GetCredentials(uri))
