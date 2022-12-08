@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference
  */
 fun CredentialsProvider.Companion.ContainerCredentials(
     containerCredentials: ContainerCredentials,
-    relativePathUri: Uri,
+    uri: Uri,
     clock: Clock,
     gracePeriod: Duration
 ) = object : CredentialsProvider {
@@ -34,7 +34,7 @@ fun CredentialsProvider.Companion.ContainerCredentials(
             val current = credentials.get()
             when {
                 current != null && !current.expiresWithin(clock, gracePeriod) -> current
-                else -> when (val refreshed = containerCredentials.getCredentials(relativePathUri)) {
+                else -> when (val refreshed = containerCredentials.getCredentials(uri)) {
                     is Success<Credentials> -> {
                         val newCreds = refreshed.value
                         credentials.set(newCreds)
@@ -52,7 +52,7 @@ fun CredentialsProvider.Companion.ContainerCredentials(
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(300)
 ) = CredentialsProvider.ContainerCredentials(
-    ContainerCredentials.Http(http),
-    AWS_CONTAINER_CREDENTIALS_RELATIVE_URI(env),
+    ContainerCredentials.Http(http, AWS_CONTAINER_AUTHORIZATION_TOKEN(env)),
+    AWS_CONTAINER_CREDENTIALS_FULL_URI(env),
     clock, gracePeriod
 )
