@@ -7,9 +7,11 @@ import org.http4k.cloudnative.env.Environment.Companion.EMPTY
 import org.http4k.connect.amazon.containercredentials.AWS_CONTAINER_CREDENTIALS_FULL_URI
 import org.http4k.connect.amazon.containercredentials.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
 import org.http4k.core.Uri
+import org.http4k.lens.LensFailure
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
-class EnvironmentUriTest {
+class CCExtensionsTest {
 
     @Test
     fun `uses full uri if present`() {
@@ -19,16 +21,16 @@ class EnvironmentUriTest {
         )
         assertThat(
             AWS_CONTAINER_CREDENTIALS_FULL_URI[env],
-            equalTo(Uri.of("http://foobar"))
+            equalTo(Uri.of("http://foobar/fullpath"))
         )
     }
 
     @Test
     fun `constructs uri if only relative present`() {
         val env = Environment.defaults(
-            AWS_CONTAINER_CREDENTIALS_FULL_URI of Uri.of("http://foobar/fullpath"),
-            AWS_CONTAINER_CREDENTIALS_RELATIVE_URI of Uri.of("randompath")
+            AWS_CONTAINER_CREDENTIALS_RELATIVE_URI of Uri.of("/randompath")
         )
+
         assertThat(
             AWS_CONTAINER_CREDENTIALS_FULL_URI[env],
             equalTo(Uri.of("http://169.254.170.2/randompath"))
@@ -36,11 +38,11 @@ class EnvironmentUriTest {
     }
 
     @Test
-    fun `bloes up if neither present`() {
+    fun `blows up if neither present`() {
         val env = EMPTY
-        assertThat(
-            AWS_CONTAINER_CREDENTIALS_FULL_URI[env],
-            equalTo(Uri.of("http://foobar"))
-        )
+
+        assertThrows<LensFailure> {
+            AWS_CONTAINER_CREDENTIALS_RELATIVE_URI[env]
+        }
     }
 }

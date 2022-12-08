@@ -13,7 +13,7 @@ import org.http4k.filter.ClientFilters.SetXForwardedHost
  */
 fun ContainerCredentials.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
-    token: ContainerCredentialsAuthToken?
+    token: ContainerCredentialsAuthToken? = null
 ) = object : ContainerCredentials {
 
     private val credentialsHttp = when (token) {
