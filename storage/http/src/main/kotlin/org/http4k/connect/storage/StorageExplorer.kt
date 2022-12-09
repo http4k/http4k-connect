@@ -37,7 +37,7 @@ inline fun <reified T : Any> Storage<T>.asHttpHandler(
     storageSecurity: Security = NoSecurity
 ): HttpHandler {
 
-    val static = static(Classpath("/META-INF/resources/webjars/swagger-ui/4.15.5"))
+    val static = static(Classpath("/www"))
 
     return ServerFilters.Cors(UnsafeGlobalPermissive).then(
         routes(
@@ -53,11 +53,7 @@ inline fun <reified T : Any> Storage<T>.asHttpHandler(
                     delete(this@asHttpHandler)
                 )
             },
-            "/" bind GET to {
-                if (it.uri.toString() == "/") Response(Status.FOUND).header("location", "?url=/api/openapi")
-                else static(it)
-            },
-            static
+            "/" bind GET to static
         )
     )
 }
