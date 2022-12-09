@@ -5,7 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.25.5.0
 - **http4k-connect-amazon-containercredentials** - Support passing of full CC URL and auth token header. This makes us compatible with AWS Snapstart
--. 
+- **http4k-connect-storage-http** - Replace Swagger UI implementation.
 - **http4k-connect-*** - Upgrade dependencies.
 
 ### v3.25.4.0
