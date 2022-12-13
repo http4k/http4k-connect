@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### uncut
+- **http4k-connect-amazon-dynamodb** - Add tableMapper batchGet and batchDelete operations
+
 ### v3.25.5.0
 - **http4k-connect-amazon-containercredentials** - Support passing of full CC URL and auth token header. This makes us compatible with AWS Snapstart
 - **http4k-connect-storage-http** - Replace Swagger UI implementation.

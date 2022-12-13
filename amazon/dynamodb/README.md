@@ -89,7 +89,7 @@ It is also possible to `map()` lenses to provide marshalling into your own types
 ### DAO-Style Dynamo Table Mapper
 
 Building on top of the existing lens-based object mapper is a DAO-style abstraction to simplify repositories.
-Many of the lower-level operations are abstracted away to provide a simple model-based interface.
+Many of the lower-level operations are abstracted away to provide a simple typesafe interface.
 
 To begin creating a DAO, let's define a model to map:
 
