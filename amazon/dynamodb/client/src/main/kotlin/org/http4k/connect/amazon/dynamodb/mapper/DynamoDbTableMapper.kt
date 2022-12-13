@@ -39,6 +39,8 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
     }
 
     fun batchGet(keys: Collection<Pair<HashKey, SortKey?>>): Sequence<Document> {
+        if (keys.isEmpty()) return emptySequence()
+
         return keys
             .asSequence()
             .map { primarySchema.key(it.first, it.second) }

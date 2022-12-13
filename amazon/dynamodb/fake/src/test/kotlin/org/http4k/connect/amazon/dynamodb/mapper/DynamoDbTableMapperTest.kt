@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.isEmpty
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDb
 import org.http4k.connect.amazon.dynamodb.model.*
@@ -148,6 +149,12 @@ class DynamoDbTableMapperTest {
         ).toList()
 
         assertThat(results, equalTo(listOf(smokie, bandit)))
+    }
+
+    @Test
+    fun `get empty batch`() {
+        val batchGetResult = tableMapper.batchGet(emptyList()).toList()
+        assertThat(batchGetResult, isEmpty)
     }
 
     @Test
