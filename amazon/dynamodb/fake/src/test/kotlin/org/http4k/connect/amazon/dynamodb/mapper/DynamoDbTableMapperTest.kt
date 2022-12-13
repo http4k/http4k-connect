@@ -11,6 +11,7 @@ import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import java.util.UUID
 
 private val ownerIdAttr = Attribute.uuid().required("ownerId")
@@ -120,6 +121,20 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
+    fun `delete batch by ids`() {
+        tableMapper.batchDelete(smokie.id, bandit.id)
+
+        assertThat(table().items, hasSize(equalTo(1)))
+    }
+
+    @Test
+    fun `delete batch by keys`() {
+        tableMapper.batchDelete(listOf(smokie.id to null, bandit.id to null))
+
+        assertThat(table().items, hasSize(equalTo(1)))
+    }
+
+    @Test
     fun `delete table`() {
         tableMapper.deleteTable().successValue()
         assertThat(storage["cats"], absent())
@@ -133,5 +148,22 @@ class DynamoDbTableMapperTest {
         ).toList()
 
         assertThat(results, equalTo(listOf(smokie, bandit)))
+    }
+
+    @Test
+    fun `get batch`() {
+        val cats = (1..150).map { index ->
+            Cat(
+                ownerId = UUID.randomUUID(),
+                id = UUID.randomUUID(),
+                name = "cat$index",
+                born = LocalDate.EPOCH
+            )
+        }
+
+        tableMapper += cats
+
+        val batchGetResult = tableMapper[cats.map { it.id }].toList()
+        assertThat(batchGetResult, equalTo(cats))
     }
 }

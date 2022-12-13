@@ -10,7 +10,8 @@ import dev.forkhandles.result4k.Result
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.autoDynamoLens
 
-private const val batchSizeLimit = 25  // as defined by DynamoDB
+private const val BATCH_PUT_LIMIT = 25  // as defined by DynamoDB
+private const val BATCH_GET_LIMIT = 100 // as defined by DynamoDB
 
 class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
     private val dynamoDb: DynamoDb,
@@ -37,10 +38,29 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ?.let(itemLens)
     }
 
+    operator fun get(vararg keys: HashKey) = get(keys.toList())
+    operator fun get(keys: Collection<HashKey>) = get(keys.map { it to null })
+
+    @JvmName("getCompound")
+    operator fun get(keys: Collection<Pair<HashKey, SortKey?>>): Sequence<Document> {
+        return keys
+            .asSequence()
+            .map { primarySchema.key(it.first, it.second) }
+            .chunked(BATCH_GET_LIMIT)
+            .flatMap { chunk ->
+                val response = dynamoDb.batchGetItem(mapOf(
+                    tableName to ReqGetItem.Get(chunk)
+                )).onFailure { it.reason.throwIt() }
+
+                response.Responses?.get(tableName.value).orEmpty()
+            }
+            .map(itemLens)
+    }
+
     operator fun plusAssign(documents: Collection<Document>) {
         if (documents.isEmpty()) return
 
-        for (chunk in documents.chunked(batchSizeLimit)) {
+        for (chunk in documents.chunked(BATCH_PUT_LIMIT)) {
             val batch = chunk.map { obj ->
                 val item = Item().with(itemLens of obj)
                 ReqWriteItem.Put(item)
@@ -73,10 +93,19 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         )
     }
 
-    operator fun minusAssign(documents: Collection<Document>) {
-        val keys = documents.map { it.key() }
+    operator fun minusAssign(documents: Collection<Document>) = batchDeleteKeys(documents.map { it.key() })
 
-        for (chunk in keys.chunked(batchSizeLimit)) {
+    fun batchDelete(vararg hashKeys: HashKey) = batchDelete(hashKeys.toList())
+
+    fun batchDelete(hashKeys: Collection<HashKey>) = batchDeleteKeys(hashKeys.map { primarySchema.key(it, null) })
+
+    @JvmName("batchDeleteCompound")
+    fun batchDelete(keys: Collection<Pair<HashKey, SortKey?>>) {
+        batchDeleteKeys(keys.map { primarySchema.key(it.first, it.second) })
+    }
+
+    private fun batchDeleteKeys(keys: Collection<Key>) {
+        for (chunk in keys.chunked(BATCH_PUT_LIMIT)) {
             val batch = chunk.map { key ->
                 ReqWriteItem.Delete(key)
             }
