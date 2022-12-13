@@ -161,7 +161,7 @@ and delete them:
 
 ```kotlin
 // by model
-table -= cat
+table.delete(cat)
 
 // by key
 table.delete(cat.id)

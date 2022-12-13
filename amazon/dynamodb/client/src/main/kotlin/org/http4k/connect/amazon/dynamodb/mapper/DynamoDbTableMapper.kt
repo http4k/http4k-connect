@@ -38,11 +38,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ?.let(itemLens)
     }
 
-    operator fun get(vararg keys: HashKey) = get(keys.toList())
-    operator fun get(keys: Collection<HashKey>) = get(keys.map { it to null })
-
-    @JvmName("getCompound")
-    operator fun get(keys: Collection<Pair<HashKey, SortKey?>>): Sequence<Document> {
+    fun batchGet(keys: Collection<Pair<HashKey, SortKey?>>): Sequence<Document> {
         return keys
             .asSequence()
             .map { primarySchema.key(it.first, it.second) }
@@ -57,7 +53,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
             .map(itemLens)
     }
 
-    operator fun plusAssign(documents: Collection<Document>) {
+    fun batchSave(documents: Collection<Document>) {
         if (documents.isEmpty()) return
 
         for (chunk in documents.chunked(BATCH_PUT_LIMIT)) {
@@ -71,7 +67,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         }
     }
 
-    operator fun plusAssign(document: Document) {
+    fun save(document: Document) {
         val item = Item().with(itemLens of document)
 
         dynamoDb.putItem(tableName, item)
@@ -85,7 +81,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         )
     }
 
-    operator fun minusAssign(document: Document) {
+    fun delete(document: Document) {
         val item = Item().with(itemLens of document)
         return delete(
             hashKey = primarySchema.hashKeyAttribute(item),
@@ -93,13 +89,9 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         )
     }
 
-    operator fun minusAssign(documents: Collection<Document>) = batchDeleteKeys(documents.map { it.key() })
+    fun batchDelete(documents: Collection<Document>) = batchDeleteKeys(documents.map { it.key() })
 
-    fun batchDelete(vararg hashKeys: HashKey) = batchDelete(hashKeys.toList())
-
-    fun batchDelete(hashKeys: Collection<HashKey>) = batchDeleteKeys(hashKeys.map { primarySchema.key(it, null) })
-
-    @JvmName("batchDeleteCompound")
+    @JvmName("batchDeleteKeyPairs")
     fun batchDelete(keys: Collection<Pair<HashKey, SortKey?>>) {
         batchDeleteKeys(keys.map { primarySchema.key(it.first, it.second) })
     }

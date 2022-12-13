@@ -3,6 +3,9 @@ import org.http4k.connect.amazon.dynamodb.Http
 import java.util.UUID
 
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapperSchema
+import org.http4k.connect.amazon.dynamodb.mapper.batchDelete
+import org.http4k.connect.amazon.dynamodb.mapper.get
+import org.http4k.connect.amazon.dynamodb.mapper.plusAssign
 import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.IndexName
@@ -61,7 +64,7 @@ fun main() {
     val ownerCats = table.index(ownerIndex).query(owner2).take(100)
 
     // delete documents
-    table -= tigger // ...individually
+    table.delete(tigger) // ...individually
     table.delete(smokie.id)  // ...by key
     table.batchDelete(smokie.id, bandit.id) // ...batched
 }
