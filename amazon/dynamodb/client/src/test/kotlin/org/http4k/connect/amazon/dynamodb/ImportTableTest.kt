@@ -7,6 +7,8 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import org.http4k.aws.AwsCredentials
 import org.http4k.aws.AwsSdkClient
+import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.configAwsEnvironment
 import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.BillingMode.PAY_PER_REQUEST
@@ -21,10 +23,12 @@ import org.http4k.connect.amazon.dynamodb.model.KeyType
 import org.http4k.connect.amazon.dynamodb.model.S3BucketSource
 import org.http4k.connect.amazon.dynamodb.model.TableCreationParameters
 import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.filter.debug
 import org.http4k.format.MapAdapter
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -34,9 +38,9 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.ImportTableRequest
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
 import software.amazon.awssdk.services.dynamodb.model.BillingMode as AwsBillingMode
-import software.amazon.awssdk.services.dynamodb.model.KeyType as AwsKeyType
-import software.amazon.awssdk.services.dynamodb.model.InputFormat as AwsInputFormat
 import software.amazon.awssdk.services.dynamodb.model.InputCompressionType as AwsInputCompressionType
+import software.amazon.awssdk.services.dynamodb.model.InputFormat as AwsInputFormat
+import software.amazon.awssdk.services.dynamodb.model.KeyType as AwsKeyType
 
 class ImportTableTest {
     @Test
@@ -92,6 +96,28 @@ class ImportTableTest {
         assertThat(http4kClientRequest?.tableCreationParameters, equalTo(awsClientRequest?.tableCreationParameters))
 
     }
+
+    @Test
+    fun `requests a table import from S3`() {
+        val aws = configAwsEnvironment()
+        val ddb = DynamoDb.Http(aws.region, { aws.credentials }, JavaHttpClient().debug(debugStream = true))
+        
+        val response = ddb.importTable(
+            ClientToken = ClientToken.of("6a5456c2-d3ad-4fc8-9f40-ff94ccccfe3c"),
+            InputCompressionType = InputCompressionType.NONE,
+            S3BucketSource = S3BucketSource(S3Bucket = "ac-test-dynamodb-import"),
+            InputFormat = InputFormat.CSV,
+            InputFormatOptions = InputFormatOptions(CsvOptions(Delimiter = ',')),
+            TableCreationParameters = TableCreationParameters(
+                KeySchema = listOf(KeySchema(AttributeName.of("UPRN"), KeyType.HASH)),
+                TableName = TableName.of("ac-test-dynamodb-import"),
+                AttributeDefinitions = listOf(AttributeDefinition(AttributeName.of("UPRN"), AttributeType = S)),
+                BillingMode = PAY_PER_REQUEST
+            )
+        ).successValue()
+    }
+
+   
 }
 
 private fun Request.json() = adapter.fromJson(this.bodyString())
