@@ -2,23 +2,45 @@ package org.http4k.connect.amazon.dynamodb
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import org.http4k.aws.AwsCredentials
 import org.http4k.aws.AwsSdkClient
+import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
+import org.http4k.connect.amazon.dynamodb.model.AttributeName
+import org.http4k.connect.amazon.dynamodb.model.BillingMode.PAY_PER_REQUEST
+import org.http4k.connect.amazon.dynamodb.model.ClientToken
+import org.http4k.connect.amazon.dynamodb.model.CsvOptions
+import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.S
+import org.http4k.connect.amazon.dynamodb.model.InputCompressionType
+import org.http4k.connect.amazon.dynamodb.model.InputFormat
+import org.http4k.connect.amazon.dynamodb.model.InputFormatOptions
+import org.http4k.connect.amazon.dynamodb.model.KeySchema
+import org.http4k.connect.amazon.dynamodb.model.KeyType
+import org.http4k.connect.amazon.dynamodb.model.S3BucketSource
+import org.http4k.connect.amazon.dynamodb.model.TableCreationParameters
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.format.MapAdapter
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.ImportTableRequest
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
+import software.amazon.awssdk.services.dynamodb.model.BillingMode as AwsBillingMode
+import software.amazon.awssdk.services.dynamodb.model.KeyType as AwsKeyType
+import software.amazon.awssdk.services.dynamodb.model.InputFormat as AwsInputFormat
+import software.amazon.awssdk.services.dynamodb.model.InputCompressionType as AwsInputCompressionType
 
 class ImportTableTest {
     @Test
-    fun `request using AWS client`() {
+    fun `sends same request as AWS SDK client`() {
         var awsClientRequest: Request? = null
         val awsDdb = awsClient(recordingRequest { awsClientRequest = it })
         var http4kClientRequest: Request? = null
@@ -27,35 +49,81 @@ class ImportTableTest {
         awsDdb.importTable(
             ImportTableRequest.builder()
                 .clientToken("client token")
-                .s3BucketSource {
-                    it
-                        .s3Bucket("bucketName")
-                        .s3BucketOwner("owner")
-                        .s3KeyPrefix("prefix")
+                .inputCompressionType(AwsInputCompressionType.NONE)
+                .s3BucketSource { it.s3Bucket("bucket").s3BucketOwner("owner").s3KeyPrefix("prefix") }
+                .inputFormat(AwsInputFormat.CSV)
+                .inputFormatOptions { 
+                    it.csv { csv -> csv.delimiter(",").headerList("header 1", "header 2") }
+                }
+                .tableCreationParameters { table ->
+                    table
+                        .keySchema({
+                            it.attributeName("key").keyType(AwsKeyType.HASH)
+                        })
+                        .tableName("test")
+                        .attributeDefinitions({ it.attributeName("key").attributeType(ScalarAttributeType.S) })
+                        .billingMode(AwsBillingMode.PAY_PER_REQUEST)
                 }
                 .build()
         )
-        http4kDdb.importTable(TableName.of("table"))
+        http4kDdb.importTable(
+            ClientToken = ClientToken.of("client token"),
+            InputCompressionType = InputCompressionType.NONE,
+            S3BucketSource = S3BucketSource(S3Bucket = "bucket", S3BucketOwner = "owner", S3KeyPrefix = "prefix"),
+            InputFormat = InputFormat.CSV,
+            InputFormatOptions = InputFormatOptions(CsvOptions(Delimiter = ',', HeaderList = listOf("header 1", "header 2"))),
+            TableCreationParameters = TableCreationParameters(
+                KeySchema = listOf(KeySchema(AttributeName.of("key"), KeyType.HASH)),
+                TableName = TableName.of("test"),
+                AttributeDefinitions = listOf(AttributeDefinition(AttributeName.of("key"), AttributeType = S)),
+                BillingMode = PAY_PER_REQUEST
+            )
+        )
 
-        println(awsClientRequest)
-        assertThat(awsClientRequest?.header("X-Amz-Target"), equalTo("DynamoDB_20120810.ImportTable"))
-        assertThat(http4kClientRequest?.header("X-Amz-Target"), equalTo("DynamoDB_20120810.ImportTable"))
+        println(awsClientRequest?.bodyString())
+        println(http4kClientRequest?.bodyString())
+        
+        assertThat(http4kClientRequest?.header("X-Amz-Target"), equalTo(awsClientRequest?.header("X-Amz-Target")))
+        assertThat(http4kClientRequest?.clientToken, equalTo(awsClientRequest?.clientToken))
+        assertThat(http4kClientRequest?.inputCompressionType, equalTo(awsClientRequest?.inputCompressionType))
+        assertThat(http4kClientRequest?.inputFormat, equalTo(awsClientRequest?.inputFormat))
+        assertThat(http4kClientRequest?.inputFormatOptions, equalTo(awsClientRequest?.inputFormatOptions))
+        assertThat(http4kClientRequest?.s3BucketSource, equalTo(awsClientRequest?.s3BucketSource))
+        assertThat(http4kClientRequest?.tableCreationParameters, equalTo(awsClientRequest?.tableCreationParameters))
 
     }
-
-    private fun http4kClient(http: HttpHandler) = DynamoDb.Http(
-        org.http4k.connect.amazon.core.model.Region.AF_SOUTH_1,
-        { AwsCredentials("id", "secret") },
-        http
-    )
-
-    private fun awsClient(http: HttpHandler) =
-        DynamoDbClient.builder()
-            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("id", "secret")))
-            .region(Region.AF_SOUTH_1)
-            .httpClient(AwsSdkClient(http))
-            .build()
-
-    private fun recordingRequest(recordRequest: (Request) -> Unit): HttpHandler =
-        { r -> Response(Status.OK).body("{}").also { recordRequest(r) } }
 }
+
+private fun Request.json() = adapter.fromJson(this.bodyString())
+
+private val Request.clientToken: String? get() = json()?.get("ClientToken")?.let { it as String }
+private val Request.s3BucketSource: Map<String, String>? get() = json()?.get("S3BucketSource")?.let { it as Map<String, String> }
+private val Request.inputCompressionType: String? get() = json()?.get("InputCompressionType")?.let { it as String }
+private val Request.inputFormat: String? get() = json()?.get("InputFormat")?.let { it as String }
+private val Request.inputFormatOptions: Map<String, String>? get() = json()?.get("InputFormatOptions")?.let { it as Map<String, String> }
+private val Request.tableCreationParameters: Map<String, String>? get() = json()?.get("TableCreationParameters")?.let { it as Map<String, String> }
+
+private val moshi = Moshi.Builder().add(MapAdapter).build()
+private val adapter: JsonAdapter<Map<String, Any>> = moshi.adapter(
+    Types.newParameterizedType(
+        MutableMap::class.java,
+        String::class.java,
+        Any::class.java
+    )
+)
+
+private fun http4kClient(http: HttpHandler) = DynamoDb.Http(
+    org.http4k.connect.amazon.core.model.Region.AF_SOUTH_1,
+    { AwsCredentials("id", "secret") },
+    http
+)
+
+private fun awsClient(http: HttpHandler) =
+    DynamoDbClient.builder()
+        .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("id", "secret")))
+        .region(Region.AF_SOUTH_1)
+        .httpClient(AwsSdkClient(http))
+        .build()
+
+private fun recordingRequest(recordRequest: (Request) -> Unit): HttpHandler =
+    { r -> Response(Status.OK).body("{}").also { recordRequest(r) } }
