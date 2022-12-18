@@ -1,7 +1,10 @@
 package org.http4k.connect.amazon.dynamodb
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThanOrEqualTo
+import com.natpryce.hamkrest.present
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -9,12 +12,14 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.aws.AwsSdkClient
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.configAwsEnvironment
+import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.BillingMode.PAY_PER_REQUEST
 import org.http4k.connect.amazon.dynamodb.model.ClientToken
 import org.http4k.connect.amazon.dynamodb.model.CsvOptions
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType.S
+import org.http4k.connect.amazon.dynamodb.model.ImportStatus
 import org.http4k.connect.amazon.dynamodb.model.InputCompressionType
 import org.http4k.connect.amazon.dynamodb.model.InputFormat
 import org.http4k.connect.amazon.dynamodb.model.InputFormatOptions
@@ -101,20 +106,44 @@ class ImportTableTest {
     fun `requests a table import from S3`() {
         val aws = configAwsEnvironment()
         val ddb = DynamoDb.Http(aws.region, { aws.credentials }, JavaHttpClient().debug(debugStream = true))
-        
+
+        val clientToken = ClientToken.random()
+        val tableCreationParameters = TableCreationParameters(
+            KeySchema = listOf(KeySchema(AttributeName.of("UPRN"), KeyType.HASH)),
+            TableName = TableName.of("ac-test-dynamodb-import-1"),
+            AttributeDefinitions = listOf(AttributeDefinition(AttributeName.of("UPRN"), AttributeType = S)),
+            BillingMode = PAY_PER_REQUEST
+        )
         val response = ddb.importTable(
-            ClientToken = ClientToken.of("6a5456c2-d3ad-4fc8-9f40-ff94ccccfe3c"),
+            ClientToken = clientToken,
             InputCompressionType = InputCompressionType.NONE,
-            S3BucketSource = S3BucketSource(S3Bucket = "ac-test-dynamodb-import"),
+            S3BucketSource = S3BucketSource(S3Bucket = "i-do-not-exist"),
             InputFormat = InputFormat.CSV,
             InputFormatOptions = InputFormatOptions(CsvOptions(Delimiter = ',')),
-            TableCreationParameters = TableCreationParameters(
-                KeySchema = listOf(KeySchema(AttributeName.of("UPRN"), KeyType.HASH)),
-                TableName = TableName.of("ac-test-dynamodb-import"),
-                AttributeDefinitions = listOf(AttributeDefinition(AttributeName.of("UPRN"), AttributeType = S)),
-                BillingMode = PAY_PER_REQUEST
-            )
+            TableCreationParameters = tableCreationParameters
         ).successValue()
+
+        assertThat(response.ImportTableDescription.ClientToken, equalTo(clientToken))
+        assertThat(response.ImportTableDescription.CloudWatchLogGroupArn, absent())
+        assertThat(response.ImportTableDescription.EndTime, absent())
+        assertThat(response.ImportTableDescription.ErrorCount, equalTo(0))
+        assertThat(response.ImportTableDescription.FailureCode, absent())
+        assertThat(response.ImportTableDescription.FailureMessage, absent())
+        assertThat(response.ImportTableDescription.ImportArn?.awsService, equalTo(AwsService.of("dynamodb")))
+        assertThat(response.ImportTableDescription.ImportStatus, equalTo(ImportStatus.IN_PROGRESS))
+        assertThat(response.ImportTableDescription.InputCompressionType, equalTo(InputCompressionType.NONE))
+        assertThat(response.ImportTableDescription.InputFormat, equalTo(InputFormat.CSV))
+        assertThat(
+            response.ImportTableDescription.InputFormatOptions,
+            equalTo(InputFormatOptions(CsvOptions(Delimiter = ',')))
+        )
+        assertThat(response.ImportTableDescription.ProcessedItemCount, present(greaterThanOrEqualTo(0)))
+        assertThat(response.ImportTableDescription.ProcessedSizeBytes, absent())
+        assertThat(response.ImportTableDescription.S3BucketSource?.S3Bucket, equalTo("i-do-not-exist"))
+        assertThat(response.ImportTableDescription.StartTime, present())
+        assertThat(response.ImportTableDescription.TableArn?.awsService, equalTo(AwsService.of("dynamodb")))
+        assertThat(response.ImportTableDescription.TableCreationParameters, equalTo(tableCreationParameters))
+        assertThat(response.ImportTableDescription.TableId, present())
     }
 
    
