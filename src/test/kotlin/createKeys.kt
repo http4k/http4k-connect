@@ -10,11 +10,11 @@ object KeyTool {
     private val keyFactory = KeyFactory.getInstance(algorithm)
 
     fun loadKeyPair(): Pair<RSAPublicKey, RSAPrivateKey> {
-        val privateKey = javaClass.getResourceAsStream("/connectKey.priv").use {
+        val privateKey = javaClass.getResourceAsStream("/liveKey.priv").use {
             keyFactory.generatePrivate(PKCS8EncodedKeySpec(it.readBytes())) as RSAPrivateKey
         }
 
-        val publicKey = javaClass.getResourceAsStream("/connectKey.pub").use {
+        val publicKey = javaClass.getResourceAsStream("/liveKey.pub").use {
             keyFactory.generatePublic(X509EncodedKeySpec(it.readBytes())) as RSAPublicKey
         }
 
