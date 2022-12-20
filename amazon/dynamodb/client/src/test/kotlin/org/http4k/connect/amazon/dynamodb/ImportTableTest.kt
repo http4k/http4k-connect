@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThanOrEqualTo
+import com.natpryce.hamkrest.or
 import com.natpryce.hamkrest.present
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -133,10 +134,7 @@ class ImportTableTest {
         assertThat(response.ImportTableDescription.ImportStatus, equalTo(ImportStatus.IN_PROGRESS))
         assertThat(response.ImportTableDescription.InputCompressionType, equalTo(InputCompressionType.NONE))
         assertThat(response.ImportTableDescription.InputFormat, equalTo(InputFormat.CSV))
-        assertThat(
-            response.ImportTableDescription.InputFormatOptions,
-            equalTo(InputFormatOptions(CsvOptions(Delimiter = ',')))
-        )
+        assertThat(response.ImportTableDescription.InputFormatOptions, equalTo(InputFormatOptions(CsvOptions(Delimiter = ','))))
         assertThat(response.ImportTableDescription.ProcessedItemCount, present(greaterThanOrEqualTo(0)))
         assertThat(response.ImportTableDescription.ProcessedSizeBytes, absent())
         assertThat(response.ImportTableDescription.S3BucketSource?.S3Bucket, equalTo("i-do-not-exist"))
@@ -144,9 +142,11 @@ class ImportTableTest {
         assertThat(response.ImportTableDescription.TableArn?.awsService, equalTo(AwsService.of("dynamodb")))
         assertThat(response.ImportTableDescription.TableCreationParameters, equalTo(tableCreationParameters))
         assertThat(response.ImportTableDescription.TableId, present())
+        
+        val describe = ddb.describeImport(response.ImportTableDescription.ImportArn!!).successValue()
+        assertThat(describe.ImportTableDescription.ImportStatus, equalTo(ImportStatus.FAILED).or(equalTo(ImportStatus.IN_PROGRESS)))
+        
     }
-
-   
 }
 
 private fun Request.json() = adapter.fromJson(this.bodyString())
