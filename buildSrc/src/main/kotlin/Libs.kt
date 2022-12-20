@@ -55,6 +55,8 @@ object Libs {
 
     const val http4k_format_moshi: String = "org.http4k:http4k-format-moshi"
 
+    const val http4k_security_oauth: String = "org.http4k:http4k-security-oauth"
+
     const val http4k_serverless_lambda: String = "org.http4k:http4k-serverless-lambda"
 
     const val http4k_template_handlebars: String = "org.http4k:http4k-template-handlebars"

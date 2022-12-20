@@ -19,12 +19,12 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class CognitoContract(http: HttpHandler) : AwsContract() {
-    private val cognito by lazy {
+abstract class CognitoContract(val http: HttpHandler) : AwsContract() {
+    val cognito by lazy {
         Cognito.Http(aws.region, { aws.credentials }, http)
     }
 
-    private val poolName = PoolName.of(UUID.randomUUID().toString())
+    protected val poolName = PoolName.of(UUID.randomUUID().toString())
 
     @Test
     @Disabled

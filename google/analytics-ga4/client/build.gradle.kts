@@ -5,7 +5,7 @@ dependencies {
     }
     implementation(Libs.api)
 
-    kapt("com.google.devtools.ksp:symbol-processing-api:1.5.31-1.0.1")
+    kapt(libs.symbol.processing.api)
     kapt(Libs.se_ansman_kotshi_compiler)
 
     implementation(Libs.http4k_format_core)
