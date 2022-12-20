@@ -50,11 +50,11 @@ class AnotherImportTableTest {
             InputFormat = InputFormat.CSV,
             InputFormatOptions = InputFormatOptions(CsvOptions(Delimiter = ',')),
             TableCreationParameters = TableCreationParameters(
-                KeySchema = listOf(KeySchema(AttributeName.of("UPRN"), KeyType.HASH)),
+                KeySchema = listOf(KeySchema(AttributeName.of("ID"), KeyType.HASH)),
                 TableName = TableName.sample(),
                 AttributeDefinitions = listOf(
                     AttributeDefinition(
-                        AttributeName.of("UPRN"),
+                        AttributeName.of("ID"),
                         AttributeType = DynamoDataType.S
                     )
                 ),
@@ -64,6 +64,7 @@ class AnotherImportTableTest {
         ).successValue()
 
         var importStatus = dynamo.describeImport(requestedImport.ImportTableDescription.ImportArn!!).successValue()
+        val imports = dynamo.listImports()
         var n = 0
         while (n++ < 5 && importStatus.ImportTableDescription.ImportStatus == ImportStatus.IN_PROGRESS) {
             waitForUpdate()
