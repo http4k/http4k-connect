@@ -4,6 +4,7 @@ import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
+import org.http4k.connect.amazon.cognito.model.TokenValidityUnit.hours
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.ResourceId
@@ -354,21 +355,25 @@ data class AnalyticsConfiguration(
 
 @JsonSerializable
 data class TokenValidityUnits(
-    val AccessToken: AccessToken? = null,
-    val IdToken: IdToken? = null,
-    val RefreshToken: RefreshToken? = null
+    val AccessToken: TokenValidityUnit = hours,
+    val IdToken: TokenValidityUnit = hours,
+    val RefreshToken: TokenValidityUnit = hours
 )
+
+enum class TokenValidityUnit {
+    days, hours, minutes, seconds
+}
 
 @JsonSerializable
 data class UserPoolClient(
     val ClientId: ClientId,
     val ClientName: ClientName,
     val UserPoolId: UserPoolId,
-    val AllowedOAuthFlowsUserPoolClient: Boolean,
     val CreationDate: Timestamp,
     val LastModifiedDate: Timestamp,
     val RefreshTokenValidity: Int,
     val TokenValidityUnits: TokenValidityUnits,
+    val AllowedOAuthFlowsUserPoolClient: Boolean? = null,
     val AllowedOAuthFlows: List<OAuthFlow>? = null,
     val ClientSecret: ClientSecret? = null,
     val AccessTokenValidity: Int? = null,

@@ -12,7 +12,12 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
     inline fun <reified Req : Any> route(crossinline fn: (Req) -> Any?) =
         header("X-Amz-Target", "${awsService}.${Req::class.simpleName!!.removeSuffix("Request")}") bind {
             fn(autoMarshalling.asA(it.bodyString(), Req::class))
-                ?.let { Response(OK).body(autoMarshalling.asFormatString(it)) }
+                ?.let {
+                    when (it) {
+                        is Unit -> Response(OK)
+                        else -> Response(OK).body(autoMarshalling.asFormatString(it))
+                    }
+                }
                 ?: Response(BAD_REQUEST)
                     .body(
                         autoMarshalling.asFormatString(

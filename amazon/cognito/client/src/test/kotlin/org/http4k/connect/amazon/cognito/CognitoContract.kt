@@ -23,7 +23,6 @@ import org.http4k.core.Request
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters
-import org.http4k.filter.debug
 import org.http4k.security.AccessTokenResponse
 import org.http4k.security.oauth.client.OAuthClientCredentials
 import org.http4k.security.oauth.server.OAuthServerMoshi
@@ -33,7 +32,7 @@ import java.util.UUID
 
 abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     private val cognito by lazy {
-        Cognito.Http(aws.region, { aws.credentials }, http.debug())
+        Cognito.Http(aws.region, { aws.credentials }, http)
     }
 
     private val poolName = PoolName.of(UUID.randomUUID().toString())
@@ -47,7 +46,6 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     }
 
     @Test
-    @Disabled
     open fun `can get access token using client credentials`() {
         val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!
 
@@ -71,7 +69,7 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
                 val client = ClientFilters.OAuthClientCredentials(clientCredentials, listOf("scope/Name"))
                     .then(ClientFilters.BasicAuth(clientCredentials))
                     .then(ClientFilters.SetBaseUriFrom(Uri.of("https://$domain.auth.${aws.region}.amazoncognito.com")))
-                    .then(http.debug())
+                    .then(http)
 
                 val response = client(Request(POST, "/oauth2/token"))
                 val token = OAuthServerMoshi.autoBody<AccessTokenResponse>().toLens()(response)

@@ -16,7 +16,9 @@ import java.time.Duration
 import java.util.UUID
 
 fun clientCredentialsToken(clock: Clock, expiry: Duration, storage: Storage<CognitoPool>) =
-    "/oauth2/token/" bind POST to ServerFilters.BasicAuth("") { storage[it.user] != null }
+    "/oauth2/token/" bind POST to ServerFilters.BasicAuth("") { creds ->
+        storage.keySet().any { storage[it]!!.clients.any { it.ClientName.value.reversed() == creds.password } }
+    }
         .then { req: Request ->
             val key = (req.header("Authorization") ?: "") + clock.instant().toEpochMilli()
             Response(OK).body(
