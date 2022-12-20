@@ -4,8 +4,6 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
-import org.http4k.connect.amazon.cognito.action.CreateResourceServer
-import org.http4k.connect.amazon.cognito.action.CreateUserPoolClient
 import org.http4k.connect.amazon.cognito.endpoints.clientCredentialsToken
 import org.http4k.connect.amazon.cognito.endpoints.createResourceServer
 import org.http4k.connect.amazon.cognito.endpoints.createUserPool
@@ -13,8 +11,6 @@ import org.http4k.connect.amazon.cognito.endpoints.createUserPoolClient
 import org.http4k.connect.amazon.cognito.endpoints.createUserPoolDomain
 import org.http4k.connect.amazon.cognito.endpoints.deleteUserPool
 import org.http4k.connect.amazon.cognito.endpoints.deleteUserPoolDomain
-import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
-import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.storage.InMemory
@@ -50,10 +46,3 @@ class FakeCognito(
 fun main() {
     FakeCognito().start()
 }
-
-data class CognitoPool(
-    val name: PoolName,
-    val clients: MutableList<CreateUserPoolClient> = mutableListOf(),
-    val domains: MutableList<CloudFrontDomain> = mutableListOf(),
-    val resourceServers: MutableList<CreateResourceServer> = mutableListOf()
-)

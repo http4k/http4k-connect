@@ -15,15 +15,19 @@ import java.time.Clock
 import java.time.Duration
 import java.util.UUID
 
+/**
+ * We only check here for the existence of the client ID in order to issue a token
+ */
 fun clientCredentialsToken(clock: Clock, expiry: Duration, storage: Storage<CognitoPool>) =
     "/oauth2/token/" bind POST to ServerFilters.BasicAuth("") { creds ->
-        storage.keySet().any { storage[it]!!.clients.any { it.ClientName.value.reversed() == creds.password } }
+        storage.keySet().any { storage[it]!!.clients.any { it.ClientId.value == creds.user } }
     }
         .then { req: Request ->
             val key = (req.header("Authorization") ?: "") + clock.instant().toEpochMilli()
             Response(OK).body(
                 OAuthServerMoshi.asFormatString(
                     AccessTokenResponse(
+                        // TODO - replace with a JWT
                         UUID.nameUUIDFromBytes(key.toByteArray()).toString(),
                         "Bearer",
                         expiry.seconds
