@@ -3,8 +3,11 @@ package org.http4k.connect.amazon.dynamodb
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.Success
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.configAwsEnvironment
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.dynamodb.action.DescribedTable
 import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
@@ -35,6 +38,7 @@ import org.http4k.connect.successValue
 import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.Instant
 import java.util.*
 
 class AnotherImportTableTest {
@@ -63,16 +67,12 @@ class AnotherImportTableTest {
             )
         ).successValue()
 
-        var importStatus = dynamo.describeImport(requestedImport.ImportTableDescription.ImportArn!!).successValue()
+        val importArn = requestedImport.ImportTableDescription.ImportArn!!
+        val importStatus = dynamo.describeImport(importArn).successValue()
         val imports = dynamo.listImports(TableArn = importStatus.ImportTableDescription.TableArn).successValue()
         assertThat(imports.ImportSummaryList.map { it.ImportArn }.contains(importStatus.ImportTableDescription.ImportArn), equalTo(true))
-        var n = 0
-        while (n++ < 5 && importStatus.ImportTableDescription.ImportStatus == ImportStatus.IN_PROGRESS) {
-            waitForUpdate()
-            importStatus = dynamo.describeImport(requestedImport.ImportTableDescription.ImportArn!!).successValue()
-        }
-
-        assertThat(importStatus.ImportTableDescription.ImportStatus, equalTo(ImportStatus.FAILED))
+        dynamo.waitForImportFinished(importArn)
+        assertThat(dynamo.describeImport(importArn).successValue().ImportTableDescription.ImportStatus, equalTo(ImportStatus.FAILED))
     }
 
     @Test
@@ -111,14 +111,10 @@ class AnotherImportTableTest {
                 )
             ).successValue()
 
-            var importStatus = dynamo.describeImport(requestedImport.ImportTableDescription.ImportArn!!).successValue()
-            var n = 0
-            while (n++ < 20 && importStatus.ImportTableDescription.ImportStatus == ImportStatus.IN_PROGRESS) {
-                waitForUpdate()
-                importStatus = dynamo.describeImport(requestedImport.ImportTableDescription.ImportArn!!).successValue()
-            }
+            val importArn = requestedImport.ImportTableDescription.ImportArn!!
+            dynamo.waitForImportFinished(importArn, timeout = Duration.ofMinutes(3))
 
-            assertThat(importStatus.ImportTableDescription.ImportStatus, equalTo(ImportStatus.COMPLETED))
+            assertThat(dynamo.describeImport(importArn).successValue().ImportTableDescription.ImportStatus, equalTo(ImportStatus.COMPLETED))
             val item = dynamo.getItem(tableName, Key = mapOf(AttributeName.of("ID") to AttributeValue.Str("1"))).successValue().item
             assertThat(item, present())
 
@@ -131,6 +127,18 @@ class AnotherImportTableTest {
             }
         }
     }
+
+}
+
+private fun DynamoDb.waitForImportFinished(importArn: ARN, timeout: Duration = Duration.ofSeconds(10)) {
+    val waitStart = Instant.now()
+    while (Duration.between(waitStart, Instant.now()) < timeout) {
+        if (describeImport(importArn).successValue().ImportTableDescription.ImportStatus != ImportStatus.IN_PROGRESS) {
+            return
+        }
+        Thread.sleep(1000)
+    }
+    throw IllegalStateException("Import $importArn was not finished after $timeout")
 }
 
 private fun waitForUpdate() = Thread.sleep(Duration.ofSeconds(10).toMillis())
