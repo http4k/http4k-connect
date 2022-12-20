@@ -14,7 +14,7 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
             fn(autoMarshalling.asA(it.bodyString(), Req::class))
                 ?.let {
                     when (it) {
-                        is Unit -> Response(OK)
+                        is Unit -> Response(OK).body("{}")
                         else -> Response(OK).body(autoMarshalling.asFormatString(it))
                     }
                 }
