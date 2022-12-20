@@ -20,6 +20,10 @@ class PoolName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<PoolName>(::PoolName)
 }
 
+class CloudFrontDomain private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<CloudFrontDomain>(::CloudFrontDomain)
+}
+
 class UserPoolId private constructor(value: String) : ResourceId(value) {
     companion object : NonBlankStringValueFactory<UserPoolId>(::UserPoolId)
 }
