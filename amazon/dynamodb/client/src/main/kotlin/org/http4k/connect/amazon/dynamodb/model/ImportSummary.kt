@@ -7,7 +7,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class ImportSummary(
     val CloudWatchLogGroupArn: ARN? = null,
-    val EndTyoe: Timestamp? = null,
+    val EndTime: Timestamp? = null,
     val ImportArn: ARN? = null,
     val ImportStatus: ImportStatus? = null,
     val InputFormat: InputFormat? = null,

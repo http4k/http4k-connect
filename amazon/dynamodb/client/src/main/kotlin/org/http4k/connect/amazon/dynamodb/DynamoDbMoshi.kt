@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.ClientToken
 import org.http4k.connect.amazon.dynamodb.model.IndexName
+import org.http4k.connect.amazon.dynamodb.model.NextToken
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.AwsCoreJsonAdapterFactory
@@ -29,6 +30,7 @@ private fun standardConfig() = Moshi.Builder()
     .value(IndexName)
     .value(TableName)
     .value(ClientToken)
+    .value(NextToken)
 
 object DynamoDbMoshi : ConfigurableMoshi(
     standardConfig().done()

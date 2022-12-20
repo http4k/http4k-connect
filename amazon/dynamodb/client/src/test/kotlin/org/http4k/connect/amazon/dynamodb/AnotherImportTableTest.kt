@@ -64,7 +64,8 @@ class AnotherImportTableTest {
         ).successValue()
 
         var importStatus = dynamo.describeImport(requestedImport.ImportTableDescription.ImportArn!!).successValue()
-        val imports = dynamo.listImports()
+        val imports = dynamo.listImports(TableArn = importStatus.ImportTableDescription.TableArn).successValue()
+        assertThat(imports.ImportSummaryList.map { it.ImportArn }.contains(importStatus.ImportTableDescription.ImportArn), equalTo(true))
         var n = 0
         while (n++ < 5 && importStatus.ImportTableDescription.ImportStatus == ImportStatus.IN_PROGRESS) {
             waitForUpdate()
