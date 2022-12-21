@@ -16,6 +16,7 @@ import org.http4k.connect.amazon.dynamodb.endpoints.describeTable
 import org.http4k.connect.amazon.dynamodb.endpoints.executeStatement
 import org.http4k.connect.amazon.dynamodb.endpoints.executeTransaction
 import org.http4k.connect.amazon.dynamodb.endpoints.getItem
+import org.http4k.connect.amazon.dynamodb.endpoints.importTable
 import org.http4k.connect.amazon.dynamodb.endpoints.listTables
 import org.http4k.connect.amazon.dynamodb.endpoints.putItem
 import org.http4k.connect.amazon.dynamodb.endpoints.query
@@ -24,6 +25,7 @@ import org.http4k.connect.amazon.dynamodb.endpoints.transactGetItems
 import org.http4k.connect.amazon.dynamodb.endpoints.transactWriteItems
 import org.http4k.connect.amazon.dynamodb.endpoints.updateItem
 import org.http4k.connect.amazon.dynamodb.endpoints.updateTable
+import org.http4k.connect.amazon.dynamodb.model.ImportTableDescription
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
@@ -34,6 +36,7 @@ import java.time.Clock.systemUTC
 
 class FakeDynamoDb(
     tables: Storage<DynamoTable> = Storage.InMemory(),
+    tableImports: Storage<ImportTableDescription> = Storage.InMemory(),
     private val clock: Clock = systemUTC()
 ) : ChaoticHttpHandler() {
 
@@ -58,7 +61,8 @@ class FakeDynamoDb(
             api.transactGetItems(tables),
             api.transactWriteItems(tables),// todo
             api.updateItem(tables),
-            api.updateTable(tables)
+            api.updateTable(tables),
+            api.importTable(tableImports)
         )
     )
 

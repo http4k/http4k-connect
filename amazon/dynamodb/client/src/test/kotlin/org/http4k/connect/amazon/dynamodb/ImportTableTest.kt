@@ -36,6 +36,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.filter.debug
 import org.http4k.format.MapAdapter
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
@@ -48,6 +49,7 @@ import software.amazon.awssdk.services.dynamodb.model.InputCompressionType as Aw
 import software.amazon.awssdk.services.dynamodb.model.InputFormat as AwsInputFormat
 import software.amazon.awssdk.services.dynamodb.model.KeyType as AwsKeyType
 
+@Disabled
 class ImportTableTest {
     @Test
     fun `sends same request as AWS SDK client`() {
