@@ -1,13 +1,16 @@
 package org.http4k.connect.amazon.dynamodb
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThanOrEqualTo
 import com.natpryce.hamkrest.present
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
 import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
@@ -16,8 +19,10 @@ import org.http4k.connect.amazon.dynamodb.model.ClientToken
 import org.http4k.connect.amazon.dynamodb.model.CsvOptions
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType
 import org.http4k.connect.amazon.dynamodb.model.ImportStatus
-import org.http4k.connect.amazon.dynamodb.model.InputCompressionType
+import org.http4k.connect.amazon.dynamodb.model.ImportStatus.COMPLETED
+import org.http4k.connect.amazon.dynamodb.model.ImportStatus.FAILED
 import org.http4k.connect.amazon.dynamodb.model.InputFormat
+import org.http4k.connect.amazon.dynamodb.model.InputFormat.CSV
 import org.http4k.connect.amazon.dynamodb.model.InputFormatOptions
 import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
@@ -45,6 +50,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.util.*
+import org.http4k.connect.amazon.dynamodb.model.InputCompressionType.NONE as NONE
 
 abstract class ImportTableFromS3Contract : AwsContract() {
     abstract val http: HttpHandler
@@ -62,17 +68,49 @@ abstract class ImportTableFromS3Contract : AwsContract() {
             it.uploadCsv("ID,AGE\n1,42")
         }
         try {
+            val clientToken = ClientToken.random()
+            val tableCreationParameters = TableCreationParameters(
+                KeySchema = listOf(KeySchema(AttributeName.of("ID"), KeyType.HASH)),
+                TableName = tableName,
+                AttributeDefinitions = listOf(
+                    AttributeDefinition(
+                        AttributeName.of("ID"),
+                        AttributeType = DynamoDataType.S
+                    )
+                ),
+                BillingMode = BillingMode.PROVISIONED,
+                ProvisionedThroughput = ProvisionedThroughput(ReadCapacityUnits = 5, WriteCapacityUnits = 5)
+            )
             val importArn = dynamo.importTable(
-                sourceBucket = bucket,
-                inputFormat = InputFormat.CSV,
-                tableName = tableName,
-                key = "ID"
+                ClientToken = clientToken,
+                InputCompressionType = NONE,
+                S3BucketSource = S3BucketSource(S3Bucket = bucket.value),
+                InputFormat = CSV,
+                InputFormatOptions = InputFormatOptions(CsvOptions(Delimiter = ',')),
+                TableCreationParameters = tableCreationParameters
             ).successValue().ImportTableDescription.ImportArn!!
             dynamo.waitForImportFinished(importArn, timeout = Duration.ofMinutes(3))
 
-            val import = dynamo.describeImport(importArn).successValue().ImportTableDescription
-
-            assertThat(import.ImportStatus, equalTo(ImportStatus.COMPLETED))
+            with(dynamo.describeImport(importArn).successValue().ImportTableDescription) {
+                assertThat(ClientToken, equalTo(clientToken))
+                assertThat(CloudWatchLogGroupArn, present())
+                assertThat(StartTime, present())
+                assertThat(EndTime, present())
+                assertThat(ErrorCount, equalTo(0))
+                assertThat(FailureCode, absent())
+                assertThat(FailureMessage, absent())
+                assertThat(ImportArn?.awsService, equalTo(AwsService.of("dynamodb")))
+                assertThat(ImportStatus, equalTo(COMPLETED))
+                assertThat(InputCompressionType, equalTo(NONE))
+                assertThat(InputFormat, equalTo(CSV))
+                assertThat(InputFormatOptions, equalTo(InputFormatOptions(CsvOptions(Delimiter = ','))))
+                assertThat(ProcessedItemCount, present(greaterThanOrEqualTo(0)))
+                assertThat(ProcessedSizeBytes, present(greaterThanOrEqualTo(0)))
+                assertThat(S3BucketSource?.S3Bucket, equalTo(bucket.value))
+                assertThat(TableArn?.awsService, equalTo(AwsService.of("dynamodb")))
+                assertThat(TableCreationParameters, equalTo(tableCreationParameters))
+                assertThat(TableId, present())
+            }
             assertThat(dynamo.getItem(tableName, key = "ID", value = "1"), present())
         } finally {
             bucket.delete()
@@ -81,16 +119,18 @@ abstract class ImportTableFromS3Contract : AwsContract() {
 
     @Test
     fun `import table fails where the S3 bucket does not exist`() {
-        val import = dynamo.importTable(sourceBucket = BucketName.sample()).successValue().ImportTableDescription
-        dynamo.waitForImportFinished(import.ImportArn!!)
+        val importArn = dynamo.importTable(sourceBucket = BucketName.sample()).successValue().ImportTableDescription.ImportArn!!
+        dynamo.waitForImportFinished(importArn)
 
-        val currentImportDescription = dynamo.describeImport(import.ImportArn!!).successValue().ImportTableDescription
-
-        assertThat(currentImportDescription.ImportStatus, equalTo(ImportStatus.FAILED))
+        with(dynamo.describeImport(importArn).successValue().ImportTableDescription) {
+            assertThat(ImportStatus, equalTo(FAILED))
+            assertThat(FailureCode, present())
+            assertThat(FailureMessage, present())
+        }
     }
 
     @Test
-    fun `query table imports`() {
+    fun `query table imports by table ARN`() {
         val import = dynamo.importTable(sourceBucket = BucketName.sample()).successValue().ImportTableDescription
 
         val importSummaries = dynamo.listImports(TableArn = import.TableArn!!).successValue().ImportSummaryList
@@ -131,12 +171,12 @@ abstract class ImportTableFromS3Contract : AwsContract() {
 
 private fun DynamoDb.importTable(
     sourceBucket: BucketName,
-    inputFormat: InputFormat = InputFormat.CSV,
+    inputFormat: InputFormat = CSV,
     tableName: TableName = TableName.sample(),
     key: String = "ID"
 ) = importTable(
     ClientToken = ClientToken.random(),
-    InputCompressionType = InputCompressionType.NONE,
+    InputCompressionType = NONE,
     S3BucketSource = S3BucketSource(S3Bucket = sourceBucket.value),
     InputFormat = inputFormat,
     InputFormatOptions = InputFormatOptions(CsvOptions(Delimiter = ',')),
