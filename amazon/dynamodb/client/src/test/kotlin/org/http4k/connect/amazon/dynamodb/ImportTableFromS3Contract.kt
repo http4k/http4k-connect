@@ -21,6 +21,7 @@ import org.http4k.connect.amazon.dynamodb.model.DynamoDataType
 import org.http4k.connect.amazon.dynamodb.model.ImportStatus
 import org.http4k.connect.amazon.dynamodb.model.ImportStatus.COMPLETED
 import org.http4k.connect.amazon.dynamodb.model.ImportStatus.FAILED
+import org.http4k.connect.amazon.dynamodb.model.InputCompressionType.NONE
 import org.http4k.connect.amazon.dynamodb.model.InputFormat
 import org.http4k.connect.amazon.dynamodb.model.InputFormat.CSV
 import org.http4k.connect.amazon.dynamodb.model.InputFormatOptions
@@ -45,17 +46,13 @@ import org.http4k.connect.amazon.s3.putObject
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import org.http4k.connect.amazon.dynamodb.model.InputCompressionType.NONE as NONE
 
 abstract class ImportTableFromS3Contract : AwsContract() {
     abstract val http: HttpHandler
-
-    private val tableName = TableName.sample()
 
     private val dynamo by lazy {
         DynamoDb.Http(aws.region, { aws.credentials }, http)
@@ -63,6 +60,7 @@ abstract class ImportTableFromS3Contract : AwsContract() {
 
     @Test
     fun `import table is successful`() {
+        val table = TableName.sample()
         val bucket = BucketName.sample().also {
             it.create()
             it.uploadCsv("ID,AGE\n1,42")
@@ -71,7 +69,7 @@ abstract class ImportTableFromS3Contract : AwsContract() {
             val clientToken = ClientToken.random()
             val tableCreationParameters = TableCreationParameters(
                 KeySchema = listOf(KeySchema(AttributeName.of("ID"), KeyType.HASH)),
-                TableName = tableName,
+                TableName = table,
                 AttributeDefinitions = listOf(
                     AttributeDefinition(
                         AttributeName.of("ID"),
@@ -111,9 +109,10 @@ abstract class ImportTableFromS3Contract : AwsContract() {
                 assertThat(TableCreationParameters, equalTo(tableCreationParameters))
                 assertThat(TableId, present())
             }
-            assertThat(dynamo.getItem(tableName, key = "ID", value = "1"), present())
+            assertThat(dynamo.getItem(table, key = "ID", value = "1"), present())
         } finally {
             bucket.delete()
+            table.delete()
         }
     }
 
@@ -160,11 +159,10 @@ abstract class ImportTableFromS3Contract : AwsContract() {
         }
     }
 
-    @AfterEach
-    fun deleteTable() {
+    private fun TableName.delete() {
         val (tables, _) = dynamo.listTables().successValue()
-        if (tables.contains(tableName)) {
-            dynamo.deleteTable(tableName).successValue()
+        if (tables.contains(this)) {
+            dynamo.deleteTable(this).successValue()
         }
     }
 }
@@ -195,25 +193,30 @@ private fun DynamoDb.importTable(
 )
 
 private fun DynamoDb.waitForImportFinished(importArn: ARN, timeout: Duration = Duration.ofSeconds(20)) {
-    val waitStart = Instant.now()
-    while (Duration.between(waitStart, Instant.now()) < timeout) {
-        if (describeImport(importArn).successValue().ImportTableDescription.ImportStatus != ImportStatus.IN_PROGRESS) {
-            return
-        }
-        Thread.sleep(1000)
-    }
-    throw IllegalStateException("Import $importArn was not finished after $timeout")
+    waitUntil(
+        { describeImport(importArn).successValue().ImportTableDescription.ImportStatus != ImportStatus.IN_PROGRESS },
+        failureMessage = "Import $importArn was not finished after $timeout",
+        timeout = timeout
+    )
 }
 
 private fun S3.waitForBucketCreated(bucketName: BucketName, timeout: Duration = Duration.ofSeconds(10)) {
+    waitUntil(
+        { listBuckets().successValue().items.contains(bucketName) },
+        failureMessage = "Bucket $bucketName was not created after $timeout",
+        timeout = timeout
+    )
+}
+
+private fun waitUntil(test: () -> Boolean, failureMessage: String, timeout: Duration) {
     val waitStart = Instant.now()
     while (Duration.between(waitStart, Instant.now()) < timeout) {
-        if (listBuckets().successValue().items.contains(bucketName)) {
+        if (test()) {
             return
         }
         Thread.sleep(1000)
     }
-    throw IllegalStateException("Bucket $bucketName was not created after $timeout")
+    throw IllegalStateException(failureMessage)
 }
 
 private fun DynamoDb.getItem(tableName: TableName, key: String, value: String) =
