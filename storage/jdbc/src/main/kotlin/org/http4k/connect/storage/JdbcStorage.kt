@@ -2,9 +2,11 @@ package org.http4k.connect.storage
 
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.Moshi
-import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
+import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.deleteWhere
@@ -55,7 +57,7 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
         when {
             keyPrefix.isBlank() -> table.selectAll()
             else -> table.select { table.id like "$keyPrefix%" }
-        }.map { it[table.id] }.map { it.value }.toSet()
+        }.map { it[table.id] }.toSet()
     }
 
     override fun removeAll(keyPrefix: String) = tx {
@@ -70,8 +72,8 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
     }
 }
 
-open class StorageTable(name: String = "") : IdTable<String>(name) {
-    override val id = varchar("key", 500).entityId()
+open class StorageTable(name: String = "") : Table(name) {
+    val id = varchar("key", 500)
     val contents: Column<String> = text("contents")
-    override val primaryKey by lazy { super.primaryKey ?: PrimaryKey(id) }
+    override val primaryKey = PrimaryKey(id, name = name + "_pk")
 }

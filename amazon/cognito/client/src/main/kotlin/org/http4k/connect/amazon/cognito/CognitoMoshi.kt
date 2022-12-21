@@ -6,6 +6,7 @@ import org.http4k.connect.amazon.cognito.model.AccessToken
 import org.http4k.connect.amazon.cognito.model.ClientId
 import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.ClientSecret
+import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
 import org.http4k.connect.amazon.cognito.model.IdToken
 import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
@@ -46,6 +47,7 @@ object CognitoMoshi : ConfigurableMoshi(
         .value(Session)
         .value(UserCode)
         .value(Username)
+        .value(CloudFrontDomain)
         .value(UserPoolId)
         .done()
 )
