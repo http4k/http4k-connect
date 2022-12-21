@@ -7,7 +7,6 @@ import com.natpryce.hamkrest.greaterThanOrEqualTo
 import com.natpryce.hamkrest.present
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsService
@@ -44,15 +43,14 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.putObject
 import org.http4k.connect.successValue
-import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.util.*
 
-abstract class ImportTableFromS3Contract : AwsContract() {
-    abstract val http: HttpHandler
+class RealImportTableFromS3Test : AwsContract() {
+    override val aws = configAwsEnvironment()
+    private val http = JavaHttpClient()
 
     private val dynamo by lazy {
         DynamoDb.Http(aws.region, { aws.credentials }, http)
@@ -223,8 +221,3 @@ private fun DynamoDb.getItem(tableName: TableName, key: String, value: String) =
     getItem(tableName, Key(Attribute.string().required(key) of value)).successValue().item
 
 private fun BucketName.Companion.sample() = BucketName.of("http4k-connect-${UUID.randomUUID()}")
-
-class RealImportFromS3Test : ImportTableFromS3Contract(), RealAwsEnvironment {
-    override val http = JavaHttpClient().debug()
-    override val aws = configAwsEnvironment()
-}
