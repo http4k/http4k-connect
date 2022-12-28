@@ -106,16 +106,12 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
         withCognitoPool { id ->
             val poolClient = createUserPoolClient(id)
 
-            val authPath = "/oauth2/authorize"
-            val tokenPath = "/oauth2/token"
             val protectedPath = "/getit"
 
             val cognito = SetBaseUriFrom(Uri.of("https://cognito"))
                 .then(http)
 
             val app = App(
-                authPath,
-                tokenPath,
                 cognito,
                 protectedPath,
                 Credentials(poolClient.ClientId.value, poolClient.ClientSecret!!.value)
@@ -246,19 +242,14 @@ private fun Response.assertAccessTokenIsOk() {
     assertThat(token.expires_in, equalTo(3600))
 }
 
-private fun App(
-    authPath: String,
-    tokenPath: String,
-    oauth: HttpHandler,
-    protectedPath: String,
-    credentials: Credentials
+private fun App(oauth: HttpHandler, protectedPath: String, credentials: Credentials
 ): RoutingHttpHandler {
     val callbackPath = "/cb"
 
     val oauthProvider = OAuthProvider(
         OAuthProviderConfig(
             Uri.of("https://cognito"),
-            authPath, tokenPath,
+            "/oauth2/authorize", "/oauth2/token",
             credentials
         ),
         oauth,
