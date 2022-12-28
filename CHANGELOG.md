@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.26.0.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-cognito*** - Implement OAuth server with JWT signing and Well Known endpoint.
 
 ### v3.25.5.0
 - **http4k-connect-amazon-containercredentials** - Support passing of full CC URL and auth token header. This makes us compatible with AWS Snapstart
