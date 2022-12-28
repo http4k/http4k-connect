@@ -22,19 +22,21 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Uri
+import org.http4k.core.body.form
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters
-import org.http4k.filter.debug
+import org.http4k.filter.ClientFilters.BasicAuth
+import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.security.AccessTokenResponse
 import org.http4k.security.oauth.client.OAuthClientCredentials
-import org.http4k.security.oauth.server.OAuthServerMoshi
+import org.http4k.security.oauth.server.OAuthServerMoshi.autoBody
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID.randomUUID
 
 abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     private val cognito by lazy {
-        Cognito.Http(aws.region, { aws.credentials }, http.debug())
+        Cognito.Http(aws.region, { aws.credentials }, http)
     }
 
     @Test
@@ -72,12 +74,16 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
                 val clientCredentials = Credentials(poolClient.ClientId.value, poolClient.ClientSecret!!.value)
 
                 val client = ClientFilters.OAuthClientCredentials(clientCredentials, listOf("scope/Name"))
-                    .then(ClientFilters.BasicAuth(clientCredentials))
-                    .then(ClientFilters.SetBaseUriFrom(Uri.of("https://$domain.auth.${aws.region}.amazoncognito.com")))
+                    .then(BasicAuth(clientCredentials))
+                    .then(SetBaseUriFrom(Uri.of("https://$domain.auth.${aws.region}.amazoncognito.com")))
                     .then(http)
 
-                val response = client(Request(POST, "/oauth2/token"))
-                val token = OAuthServerMoshi.autoBody<AccessTokenResponse>().toLens()(response)
+                val response = client(
+                    Request(POST, "/oauth2/token")
+                        .form("client_id", id.value)
+                )
+
+                val token = autoBody<AccessTokenResponse>().toLens()(response)
                 assertThat(response.bodyString(), response.status.successful, equalTo(true))
                 assertThat(token.token_type, equalTo("Bearer"))
                 assertThat(token.expires_in, equalTo(3600))

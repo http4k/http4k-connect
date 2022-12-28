@@ -9,12 +9,15 @@ import org.http4k.security.oauth.server.ClientValidator
 
 class CognitoPoolClientValidator(private val storage: Storage<CognitoPool>) : ClientValidator {
     override fun validateClientId(request: Request, clientId: ClientId) =
-        storage[clientId.value] != null
+        storage.hasAppClient(clientId)
 
     override fun validateCredentials(request: Request, clientId: ClientId, clientSecret: String) =
-        storage[clientId.value] != null
+        storage.hasAppClient(clientId)
 
-    override fun validateRedirection(request: Request, clientId: ClientId, redirectionUri: Uri)= true
+    override fun validateRedirection(request: Request, clientId: ClientId, redirectionUri: Uri) = true
 
     override fun validateScopes(request: Request, clientId: ClientId, scopes: List<String>) = true
 }
+
+private fun Storage<CognitoPool>.hasAppClient(clientId: ClientId) =
+    keySet().any { this[it]!!.clients.any { it.ClientId.value == clientId.value } }

@@ -65,7 +65,7 @@ class CognitoAccessTokens(
                 payload = toJson()
                 key = Keys.live.second
                 algorithmHeaderValue = RSA_USING_SHA256
-            }.compactSerialization
+            }.compactSerialization, expiresIn = expiry.seconds
         )
     )
 
