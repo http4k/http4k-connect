@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.cognito
 
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.cognito.action.Scope
@@ -16,18 +17,35 @@ import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.UserPoolId
 import org.http4k.connect.amazon.cognito.model.Username
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.successValue
+import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Credentials
+import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
+import org.http4k.core.Response
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.body.form
 import org.http4k.core.then
+import org.http4k.core.with
 import org.http4k.filter.ClientFilters
 import org.http4k.filter.ClientFilters.BasicAuth
+import org.http4k.filter.ClientFilters.Cookies
+import org.http4k.filter.ClientFilters.FollowRedirects
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.hamkrest.hasBody
+import org.http4k.lens.Header.CONTENT_TYPE
+import org.http4k.routing.RoutingHttpHandler
+import org.http4k.routing.bind
+import org.http4k.routing.routes
 import org.http4k.security.AccessTokenResponse
+import org.http4k.security.InsecureCookieBasedOAuthPersistence
+import org.http4k.security.OAuthProvider
+import org.http4k.security.OAuthProviderConfig
 import org.http4k.security.oauth.client.OAuthClientCredentials
 import org.http4k.security.oauth.server.OAuthServerMoshi.autoBody
 import org.junit.jupiter.api.Disabled
@@ -55,21 +73,29 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     }
 
     @Test
-    open fun `can get access token using client credentials`() {
+    open fun `user pool domain lifecycle`() {
         withCognitoPool { id ->
-            cognito.createResourceServer(id, "scope", "scope", listOf(Scope("Name", "Description"))).successValue()
+            cognito.createResourceServer(id)
             val domain = CloudFrontDomain.of(randomUUID().toString())
             cognito.createUserPoolDomain(id, domain).successValue()
 
             try {
-                val poolClient = cognito.createUserPoolClient(
-                    UserPoolId = id,
-                    ClientName = ClientName.of(randomUUID().toString()),
-                    AllowedOAuthFlows = listOf(client_credentials),
-                    AllowedOAuthFlowsUserPoolClient = true,
-                    AllowedOAuthScopes = listOf("scope/Name"),
-                    GenerateSecret = true
-                ).successValue().UserPoolClient
+                createUserPoolClient(id)
+            } finally {
+                cognito.deleteUserPoolDomain(id, domain)
+            }
+        }
+    }
+
+    @Test
+    open fun `can get access token using client credentials grant`() {
+        withCognitoPool { id ->
+            cognito.createResourceServer(id)
+            val domain = CloudFrontDomain.of(randomUUID().toString())
+            cognito.createUserPoolDomain(id, domain).successValue()
+
+            try {
+                val poolClient = createUserPoolClient(id)
 
                 val clientCredentials = Credentials(poolClient.ClientId.value, poolClient.ClientSecret!!.value)
 
@@ -78,15 +104,69 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
                     .then(SetBaseUriFrom(Uri.of("https://$domain.auth.${aws.region}.amazoncognito.com")))
                     .then(http)
 
-                val response = client(
-                    Request(POST, "/oauth2/token")
-                        .form("client_id", id.value)
+                client(Request(POST, "/oauth2/token").form("client_id", id.value)).assertAccessTokenIsOk()
+            } finally {
+                cognito.deleteUserPoolDomain(id, domain)
+            }
+        }
+    }
+
+    @Test
+    open fun `can get access token using auth code grant`() {
+        withCognitoPool { id ->
+            cognito.createResourceServer(id)
+            val domain = CloudFrontDomain.of(randomUUID().toString())
+            cognito.createUserPoolDomain(id, domain).successValue()
+
+            try {
+                val poolClient = createUserPoolClient(id)
+                val clientCredentials = Credentials(poolClient.ClientId.value, poolClient.ClientSecret!!.value)
+
+                val authPath = "/oauth2/authorize"
+                val tokenPath = "/oauth2/token"
+                val protectedPath = "/getit"
+
+                val cognito = SetBaseUriFrom(Uri.of("https://$domain.auth.${aws.region}.amazoncognito.com"))
+                    .then(http)
+
+                val app = App(
+                    authPath,
+                    tokenPath,
+                    cognito,
+                    protectedPath,
+                    domain,
+                    aws.region,
+                    clientCredentials
                 )
 
-                val token = autoBody<AccessTokenResponse>().toLens()(response)
-                assertThat(response.bodyString(), response.status.successful, equalTo(true))
-                assertThat(token.token_type, equalTo("Bearer"))
-                assertThat(token.expires_in, equalTo(3600))
+                var lastUri: Uri = Uri.of("")
+                val browser = FollowRedirects()
+                    .then(Filter { next ->
+                        {
+                            lastUri = it.uri
+                            next(it)
+                        }
+                    })
+                    .then(Cookies())
+                    .then { r ->
+                        when (r.uri.host) {
+                            "app" -> app
+                            else -> cognito
+                        }(r)
+                    }
+
+                assertThat(
+                    browser(Request(GET, "http://app$protectedPath")),
+                    hasBody(containsSubstring("Please log into Cognito"))
+                )
+
+                assertThat(
+                    browser(
+                        Request(POST, lastUri)
+                            .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
+                            .form("email", "joe@email.com")
+                    ), hasBody("LOGGEDIN")
+                )
             } finally {
                 cognito.deleteUserPoolDomain(id, domain)
             }
@@ -165,4 +245,53 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
             deleteUserPool(id).successValue()
         }
     }
+}
+
+private fun Cognito.createUserPoolClient(id: UserPoolId) = createUserPoolClient(
+    UserPoolId = id,
+    ClientName = ClientName.of(randomUUID().toString()),
+    AllowedOAuthFlows = listOf(client_credentials),
+    AllowedOAuthFlowsUserPoolClient = true,
+    AllowedOAuthScopes = listOf("scope/Name"),
+    GenerateSecret = true
+).successValue().UserPoolClient
+
+private fun Cognito.createResourceServer(id: UserPoolId) {
+    createResourceServer(id, "scope", "scope", listOf(Scope("Name", "Description"))).successValue()
+}
+
+private fun Response.assertAccessTokenIsOk() {
+    val token = autoBody<AccessTokenResponse>().toLens()(this)
+    assertThat(bodyString(), status.successful, equalTo(true))
+    assertThat(token.token_type, equalTo("Bearer"))
+    assertThat(token.expires_in, equalTo(3600))
+}
+
+private fun App(
+    authPath: String,
+    tokenPath: String,
+    oauth: HttpHandler,
+    protectedPath: String,
+    domain: CloudFrontDomain,
+    region: Region,
+    credentials: Credentials
+): RoutingHttpHandler {
+    val callbackPath = "/cb"
+
+    val oauthProvider = OAuthProvider(
+        OAuthProviderConfig(
+            Uri.of("https://$domain.auth.${region}.amazoncognito.com"),
+            authPath, tokenPath,
+            credentials
+        ),
+        oauth,
+        Uri.of("http://app$callbackPath"),
+        listOf(),
+        InsecureCookieBasedOAuthPersistence("oauth")
+    )
+
+    return routes(
+        callbackPath bind GET to oauthProvider.callback,
+        protectedPath bind GET to oauthProvider.authFilter.then { Response(OK).body("LOGGEDIN") }
+    )
 }

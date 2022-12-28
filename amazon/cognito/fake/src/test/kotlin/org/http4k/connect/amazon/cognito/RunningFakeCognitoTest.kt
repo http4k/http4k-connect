@@ -21,7 +21,10 @@ class RunningFakeCognitoTest : CognitoContract(
 
     @AfterEach
     fun stop() {
-        println("STOP")
         server.stop()
+    }
+
+    override fun `can get access token using auth code grant`() {
+        super.`can get access token using auth code grant`()
     }
 }
