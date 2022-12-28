@@ -8,9 +8,7 @@ import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetHostFrom
 import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 
-@Disabled
 class RunningFakeCognitoTest : CognitoContract(
     SetHostFrom(FakeCognito::class.defaultLocalUri).then(JavaHttpClient())
 ) {
@@ -24,5 +22,9 @@ class RunningFakeCognitoTest : CognitoContract(
     @AfterEach
     fun stop() {
         server.stop()
+    }
+
+    override fun `can get access token using auth code grant`() {
+        super.`can get access token using auth code grant`()
     }
 }

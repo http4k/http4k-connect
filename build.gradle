@@ -32,19 +32,19 @@ allprojects {
     dependencies {
         implementation(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
         implementation(platform(Libs.forkhandles_bom))
-        api("org.http4k:http4k-core")
-        api("dev.forkhandles:result4k")
+        api(Http4k.core)
+        api(libs.result4k)
 
         testImplementation(platform(Libs.junit_bom))
-        testImplementation("org.http4k:http4k-testing-hamkrest")
-        testImplementation("org.http4k:http4k-testing-approval")
+        testImplementation(Http4k.testing.hamkrest)
+        testImplementation(Http4k.testing.approval)
 
-        testImplementation("org.junit.jupiter:junit-jupiter-api")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation(Testing.junit.jupiter.api)
+        testImplementation(Testing.junit.jupiter.engine)
         testImplementation(platform(Libs.testcontainers_bom))
-        testImplementation("org.junit.jupiter:junit-jupiter-params")
-        testImplementation("org.testcontainers:junit-jupiter")
-        testImplementation("org.testcontainers:testcontainers")
+        testImplementation(Testing.junit.jupiter.params)
+        testImplementation(libs.junit.jupiter)
+        testImplementation(libs.testcontainers)
 
         dokkaHtmlPlugin(Libs.org_jetbrains_dokka_gradle_plugin)
 
@@ -70,7 +70,7 @@ allprojects {
         } else if (project.name == "http4k-connect-kapt-generator") {
             api(project(":http4k-connect-core"))
         } else if (project.name != "http4k-connect-core") {
-            api("org.http4k:http4k-cloudnative")
+            api(Http4k.cloudnative)
             api(project(":http4k-connect-core"))
             kapt(project(":http4k-connect-kapt-generator"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
@@ -282,18 +282,18 @@ dependencies {
         }
 
     implementation(platform(Libs.bom))
-    implementation("software.amazon.awssdk:cloudfront")
-    implementation("software.amazon.awssdk:cognitoidentityprovider")
-    implementation("software.amazon.awssdk:dynamodb")
-    implementation("software.amazon.awssdk:kms")
-    implementation("software.amazon.awssdk:lambda")
-    implementation("software.amazon.awssdk:s3")
-    implementation("software.amazon.awssdk:secretsmanager")
-    implementation("software.amazon.awssdk:ses")
-    implementation("software.amazon.awssdk:sns")
-    implementation("software.amazon.awssdk:sqs")
-    implementation("software.amazon.awssdk:ssm")
-    implementation("software.amazon.awssdk:sts")
+    implementation(libs.cloudfront)
+    implementation(libs.cognitoidentityprovider)
+    implementation(libs.dynamodb)
+    implementation(libs.kms)
+    implementation(libs.lambda)
+    implementation(libs.s3)
+    implementation(libs.secretsmanager)
+    implementation(libs.ses)
+    implementation(libs.sns)
+    implementation(libs.sqs)
+    implementation(libs.ssm)
+    implementation(libs.sts)
 }
 
 static def hasCodeCoverage(project) {
