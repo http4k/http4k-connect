@@ -389,3 +389,16 @@ data class UserPoolClient(
     val SupportedIdentityProviders: List<String>? = null,
     val WriteAttributes: List<String>? = null
 )
+
+@JsonSerializable
+data class Jwk(
+    val e: String,
+    val kid: String,
+    val n: String,
+    val alg: String = "RSA256",
+    val kty: String = "RSA",
+    val use: String = "sig"
+)
+
+@JsonSerializable
+data class Jwks(val keys: List<Jwk>)

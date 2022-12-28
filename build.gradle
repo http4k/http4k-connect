@@ -30,7 +30,7 @@ allprojects {
     apply(plugin: "com.github.kt3k.coveralls")
 
     dependencies {
-        implementation(platform(Http4k.bom)) // manually set because of auto-upgrading
+        implementation(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
         implementation(platform(Libs.forkhandles_bom))
         api(Http4k.core)
         api(libs.result4k)

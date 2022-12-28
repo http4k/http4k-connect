@@ -14,6 +14,7 @@ import org.http4k.connect.amazon.cognito.model.OAuthFlow.client_credentials
 import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.UserCode
+import org.http4k.connect.amazon.cognito.model.UserPoolId
 import org.http4k.connect.amazon.cognito.model.Username
 import org.http4k.connect.successValue
 import org.http4k.core.Credentials
@@ -23,19 +24,18 @@ import org.http4k.core.Request
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters
+import org.http4k.filter.debug
 import org.http4k.security.AccessTokenResponse
 import org.http4k.security.oauth.client.OAuthClientCredentials
 import org.http4k.security.oauth.server.OAuthServerMoshi
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.UUID.randomUUID
 
 abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     private val cognito by lazy {
-        Cognito.Http(aws.region, { aws.credentials }, http)
+        Cognito.Http(aws.region, { aws.credentials }, http.debug())
     }
-
-    private val poolName = PoolName.of(UUID.randomUUID().toString())
 
     @Test
     @Disabled
@@ -46,18 +46,23 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     }
 
     @Test
-    open fun `can get access token using client credentials`() {
-        val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!
+    fun `can load well known keys`() {
+        withCognitoPool { id ->
+            assertThat(cognito.getJwks(id).successValue().keys.size, equalTo(2))
+        }
+    }
 
-        try {
+    @Test
+    open fun `can get access token using client credentials`() {
+        withCognitoPool { id ->
             cognito.createResourceServer(id, "scope", "scope", listOf(Scope("Name", "Description"))).successValue()
-            val domain = CloudFrontDomain.of(UUID.randomUUID().toString())
+            val domain = CloudFrontDomain.of(randomUUID().toString())
             cognito.createUserPoolDomain(id, domain).successValue()
 
             try {
                 val poolClient = cognito.createUserPoolClient(
                     UserPoolId = id,
-                    ClientName = ClientName.of(UUID.randomUUID().toString()),
+                    ClientName = ClientName.of(randomUUID().toString()),
                     AllowedOAuthFlows = listOf(client_credentials),
                     AllowedOAuthFlowsUserPoolClient = true,
                     AllowedOAuthScopes = listOf("scope/Name"),
@@ -79,81 +84,79 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
             } finally {
                 cognito.deleteUserPoolDomain(id, domain)
             }
-
-        } finally {
-            cognito.deleteUserPool(id).successValue()
         }
     }
 
     @Test
     @Disabled("WIP")
-    fun `user pool lifecycle`() {
-        val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!
-
-        try {
-            val username = Username.of(UUID.randomUUID().toString())
-            cognito.adminCreateUser(
+    fun `user pool operations`() {
+        withCognitoPool { id ->
+            val username = Username.of(randomUUID().toString())
+            adminCreateUser(
                 username, id, listOf(
-                    AttributeType("email", "test@example.com"),
-                    AttributeType("email_verified", "true")
+                    AttributeType("email", "test@example.com"), AttributeType("email_verified", "true")
                 )
             ).successValue()
 
-            assertThat(cognito.adminGetUser(username, id).successValue().Username, equalTo(username))
+            assertThat(adminGetUser(username, id).successValue().Username, equalTo(username))
 
-            cognito.adminSetUserPassword(username, id, true, Password.of("Password1£$%4")).successValue()
+            adminSetUserPassword(username, id, true, Password.of("Password1£$%4")).successValue()
 
-            cognito.adminResetUserPassword(username, id, emptyMap()).successValue()
+            adminResetUserPassword(username, id, emptyMap()).successValue()
 
-            cognito.adminDisableUser(username, id).successValue()
+            adminDisableUser(username, id).successValue()
 
-            cognito.adminEnableUser(username, id).successValue()
+            adminEnableUser(username, id).successValue()
 
-            cognito.adminDeleteUser(username, id).successValue()
-        } finally {
-            cognito.deleteUserPool(id).successValue()
+            adminDeleteUser(username, id).successValue()
         }
     }
 
     @Test
     @Disabled("WIP")
     fun `user auth lifecycle`() {
-        val username = Username.of(UUID.randomUUID().toString())
-        val id = cognito.createUserPool(poolName).successValue().UserPool.Id!!
+        withCognitoPool { id ->
+            val username = Username.of(randomUUID().toString())
 
-        try {
-            cognito.adminCreateUser(
+            adminCreateUser(
                 username, id, listOf(
                     AttributeType("email", "test@example.com"),
                     AttributeType("email_verified", "true")
                 )
             ).successValue()
 
-            val client = cognito.createUserPoolClient(id, ClientName.of(username.value), listOf(client_credentials))
+            val client = createUserPoolClient(id, ClientName.of(username.value), listOf(client_credentials))
                 .successValue().UserPoolClient
 
-            val challenge = cognito.initiateAuth(
+            val challenge = initiateAuth(
                 client.ClientId, USER_PASSWORD_AUTH, mapOf(
                     "USERNAME" to username.value,
                     "PASSWORD" to "foobar"
                 )
             ).successValue()
 
-            cognito.associateSoftwareToken(AccessToken.of("1234"), challenge.Session).successValue()
+            associateSoftwareToken(AccessToken.of("1234"), challenge.Session).successValue()
 
-            cognito.verifySoftwareToken(UserCode.of("123456"), AccessToken.of("1234"), challenge.Session).successValue()
+            verifySoftwareToken(UserCode.of("123456"), AccessToken.of("1234"), challenge.Session).successValue()
 
-            val nextChallenge = cognito.respondToAuthChallenge(
+            val nextChallenge = respondToAuthChallenge(
                 client.ClientId, NEW_PASSWORD_REQUIRED, mapOf(
                     NEW_PASSWORD_REQUIRED to "",
                 )
             ).successValue()
 
-            cognito.deleteUserPoolClient(id, client.ClientId).successValue()
+            deleteUserPoolClient(id, client.ClientId).successValue()
 
-            cognito.adminDeleteUser(username, id).successValue()
+            adminDeleteUser(username, id).successValue()
+        }
+    }
+
+    private fun <T> withCognitoPool(fn: Cognito.(UserPoolId) -> T) = with(cognito) {
+        val id = createUserPool(PoolName.of(randomUUID().toString())).successValue().UserPool.Id!!
+        try {
+            fn(id)
         } finally {
-            cognito.deleteUserPool(id).successValue()
+            deleteUserPool(id).successValue()
         }
     }
 }
