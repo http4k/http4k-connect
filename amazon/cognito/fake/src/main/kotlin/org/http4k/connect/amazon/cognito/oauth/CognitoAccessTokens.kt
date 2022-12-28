@@ -71,7 +71,7 @@ class CognitoAccessTokens(
 
     private fun coreJwtClaims(uuid: UUID, clientId: ClientId, now: Instant) = JwtClaims().apply {
         subject = uuid.toString()
-        issuer = "https://cognito-idp.$region.amazonaws.com/$clientId"
+        issuer = "https://cognito-idp.$region.amazonaws.com/${clientId.value}"
         expirationTime = NumericDate.fromMilliseconds(now.plus(expiry).toEpochMilli())
         issuedAt = NumericDate.fromMilliseconds(now.toEpochMilli())
         setClaim("cognito:username", uuid.toString())
