@@ -9,6 +9,8 @@ dependencies {
     }
 
     implementation(Libs.api)
+    testImplementation(libs.jose4j)
+
     kapt(libs.symbol.processing.api)
     kapt(Libs.se_ansman_kotshi_compiler)
 

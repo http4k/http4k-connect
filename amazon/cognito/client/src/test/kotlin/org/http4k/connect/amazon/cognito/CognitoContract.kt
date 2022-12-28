@@ -36,6 +36,7 @@ import org.http4k.filter.ClientFilters.BasicAuth
 import org.http4k.filter.ClientFilters.Cookies
 import org.http4k.filter.ClientFilters.FollowRedirects
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
+import org.http4k.filter.cookie.BasicCookieStorage
 import org.http4k.hamkrest.hasBody
 import org.http4k.lens.Header.CONTENT_TYPE
 import org.http4k.routing.RoutingHttpHandler
@@ -47,9 +48,12 @@ import org.http4k.security.OAuthProvider
 import org.http4k.security.OAuthProviderConfig
 import org.http4k.security.oauth.client.OAuthClientCredentials
 import org.http4k.security.oauth.server.OAuthServerMoshi.autoBody
+import org.jose4j.jwk.JsonWebKeySet
+import org.jose4j.jws.JsonWebSignature
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID.randomUUID
+
 
 abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
     private val cognito by lazy {
@@ -97,7 +101,9 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
                 .then(BasicAuth(clientCredentials))
                 .then(http)
 
-            client(Request(POST, "/oauth2/token").form("client_id", id.value)).assertAccessTokenIsOk()
+            val accessToken = client(Request(POST, "/oauth2/token").form("client_id", id.value)).assertAccessTokenIsOk()
+
+            http.verifyJwtSignedCorrectly(id, accessToken.value)
         }
     }
 
@@ -118,6 +124,7 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
             )
 
             var lastUri: Uri = Uri.of("")
+            val storage = BasicCookieStorage()
             val browser = FollowRedirects()
                 .then(Filter { next ->
                     {
@@ -125,7 +132,7 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
                         next(it)
                     }
                 })
-                .then(Cookies())
+                .then(Cookies(storage = storage))
                 .then { r ->
                     when (r.uri.host) {
                         "app" -> app
@@ -144,6 +151,11 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
                         .with(CONTENT_TYPE of APPLICATION_FORM_URLENCODED)
                         .form("email", "joe@email.com")
                 ), hasBody("LOGGEDIN")
+            )
+
+            cognito.verifyJwtSignedCorrectly(
+                id,
+                storage.retrieve().first { it.cookie.name == "oauthAccessToken" }.cookie.value
             )
         }
     }
@@ -235,14 +247,26 @@ private fun Cognito.createResourceServer(id: UserPoolId) {
     createResourceServer(id, "scope", "scope", listOf(Scope("Name", "Description"))).successValue()
 }
 
-private fun Response.assertAccessTokenIsOk() {
+private fun Response.assertAccessTokenIsOk(): AccessToken {
     val token = autoBody<AccessTokenResponse>().toLens()(this)
     assertThat(bodyString(), status.successful, equalTo(true))
     assertThat(token.token_type, equalTo("Bearer"))
     assertThat(token.expires_in, equalTo(3600))
+    return AccessToken.of(token.access_token)
 }
 
-private fun App(oauth: HttpHandler, protectedPath: String, credentials: Credentials
+private fun HttpHandler.verifyJwtSignedCorrectly(id: UserPoolId, jwt: String) {
+    val jwks = JsonWebKeySet(this(Request(GET, "/$id/.well-known/jwks.json")).bodyString()).jsonWebKeys
+
+    val jws = JsonWebSignature().apply {
+        key = jwks.last().key
+        compactSerialization = jwt
+    }
+    assertThat(jws.verifySignature(), equalTo(true))
+}
+
+private fun App(
+    oauth: HttpHandler, protectedPath: String, credentials: Credentials
 ): RoutingHttpHandler {
     val callbackPath = "/cb"
 
