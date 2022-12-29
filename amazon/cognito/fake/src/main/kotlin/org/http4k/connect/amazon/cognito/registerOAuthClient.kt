@@ -19,7 +19,7 @@ fun FakeCognito.registerOAuthClient(id: ClientId): Credentials =
         createUserPoolDomain(poolId, CloudFrontDomain.of(id.value)).valueOrNull()
         val userPoolClient = createUserPoolClient(
             UserPoolId = poolId,
-            ClientName = ClientName.of(id.value),
+            ClientName = ClientName.of(id.value)
         ).valueOrNull()!!.UserPoolClient
 
         Credentials(userPoolClient.ClientId.value, userPoolClient.ClientSecret!!.value)
