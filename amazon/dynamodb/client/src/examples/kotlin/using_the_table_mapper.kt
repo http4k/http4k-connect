@@ -3,6 +3,9 @@ import org.http4k.connect.amazon.dynamodb.Http
 import java.util.UUID
 
 import org.http4k.connect.amazon.dynamodb.mapper.DynamoDbTableMapperSchema
+import org.http4k.connect.amazon.dynamodb.mapper.batchDelete
+import org.http4k.connect.amazon.dynamodb.mapper.get
+import org.http4k.connect.amazon.dynamodb.mapper.plusAssign
 import org.http4k.connect.amazon.dynamodb.mapper.tableMapper
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.IndexName
@@ -16,15 +19,17 @@ private data class KittyCat(
 )
 
 // define our key attributes (for primary and secondary indexes)
-private val idAttr = Attribute.uuid().required("id")  // primary hash key
-private val ownerIdAttr = Attribute.uuid().required("ownerId")  // secondary hash key
-private val nameAttr = Attribute.string().required("name")  // secondary sort key
+private val idAttr = Attribute.uuid().required("id")
+private val ownerIdAttr = Attribute.uuid().required("ownerId")
+
+// define the primary index
+private val primaryIndex = DynamoDbTableMapperSchema.Primary(idAttr)
 
 // define an optional secondary index
-private val byOwnerIndex = DynamoDbTableMapperSchema.GlobalSecondary(
+private val ownerIndex = DynamoDbTableMapperSchema.GlobalSecondary(
     indexName = IndexName.of("owners"),
     hashKeyAttribute = ownerIdAttr,
-    sortKeyAttribute = nameAttr
+    sortKeyAttribute = idAttr
 )
 
 fun main() {
@@ -33,11 +38,11 @@ fun main() {
     // define the table mapper and its primary index
     val table = dynamoDb.tableMapper<KittyCat, UUID, Unit>(
         TableName = TableName.of("cats"),
-        hashKeyAttribute = idAttr
+        primarySchema = primaryIndex
     )
 
     // optionally, create the table and its secondary indexes
-    // table.createTable(byOwnerIndex)
+    table.createTable(ownerIndex)
 
     // generate some documents
     val owner1 = UUID.randomUUID()
@@ -52,15 +57,14 @@ fun main() {
     table += listOf(smokie, bandit) // ...batched
 
     // get documents
-    val bestCat = table[tigger.id]
-    val missingCat = table[UUID.randomUUID()] // null
+    val cat = table[tigger.id] // individually
+    val cats = table[tigger.id, smokie.id]  // batched
 
     // query documents
-    val bestCats = table.primaryIndex().query(tigger.id).take(100) // by primary index
-    val owner2Cats = table.index(byOwnerIndex).query(owner2).take(100) // by secondary index
+    val ownerCats = table.index(ownerIndex).query(owner2).take(100)
 
     // delete documents
-    table -= tigger // ...individually
+    table.delete(tigger) // ...individually
     table.delete(smokie.id)  // ...by key
-    table -= listOf(bandit) // ...batched
+    table.batchDelete(smokie.id, bandit.id) // ...batched
 }

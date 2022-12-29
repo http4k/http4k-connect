@@ -86,6 +86,91 @@ val boolean: Result<Boolean, LensFailure> = attrBool.asResult()(item)
 
 It is also possible to `map()` lenses to provide marshalling into your own types.
 
+### DAO-Style Dynamo Table Mapper
+
+Building on top of the existing lens-based object mapper is a DAO-style abstraction to simplify repositories.
+Many of the lower-level operations are abstracted away to provide a simple typesafe interface.
+
+To begin creating a DAO, let's define a model to map:
+
+```kotlin
+data class KittyCat(
+    val ownerId: UUID,
+    val name: String,
+    val id: UUID = UUID.randomUUID()
+)
+```
+
+From there, we can imagine two access patterns:
+- get by id
+- list for owner
+
+We'll satisfy them with a primary and secondary index:
+
+```kotlin
+val idAttr = Attribute.uuid().required("id")
+val ownerIdAttr = Attribute.uuid().required("ownerId")
+
+val primaryIndex = DynamoDbTableMapperSchema.Primary(idAttr)
+
+val ownerIndex = DynamoDbTableMapperSchema.GlobalSecondary(
+    indexName = IndexName.of("owners"),
+    hashKeyAttribute = ownerIdAttr,
+    sortKeyAttribute = idAttr
+)
+```
+
+Now we can define a DAO:
+
+```kotlin
+val dynamoDb = DynamoDb.Http(System.getenv())
+
+val table = dynamoDb.tableMapper<KittyCat, UUID, Unit>(
+    TableName = TableName.of("cats"),
+    primarySchema = primaryIndex
+)
+
+// optionally, create the table and its secondary index
+table.createTable(ownerIndex)
+```
+
+and add some documents:
+
+```kotlin
+// individually
+table += KittyCat(owner1, "Tigger")
+
+// or batched
+table += listOf(KittyCat(owner2, "Smokie"), KittyCat(owner2, "Bandit"))
+```
+
+and retrieve them:
+
+```kotlin
+// by key
+val cat = table[UUID.randomUUID()]
+
+// batched by key
+val cats = table[UUID.randomUUID(), UUID.randomUUID()]
+
+// query by index
+val ownerCats = table.index(ownerIndex).query(UUID.randomUUID()).take(100)
+```
+
+and delete them:
+
+```kotlin
+// by model
+table.delete(cat)
+
+// by key
+table.delete(cat.id)
+
+// batched
+table.batchDelete(cat.id, cat2.id)
+```
+
+
 ### General example usage of API client
 
 ```kotlin

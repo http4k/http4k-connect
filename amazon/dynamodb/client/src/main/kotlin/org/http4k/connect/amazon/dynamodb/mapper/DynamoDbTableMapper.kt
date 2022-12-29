@@ -10,7 +10,8 @@ import dev.forkhandles.result4k.Result
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.autoDynamoLens
 
-private const val batchSizeLimit = 25  // as defined by DynamoDB
+private const val BATCH_PUT_LIMIT = 25  // as defined by DynamoDB
+private const val BATCH_GET_LIMIT = 100 // as defined by DynamoDB
 
 class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
     private val dynamoDb: DynamoDb,
@@ -37,10 +38,27 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ?.let(itemLens)
     }
 
-    operator fun plusAssign(documents: Collection<Document>) {
+    fun batchGet(keys: Collection<Pair<HashKey, SortKey?>>): Sequence<Document> {
+        if (keys.isEmpty()) return emptySequence()
+
+        return keys
+            .asSequence()
+            .map { primarySchema.key(it.first, it.second) }
+            .chunked(BATCH_GET_LIMIT)
+            .flatMap { chunk ->
+                val response = dynamoDb.batchGetItem(mapOf(
+                    tableName to ReqGetItem.Get(chunk)
+                )).onFailure { it.reason.throwIt() }
+
+                response.Responses?.get(tableName.value).orEmpty()
+            }
+            .map(itemLens)
+    }
+
+    fun batchSave(documents: Collection<Document>) {
         if (documents.isEmpty()) return
 
-        for (chunk in documents.chunked(batchSizeLimit)) {
+        for (chunk in documents.chunked(BATCH_PUT_LIMIT)) {
             val batch = chunk.map { obj ->
                 val item = Item().with(itemLens of obj)
                 ReqWriteItem.Put(item)
@@ -51,7 +69,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         }
     }
 
-    operator fun plusAssign(document: Document) {
+    fun save(document: Document) {
         val item = Item().with(itemLens of document)
 
         dynamoDb.putItem(tableName, item)
@@ -65,7 +83,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         )
     }
 
-    operator fun minusAssign(document: Document) {
+    fun delete(document: Document) {
         val item = Item().with(itemLens of document)
         return delete(
             hashKey = primarySchema.hashKeyAttribute(item),
@@ -73,10 +91,15 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         )
     }
 
-    operator fun minusAssign(documents: Collection<Document>) {
-        val keys = documents.map { it.key() }
+    fun batchDelete(documents: Collection<Document>) = batchDeleteKeys(documents.map { it.key() })
 
-        for (chunk in keys.chunked(batchSizeLimit)) {
+    @JvmName("batchDeleteKeyPairs")
+    fun batchDelete(keys: Collection<Pair<HashKey, SortKey?>>) {
+        batchDeleteKeys(keys.map { primarySchema.key(it.first, it.second) })
+    }
+
+    private fun batchDeleteKeys(keys: Collection<Key>) {
+        for (chunk in keys.chunked(BATCH_PUT_LIMIT)) {
             val batch = chunk.map { key ->
                 ReqWriteItem.Delete(key)
             }
