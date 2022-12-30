@@ -18,5 +18,5 @@ performance factor.
 To start:
 
 ```
-FakeSQS().start()
+FakeSNS().start()
 ```
