@@ -4,13 +4,14 @@ import org.http4k.aws.AwsCredentials
 import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
-import org.http4k.connect.amazon.cognito.endpoints.clientCredentialsToken
 import org.http4k.connect.amazon.cognito.endpoints.createResourceServer
 import org.http4k.connect.amazon.cognito.endpoints.createUserPool
 import org.http4k.connect.amazon.cognito.endpoints.createUserPoolClient
 import org.http4k.connect.amazon.cognito.endpoints.createUserPoolDomain
 import org.http4k.connect.amazon.cognito.endpoints.deleteUserPool
 import org.http4k.connect.amazon.cognito.endpoints.deleteUserPoolDomain
+import org.http4k.connect.amazon.cognito.endpoints.wellKnown
+import org.http4k.connect.amazon.cognito.oauth.CognitoOAuth
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.storage.InMemory
@@ -28,7 +29,8 @@ class FakeCognito(
     private val api = AmazonJsonFake(CognitoMoshi, AwsService.of("AWSCognitoIdentityProviderService"))
 
     override val app = routes(
-        clientCredentialsToken(clock, expiry, pools),
+        CognitoOAuth(pools, clock, expiry),
+        wellKnown(pools),
         api.createUserPool(pools),
         api.createResourceServer(pools),
         api.createUserPoolDomain(pools),
@@ -46,3 +48,4 @@ class FakeCognito(
 fun main() {
     FakeCognito().start()
 }
+

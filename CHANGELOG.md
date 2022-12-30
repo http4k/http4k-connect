@@ -3,8 +3,13 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v3.26.0.0 (uncut)
+### v3.26.1.0 (uncut)
+- **http4k-connect-amazon-dynamodb** - Add tableMapper batchGet and batchDelete operations. H/T @oharaandrew314
+- **http4k-connect-cognito-fake** - Enforce matching of Client Secret as well as ClientId 
+
+### v3.26.0.0
 - **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-cognito*** - Implement OAuth server with JWT signing and Well Known endpoint.
 
 ### v3.25.5.0
 - **http4k-connect-amazon-containercredentials** - Support passing of full CC URL and auth token header. This makes us compatible with AWS Snapstart

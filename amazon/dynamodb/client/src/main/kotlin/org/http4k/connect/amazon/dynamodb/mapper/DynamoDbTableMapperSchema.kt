@@ -17,6 +17,11 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
         override val hashKeyAttribute: Attribute<HashKey>,
         override val sortKeyAttribute: Attribute<SortKey>?
     ): DynamoDbTableMapperSchema<HashKey, SortKey> {
+        companion object {
+            operator fun <HashKey> invoke(hashKeyAttribute: Attribute<HashKey>) =
+                Primary<HashKey, Unit>(hashKeyAttribute, null)
+        }
+
         override val indexName = null
     }
 

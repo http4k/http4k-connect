@@ -14,7 +14,7 @@ import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.createUserPoolClient(pools: Storage<CognitoPool>) = route<CreateUserPoolClient> { client ->
     pools[client.UserPoolId.value]?.let { pool ->
-        val newClient =  UserPoolClient(
+        val newClient = UserPoolClient(
             ClientId.of(client.ClientName.value),
             client.ClientName,
             client.UserPoolId,
