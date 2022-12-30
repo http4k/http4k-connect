@@ -5,12 +5,10 @@ import org.http4k.connect.amazon.dynamodb.action.ListImports
 import org.http4k.connect.amazon.dynamodb.action.ListImportsResponse
 import org.http4k.connect.amazon.dynamodb.model.ImportSummary
 import org.http4k.connect.amazon.dynamodb.model.ImportTableDescription
-import org.http4k.connect.storage.Storage
 
-fun AmazonJsonFake.listImports(tableImports: Storage<ImportTableDescription>) = route<ListImports> { listImports ->
+fun AmazonJsonFake.listImports(tableImports: List<ImportTableDescription>) = route<ListImports> { listImports ->
     ListImportsResponse(
-        ImportSummaryList = tableImports.keySet()
-            .map { tableImports[it]!! }
+        ImportSummaryList = tableImports
             .filter { it.TableArn == listImports.TableArn }
             .map {
                 ImportSummary(ImportArn = it.ImportArn)

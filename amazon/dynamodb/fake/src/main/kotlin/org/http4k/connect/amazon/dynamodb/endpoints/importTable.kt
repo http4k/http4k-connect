@@ -21,7 +21,7 @@ import java.time.Clock
 
 fun AmazonJsonFake.importTable(
     tables: Storage<DynamoTable>,
-    tableImports: Storage<ImportTableDescription>,
+    addTableImport: (ImportTableDescription) -> Unit,
     availableS3Buckets: () -> List<FakeS3BucketSource>,
     clock: Clock
 ) = route<ImportTable> { importRequest ->
@@ -33,7 +33,7 @@ fun AmazonJsonFake.importTable(
                 ImportTableDescription.completed(importRequest, clock)
             }
             ?: ImportTableDescription.noSuchBucket(importRequest)
-    tableImports[importDescription.ImportArn!!.value] = importDescription
+    addTableImport(importDescription)
     ImportTableResponse(importDescription)
 }
 

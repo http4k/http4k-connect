@@ -36,15 +36,16 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import java.time.Clock
 import java.time.Clock.systemUTC
+import java.util.concurrent.CopyOnWriteArrayList
 
 class FakeDynamoDb(
     tables: Storage<DynamoTable> = Storage.InMemory(),
-    tableImports: Storage<ImportTableDescription> = Storage.InMemory(),
     s3BucketSources: () -> List<FakeS3BucketSource> = { emptyList() },
     private val clock: Clock = systemUTC()
 ) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(DynamoDbMoshi, AwsService.of("DynamoDB_20120810"))
+    private val tableImports = CopyOnWriteArrayList<ImportTableDescription>()
 
     override val app = routes(
         "/" bind POST to routes(
@@ -66,7 +67,7 @@ class FakeDynamoDb(
             api.transactWriteItems(tables),// todo
             api.updateItem(tables),
             api.updateTable(tables),
-            api.importTable(tables, tableImports, s3BucketSources, clock),
+            api.importTable(tables, tableImports::add, s3BucketSources, clock),
             api.describeImport(tableImports),
             api.listImports(tableImports)
         )
