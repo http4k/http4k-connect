@@ -47,8 +47,9 @@ private val ImportTable.tableName get() = TableCreationParameters.TableName.valu
 private val ImportTable.s3Bucket get() =S3BucketSource.S3Bucket
 
 private fun itemFromCsv(csv: String): Item {
-    val headers = csv.lines().first().split(",")
-    val row = csv.lines().drop(1).first().split(",")
+    val lines = csv.lines()
+    val headers = lines.first().split(",")
+    val row = lines.drop(1).first().split(",")
     return headers.zip(row).associate { (header, value) ->
         AttributeName.of(header) to AttributeValue.Str(value)
     }
