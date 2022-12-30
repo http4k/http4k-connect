@@ -23,7 +23,7 @@ fun AmazonJsonFake.createUserPoolClient(pools: Storage<CognitoPool>) = route<Cre
             3600,
             TokenValidityUnits(),
             client.AllowedOAuthFlowsUserPoolClient,
-            ClientSecret = ClientSecret.of(client.ClientName.value.reversed())
+            ClientSecret = if (client.GenerateSecret == true) ClientSecret.of(client.ClientName.value.reversed()) else null
         )
         pool.clients += newClient
         CreatedUserPoolClient(newClient)
