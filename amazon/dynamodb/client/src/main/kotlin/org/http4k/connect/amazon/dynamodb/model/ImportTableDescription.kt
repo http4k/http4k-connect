@@ -25,6 +25,7 @@ data class ImportTableDescription(
     val TableArn: ARN? = null,
     val TableCreationParameters: TableCreationParameters? = null,
     val TableId: String? = null,
-    
-)
+) {
+    companion object
+}
 
