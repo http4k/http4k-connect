@@ -60,14 +60,3 @@ private fun S3.waitForBucketCreated(bucketName: BucketName, timeout: Duration = 
         timeout = timeout
     )
 }
-
-private fun waitUntil(test: () -> Boolean, failureMessage: String, timeout: Duration) {
-    val waitStart = Instant.now()
-    while (Duration.between(waitStart, Instant.now()) < timeout) {
-        if (test()) {
-            return
-        }
-        Thread.sleep(1000)
-    }
-    throw IllegalStateException(failureMessage)
-}
