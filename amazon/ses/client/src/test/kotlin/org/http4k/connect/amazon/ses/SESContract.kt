@@ -3,7 +3,6 @@ package org.http4k.connect.amazon.ses
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.ses.action.SendEmail
 import org.http4k.connect.amazon.ses.model.Body
 import org.http4k.connect.amazon.ses.model.Destination
 import org.http4k.connect.amazon.ses.model.EmailAddress
@@ -23,18 +22,16 @@ abstract class SESContract(http: HttpHandler) : AwsContract() {
 
     @Test
     fun `sends emails`() {
-        val response = ses(
-            SendEmail(
-                source = from,
-                destination = Destination(
-                    toAddresses = setOf(
-                        EmailAddress.of("destination@example.com")
-                    )
-                ),
-                message = Message(
-                    subject = Subject.of("Hello"),
-                    html = Body.of("Hello World")
+        val response = ses.sendEmail(
+            source = from,
+            destination = Destination(
+                toAddresses = setOf(
+                    EmailAddress.of("destination@example.com")
                 )
+            ),
+            message = Message(
+                subject = Subject.of("Hello"),
+                html = Body.of("Hello World")
             )
         )
 
