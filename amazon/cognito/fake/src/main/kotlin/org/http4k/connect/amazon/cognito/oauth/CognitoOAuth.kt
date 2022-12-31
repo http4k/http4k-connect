@@ -94,7 +94,7 @@ private fun LoginPage(name: ClientName) = """
     <html>
     <b>Please log into ${name}</b>
     <form id="loginForm" method="POST">
-        <input id="email" type="text" placeholder="joe@email.com" name="Email"><br>
+        <input id="email" type="text" placeholder="joe@email.com" name="email"><br>
         <button type="submit">Login</button>
     </form>
     </html>
