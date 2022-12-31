@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.cognito.oauth
 
 import org.http4k.connect.amazon.cognito.CognitoPool
+import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.oauth.Form.email
 import org.http4k.connect.amazon.cognito.oauth.Form.formLens
 import org.http4k.connect.amazon.core.model.Region
@@ -9,6 +10,7 @@ import org.http4k.core.Body
 import org.http4k.core.Filter
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
+import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.FOUND
 import org.http4k.core.Status.Companion.OK
@@ -26,6 +28,7 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.security.oauth.server.OAuthServer
+import org.http4k.security.oauth.server.OAuthServer.Companion.clientIdQueryParameter
 import java.time.Clock
 import java.time.Duration
 
@@ -47,7 +50,9 @@ fun CognitoOAuth(pools: Storage<CognitoPool>, clock: Clock, expiry: Duration): R
                     Response(FOUND).with(LOCATION of it.uri.path("/oauth2/login"))
                 },
                 "/oauth2/login" bind routes(
-                    GET to server.authenticationStart.then { Response(OK).body(LOGIN_PAGE) },
+                    GET to server.authenticationStart.then {
+                        Response(OK).body(LoginPage(pools.findMatchingClientName(it)))
+                    },
                     POST to { request ->
                         if (email(formLens(request)).contains('@')) {
                             server.authenticationComplete(request)
@@ -69,14 +74,25 @@ private fun CopyNonStandardOAuthParamsIntoFormIfItIsNotAlreadyThere() = Filter {
     }
 }
 
+private fun Storage<CognitoPool>.findMatchingClientName(
+    req: Request
+) = (keySet()
+    .firstNotNullOfOrNull {
+        this[it]
+            ?.clients
+            ?.firstOrNull { it.ClientId.value == clientIdQueryParameter(req).value }
+    }
+    ?.ClientName
+    ?: ClientName.of("Cognito"))
+
 internal object Form {
     val email = FormField.required("email")
     val formLens = Body.webForm(Strict, email).toLens()
 }
 
-private const val LOGIN_PAGE = """
+private fun LoginPage(name: ClientName) = """
     <html>
-    <b>Please log into Cognito</b>
+    <b>Please log into ${name}</b>
     <form id="loginForm" method="POST">
         <input id="email" type="text" placeholder="joe@email.com" name="Email"><br>
         <button type="submit">Login</button>
