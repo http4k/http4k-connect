@@ -18,14 +18,13 @@ class CognitoPoolClientValidator(private val storage: Storage<CognitoPool>) : Cl
      * We are non-strict here - we only check the secret if there was one generated. This will differ from
      * real cognito (which would reject if an attempt was made to auth with a client with no secret)
      */
-    override fun validateCredentials(request: Request, clientId: ClientId, clientSecret: String): Boolean {
-        return storage.keySet().any {
+    override fun validateCredentials(request: Request, clientId: ClientId, clientSecret: String) =
+        storage.keySet().any {
             storage[it]!!.clients.any {
                 it.ClientId.value == clientId.value &&
                     (it.ClientSecret == null || it.ClientSecret == ClientSecret.of(clientSecret))
             }
         }
-    }
 
     override fun validateRedirection(request: Request, clientId: ClientId, redirectionUri: Uri) = true
 
