@@ -11,7 +11,7 @@ import java.util.UUID
 /**
  * Helper method to create some OAuth Client credentials inside FakeCognito
  */
-fun FakeCognito.registerOAuthClient(id: ClientId): Credentials =
+fun FakeCognito.registerOAuthClient(id: ClientId, clientName: ClientName = ClientName.of(id.value)): Credentials =
     with(client()) {
         val poolId = createUserPool(PoolName.of("POOL" + UUID.randomUUID())).valueOrNull()!!.UserPool.Id!!
 
@@ -19,7 +19,7 @@ fun FakeCognito.registerOAuthClient(id: ClientId): Credentials =
         createUserPoolDomain(poolId, CloudFrontDomain.of(id.value)).valueOrNull()
         val userPoolClient = createUserPoolClient(
             UserPoolId = poolId,
-            ClientName = ClientName.of(id.value),
+            ClientName = clientName,
             GenerateSecret = true
         ).valueOrNull()!!.UserPoolClient
 
