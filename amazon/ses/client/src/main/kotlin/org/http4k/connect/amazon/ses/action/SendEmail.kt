@@ -38,7 +38,7 @@ data class SendEmail(
         .mapIndexed { idx, it -> "ReplyToAddresses.member.${idx + 1}" to it.value }
         .toTypedArray(),
     Pair("Message.Subject.Data", message.subject.value),
-    Pair("Message.Body.Html.Data", message.html.value),
+    message.html?.let { Pair("Message.Body.Html.Data", it.value) },
     message.text?.let { Pair("Message.Body.Text.Data", it.value) }
 ) {
     override fun toResult(response: Response) = with(response) {

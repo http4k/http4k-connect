@@ -19,11 +19,13 @@ abstract class SESContract(http: HttpHandler) : AwsContract() {
         SES.Http(aws.region, aws::credentials, http)
     }
 
+    protected val from = EmailAddress.of("source@example.com")
+
     @Test
     fun `sends emails`() {
         val response = ses(
             SendEmail(
-                source = EmailAddress.of("source@example.com"),
+                source = from,
                 destination = Destination(
                     toAddresses = setOf(
                         EmailAddress.of("destination@example.com")
@@ -37,5 +39,9 @@ abstract class SESContract(http: HttpHandler) : AwsContract() {
         )
 
         assertThat(response.successValue(), present())
+
+        assertEmailSent()
     }
+
+    abstract fun assertEmailSent()
 }
