@@ -96,8 +96,8 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
 
     queues[queue]?.let {
         val message = req.form("MessageBody")!!
-        val messageId = SQSMessageId.of(queue + "/" + UUID.randomUUID())
-        val receiptHandle = ReceiptHandle.of(queue + "/" + UUID.randomUUID())
+        val messageId = SQSMessageId.of(UUID.randomUUID().toString())
+        val receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString())
 
         val sqsMessage = SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
         queues[queue] = it + sqsMessage
