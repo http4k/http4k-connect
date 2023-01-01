@@ -1,19 +1,19 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
+import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.onFailure
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.dynamodb.*
 import org.http4k.connect.amazon.dynamodb.action.TableDescriptionResponse
 import org.http4k.connect.amazon.dynamodb.model.*
-import org.http4k.lens.BiDiLens
-import dev.forkhandles.result4k.Result
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.autoDynamoLens
+import org.http4k.lens.BiDiLens
 
 private const val BATCH_PUT_LIMIT = 25  // as defined by DynamoDB
 private const val BATCH_GET_LIMIT = 100 // as defined by DynamoDB
 
-class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
+class DynamoDbTableMapper<Document : Any, HashKey : Any, SortKey : Any>(
     private val dynamoDb: DynamoDb,
     private val tableName: TableName,
     private val itemLens: BiDiLens<Item, Document>,
@@ -28,15 +28,13 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         return primarySchema.key(hashKey, sortKey)
     }
 
-    operator fun get(hashKey: HashKey, sortKey: SortKey? = null): Document? {
-        return dynamoDb.getItem(
-            TableName = tableName,
-            Key = primarySchema.key(hashKey, sortKey)
-        )
-            .onFailure { it.reason.throwIt() }
-            .item
-            ?.let(itemLens)
-    }
+    operator fun get(hashKey: HashKey, sortKey: SortKey? = null) = dynamoDb.getItem(
+        TableName = tableName,
+        Key = primarySchema.key(hashKey, sortKey)
+    )
+        .onFailure { it.reason.throwIt() }
+        .item
+        ?.let(itemLens)
 
     fun batchGet(keys: Collection<Pair<HashKey, SortKey?>>): Sequence<Document> {
         if (keys.isEmpty()) return emptySequence()
@@ -46,9 +44,11 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
             .map { primarySchema.key(it.first, it.second) }
             .chunked(BATCH_GET_LIMIT)
             .flatMap { chunk ->
-                val response = dynamoDb.batchGetItem(mapOf(
-                    tableName to ReqGetItem.Get(chunk)
-                )).onFailure { it.reason.throwIt() }
+                val response = dynamoDb.batchGetItem(
+                    mapOf(
+                        tableName to ReqGetItem.Get(chunk)
+                    )
+                ).onFailure { it.reason.throwIt() }
 
                 response.Responses?.get(tableName.value).orEmpty()
             }
@@ -109,7 +109,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         }
     }
 
-    fun <NewHashKey: Any, NewSortKey: Any> index(
+    fun <NewHashKey : Any, NewSortKey : Any> index(
         schema: DynamoDbTableMapperSchema<NewHashKey, NewSortKey>
     ) = DynamoDbIndexMapper(
         dynamoDb = dynamoDb,
@@ -129,7 +129,7 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
 
         for (schema in secondarySchemas) {
             attributeDefinitions += schema.attributeDefinitions()
-            when(schema) {
+            when (schema) {
                 is DynamoDbTableMapperSchema.GlobalSecondary -> globalIndexes += schema.toIndex()
                 is DynamoDbTableMapperSchema.LocalSecondary -> localIndexes += schema.toIndex()
             }
@@ -144,12 +144,10 @@ class DynamoDbTableMapper<Document: Any, HashKey: Any, SortKey: Any>(
         )
     }
 
-    fun deleteTable(): Result<TableDescriptionResponse, RemoteFailure> {
-        return dynamoDb.deleteTable(tableName)
-    }
+    fun deleteTable() = dynamoDb.deleteTable(tableName)
 }
 
-inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMapper(
+inline fun <reified Document : Any, HashKey : Any, SortKey : Any> DynamoDb.tableMapper(
     TableName: TableName,
     hashKeyAttribute: Attribute<HashKey>,
     sortKeyAttribute: Attribute<SortKey>? = null,
@@ -160,7 +158,7 @@ inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMap
     autoMarshalling = autoMarshalling
 )
 
-inline fun <reified Document: Any, HashKey: Any, SortKey: Any> DynamoDb.tableMapper(
+inline fun <reified Document : Any, HashKey : Any, SortKey : Any> DynamoDb.tableMapper(
     TableName: TableName,
     primarySchema: DynamoDbTableMapperSchema.Primary<HashKey, SortKey>,
     autoMarshalling: AutoMarshalling = DynamoDbMoshi
