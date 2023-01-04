@@ -142,7 +142,7 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
 
             assertThat(
                 browser(Request(GET, "http://app$protectedPath")),
-                hasBody(containsSubstring("Please log into "))
+                hasBody(containsSubstring("Enter your email to log into "))
             )
 
             assertThat(
