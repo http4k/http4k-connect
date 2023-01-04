@@ -92,10 +92,16 @@ internal object Form {
 
 private fun LoginPage(name: ClientName) = """
     <html>
-    <b>Please log into ${name}</b>
+    <head> 
+        <title>${name} Login</title> 
+    </head>
+    <body>
+    Enter your email to log into <b>${name}</b>.
+    <i>You will be issued a JWT with the verified email<./i>
     <form id="loginForm" method="POST">
-        <input id="email" type="text" placeholder="joe@email.com" name="email"><br>
+        <input id="email" type="text" placeholder="Enter email" name="email"><br>
         <button type="submit">Login</button>
     </form>
+    </body>
     </html>
 """
