@@ -13,7 +13,10 @@ import java.time.Clock
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
+/**
+ * This provider will time out if not in an EC2 Environment.
+ * For that reason, if there are multiple providers in a chain, this provider should be last.
+ */
 fun CredentialsChain.Companion.Ec2InstanceProfile(
     ec2InstanceMetadata: Ec2InstanceMetadata,
     clock: Clock,
@@ -45,7 +48,6 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
     }
 }
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
 fun CredentialsChain.Companion.Ec2InstanceProfile(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
@@ -56,7 +58,6 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
     gracePeriod = gracePeriod
 )
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
 fun CredentialsProvider.Companion.Ec2InstanceProfile(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
@@ -66,4 +67,3 @@ fun CredentialsProvider.Companion.Ec2InstanceProfile(
     clock = clock,
     gracePeriod = gracePeriod
 ).provider()
-

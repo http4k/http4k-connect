@@ -6,7 +6,6 @@ import org.http4k.connect.amazon.ec2credentials.action.Ec2CredentialsAction
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.amazon.AwsServiceCompanion
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
 @Http4kConnectAdapter
 interface Ec2InstanceMetadata {
     operator fun <R> invoke(action: Ec2CredentialsAction<R>): Result<R, RemoteFailure>
