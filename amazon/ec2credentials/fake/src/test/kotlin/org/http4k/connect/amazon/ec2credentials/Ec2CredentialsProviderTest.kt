@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat

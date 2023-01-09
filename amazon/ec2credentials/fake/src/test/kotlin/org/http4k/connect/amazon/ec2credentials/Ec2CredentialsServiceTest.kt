@@ -1,11 +1,11 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
-import org.http4k.connect.amazon.instancemetadata.action.getCredentials
-import org.http4k.connect.amazon.instancemetadata.action.listProfiles
+import org.http4k.connect.amazon.ec2credentials.action.getCredentials
+import org.http4k.connect.amazon.ec2credentials.action.listProfiles
 import org.http4k.connect.successValue
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.junit.jupiter.api.Test

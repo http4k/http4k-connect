@@ -1,12 +1,12 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.valueOrNull
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.instancemetadata.action.getCredentials
-import org.http4k.connect.amazon.instancemetadata.action.listProfiles
+import org.http4k.connect.amazon.ec2credentials.action.getCredentials
+import org.http4k.connect.amazon.ec2credentials.action.listProfiles
 import org.http4k.core.HttpHandler
 import java.time.Clock
 import java.time.Duration

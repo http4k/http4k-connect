@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import com.squareup.moshi.Moshi
 import org.http4k.format.AwsCoreJsonAdapterFactory

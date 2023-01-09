@@ -1,7 +1,7 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.instancemetadata.action.Ec2CredentialsAction
+import org.http4k.connect.amazon.ec2credentials.action.Ec2CredentialsAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

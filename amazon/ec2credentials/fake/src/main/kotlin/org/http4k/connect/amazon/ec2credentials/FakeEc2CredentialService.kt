@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import org.http4k.base64Encode
 import org.http4k.chaos.ChaoticHttpHandler

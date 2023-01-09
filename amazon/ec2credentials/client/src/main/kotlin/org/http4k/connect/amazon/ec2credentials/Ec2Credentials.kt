@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.connect.amazon.core.model.AccessKeyId

@@ -1,8 +1,8 @@
-package org.http4k.connect.amazon.instancemetadata
+package org.http4k.connect.amazon.ec2credentials
 
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.instancemetadata.action.Ec2CredentialsAction
+import org.http4k.connect.amazon.ec2credentials.action.Ec2CredentialsAction
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.amazon.AwsServiceCompanion
 
