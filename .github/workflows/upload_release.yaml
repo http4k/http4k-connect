@@ -9,13 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.3.0
       - name: Grab tag name
         uses: olegtarasov/get-tag@v2
         id: tagName
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3.9.0
         with:
+          distribution: adopt
           java-version: 11
       - name: Upload to Sonatype
         run: |
@@ -31,10 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.3.0
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3.9.0
         with:
+          distribution: adopt
           java-version: 11
       - name: Release to Maven Central
         run: |
@@ -46,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.3.0
       - name: Grab tag name
         uses: olegtarasov/get-tag@v2
         id: tagName
@@ -62,7 +64,7 @@ jobs:
     needs: [Announce]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.3.0
       - name: Grab tag name
         uses: olegtarasov/get-tag@v2
         id: tagName
