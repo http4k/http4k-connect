@@ -18,11 +18,11 @@ import java.time.ZonedDateTime
 private val profileNameLens = Path.value(Ec2ProfileName).of("profile_name")
 private val credentialsLens = InstanceMetadataServiceMoshi.autoBody<Ec2Credentials>().toLens()
 
-fun listCredentials(metadata: InstanceMetadata) = "/latest/meta-data/iam/security-credentials" bind GET to {
+fun listSecurityCredentials(metadata: InstanceMetadata) = "/latest/meta-data/iam/security-credentials" bind GET to {
     Response(OK).body(metadata.profiles.joinToString("\n"))
 }
 
-fun getCredentials(metadata: InstanceMetadata, clock: Clock) = "/latest/meta-data/iam/security-credentials/$profileNameLens" bind GET to { request ->
+fun getSecurityCredentials(metadata: InstanceMetadata, clock: Clock) = "/latest/meta-data/iam/security-credentials/$profileNameLens" bind GET to { request ->
     metadata.getCredentials(profileNameLens(request), ZonedDateTime.now(clock))
         ?.let { Response(OK).with(credentialsLens of it) }
         ?: Response(NOT_FOUND)

@@ -6,6 +6,7 @@ import org.http4k.connect.amazon.instancemetadata.model.HostName
 import org.http4k.connect.amazon.instancemetadata.model.ImageId
 import org.http4k.connect.amazon.instancemetadata.model.InstanceId
 import org.http4k.connect.amazon.instancemetadata.model.InstanceType
+import org.http4k.connect.amazon.instancemetadata.model.IpV4Address
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
@@ -29,6 +30,7 @@ fun <T> AutoMappingConfiguration<T>.withInstanceMetadataServiceMappings() = appl
     value(ImageId)
     value(InstanceId)
     value(InstanceType)
+    value(IpV4Address)
 }
 
 @KotshiJsonAdapterFactory
