@@ -18,11 +18,7 @@ class GetInstanceId: Ec2MetadataAction<InstanceId> {
     override fun toRequest() = Request(Method.GET, uri)
 
     override fun toResult(response: Response) = when(response.status) {
-        Status.OK -> response.bodyString()
-            .lines()
-            .first()
-            .let(InstanceId::of)
-            .let(::Success)
+        Status.OK -> Success(response.value(InstanceId))
         else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
     }
 }

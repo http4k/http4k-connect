@@ -1,6 +1,6 @@
 # Instance Metadata Service
 
-The EC2 Instance Metadata Service connector provides the following Actions:
+The Instance Metadata Service connector provides the following Actions:
 
      *  GetAmiId
      *  GetHostName

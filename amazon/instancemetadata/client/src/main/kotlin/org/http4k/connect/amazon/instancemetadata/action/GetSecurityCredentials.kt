@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.instancemetadata.model.Ec2Credentials
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
@@ -20,11 +21,8 @@ data class GetSecurityCredentials(private val ec2ProfileName: Ec2ProfileName): E
 
     override fun toRequest() = Request(Method.GET, uri)
 
-    override fun toResult(response: Response) = with(response) {
-        if (status.successful) {
-            Success(lens(response))
-        } else {
-            Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
-        }
+    override fun toResult(response: Response) = when(response.status) {
+        Status.OK -> Success(lens(response))
+        else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
     }
 }

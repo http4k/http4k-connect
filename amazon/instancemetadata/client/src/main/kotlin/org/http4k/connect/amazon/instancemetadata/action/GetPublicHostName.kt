@@ -18,11 +18,7 @@ class GetPublicHostName: Ec2MetadataAction<HostName> {
     override fun toRequest() = Request(Method.GET, uri)
 
     override fun toResult(response: Response) = when(response.status) {
-        Status.OK -> response.bodyString()
-            .lines()
-            .first()
-            .let(HostName::of)
-            .let(::Success)
+        Status.OK -> Success(response.value(HostName))
         else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
     }
 }

@@ -20,11 +20,11 @@ object InstanceMetadataServiceMoshi : ConfigurableMoshi(
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()
-        .withEc2MetadataMappings()
+        .withInstanceMetadataServiceMappings()
         .done()
 )
 
-fun <T> AutoMappingConfiguration<T>.withEc2MetadataMappings() = apply {
+fun <T> AutoMappingConfiguration<T>.withInstanceMetadataServiceMappings() = apply {
     value(HostName)
     value(ImageId)
     value(InstanceId)

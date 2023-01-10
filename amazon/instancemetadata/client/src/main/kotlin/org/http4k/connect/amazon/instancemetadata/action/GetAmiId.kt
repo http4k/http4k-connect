@@ -18,11 +18,7 @@ class GetAmiId: Ec2MetadataAction<ImageId> {
     override fun toRequest() = Request(Method.GET, uri)
 
     override fun toResult(response: Response) = when(response.status) {
-        Status.OK -> response.bodyString()
-            .lines()
-            .first()
-            .let(ImageId::of)
-            .let(::Success)
+        Status.OK -> Success(response.value(ImageId))
         else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
     }
 }

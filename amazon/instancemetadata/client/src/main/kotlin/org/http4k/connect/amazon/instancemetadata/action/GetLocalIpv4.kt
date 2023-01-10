@@ -18,11 +18,7 @@ class GetLocalIpv4: Ec2MetadataAction<IpV4Address> {
     override fun toRequest() = Request(Method.GET, uri)
 
     override fun toResult(response: Response) = when(response.status) {
-        Status.OK -> response.bodyString()
-            .lines()
-            .first()
-            .let(IpV4Address::of)
-            .let(::Success)
+        Status.OK -> Success(response.value(IpV4Address))
         else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
     }
 }
