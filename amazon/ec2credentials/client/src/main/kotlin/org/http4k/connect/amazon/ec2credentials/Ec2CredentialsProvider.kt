@@ -12,7 +12,7 @@ import java.time.Clock
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
+@Deprecated("Use http4k-connect-amazon-instancemetadata module")
 fun CredentialsChain.Companion.Ec2InstanceProfile(
     ec2InstanceMetadata: Ec2InstanceMetadata,
     clock: Clock,
@@ -44,7 +44,7 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
     }
 }
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
+@Deprecated("Use http4k-connect-amazon-instancemetadata module")
 fun CredentialsChain.Companion.Ec2InstanceProfile(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
@@ -55,7 +55,7 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
     gracePeriod = gracePeriod
 )
 
-@Deprecated("Use http4k-connect-amazon-ec2metadata module")
+@Deprecated("Use http4k-connect-amazon-instancemetadata module")
 fun CredentialsProvider.Companion.Ec2InstanceProfile(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
