@@ -101,6 +101,7 @@ dependencies {
     - [SQS](./amazon/sqs) -> `"org.http4k:http4k-connect-amazon-sqs"` / `"org.http4k:http4k-connect-amazon-sqs-fake"`
     - [STS](./amazon/sts) -> `"org.http4k:http4k-connect-amazon-sts"` / `"org.http4k:http4k-connect-amazon-sts-fake"
     - [SystemsManager](./amazon/systemsmanager) -> `"org.http4k:http4k-connect-amazon-systemsmanager"` / `"org.http4k:http4k-connect-amazon-systemsmanager-fake"`
+    - [InstanceMetadataService](./amazon/instancemetadata) -> `"org.http4k:http4k-connect-amazon-instancemetadata"` / `"org.http4k:http4k-connect-amazon-instancemetadata-fake"`
 - [GitHub V3, App, Callback](./github) -> `"org.http4k:http4k-connect-github"`
 - Google Analytics
     - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`

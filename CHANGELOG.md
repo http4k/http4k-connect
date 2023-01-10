@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.27.0.0 (uncut)
+- **http4k-connect-amazon-instancemetadata** - New module!  Query metadata and credentials from the current Amazon EC2 environment.  H/T @oharaandrew314
+- **http4k-connect-amazon-ec2credentials** - Deprecated.  Use the **http4k-connect-amazon-instancemetadata** module
+
 ### v3.26.3.0
 - **http4k-connect-cognito** - We now generate action code using Kapt, as per the other adapters.
 - **http4k-connect-cognito-fake** - Fixes to login page.
