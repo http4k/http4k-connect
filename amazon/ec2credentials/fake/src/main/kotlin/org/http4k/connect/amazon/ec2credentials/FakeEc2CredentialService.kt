@@ -4,7 +4,6 @@ import org.http4k.base64Encode
 import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
 import org.http4k.connect.amazon.core.model.AccessKeyId
-import org.http4k.connect.amazon.core.model.Ec2Credentials
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
 import org.http4k.connect.amazon.core.model.Expiration
 import org.http4k.connect.amazon.core.model.SecretAccessKey

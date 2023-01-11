@@ -1,12 +1,14 @@
-package org.http4k.connect.amazon.core.model
+package org.http4k.connect.amazon.ec2credentials
 
 import org.http4k.aws.AwsCredentials
-import se.ansman.kotshi.JsonSerializable
+import org.http4k.connect.amazon.core.model.AccessKeyId
+import org.http4k.connect.amazon.core.model.Expiration
+import org.http4k.connect.amazon.core.model.SecretAccessKey
+import org.http4k.connect.amazon.core.model.SessionToken
 import java.time.Clock
 import java.time.Duration
 import java.time.ZonedDateTime
 
-@JsonSerializable
 data class Ec2Credentials(
     val Code: String,
     val LastUpdated: ZonedDateTime,

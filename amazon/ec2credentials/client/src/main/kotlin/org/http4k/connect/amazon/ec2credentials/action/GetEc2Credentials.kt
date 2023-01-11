@@ -5,8 +5,8 @@ import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.core.model.Ec2Credentials
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
+import org.http4k.connect.amazon.ec2credentials.Ec2Credentials
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadata
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadataMoshi
 import org.http4k.core.Method

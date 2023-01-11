@@ -1,20 +1,22 @@
-package org.http4k.connect.amazon.ec2credentials
+package org.http4k.connect.amazon.instancemetadata
 
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.valueOrNull
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider
-import org.http4k.connect.amazon.ec2credentials.action.getCredentials
-import org.http4k.connect.amazon.ec2credentials.action.listProfiles
+import org.http4k.connect.amazon.instancemetadata.model.Ec2Credentials
 import org.http4k.core.HttpHandler
 import java.time.Clock
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 
-@Deprecated("Use http4k-connect-amazon-instancemetadata module")
+/**
+ * This provider will time out if not in an EC2 Environment.
+ * For that reason, if there are multiple providers in a chain, this provider should be last.
+ */
 fun CredentialsChain.Companion.Ec2InstanceProfile(
-    ec2InstanceMetadata: Ec2InstanceMetadata,
+    ec2InstanceMetadata: InstanceMetadataService,
     clock: Clock,
     gracePeriod: Duration
 ): CredentialsChain {
@@ -26,11 +28,10 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
             current
         } else {
             ec2InstanceMetadata
-                .listProfiles()
+                .listSecurityCredentials()
                 .onFailure { it.reason.throwIt() }
                 .asSequence()
-                .map { ec2InstanceMetadata.getCredentials(it) }
-                .mapNotNull { it.valueOrNull() }
+                .mapNotNull { ec2InstanceMetadata.getSecurityCredentials(it).valueOrNull() }
                 .firstOrNull()
                 ?.also { cached.set(it) }
         }
@@ -44,25 +45,22 @@ fun CredentialsChain.Companion.Ec2InstanceProfile(
     }
 }
 
-@Deprecated("Use http4k-connect-amazon-instancemetadata module")
 fun CredentialsChain.Companion.Ec2InstanceProfile(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(30)
 ) = CredentialsChain.Ec2InstanceProfile(
-    ec2InstanceMetadata = Ec2InstanceMetadata.Http(http),
+    ec2InstanceMetadata = InstanceMetadataService.Http(http),
     clock = clock,
     gracePeriod = gracePeriod
 )
 
-@Deprecated("Use http4k-connect-amazon-instancemetadata module")
 fun CredentialsProvider.Companion.Ec2InstanceProfile(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(30)
 ) = CredentialsChain.Ec2InstanceProfile(
-    ec2InstanceMetadata = Ec2InstanceMetadata.Http(http),
+    ec2InstanceMetadata = InstanceMetadataService.Http(http),
     clock = clock,
     gracePeriod = gracePeriod
 ).provider()
-
