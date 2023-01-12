@@ -17,6 +17,7 @@ import java.io.File
 import kotlin.io.path.Path
 
 val AWS_REGION = EnvironmentKey.value(Region).required("AWS_REGION")
+val AWS_REGION_OPTIONAL = EnvironmentKey.value(Region).optional("AWS_REGION")
 val AWS_ACCESS_KEY_ID = EnvironmentKey.value(AccessKeyId).required("AWS_ACCESS_KEY_ID")
 val AWS_SECRET_ACCESS_KEY = EnvironmentKey.value(SecretAccessKey).required("AWS_SECRET_ACCESS_KEY")
 val AWS_ACCESS_KEY_ID_OPTIONAL = EnvironmentKey.value(AccessKeyId).optional("AWS_ACCESS_KEY_ID")
