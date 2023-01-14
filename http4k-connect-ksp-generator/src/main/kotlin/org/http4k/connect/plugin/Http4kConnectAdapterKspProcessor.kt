@@ -13,14 +13,14 @@ class Http4kConnectAdapterKspProcessor(
     private val codeGenerator: CodeGenerator
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
+        val allActions = resolver
+            .getSymbolsWithAnnotation(Http4kConnectAction::class.qualifiedName!!)
+            .toList()
+
         resolver
             .getSymbolsWithAnnotation(Http4kConnectAdapter::class.qualifiedName!!)
             .forEach {
-                it.accept(
-                    Http4kConnectAdapterVisitor { logger.warn(it.toString()) }, resolver
-                        .getSymbolsWithAnnotation(Http4kConnectAction::class.qualifiedName!!)
-                        .toList()
-                )
+                it.accept(Http4kConnectAdapterVisitor { logger.warn(it.toString()) }, allActions)
             }
         return emptyList()
     }

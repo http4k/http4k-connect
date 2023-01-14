@@ -7,7 +7,7 @@ import com.google.devtools.ksp.visitor.KSEmptyVisitor
 
 class Http4kConnectActionVisitor(private val log: (Any?) -> Unit) : KSEmptyVisitor<KSTypeReference, Unit>() {
     override fun visitClassDeclaration(actionClass: KSClassDeclaration, actionType: KSTypeReference) {
-        log("PROCESSING " + actionClass.simpleName)
+        log("PROCESSING " + actionClass.asStarProjectedType().declaration.qualifiedName)
         log("PROCESSING " + actionClass.superTypes.toList().map { it.element })
 
         if (actionClass.superTypes.contains(actionType)) {
