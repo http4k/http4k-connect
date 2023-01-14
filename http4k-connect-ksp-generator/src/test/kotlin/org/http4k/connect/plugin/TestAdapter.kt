@@ -9,10 +9,17 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status
 
 @Http4kConnectAdapter
 interface TestAdapter {
     operator fun <R> invoke(action: FooAction<R>): Result<R, RemoteFailure>
+
+    companion object
+}
+
+fun TestAdapter.Companion.Impl() = object : TestAdapter {
+    override fun <R> invoke(action: FooAction<R>) = action.toResult(Response(Status.OK))
 }
 
 interface FooAction<R> : Action<Result<R, RemoteFailure>>

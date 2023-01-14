@@ -12,6 +12,7 @@ class Http4kConnectAdapterKspProcessor(
 ) : SymbolProcessor {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
+        System.err.println("FOOBAR")
         logger.info("Http4kConnectAdapterKspProcessor was invoked.")
         return emptyList()
     }
