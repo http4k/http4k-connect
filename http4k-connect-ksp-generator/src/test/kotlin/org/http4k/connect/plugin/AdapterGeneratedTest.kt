@@ -9,6 +9,6 @@ class AdapterGeneratedTest {
 
     @Test
     fun `adapter actions are generated`() {
-        assertThat(TestAdapter.Companion.Impl()(TestAction("hello")).valueOrNull(), equalTo("hello"))
+        assertThat(TestAdapter.Impl()(TestAction("hello")).valueOrNull(), equalTo("hello"))
     }
 }
