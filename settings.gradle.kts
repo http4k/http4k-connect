@@ -17,6 +17,7 @@ refreshVersions {
 }
 
 include(":http4k-connect-kapt-generator")
+include(":http4k-connect-ksp-generator")
 
 includeWithName("http4k-connect-bom", "bom")
 includeSystem("core")

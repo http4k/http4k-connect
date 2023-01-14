@@ -83,3 +83,5 @@ h2 = "com.h2database:h2:2.1.214"
 lettuce-core = "io.lettuce:lettuce-core:6.2.2.RELEASE"
 
 jose4j = "org.bitbucket.b_c:jose4j:0.9.2"
+
+symbol-processing = "com.google.devtools.ksp:symbol-processing:1.7.22-1.0.8"

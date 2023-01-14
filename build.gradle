@@ -13,6 +13,7 @@ buildscript {
         classpath Libs.org_jetbrains_dokka_gradle_plugin
         classpath Libs.io_codearte_nexus_staging_gradle_plugin
         classpath Libs.com_github_kt3k_coveralls_gradle_plugin
+        classpath Libs.com_google_devtools_ksp_com_google_devtools_ksp_gradle_plugin
     }
 }
 
@@ -28,6 +29,7 @@ allprojects {
     apply(plugin: "jacoco")
     apply(plugin: "org.jetbrains.dokka")
     apply(plugin: "com.github.kt3k.coveralls")
+    apply(plugin: "com.google.devtools.ksp")
 
     dependencies {
         implementation(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
