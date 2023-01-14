@@ -9,8 +9,8 @@ import com.google.devtools.ksp.visitor.KSEmptyVisitor
 class Http4kConnectAdapterVisitor(private val log: (Any?) -> Unit) : KSEmptyVisitor<List<KSAnnotated>, Unit>() {
     override fun visitClassDeclaration(adapterClass: KSClassDeclaration, actions: List<KSAnnotated>) {
         log("Processing http4k-connect adapter: " + adapterClass.qualifiedName!!.asString() + " with action type: ${adapterClass.http4kConnectActionType}")
-        val adapterActions = actions.filterForActionsOf(adapterClass)
-        adapterActions.forEach { it.accept(Http4kConnectActionVisitor(log), adapterClass.http4kConnectActionType) }
+        actions.filterForActionsOf(adapterClass)
+            .forEach { it.accept(Http4kConnectActionVisitor(log), Unit) }
     }
 
     override fun defaultHandler(node: KSNode, data: List<KSAnnotated>) {
