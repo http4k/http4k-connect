@@ -11,7 +11,7 @@ dependencies {
     implementation(Libs.api)
     testImplementation(libs.jose4j)
 
-    kapt(libs.symbol.processing.api)
+   
     kapt(Libs.se_ansman_kotshi_compiler)
 
     testImplementation(project(path = ":http4k-connect-core", configuration = "testArtifacts"))

@@ -4,7 +4,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
     implementation(Libs.api)
-    kapt(libs.symbol.processing.api)
+   
     kapt(Libs.se_ansman_kotshi_compiler)
 
     testImplementation("org.jetbrains.kotlin", "kotlin-reflect")
