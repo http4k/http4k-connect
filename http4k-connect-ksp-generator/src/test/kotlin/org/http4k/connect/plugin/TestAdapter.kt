@@ -27,7 +27,9 @@ fun TestAdapter.Companion.Impl() = object : TestAdapter {
 interface FooAction<R> : Action<Result<R, RemoteFailure>>
 
 @Http4kConnectAction
-data class TestAction(val input: String) : FooAction<String> {
+data class TestAction(val input: String, val input2: String) : FooAction<String> {
+    constructor(input: String) : this(input, input)
+
     override fun toRequest() = Request(Method.GET, "")
 
     override fun toResult(response: Response) = Success(input)

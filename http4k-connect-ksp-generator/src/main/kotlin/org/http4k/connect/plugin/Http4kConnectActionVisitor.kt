@@ -1,6 +1,7 @@
 package org.http4k.connect.plugin
 
 import com.google.devtools.ksp.getAllSuperTypes
+import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
@@ -14,23 +15,23 @@ import org.http4k.connect.PagedAction
 import java.util.Locale
 
 class Http4kConnectActionVisitor(private val log: (Any?) -> Unit) :
-    KSEmptyVisitor<KSClassDeclaration, List<FunSpec>>() {
+    KSEmptyVisitor<KSClassDeclaration, Sequence<FunSpec>>() {
     override fun visitClassDeclaration(
         classDeclaration: KSClassDeclaration,
         data: KSClassDeclaration
-    ): List<FunSpec> {
+    ): Sequence<FunSpec> {
         log("Processing " + classDeclaration.asStarProjectedType().declaration.qualifiedName!!.asString())
 
-        val ctr = classDeclaration.primaryConstructor!!
-
-        return listOfNotNull(
-            generateActionExtension(classDeclaration, data, ctr),
-            classDeclaration.takeIf {
-                it.getAllSuperTypes().map { it.toClassName().canonicalName }
-                    .contains(PagedAction::class.qualifiedName)
-            }
-                ?.let { generateActionPagination(classDeclaration, data, ctr) }
-        )
+        return classDeclaration.getConstructors().flatMap { ctr ->
+            listOfNotNull(
+                generateActionExtension(classDeclaration, data, ctr),
+                classDeclaration.takeIf {
+                    it.getAllSuperTypes().map { it.toClassName().canonicalName }
+                        .contains(PagedAction::class.qualifiedName)
+                }
+                    ?.let { generateActionPagination(classDeclaration, data, ctr) }
+            )
+        }
     }
 
     override fun defaultHandler(node: KSNode, data: KSClassDeclaration) = error("unsupported")
