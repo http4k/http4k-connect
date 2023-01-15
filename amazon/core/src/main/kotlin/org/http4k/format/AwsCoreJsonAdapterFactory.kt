@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.core.model.KotshiCredentialsJsonAdapter
 import org.http4k.connect.amazon.core.model.KotshiTagJsonAdapter
 import se.ansman.kotshi.InternalKotshiApi
+import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 @OptIn(InternalKotshiApi::class)
 class AwsCoreJsonAdapterFactory(
@@ -17,3 +18,6 @@ class AwsCoreJsonAdapterFactory(
         )
         .toTypedArray()
 )
+
+@KotshiJsonAdapterFactory
+internal interface CoreAdapterFactory : JsonAdapter.Factory

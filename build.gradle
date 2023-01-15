@@ -77,6 +77,7 @@ allprojects {
         } else if (project.name != "http4k-connect-core") {
             api(Http4k.cloudnative)
             api(project(":http4k-connect-core"))
+            ksp(Libs.se_ansman_kotshi_compiler)
             ksp(project(":http4k-connect-ksp-generator"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
         }
