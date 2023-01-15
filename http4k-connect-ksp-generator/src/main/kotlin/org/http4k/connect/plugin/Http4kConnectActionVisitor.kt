@@ -5,7 +5,6 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
@@ -69,7 +68,7 @@ private fun generateExtensionFunction(
     val baseFunction = FunSpec.builder(
         actionClazz.simpleName.asString().replaceFirstChar { it.lowercase(Locale.getDefault()) } + suffix)
         .addKdoc("@see ${actionClazz.qualifiedName!!.asString().replace('/', '.')}")
-        .receiver(adapterClazz.simpleName.asString().asClassName())
+        .receiver(adapterClazz.toClassName())
         .addCode(codeBlock)
 
     ctr.parameters.forEach {
@@ -79,6 +78,3 @@ private fun generateExtensionFunction(
     }
     return baseFunction.build()
 }
-internal fun kotlinx.metadata.ClassName.pkg() = substringBeforeLast("/").replace('/', '.')
-internal fun kotlinx.metadata.ClassName.name() = substringAfterLast('/')
-internal fun kotlinx.metadata.ClassName.asClassName() = ClassName(pkg(), name())

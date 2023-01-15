@@ -21,7 +21,7 @@ class Http4kConnectAdapterKspProcessor(
         resolver
             .getSymbolsWithAnnotation(Http4kConnectAdapter::class.qualifiedName!!)
             .forEach {
-                it.accept(Http4kConnectAdapterVisitor { logger.warn(it.toString()) }, allActions)
+                it.accept(Http4kConnectAdapterVisitor { logger.info(it.toString()) }, allActions)
                     .writeTo(codeGenerator = codeGenerator, aggregating = false)
             }
         return emptyList()
