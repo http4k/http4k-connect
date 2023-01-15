@@ -22,6 +22,8 @@ object Libs {
 
     const val kotlinpoet: String = "com.squareup:kotlinpoet:_"
 
+    const val kotlinpoet_ksp: String = "com.squareup:kotlinpoet-ksp:_"
+
     const val kotlinpoet_metadata: String = "com.squareup:kotlinpoet-metadata:_"
 
     const val hikaricp: String = "com.zaxxer:HikariCP:_"
