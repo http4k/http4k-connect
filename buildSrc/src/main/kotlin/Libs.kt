@@ -12,12 +12,17 @@
 object Libs {
     const val aws_lambda_java_events: String = "com.amazonaws:aws-lambda-java-events:_"
 
+    const val com_google_devtools_ksp_com_google_devtools_ksp_gradle_plugin: String =
+        "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_"
+
     const val com_github_kt3k_coveralls_gradle_plugin: String =
         "com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_"
 
     const val h2: String = "com.h2database:h2:_"
 
     const val kotlinpoet: String = "com.squareup:kotlinpoet:_"
+
+    const val kotlinpoet_ksp: String = "com.squareup:kotlinpoet-ksp:_"
 
     const val kotlinpoet_metadata: String = "com.squareup:kotlinpoet-metadata:_"
 

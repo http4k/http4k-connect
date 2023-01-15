@@ -13,6 +13,7 @@ buildscript {
         classpath Libs.org_jetbrains_dokka_gradle_plugin
         classpath Libs.io_codearte_nexus_staging_gradle_plugin
         classpath Libs.com_github_kt3k_coveralls_gradle_plugin
+        classpath Libs.com_google_devtools_ksp_com_google_devtools_ksp_gradle_plugin
     }
 }
 
@@ -28,6 +29,7 @@ allprojects {
     apply(plugin: "jacoco")
     apply(plugin: "org.jetbrains.dokka")
     apply(plugin: "com.github.kt3k.coveralls")
+    apply(plugin: "com.google.devtools.ksp")
 
     dependencies {
         implementation(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
@@ -69,10 +71,13 @@ allprojects {
             // bom - no code
         } else if (project.name == "http4k-connect-kapt-generator") {
             api(project(":http4k-connect-core"))
+        } else if (project.name == "http4k-connect-ksp-generator") {
+            api(project(":http4k-connect-core"))
+            kspTest(project(":http4k-connect-ksp-generator"))
         } else if (project.name != "http4k-connect-core") {
             api(Http4k.cloudnative)
             api(project(":http4k-connect-core"))
-            kapt(project(":http4k-connect-kapt-generator"))
+            ksp(project(":http4k-connect-ksp-generator"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
         }
     }
@@ -117,11 +122,13 @@ allprojects {
 }
 
 subprojects {
-    sourceSets {
-        test {
-            kotlin {
-                srcDirs "src/examples/kotlin"
-            }
+
+    kotlin {
+        sourceSets {
+            main.kotlin.srcDirs += 'build/generated/ksp/main/kotlin'
+
+            test.kotlin.srcDirs += 'src/examples/kotlin'
+            test.kotlin.srcDirs += 'build/generated/ksp/test/kotlin'
         }
     }
 
@@ -298,5 +305,5 @@ dependencies {
 
 static def hasCodeCoverage(project) {
     return project.name != "http4k-connect-bom" &&
-        project.name != "http4k-connect-kapt-adapter"
+        !project.name.endsWith("generator")
 }
