@@ -4,8 +4,6 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
     implementation(Libs.api)
-   
-    ksp(Libs.se_ansman_kotshi_compiler)
 
     testImplementation("org.jetbrains.kotlin", "kotlin-reflect")
     testImplementation(Libs.http4k_serverless_lambda)

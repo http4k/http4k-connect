@@ -37,6 +37,8 @@ allprojects {
         api(Http4k.core)
         api(libs.result4k)
 
+        ksp(Libs.se_ansman_kotshi_compiler)
+
         testImplementation(platform(Libs.junit_bom))
         testImplementation(Http4k.testing.hamkrest)
         testImplementation(Http4k.testing.approval)
@@ -77,7 +79,6 @@ allprojects {
         } else if (project.name != "http4k-connect-core") {
             api(Http4k.cloudnative)
             api(project(":http4k-connect-core"))
-            ksp(Libs.se_ansman_kotshi_compiler)
             ksp(project(":http4k-connect-ksp-generator"))
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
         }
