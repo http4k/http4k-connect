@@ -73,6 +73,7 @@ allprojects {
             api(project(":http4k-connect-core"))
         } else if (project.name == "http4k-connect-ksp-generator") {
             api(project(":http4k-connect-core"))
+            kspTest(project(":http4k-connect-ksp-generator"))
         } else if (project.name != "http4k-connect-core") {
             api(Http4k.cloudnative)
             api(project(":http4k-connect-core"))
@@ -121,11 +122,13 @@ allprojects {
 }
 
 subprojects {
-    sourceSets {
-        test {
-            kotlin {
-                srcDirs "src/examples/kotlin"
-            }
+
+    kotlin {
+        sourceSets {
+            main.kotlin.srcDirs += 'build/generated/ksp/main/kotlin'
+
+            test.kotlin.srcDirs += 'src/examples/kotlin'
+            test.kotlin.srcDirs += 'build/generated/ksp/test/kotlin'
         }
     }
 
@@ -302,5 +305,5 @@ dependencies {
 
 static def hasCodeCoverage(project) {
     return project.name != "http4k-connect-bom" &&
-        project.name != "http4k-connect-kapt-adapter"
+        !project.name.endsWith("generator")
 }

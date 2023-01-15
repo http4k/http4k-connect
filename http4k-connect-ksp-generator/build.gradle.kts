@@ -4,6 +4,4 @@ dependencies {
     implementation(Libs.kotlinpoet_metadata)
     implementation(Libs.kotlinpoet_ksp)
     implementation(libs.symbol.processing.api)
-
-    kspTest(project)
 }
