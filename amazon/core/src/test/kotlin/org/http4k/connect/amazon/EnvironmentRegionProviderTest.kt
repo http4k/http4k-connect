@@ -3,7 +3,7 @@ package org.http4k.connect.amazon
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.cloudnative.env.Environment
+import org.http4k.cloudnative.env.Environment.Companion.EMPTY
 import org.http4k.connect.amazon.core.model.Region
 import org.junit.jupiter.api.Test
 
@@ -11,7 +11,7 @@ class EnvironmentRegionProviderTest {
 
     @Test
     fun `region not in environment`() = assertThat(
-        RegionProvider.Environment(Environment.ENV).invoke(),
+        RegionProvider.Environment(EMPTY).invoke(),
         absent()
     )
 
