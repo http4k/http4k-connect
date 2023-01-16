@@ -24,7 +24,7 @@ val AWS_CONTAINER_CREDENTIALS_FULL_URI = EnvironmentKey.uri().defaulted(
 private val STANDARD_CC_BASE_URL = Uri.of("http://169.254.170.2")
 
 val AWS_CONTAINER_AUTHORIZATION_TOKEN =
-    EnvironmentKey.value(ContainerCredentialsAuthToken).required("AWS_CONTAINER_AUTHORIZATION_TOKEN")
+    EnvironmentKey.value(ContainerCredentialsAuthToken).optional("AWS_CONTAINER_AUTHORIZATION_TOKEN")
 
 class ContainerCredentialsAuthToken(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ContainerCredentialsAuthToken>(::ContainerCredentialsAuthToken)
