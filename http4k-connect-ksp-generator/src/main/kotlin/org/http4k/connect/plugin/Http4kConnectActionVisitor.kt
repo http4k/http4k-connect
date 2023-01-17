@@ -2,6 +2,7 @@ package org.http4k.connect.plugin
 
 import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.getConstructors
+import com.google.devtools.ksp.symbol.ClassKind.OBJECT
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
@@ -53,8 +54,13 @@ private fun generateActionExtension(
     adapterClazz: KSClassDeclaration,
     ctr: KSFunctionDeclaration
 ) = generateExtensionFunction(
-    actionClass, adapterClazz, ctr, "", CodeBlock.of(
-        "return invoke(%T(${ctr.parameters.joinToString(", ") { it.name!!.asString() }}))",
+    actionClass, adapterClazz, ctr, "",
+
+    CodeBlock.of(
+        when (actionClass.classKind) {
+            OBJECT -> "return invoke(%T)"
+            else -> "return invoke(%T(${ctr.parameters.joinToString(", ") { it.name!!.asString() }}))"
+        },
         actionClass.asType(emptyList()).toTypeName()
     )
 )
