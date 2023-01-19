@@ -19,7 +19,7 @@ import org.http4k.format.withStandardMappings
 import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 private fun standardConfig() = Moshi.Builder()
-    .add(KotshiDynamoDbJsonAdapterFactory)
+    .add(DynamoDbJsonAdapterFactory)
     .add(AwsCoreJsonAdapterFactory())
     .add(MapAdapter)
     .add(ListAdapter)
@@ -41,4 +41,4 @@ object DynamoDbMoshi : ConfigurableMoshi(
 }
 
 @KotshiJsonAdapterFactory
-interface DynamoDbJsonAdapterFactory : JsonAdapter.Factory
+object DynamoDbJsonAdapterFactory : JsonAdapter.Factory by KotshiDynamoDbJsonAdapterFactory

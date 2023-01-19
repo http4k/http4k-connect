@@ -13,7 +13,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object KMSMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(KotshiKMSJsonAdapterFactory)
+        .add(KMSJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
         .add(ListAdapter)
         .add(MapAdapter)
@@ -24,4 +24,4 @@ object KMSMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-interface KMSJsonAdapterFactory : JsonAdapter.Factory
+object KMSJsonAdapterFactory : JsonAdapter.Factory by KotshiKMSJsonAdapterFactory

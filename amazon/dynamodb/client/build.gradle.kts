@@ -5,6 +5,8 @@ dependencies {
     }
     implementation(Libs.api)
 
+    ksp(Libs.se_ansman_kotshi_compiler)
+
     testImplementation("org.jetbrains.kotlin", "kotlin-reflect")
     testImplementation(Libs.http4k_serverless_lambda)
     testImplementation(project(path = ":http4k-connect-core", configuration = "testArtifacts"))

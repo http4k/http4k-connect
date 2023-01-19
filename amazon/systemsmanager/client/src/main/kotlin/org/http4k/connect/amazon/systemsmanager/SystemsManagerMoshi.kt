@@ -16,7 +16,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object SystemsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(KotshiSystemsManagerJsonAdapterFactory)
+        .add(SystemsManagerJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
         .add(MapAdapter)
         .add(ListAdapter)
@@ -32,4 +32,4 @@ fun <T> AutoMappingConfiguration<T>.withSystemsManagerMappings() = apply {
 }
 
 @KotshiJsonAdapterFactory
-interface SystemsManagerJsonAdapterFactory : JsonAdapter.Factory
+object SystemsManagerJsonAdapterFactory : JsonAdapter.Factory by KotshiSystemsManagerJsonAdapterFactory

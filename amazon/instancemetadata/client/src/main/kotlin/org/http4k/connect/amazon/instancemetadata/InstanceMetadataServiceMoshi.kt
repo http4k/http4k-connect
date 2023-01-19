@@ -17,7 +17,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object InstanceMetadataServiceMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(KotshiInstanceMetadataServiceJsonAdapterFactory)
+        .add(InstanceMetadataServiceJsonAdapterFactory)
         .asConfigurable()
         .withStandardMappings()
         .withAwsCoreMappings()
@@ -34,4 +34,4 @@ fun <T> AutoMappingConfiguration<T>.withInstanceMetadataServiceMappings() = appl
 }
 
 @KotshiJsonAdapterFactory
-interface InstanceMetadataServiceJsonAdapterFactory : JsonAdapter.Factory
+object InstanceMetadataServiceJsonAdapterFactory : JsonAdapter.Factory by KotshiInstanceMetadataServiceJsonAdapterFactory

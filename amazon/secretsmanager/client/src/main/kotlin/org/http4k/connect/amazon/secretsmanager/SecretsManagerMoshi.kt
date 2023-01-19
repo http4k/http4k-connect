@@ -18,7 +18,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object SecretsManagerMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(KotshiSecretsManagerJsonAdapterFactory)
+        .add(SecretsManagerJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
         .add(MapAdapter)
         .add(ListAdapter)
@@ -36,5 +36,5 @@ fun <T> AutoMappingConfiguration<T>.withSecretsManagerMappings() = apply {
 }
 
 @KotshiJsonAdapterFactory
-interface SecretsManagerJsonAdapterFactory : JsonAdapter.Factory
+object SecretsManagerJsonAdapterFactory : JsonAdapter.Factory by KotshiSecretsManagerJsonAdapterFactory
 

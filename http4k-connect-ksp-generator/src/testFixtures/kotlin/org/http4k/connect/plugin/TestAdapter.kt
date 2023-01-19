@@ -26,6 +26,8 @@ fun TestAdapter.Companion.Impl() = object : TestAdapter {
 
 interface FooAction<R> : Action<Result<R, RemoteFailure>>
 
+abstract class NotATestAction(val input: String, val input2: String) : FooAction<String>
+
 @Http4kConnectAction
 data class TestAction(val input: String, val input2: String) : FooAction<String> {
     constructor(input: String) : this(input, input)

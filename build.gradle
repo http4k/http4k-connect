@@ -17,7 +17,7 @@ buildscript {
     }
 }
 
-apply plugin: "io.codearte.nexus-staging"
+apply(plugin: "io.codearte.nexus-staging")
 
 allprojects {
     repositories {
@@ -30,10 +30,11 @@ allprojects {
     apply(plugin: "org.jetbrains.dokka")
     apply(plugin: "com.github.kt3k.coveralls")
     apply(plugin: "com.google.devtools.ksp")
+    apply(plugin: "java-test-fixtures")
 
     dependencies {
-        implementation(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
-        implementation(platform(Libs.forkhandles_bom))
+        api(platform("org.http4k:http4k-bom:$http4k_version")) // manually set because of auto-upgrading
+        api(platform(Libs.forkhandles_bom))
         api(Http4k.core)
         api(libs.result4k)
 
@@ -80,6 +81,9 @@ allprojects {
             api(Http4k.cloudnative)
             api(project(":http4k-connect-core"))
             ksp(project(":http4k-connect-ksp-generator"))
+            ksp(Libs.se_ansman_kotshi_compiler)
+
+            testImplementation(Libs.se_ansman_kotshi_compiler)
             testImplementation(project(path: ":http4k-connect-core-fake", configuration: "testArtifacts"))
         }
     }

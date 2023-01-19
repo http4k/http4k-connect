@@ -28,7 +28,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object CognitoMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(KotshiCognitoJsonAdapterFactory)
+        .add(CognitoJsonAdapterFactory)
         .add(AwsCoreJsonAdapterFactory())
         .add(ListAdapter)
         .add(MapAdapter)
@@ -53,4 +53,4 @@ object CognitoMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-interface CognitoJsonAdapterFactory : JsonAdapter.Factory
+object CognitoJsonAdapterFactory : JsonAdapter.Factory by KotshiCognitoJsonAdapterFactory

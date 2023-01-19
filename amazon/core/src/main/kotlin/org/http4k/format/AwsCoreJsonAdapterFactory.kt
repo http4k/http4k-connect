@@ -20,4 +20,4 @@ class AwsCoreJsonAdapterFactory(
 )
 
 @KotshiJsonAdapterFactory
-internal interface CoreAdapterFactory : JsonAdapter.Factory
+internal object CoreAdapterFactory : JsonAdapter.Factory by KotshiCoreAdapterFactory

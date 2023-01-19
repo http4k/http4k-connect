@@ -13,7 +13,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object GoogleAnalyticsMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(KotshiGoogleAnalyticsJsonAdapterFactory)
+        .add(GoogleAnalyticsJsonAdapterFactory)
         .add(ListAdapter)
         .add(MapAdapter)
         .asConfigurable()
@@ -23,4 +23,4 @@ object GoogleAnalyticsMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-interface GoogleAnalyticsJsonAdapterFactory : JsonAdapter.Factory
+object GoogleAnalyticsJsonAdapterFactory : JsonAdapter.Factory by KotshiGoogleAnalyticsJsonAdapterFactory
