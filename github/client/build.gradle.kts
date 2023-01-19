@@ -5,8 +5,6 @@ dependencies {
     }
     implementation(Libs.api)
 
-    ksp(Libs.se_ansman_kotshi_compiler)
-
     testApi(Libs.http4k_format_moshi)
     testImplementation(project(path = ":http4k-connect-core", configuration = "testArtifacts"))
 }

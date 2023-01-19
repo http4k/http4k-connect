@@ -16,7 +16,7 @@ class CodeGenerationTest {
     fun `correct code is generated for JSON factory`() {
         assertThat(
             TestMoshi.asFormatString(TestBean("hello")),
-            equalTo(Success("""{"value":"hello"}"""))
+            equalTo("""{"value":"hello"}""")
         )
     }
 }
