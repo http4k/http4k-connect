@@ -1,5 +1,7 @@
 package org.http4k.connect.plugin
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Action
@@ -12,6 +14,10 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.format.ConfigurableMoshi
+import org.http4k.format.asConfigurable
+import se.ansman.kotshi.JsonSerializable
+import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 @Http4kConnectAdapter
 interface TestAdapter {
@@ -25,6 +31,19 @@ fun TestAdapter.Companion.Impl() = object : TestAdapter {
 }
 
 interface FooAction<R> : Action<Result<R, RemoteFailure>>
+
+object TestMoshi : ConfigurableMoshi(
+    Moshi.Builder()
+        .add(TestJsonFactory)
+        .asConfigurable()
+        .done()
+)
+
+@JsonSerializable
+data class TestBean(val value: String)
+
+@KotshiJsonAdapterFactory
+object TestJsonFactory : JsonAdapter.Factory by KotshiTestJsonFactory
 
 abstract class NotATestAction(val input: String, val input2: String) : FooAction<String>
 

@@ -8,7 +8,15 @@ import org.junit.jupiter.api.Test
 class CodeGenerationTest {
 
     @Test
-    fun `correct code is generated`() {
+    fun `correct code is generated for adapter`() {
         assertThat(TestAdapter.Impl().testAction("hello"), equalTo(Success("hello")))
+    }
+
+    @Test
+    fun `correct code is generated for JSON factory`() {
+        assertThat(
+            TestMoshi.asFormatString(TestBean("hello")),
+            equalTo(Success("""{"value":"hello"}"""))
+        )
     }
 }
