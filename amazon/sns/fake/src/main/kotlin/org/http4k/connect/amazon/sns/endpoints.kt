@@ -18,7 +18,7 @@ import org.http4k.routing.asRouter
 import org.http4k.routing.bind
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
-import java.util.UUID
+import java.util.*
 
 fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
     { r: Request -> r.form("Action") == "CreateTopic" }
@@ -63,7 +63,7 @@ fun publish(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: R
     when {
         topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
         else -> {
-            topics[topicName.value] = topics[topicName.value]!! + SNSMessage(req.form("Message")!!)
+            topics[topicName.value] = topics[topicName.value]!! + SNSMessage(req.form("Message")!!, req.form("Subject"), listOf())
             Response(OK).with(viewModelLens of PublishResponse(SNSMessageId.of(UUID.randomUUID().toString())))
         }
     }

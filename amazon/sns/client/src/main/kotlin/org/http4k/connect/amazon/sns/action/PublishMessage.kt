@@ -35,6 +35,7 @@ data class PublishMessage(
                 messageStructure?.let { "MessageStructure" to it },
                 messageDeduplicationId?.let { "MessageDeduplicationId" to it },
                 messageGroupId?.let { "MessageGroupId" to it },
+                subject?.let { "Subject" to it },
                 topicArn?.let { "TopicArn" to it.value },
                 targetArn?.let { "TargetArn" to it.value },
                 phoneNumber?.let { "PhoneNumber" to it.value },

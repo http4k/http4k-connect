@@ -5,6 +5,7 @@ import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
@@ -32,7 +33,7 @@ class FakeSNS(
     fun client() = SNS.Http(region, { AwsCredentials("accessKey", "secret") }, this)
 }
 
-data class SNSMessage(val message: String)
+data class SNSMessage(val message: String, val subject: String?, val attributes: List<MessageAttribute>)
 
 fun main() {
     FakeSNS().start()
