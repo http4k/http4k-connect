@@ -3,8 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v3.27.2.0 (uncut)
+### v3.28.0.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies,
+- **http4k-connect-sns-fake*** [Breaking] Change SNSMessage to include subject and attributes
 
 ### v3.27.1.0
 - **http4k-connect-*** - Upgrade dependencies

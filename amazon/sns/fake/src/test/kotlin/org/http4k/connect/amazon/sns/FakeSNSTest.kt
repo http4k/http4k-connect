@@ -9,13 +9,12 @@ import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.successValue
-import org.http4k.filter.debug
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 val topics = Storage.InMemory<List<SNSMessage>>()
 
-class FakeSNSTest : SNSContract(FakeSNS(topics).debug()) {
+class FakeSNSTest : SNSContract(FakeSNS(topics)) {
     override val aws = fakeAwsEnvironment
 
     @AfterEach
@@ -38,16 +37,11 @@ class FakeSNSTest : SNSContract(FakeSNS(topics).debug()) {
                     attributes = attributes
                 ).successValue()
 
-                assertThat(
-                    topics[topicName.value], equalTo(
-                        listOf(
-                            SNSMessage(
-                                "hello world", "subject",
-                                emptyList()
-                            )
-                        )
-                    )
-                )
+                assertThat(topics[topicName.value]!![0].message, equalTo("hello world"))
+                assertThat(topics[topicName.value]!![0].subject, equalTo("subject"))
+                assertThat(topics[topicName.value]!![0].attributes.first().name, equalTo("foo"))
+                assertThat(topics[topicName.value]!![0].attributes.first().value, equalTo("123"))
+                assertThat(topics[topicName.value]!![0].attributes.first().dataType, equalTo(Number))
             } finally {
                 deleteTopic(topicArn).successValue()
             }
