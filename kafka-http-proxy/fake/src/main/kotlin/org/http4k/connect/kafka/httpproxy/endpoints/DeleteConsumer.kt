@@ -1,7 +1,7 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
+import org.http4k.connect.kafka.httpproxy.CommitState
 import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
-import org.http4k.connect.kafka.httpproxy.model.Topic
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
 import org.http4k.connect.storage.remove
@@ -14,7 +14,7 @@ import org.http4k.lens.Path
 import org.http4k.lens.value
 import org.http4k.routing.bind
 
-fun deleteConsumer(consumers: Storage<Map<Topic, Int>>) =
+fun deleteConsumer(consumers: Storage<CommitState>) =
     "/consumers/{consumerGroup}/instances/{instance}" bind DELETE to { req: Request ->
         val instance = Path.value(ConsumerInstanceId).of("instance")(req)
         when {
@@ -25,4 +25,3 @@ fun deleteConsumer(consumers: Storage<Map<Topic, Int>>) =
             }
         }
     }
-

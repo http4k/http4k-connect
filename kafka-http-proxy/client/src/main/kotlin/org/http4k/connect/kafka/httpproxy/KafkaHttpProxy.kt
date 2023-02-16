@@ -14,3 +14,4 @@ interface KafkaHttpProxy {
 
     companion object
 }
+

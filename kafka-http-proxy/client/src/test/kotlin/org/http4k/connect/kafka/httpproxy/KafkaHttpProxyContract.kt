@@ -3,10 +3,10 @@ package org.http4k.connect.kafka.httpproxy
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.asFormatString
-import org.http4k.connect.kafka.httpproxy.action.Consumer
-import org.http4k.connect.kafka.httpproxy.action.TopicRecord
 import org.http4k.connect.kafka.httpproxy.model.AvroRecord
 import org.http4k.connect.kafka.httpproxy.model.BinaryRecord
+import org.http4k.connect.kafka.httpproxy.model.CommitOffset
+import org.http4k.connect.kafka.httpproxy.model.Consumer
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerName
 import org.http4k.connect.kafka.httpproxy.model.JsonRecord
@@ -20,10 +20,12 @@ import org.http4k.connect.kafka.httpproxy.model.RecordFormat.json
 import org.http4k.connect.kafka.httpproxy.model.Records
 import org.http4k.connect.kafka.httpproxy.model.Records.Json
 import org.http4k.connect.kafka.httpproxy.model.Topic
+import org.http4k.connect.kafka.httpproxy.model.TopicRecord
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -31,19 +33,16 @@ import java.util.UUID
 abstract class KafkaHttpProxyContract {
 
     abstract val http: HttpHandler
+    abstract val uri: Uri
 
     private val kafkaHttpProxy by lazy {
-        KafkaHttpProxy.Http(Credentials("", ""), http)
+        KafkaHttpProxy.Http(Credentials("", ""), uri, http)
     }
 
     @Test
     fun `can send JSON messages and get them back`() {
         kafkaHttpProxy.testSending(json, { (it as Json).records.first() as JsonRecord<String, Message> }) {
-            Json(
-                listOf(
-                    JsonRecord(it, Message(randomString()))
-                )
-            )
+            Json(listOf(JsonRecord(it, Message(randomString()))))
         }
     }
 
@@ -52,10 +51,7 @@ abstract class KafkaHttpProxyContract {
         kafkaHttpProxy.testSending(
             avro,
             { (it as Records.Avro).records.first() as AvroRecord<String, Message> }) {
-            Records.Avro(
-                "schema",
-                listOf(AvroRecord(it, Message(randomString())))
-            )
+            Records.Avro("schema", listOf(AvroRecord(it, Message(randomString()))))
         }
     }
 
@@ -66,14 +62,75 @@ abstract class KafkaHttpProxyContract {
         }
     }
 
+    @Test
+    fun `can create consumer client`() {
+        val topic1 = Topic.of("t1_${randomString()}")
+
+        val group = ConsumerGroup.of(randomString())
+        val name = ConsumerName.of(randomString())
+        val consumer = KafkaHttpProxyConsumer.Http(
+            Credentials("", ""), group,
+            Consumer(name, json, "earliest", enableAutocommit = "true"), uri, http
+        ).successValue()
+
+        try {
+            consumer.subscribeToTopics(listOf(topic1)).successValue()
+
+            val record1 = Json(listOf(JsonRecord("m1", Message(randomString()))))
+            kafkaHttpProxy.produceMessages(topic1, record1).successValue()
+
+            assertThat(
+                consumer.consumeRecords(json).successValue().toList(),
+                equalTo(
+                    listOf(
+                        TopicRecord(
+                            topic1, record1.records.first().key,
+                            record1.records.first().value.toMap(), PartitionId.of(0), Offset.of(0)
+                        )
+                    )
+                )
+            )
+        } finally {
+            consumer.delete().successValue()
+        }
+    }
+
+    @Test
+    fun `can manually commit consumer offsets`() {
+        val topic1 = Topic.of("t1_${randomString()}")
+
+        val group = ConsumerGroup.of(randomString())
+        val name = ConsumerName.of(randomString())
+        val consumer = KafkaHttpProxyConsumer.Http(
+            Credentials("", ""), group,
+            Consumer(name, json, "earliest", enableAutocommit = "false"), uri, http
+        ).successValue()
+
+        try {
+            consumer.subscribeToTopics(listOf(topic1)).successValue()
+
+            val record1 = Json(listOf(JsonRecord("m1", Message(randomString()))))
+            kafkaHttpProxy.produceMessages(topic1, record1).successValue()
+
+            assertThat(consumer.consumeRecords(json).successValue().size, equalTo(1))
+            assertThat(consumer.consumeRecords(json).successValue().size, equalTo(1))
+            consumer.commitOffsets(
+                listOf(CommitOffset(topic1, PartitionId.of(0), Offset.of(1)))
+            ).successValue()
+            assertThat(consumer.consumeRecords(json).successValue().size, equalTo(0))
+        } finally {
+            consumer.delete().successValue()
+        }
+    }
+
     private fun <K : Any, V : Any, T : Record<K, V>> KafkaHttpProxy.testSending(
         format: RecordFormat,
         recordFrom: (Records) -> T,
         buildRecords: (String) -> Records
     ) {
-        val topic1 = Topic.of("t1_${UUID.randomUUID()}")
-        val topic2 = Topic.of("t2_${UUID.randomUUID()}")
-        val topic3 = Topic.of("t3_${UUID.randomUUID()}")
+        val topic1 = Topic.of("t1_${randomString()}")
+        val topic2 = Topic.of("t2_${randomString()}")
+        val topic3 = Topic.of("t3_${randomString()}")
 
         val group = ConsumerGroup.of(randomString())
         val name = ConsumerName.of(randomString())
@@ -98,12 +155,18 @@ abstract class KafkaHttpProxyContract {
                 consumeRecords(group, instance, format).successValue().toList(),
                 equalTo(
                     listOf(
-                        TopicRecord(topic1, recordFrom(record1).key,
-                            recordFrom(record1).value.toMap(), PartitionId.of(0), Offset.of(0)),
-                        TopicRecord(topic2, recordFrom(record2).key,
-                            recordFrom(record2).value.toMap(), PartitionId.of(0), Offset.of(0)),
-                        TopicRecord(topic1, recordFrom(record4).key,
-                            recordFrom(record4).value.toMap(), PartitionId.of(0), Offset.of(1))
+                        TopicRecord(
+                            topic1, recordFrom(record1).key,
+                            recordFrom(record1).value.toMap(), PartitionId.of(0), Offset.of(0)
+                        ),
+                        TopicRecord(
+                            topic2, recordFrom(record2).key,
+                            recordFrom(record2).value.toMap(), PartitionId.of(0), Offset.of(0)
+                        ),
+                        TopicRecord(
+                            topic1, recordFrom(record4).key,
+                            recordFrom(record4).value.toMap(), PartitionId.of(0), Offset.of(1)
+                        )
                     )
                 )
             )
@@ -117,10 +180,14 @@ abstract class KafkaHttpProxyContract {
 
             assertThat(
                 consumeRecords(group, instance, format).successValue().toList(),
-                equalTo(listOf(
-                    TopicRecord(topic1, recordFrom(record5).key,
-                        recordFrom(record5).value.toMap(), PartitionId.of(0), Offset.of(2)),
-                ))
+                equalTo(
+                    listOf(
+                        TopicRecord(
+                            topic1, recordFrom(record5).key,
+                            recordFrom(record5).value.toMap(), PartitionId.of(0), Offset.of(2)
+                        ),
+                    )
+                )
             )
         } finally {
             deleteConsumer(group, instance)
@@ -130,7 +197,7 @@ abstract class KafkaHttpProxyContract {
     private fun randomString() = UUID.randomUUID().toString().take(5)
 }
 
-private fun <V: Any> V.toMap(): Any =
+private fun <V : Any> V.toMap(): Any =
     KafkaHttpProxyMoshi.asA<Map<String, Any>>(asFormatString(this))
 
 data class Message(val field: String)

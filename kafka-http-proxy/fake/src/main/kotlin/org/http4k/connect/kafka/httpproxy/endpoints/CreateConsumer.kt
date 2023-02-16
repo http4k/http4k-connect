@@ -1,11 +1,11 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
+import org.http4k.connect.kafka.httpproxy.CommitState
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
-import org.http4k.connect.kafka.httpproxy.action.Consumer
 import org.http4k.connect.kafka.httpproxy.action.NewConsumer
+import org.http4k.connect.kafka.httpproxy.model.Consumer
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
-import org.http4k.connect.kafka.httpproxy.model.Topic
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
 import org.http4k.connect.storage.set
@@ -22,14 +22,16 @@ import org.http4k.lens.Path
 import org.http4k.lens.value
 import org.http4k.routing.bind
 
-fun createConsumer(consumers: Storage<Map<Topic, Int>>, baseUri: Uri) =
+fun createConsumer(consumers: Storage<CommitState>, baseUri: Uri) =
     "/consumers/{consumerGroup}" bind POST to { req: Request ->
         val consumerGroup = Path.value(ConsumerGroup).of("consumerGroup")(req)
         val consumer = Body.auto<Consumer>().toLens()(req)
         val id = ConsumerInstanceId.of("$consumerGroup${consumer.name}")
         when {
             consumers[id] == null -> {
-                consumers[id] = mapOf()
+                consumers[id] = CommitState(
+                    consumer.enableAutocommit?.let { it.toBoolean() } ?: true, mapOf()
+                )
                 Response(OK).with(
                     Body.auto<NewConsumer>().toLens() of
                         NewConsumer(

@@ -1,10 +1,8 @@
-package org.http4k.connect.kafka.httpproxy.action
+package org.http4k.connect.kafka.httpproxy.action.consumer
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.kClass
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
-import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
-import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
 import org.http4k.connect.kafka.httpproxy.model.Subscription
 import org.http4k.connect.kafka.httpproxy.model.Topic
 import org.http4k.core.Body
@@ -16,10 +14,8 @@ import org.http4k.core.with
 
 @Http4kConnectAction
 data class SubscribeToTopics(
-    val group: ConsumerGroup,
-    val instance: ConsumerInstanceId,
     val topics: List<Topic>,
-) : KafkaHttpProxyAction<Unit>(kClass()) {
-    override fun toRequest() = Request(POST, "/consumers/$group/instances/$instance/subscription")
+) : KafkaHttpProxyConsumerAction<Unit>(kClass()) {
+    override fun toRequest() = Request(POST, "/consumers/{group}/instances/{instance}/subscription")
         .with(Body.auto<Subscription>(contentType = ContentType.KAFKA_JSON_V2).toLens() of Subscription(topics))
 }
