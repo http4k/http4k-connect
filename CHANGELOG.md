@@ -5,7 +5,6 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.29.0.0
 - **http4k-connect-*** - Upgrade dependencies,
-- **http4k-connect-kafka-http-proxy*** - New module!
 
 ### v3.28.0.0
 - **http4k-connect-*** - Upgrade dependencies,
