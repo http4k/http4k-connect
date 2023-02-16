@@ -4,7 +4,6 @@ import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.AwsService
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.Timestamp
@@ -31,6 +30,7 @@ import org.http4k.connect.amazon.kms.model.EncryptionAlgorithm
 import org.http4k.connect.amazon.kms.model.KeyEntry
 import org.http4k.connect.amazon.kms.model.KeyMetadata
 import org.http4k.connect.amazon.kms.model.KeyUsage
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.storage.Storage
 import java.util.UUID
 

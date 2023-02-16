@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.toARN
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.RSA_3072
 import org.http4k.connect.amazon.kms.model.EncryptionAlgorithm.RSAES_OAEP_SHA_256
@@ -14,6 +13,7 @@ import org.http4k.connect.amazon.kms.model.KeyUsage.ENCRYPT_DECRYPT
 import org.http4k.connect.amazon.kms.model.KeyUsage.SIGN_VERIFY
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_256
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST

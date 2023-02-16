@@ -3,7 +3,6 @@ import dev.forkhandles.result4k.valueOrNull
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.dynamodb.DynamoDb
 import org.http4k.connect.amazon.dynamodb.Http
@@ -19,6 +18,7 @@ import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.with
 import org.http4k.connect.amazon.dynamodb.putItem
+import org.http4k.connect.model.Base64Blob
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import org.http4k.lens.LensFailure

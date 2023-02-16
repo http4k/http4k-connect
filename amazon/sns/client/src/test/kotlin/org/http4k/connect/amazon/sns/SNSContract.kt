@@ -3,15 +3,15 @@ package org.http4k.connect.amazon.sns
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.core.model.DataType.Number
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.TopicName
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 abstract class SNSContract(http: HttpHandler) : AwsContract() {
     val sns by lazy {

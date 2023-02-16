@@ -1,10 +1,12 @@
-package org.http4k.connect.amazon.core.model
+package org.http4k.connect
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.http4k.connect.model.Base64Blob
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import kotlin.random.Random
+
 
 class Base64BlobTest {
 

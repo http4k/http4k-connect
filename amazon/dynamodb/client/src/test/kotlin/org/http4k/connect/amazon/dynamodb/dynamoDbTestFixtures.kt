@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.dynamodb
 
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.dynamodb.action.TableDescriptionResponse
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
@@ -11,8 +10,9 @@ import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.amazon.dynamodb.model.value
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
-import java.util.*
+import java.util.UUID
 
 val attrBool = Attribute.boolean().required("theBool")
 val attrB = Attribute.base64Blob().required("theBase64Blob")

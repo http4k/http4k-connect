@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.endpoints
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
@@ -24,6 +23,7 @@ import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.query
 import org.http4k.connect.amazon.dynamodb.sample
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

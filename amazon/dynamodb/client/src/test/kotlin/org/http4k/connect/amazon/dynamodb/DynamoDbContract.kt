@@ -8,7 +8,6 @@ import com.natpryce.hamkrest.hasElement
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
@@ -25,6 +24,7 @@ import org.http4k.connect.amazon.dynamodb.model.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Delete
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Update
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug

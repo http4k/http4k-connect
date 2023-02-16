@@ -2,10 +2,10 @@ package org.http4k.connect.amazon.secretsmanager.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.secretsmanager.model.SecretId
 import org.http4k.connect.amazon.secretsmanager.model.VersionId
 import org.http4k.connect.amazon.secretsmanager.model.VersionStage
+import org.http4k.connect.model.Base64Blob
 import se.ansman.kotshi.JsonSerializable
 import java.util.UUID
 
