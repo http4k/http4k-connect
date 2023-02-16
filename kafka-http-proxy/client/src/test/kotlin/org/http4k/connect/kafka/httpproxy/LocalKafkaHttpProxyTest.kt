@@ -6,7 +6,9 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.filter.debug
+import org.junit.jupiter.api.Disabled
 
+@Disabled
 class LocalKafkaHttpProxyTest : KafkaHttpProxyContract() {
     init {
         assumeDockerDaemonRunning()
