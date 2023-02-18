@@ -20,7 +20,9 @@ In addition, you can use a `KafkaHttpProxyConsumer` which provides the following
 
 The Fake provides the following endpoints, which is enough for basic consumer lifecycle and production and consumption
 of records. Note that consumers by default will start at the start of the topic stream, although they can be committed
-to.
+to. 
+
+"auto.commit.enable" is enabled by default but can be set to "false" for manual commiting of offsets.
 
 - CommitOffsets
 - ConsumeRecords
