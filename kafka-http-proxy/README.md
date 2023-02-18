@@ -22,7 +22,7 @@ The Fake provides the following endpoints, which is enough for basic consumer li
 of records. Note that consumers by default will start at the start of the topic stream, although they can be committed
 to. 
 
-"auto.commit.enable" is enabled by default but can be set to "false" for manual commiting of offsets.
+"auto.commit.enable" is enabled by default but can be set to "false" for manual committing of offsets.
 
 - CommitOffsets
 - ConsumeRecords
