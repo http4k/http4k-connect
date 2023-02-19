@@ -37,8 +37,6 @@ to.
 - ProduceMessages
 - SubscribeToTopics
 
-`http://<server:port>/<user pool id>/.well-known/jwks.json`
-
 ### Default Fake port: 30091
 
 To start:
