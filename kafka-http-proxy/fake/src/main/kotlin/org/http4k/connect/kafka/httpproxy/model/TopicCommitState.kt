@@ -6,6 +6,6 @@ data class TopicCommitState(
     val next: Offset = Offset.ZERO,
     val committed: Offset = Offset.ZERO
 ) {
-    fun next(last: Offset) = TopicCommitState(last.inc(), committed)
-    fun committed(last: Offset) = TopicCommitState(last.inc(), last.inc())
+    fun next(lastOffset: Offset) = TopicCommitState(lastOffset.inc(), committed)
+    fun commitAt(lastOffset: Offset) = TopicCommitState(lastOffset.inc(), lastOffset.inc())
 }

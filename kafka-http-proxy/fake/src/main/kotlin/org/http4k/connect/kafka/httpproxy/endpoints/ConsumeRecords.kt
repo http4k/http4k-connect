@@ -28,7 +28,7 @@ fun consumeRecords(consumers: Storage<CommitState>, topics: Storage<List<SendRec
 
         consumers[group]?.let { state ->
             val records = state.offsets
-                .flatMap { (topic, originalTopicState) ->
+                .flatMap { (topic, _) ->
                     val allRecords = topics[topic] ?: emptyList()
 
                     val lastRecord = Offset.of(allRecords.size - 1)
@@ -36,18 +36,15 @@ fun consumeRecords(consumers: Storage<CommitState>, topics: Storage<List<SendRec
                     val newTopicState = consumers[group]!!.next(topic, lastRecord)
                     consumers[group] = newTopicState
 
-                    allRecords.withIndex().drop(state.offsets[topic]!!.committed.value)
-                        .map { (i, it) ->
-                            it.first to TopicRecord(
-                                topic,
-                                it.second,
-                                it.third,
-                                PartitionId.of(0), Offset.of(i)
-                            )
+                    allRecords
+                        .withIndex()
+                        .drop(state.offsets[topic]!!.committed.value)
+                        .map { (index, it) ->
+                            it.first to TopicRecord(topic, it.second, it.third, PartitionId.of(0), Offset.of(index))
                         }
                         .also {
                             if (state.autoCommitEnable == `true`)
-                                consumers[group] = newTopicState.committed(topic, lastRecord)
+                                consumers[group] = newTopicState.commitAt(topic, lastRecord)
                         }
                 }
                 .sortedBy { it.first }

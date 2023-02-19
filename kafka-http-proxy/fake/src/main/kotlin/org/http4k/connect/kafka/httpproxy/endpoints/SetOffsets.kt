@@ -25,7 +25,7 @@ fun setOffsets(consumers: Storage<CommitState>) =
             ?.let {
                 val offsets = Body.auto<CommitOffsetsSet>().toLens()(req)
                 consumers[group] = offsets.offsets.fold(it) { acc, next ->
-                    acc.committed(next.topic, next.offset)
+                    acc.commitAt(next.topic, next.offset)
                 }
                 Response(NO_CONTENT)
             }

@@ -26,8 +26,8 @@ fun getOffsets(consumers: Storage<CommitState>) =
             ?.let {
                 Response(OK)
                     .with(Body.auto<CommitOffsetsSet>().toLens() of CommitOffsetsSet(
-                        it.offsets.map {
-                            CommitOffset(it.key, PartitionId.of(0), it.value.committed)
+                        it.offsets.map { (topic, state) ->
+                            CommitOffset(topic, PartitionId.of(0), state.committed)
                         }
                     ))
             }

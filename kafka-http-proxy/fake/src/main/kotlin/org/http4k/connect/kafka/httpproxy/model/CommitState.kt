@@ -14,15 +14,15 @@ data class CommitState(
             offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()))
         )
 
-    fun next(topic: Topic, last: Offset) =
+    fun next(topic: Topic, lastOffset: Offset) =
         copy(
             offsets =
-            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()).next(last))
+            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()).next(lastOffset))
         )
 
-    fun committed(topic: Topic, new: Offset) =
+    fun commitAt(topic: Topic, lastOffset: Offset) =
         copy(
             offsets =
-            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()).committed(new))
+            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()).commitAt(lastOffset))
         )
 }
