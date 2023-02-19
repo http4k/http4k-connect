@@ -25,6 +25,7 @@ import org.http4k.connect.kafka.httpproxy.model.RecordFormat.binary
 import org.http4k.connect.kafka.httpproxy.model.RecordFormat.json
 import org.http4k.connect.kafka.httpproxy.model.Records
 import org.http4k.connect.kafka.httpproxy.model.Records.Json
+import org.http4k.connect.kafka.httpproxy.model.SeekOffset
 import org.http4k.connect.kafka.httpproxy.model.Topic
 import org.http4k.connect.kafka.httpproxy.model.TopicRecord
 import org.http4k.connect.model.Base64Blob
@@ -211,6 +212,41 @@ abstract class KafkaHttpProxyContract {
         ).successValue()
 
         consumer3GetsOnly2NewRecords()
+    }
+
+    @Test
+    fun `can seek back to earlier next point`() {
+        val topic1 = Topic.of("t1_${randomString()}")
+
+        val group = ConsumerGroup.of(randomString())
+
+        val credentials = Credentials("", "")
+
+        kafkaHttpProxy.produceMessages(
+            topic1, Json(
+                listOf(
+                    JsonRecord("m1", Message(randomString())),
+                    JsonRecord("m2", Message(randomString()))
+                )
+            )
+        ).successValue()
+
+        val consumer = KafkaHttpProxyConsumer.Http(
+            credentials, group,
+            Consumer(ConsumerName.of("--1"), json, earliest, enableAutocommit = `false`), uri, http
+        ).successValue()
+
+        consumer.subscribeToTopics(listOf(topic1)).successValue()
+
+        val records = consumer.consumeRecordsTwiceBecauseOfProxy(json)
+
+        consumer.seekOffsets(records.map { SeekOffset(topic1, it.partition, Offset.ZERO) }).successValue()
+
+        val records2 = consumer.consumeRecordsTwiceBecauseOfProxy(json)
+
+        assertThat(records2.map { it.key }, equalTo(listOf("m1", "m2")))
+
+        consumer.delete().successValue()
     }
 
     private fun <K : Any, V : Any, T : Record<K, V>> KafkaHttpProxy.testSending(

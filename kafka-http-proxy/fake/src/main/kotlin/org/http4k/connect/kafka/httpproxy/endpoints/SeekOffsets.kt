@@ -17,7 +17,7 @@ import org.http4k.lens.value
 import org.http4k.routing.bind
 
 fun seekOffsets(consumers: Storage<ConsumerState>) =
-    "/consumers/{consumerGroup}/instances/{instance}/position" bind POST to { req: Request ->
+    "/consumers/{consumerGroup}/instances/{instance}/positions" bind POST to { req: Request ->
         val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
 
         val offsetsToSeek = Body.auto<SeekOffsetsSet>().toLens()(req)
