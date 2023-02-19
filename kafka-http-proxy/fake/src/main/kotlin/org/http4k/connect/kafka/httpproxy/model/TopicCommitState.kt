@@ -4,7 +4,7 @@ import dev.forkhandles.values.ZERO
 
 data class TopicCommitState(
     val next: Offset = Offset.ZERO,
-    val committed: Offset = Offset.ZERO
+    val committed: Offset? = null
 ) {
     fun next(lastOffset: Offset) = TopicCommitState(lastOffset.inc(), committed)
     fun commitAt(lastOffset: Offset) = TopicCommitState(lastOffset.inc(), lastOffset.inc())

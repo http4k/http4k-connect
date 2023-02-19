@@ -3,8 +3,8 @@ package org.http4k.connect.kafka.httpproxy.endpoints
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
 import org.http4k.connect.kafka.httpproxy.model.CommitOffset
 import org.http4k.connect.kafka.httpproxy.model.CommitOffsetsSet
-import org.http4k.connect.kafka.httpproxy.model.CommitState
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
+import org.http4k.connect.kafka.httpproxy.model.ConsumerState
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
@@ -19,16 +19,18 @@ import org.http4k.lens.Path
 import org.http4k.lens.value
 import org.http4k.routing.bind
 
-fun getOffsets(consumers: Storage<CommitState>) =
+fun getOffsets(consumers: Storage<ConsumerState>) =
     "/consumers/{consumerGroup}/instances/{instance}/offsets" bind Method.GET to { req: Request ->
         val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
         consumers[group]
             ?.let {
                 Response(OK)
                     .with(Body.auto<CommitOffsetsSet>().toLens() of CommitOffsetsSet(
-                        it.offsets.map { (topic, state) ->
-                            CommitOffset(topic, PartitionId.of(0), state.committed)
-                        }
+                        it.offsets
+                            .filter { it.value.committed != null }
+                            .map { (topic, state) ->
+                                CommitOffset(topic, PartitionId.of(0), state.committed!!)
+                            }
                     ))
             }
             ?: Response(NOT_FOUND)

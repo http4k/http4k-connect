@@ -7,7 +7,7 @@ data class CommitOffset(
     val topic: Topic,
     val partition: PartitionId,
     val offset: Offset,
-    val metadata: String? = null
+    val metadata: String = ""
 )
 
 

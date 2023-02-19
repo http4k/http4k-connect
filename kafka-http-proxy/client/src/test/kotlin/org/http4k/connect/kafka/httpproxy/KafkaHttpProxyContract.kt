@@ -2,12 +2,14 @@ package org.http4k.connect.kafka.httpproxy
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.values.ZERO
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.asFormatString
 import org.http4k.connect.kafka.httpproxy.model.AutoCommitEnable.`false`
 import org.http4k.connect.kafka.httpproxy.model.AutoOffsetReset.earliest
 import org.http4k.connect.kafka.httpproxy.model.AvroRecord
 import org.http4k.connect.kafka.httpproxy.model.BinaryRecord
 import org.http4k.connect.kafka.httpproxy.model.CommitOffset
+import org.http4k.connect.kafka.httpproxy.model.CommitOffsetsSet
 import org.http4k.connect.kafka.httpproxy.model.Consumer
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
@@ -15,6 +17,7 @@ import org.http4k.connect.kafka.httpproxy.model.ConsumerName
 import org.http4k.connect.kafka.httpproxy.model.JsonRecord
 import org.http4k.connect.kafka.httpproxy.model.Offset
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
+import org.http4k.connect.kafka.httpproxy.model.PartitionOffsetRequest
 import org.http4k.connect.kafka.httpproxy.model.Record
 import org.http4k.connect.kafka.httpproxy.model.RecordFormat
 import org.http4k.connect.kafka.httpproxy.model.RecordFormat.avro
@@ -115,8 +118,18 @@ abstract class KafkaHttpProxyContract {
 
             consumer1.subscribeToTopics(listOf(topic1)).successValue()
 
+            assertThat(
+                consumer1.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.ZERO))).successValue(),
+                equalTo(CommitOffsetsSet(listOf()))
+            )
+
             val records = consumer1.consumeRecordsTwiceBecauseOfProxy(json)
             assertThat(records.map { it.key }, equalTo(listOf("m1", "m2")))
+
+            assertThat(
+                consumer1.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.ZERO))).successValue(),
+                equalTo(CommitOffsetsSet(listOf()))
+            )
 
             consumer1.delete().successValue()
         }
@@ -132,9 +145,25 @@ abstract class KafkaHttpProxyContract {
             val records = consumer2.consumeRecordsTwiceBecauseOfProxy(json)
             assertThat(records.map { it.key }, equalTo(listOf("m1", "m2")))
 
+            assertThat(
+                consumer2.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.ZERO))).successValue(),
+                equalTo(CommitOffsetsSet(listOf()))
+            )
+
             consumer2.commitOffsets(
                 listOf(CommitOffset(topic1, PartitionId.of(0), records.last().offset))
             ).successValue()
+
+            assertThat(
+                consumer2.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.ZERO))).successValue(),
+                equalTo(
+                    CommitOffsetsSet(
+                        listOf(
+                            CommitOffset(topic1, PartitionId.ZERO, Offset.of(2), "")
+                        )
+                    )
+                )
+            )
 
             consumer2.delete().successValue()
         }
@@ -148,6 +177,13 @@ abstract class KafkaHttpProxyContract {
             consumer3.subscribeToTopics(listOf(topic1)).successValue()
 
             assertThat(consumer3.consumeRecordsTwiceBecauseOfProxy(json).map { it.key }, equalTo(listOf("m3", "m4")))
+
+            assertThat(
+                consumer3.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.ZERO))).successValue(),
+                equalTo(
+                    CommitOffsetsSet(listOf(CommitOffset(topic1, PartitionId.ZERO, Offset.of(2), "")))
+                )
+            )
 
             consumer3.delete().successValue()
         }

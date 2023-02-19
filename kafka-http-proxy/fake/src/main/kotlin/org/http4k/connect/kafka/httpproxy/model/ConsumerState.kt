@@ -1,10 +1,12 @@
 package org.http4k.connect.kafka.httpproxy.model
 
-data class CommitState(
+data class ConsumerState(
     val instances: Set<ConsumerInstanceId>,
     val autoCommitEnable: AutoCommitEnable,
     val offsets: Map<Topic, TopicCommitState>
 ) {
+    fun committedRecords(topic: Topic) = offsets[topic]?.committed?.value ?: 0
+
     fun add(instance: ConsumerInstanceId) = copy(instances = instances + instance)
     fun remove(instance: ConsumerInstanceId) = copy(instances = instances - instance)
 

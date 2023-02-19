@@ -1,8 +1,8 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
-import org.http4k.connect.kafka.httpproxy.model.CommitState
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
+import org.http4k.connect.kafka.httpproxy.model.ConsumerState
 import org.http4k.connect.kafka.httpproxy.model.Subscription
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
@@ -17,7 +17,7 @@ import org.http4k.lens.Path
 import org.http4k.lens.value
 import org.http4k.routing.bind
 
-fun subscribeToTopics(consumers: Storage<CommitState>) =
+fun subscribeToTopics(consumers: Storage<ConsumerState>) =
     "/consumers/{consumerGroup}/instances/{instance}/subscription" bind POST to { req: Request ->
         val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
         consumers[group]?.let {
