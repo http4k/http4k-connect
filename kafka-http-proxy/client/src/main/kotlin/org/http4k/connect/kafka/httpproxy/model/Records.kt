@@ -23,7 +23,7 @@ sealed interface Records {
     }
 
     @JsonSerializable
-    data class Binary(val records: List<BinaryRecord<*>>) : Records {
+    data class Binary(val records: List<BinaryRecord>) : Records {
         override fun contentType() = ContentType.KAFKA_BINARY_v2
     }
 }

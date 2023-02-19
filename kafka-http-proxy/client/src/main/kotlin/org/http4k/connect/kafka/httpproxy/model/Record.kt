@@ -17,11 +17,11 @@ data class JsonRecord<K : Any, V : Any>(
 ) : Record<K, V>
 
 @JsonSerializable
-data class BinaryRecord<K : Any>(
-    override val key: K?,
+data class BinaryRecord(
+    override val key: Base64Blob?,
     override val value: Base64Blob,
     override val partition: PartitionId? = null
-) : Record<K, Base64Blob>
+) : Record<Base64Blob, Base64Blob>
 
 @JsonSerializable
 data class AvroRecord<K : Any, V : Any>(

@@ -9,6 +9,7 @@ import org.http4k.connect.kafka.httpproxy.model.Offset
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
 import org.http4k.connect.kafka.httpproxy.model.SchemaId
 import org.http4k.connect.kafka.httpproxy.model.Topic
+import org.http4k.connect.model.Base64Blob
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter
 import org.http4k.format.MapAdapter
@@ -24,6 +25,7 @@ object KafkaHttpProxyMoshi : ConfigurableMoshi(
         .add(MapAdapter)
         .asConfigurable()
         .withStandardMappings()
+        .value(Base64Blob)
         .value(ConsumerGroup)
         .value(ConsumerName)
         .value(ConsumerInstanceId)
