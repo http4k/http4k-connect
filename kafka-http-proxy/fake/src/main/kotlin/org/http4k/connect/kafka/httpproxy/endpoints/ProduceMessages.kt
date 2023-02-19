@@ -16,21 +16,19 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.lens.Path
 import org.http4k.lens.value
-import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 
-fun produceMessages(topics: Storage<List<SendRecord>>): RoutingHttpHandler {
-    return "/topics/{topicName}" bind POST to { req: Request ->
+fun produceMessages(topics: Storage<List<SendRecord>>) =
+    "/topics/{topicName}" bind POST to { req: Request ->
         val topic = Path.value(Topic).of("topicName")(req)
         val records = toLens(req)["records"]!!
-            .map { Triple(System.nanoTime(), it["key"]!!, it["value"]!!) }
+            .map { Triple(System.nanoTime(), it["key"], it["value"]!!) }
 
         topics[topic] = topics.getOrPut(topic) { mutableListOf() } + records
 
         Response(OK)
             .with(responseLens of ProducedMessages(null, null, emptyList()))
     }
-}
 
 private val toLens = Body.auto<Map<String, List<Map<String, Any>>>>()
     .toLens()

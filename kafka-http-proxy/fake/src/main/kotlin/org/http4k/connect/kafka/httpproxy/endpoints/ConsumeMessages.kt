@@ -3,7 +3,7 @@ package org.http4k.connect.kafka.httpproxy.endpoints
 import org.http4k.connect.kafka.httpproxy.CommitState
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
 import org.http4k.connect.kafka.httpproxy.SendRecord
-import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
+import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.Offset
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
 import org.http4k.connect.kafka.httpproxy.model.TopicRecord
@@ -23,23 +23,26 @@ import org.http4k.routing.bind
 
 fun consumeRecords(consumers: Storage<CommitState>, topics: Storage<List<SendRecord>>) =
     "/consumers/{consumerGroup}/instances/{instance}/records" bind GET to { req: Request ->
-        val instance = Path.value(ConsumerInstanceId).of("instance")(req)
+        val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
 
-        consumers[instance]?.let { state ->
+        consumers[group]?.let { state ->
             val offsets = state.offsets
             val records = offsets
-                .flatMap { (topic, originalOffset) ->
+                .flatMap { (topic, originalTopicState) ->
                     val allMessages = topics[topic] ?: emptyList()
-                    if(consumers[instance]!!.auto) {
-                        consumers[instance] = consumers[instance]!!.updated(topic, Offset.of(allMessages.size.toLong()))
+
+                    consumers[group] = consumers[group]!!.next(topic, Offset.of(allMessages.size.toLong()))
+
+                    if (consumers[group]!!.auto) {
+                        consumers[group] = consumers[group]!!.committed(topic, Offset.of(allMessages.size.toLong()))
                     }
-                    allMessages.drop(originalOffset.value.toInt())
+                    allMessages.drop(originalTopicState.next.value.toInt())
                         .mapIndexed { i, it ->
                             it.first to TopicRecord(
                                 topic,
                                 it.second,
                                 it.third,
-                                PartitionId.of(0), Offset.of((originalOffset.value + i))
+                                PartitionId.of(0), Offset.of((originalTopicState.next.value + i))
                             )
                         }
                 }

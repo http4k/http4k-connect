@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
 import org.http4k.connect.kafka.httpproxy.model.ConsumerName
+import org.http4k.connect.kafka.httpproxy.model.ConsumerRequestTimeout
 import org.http4k.connect.kafka.httpproxy.model.Offset
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
 import org.http4k.connect.kafka.httpproxy.model.SchemaId
@@ -16,7 +17,9 @@ import org.http4k.format.MapAdapter
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
 import org.http4k.format.withStandardMappings
+import org.http4k.lens.BiDiMapping
 import se.ansman.kotshi.KotshiJsonAdapterFactory
+import java.time.Duration
 
 object KafkaHttpProxyMoshi : ConfigurableMoshi(
     Moshi.Builder()
@@ -28,6 +31,9 @@ object KafkaHttpProxyMoshi : ConfigurableMoshi(
         .value(Base64Blob)
         .value(ConsumerGroup)
         .value(ConsumerName)
+        .text(BiDiMapping(ConsumerRequestTimeout::class.java,
+            { ConsumerRequestTimeout.of(Duration.ofMillis(it.toLong())) }, { it.value.toMillis().toString() })
+        )
         .value(ConsumerInstanceId)
         .value(Offset)
         .value(PartitionId)

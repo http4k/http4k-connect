@@ -23,4 +23,3 @@ data class CommitOffsets(
     override fun toRequest() = Request(POST, "/consumers/$group/instances/$instance/offsets")
         .with(Body.auto<CommitOffsetsSet>(contentType = ContentType.KAFKA_JSON_V2).toLens() of CommitOffsetsSet(offsets))
 }
-

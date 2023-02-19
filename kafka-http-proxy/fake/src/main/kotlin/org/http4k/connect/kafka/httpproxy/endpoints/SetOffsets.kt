@@ -3,7 +3,7 @@ package org.http4k.connect.kafka.httpproxy.endpoints
 import org.http4k.connect.kafka.httpproxy.CommitState
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
 import org.http4k.connect.kafka.httpproxy.model.CommitOffsetsSet
-import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
+import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
 import org.http4k.connect.storage.set
@@ -19,13 +19,13 @@ import org.http4k.routing.bind
 
 fun setOffsets(consumers: Storage<CommitState>) =
     "/consumers/{consumerGroup}/instances/{instance}/offsets" bind POST to { req: Request ->
-        val instance = Path.value(ConsumerInstanceId).of("instance")(req)
+        val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
 
-        consumers[instance]
+        consumers[group]
             ?.let {
                 val offsets = Body.auto<CommitOffsetsSet>().toLens()(req)
-                consumers[instance] = offsets.offsets.fold(it) { acc, next ->
-                    acc.updated(next.topic, next.offset)
+                consumers[group] = offsets.offsets.fold(it) { acc, next ->
+                    acc.committed(next.topic, next.offset)
                 }
                 Response(NO_CONTENT)
             }

@@ -4,7 +4,7 @@ import org.http4k.connect.kafka.httpproxy.CommitState
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
 import org.http4k.connect.kafka.httpproxy.model.CommitOffset
 import org.http4k.connect.kafka.httpproxy.model.CommitOffsetsSet
-import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
+import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
@@ -21,13 +21,13 @@ import org.http4k.routing.bind
 
 fun getOffsets(consumers: Storage<CommitState>) =
     "/consumers/{consumerGroup}/instances/{instance}/offsets" bind Method.GET to { req: Request ->
-        val instance = Path.value(ConsumerInstanceId).of("instance")(req)
-        consumers[instance]
+        val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
+        consumers[group]
             ?.let {
                 Response(OK)
                     .with(Body.auto<CommitOffsetsSet>().toLens() of CommitOffsetsSet(
                         it.offsets.map {
-                            CommitOffset(it.key, PartitionId.of(0), it.value)
+                            CommitOffset(it.key, PartitionId.of(0), it.value.committed)
                         }
                     ))
             }

@@ -15,7 +15,6 @@ import org.http4k.connect.kafka.httpproxy.model.ConsumerName
 import org.http4k.connect.kafka.httpproxy.model.JsonRecord
 import org.http4k.connect.kafka.httpproxy.model.Offset
 import org.http4k.connect.kafka.httpproxy.model.PartitionId
-import org.http4k.connect.kafka.httpproxy.model.PartitionOffsetRequest
 import org.http4k.connect.kafka.httpproxy.model.Record
 import org.http4k.connect.kafka.httpproxy.model.RecordFormat
 import org.http4k.connect.kafka.httpproxy.model.RecordFormat.avro
@@ -52,14 +51,11 @@ abstract class KafkaHttpProxyContract {
     }
 
     @Test
-    fun `can send AVRO messages and get them back`() {
+    open fun `can send AVRO messages and get them back`() {
         kafkaHttpProxy.testSending(
             avro,
             { (it as Records.Avro).records.first() as AvroRecord<String, Message> }) {
-            Records.Avro(
-                "{\"name\":\"int\",\"type\": \"int\"}",
-                listOf(AvroRecord(null, 12))
-            )
+            Records.Avro("schema", listOf(AvroRecord(it, Message(randomString()))))
         }
     }
 
@@ -104,37 +100,44 @@ abstract class KafkaHttpProxyContract {
     }
 
     @Test
-    fun `can manually commit consumer offsets`() {
+    fun `can manually commit consumer offsets for group`() {
         val topic1 = Topic.of("t1_${randomString()}")
 
         val group = ConsumerGroup.of(randomString())
-        val name = ConsumerName.of(randomString())
-        val consumer = KafkaHttpProxyConsumer.Http(
-            Credentials("", ""), group,
-            Consumer(name, json, earliest, enableAutocommit = `false`), uri, http
+
+        val credentials = Credentials("", "")
+
+        val consumer1 = KafkaHttpProxyConsumer.Http(
+            credentials, group,
+            Consumer(ConsumerName.of(randomString()), json, earliest, enableAutocommit = `false`), uri, http
+        ).successValue()
+
+        val consumer2 = KafkaHttpProxyConsumer.Http(
+            credentials, group,
+            Consumer(ConsumerName.of(randomString()), json, earliest, enableAutocommit = `false`), uri, http
         ).successValue()
 
         try {
-            consumer.subscribeToTopics(listOf(topic1)).successValue()
+            consumer1.subscribeToTopics(listOf(topic1)).successValue()
+            consumer2.subscribeToTopics(listOf(topic1)).successValue()
 
             val record1 = Json(listOf(JsonRecord("m1", Message(randomString()))))
             kafkaHttpProxy.produceMessages(topic1, record1).successValue()
 
-            println(consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0)))).successValue())
+            assertThat(consumer1.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
+            assertThat(consumer2.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(0))
 
-            assertThat(consumer.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
+            val record2 = Json(listOf(JsonRecord("m2", Message(randomString()))))
+            kafkaHttpProxy.produceMessages(topic1, record2).successValue()
 
-            println(consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0)))).successValue())
-
-            assertThat(consumer.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
-            consumer.commitOffsets(
+            assertThat(consumer1.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
+            consumer1.commitOffsets(
                 listOf(CommitOffset(topic1, PartitionId.of(0), Offset.of(1)))
             ).successValue()
-            assertThat(consumer.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(0))
-
-            println(consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0)))).successValue())
+            assertThat(consumer2.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(0))
         } finally {
-            consumer.delete().successValue()
+            consumer1.delete().successValue()
+            consumer2.delete().successValue()
         }
     }
 
@@ -231,10 +234,12 @@ private fun KafkaHttpProxyConsumer.consumeRecordsTwiceBecauseOfProxy(format: Rec
         .distinctBy { it.key }
         .sortedBy { it.key.toString() }
 
-private fun <V : Any> V.toMapOrString(): Any =
-    when (this) {
+private fun <V : Any> V.toMapOrString(): Any {
+    return when (this) {
         is Base64Blob -> value
+        is String -> this
         else -> KafkaHttpProxyMoshi.asA<Map<String, Any>>(asFormatString(this))
     }
+}
 
 data class Message(val field: String)
