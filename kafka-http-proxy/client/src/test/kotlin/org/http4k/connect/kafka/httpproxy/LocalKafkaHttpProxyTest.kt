@@ -3,7 +3,6 @@ package org.http4k.connect.kafka.httpproxy
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.assumeDockerDaemonRunning
 import org.http4k.core.Uri
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Disabled
 
 class LocalKafkaHttpProxyTest : KafkaHttpProxyContract() {
@@ -18,5 +17,5 @@ class LocalKafkaHttpProxyTest : KafkaHttpProxyContract() {
 
     override val uri = Uri.of("http://localhost:8082")
 
-    override val http = JavaHttpClient().debug()
+    override val http = JavaHttpClient()
 }

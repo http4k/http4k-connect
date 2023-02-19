@@ -16,9 +16,13 @@ import org.http4k.connect.kafka.httpproxy.model.SendRecord
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Credentials
+import org.http4k.core.Method.GET
+import org.http4k.core.Response
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ServerFilters.BasicAuth
+import org.http4k.routing.bind
 import org.http4k.routing.routes
 
 class FakeKafkaHttpProxy(
@@ -26,19 +30,22 @@ class FakeKafkaHttpProxy(
     topics: Storage<List<SendRecord>> = Storage.InMemory(),
     private val baseUri: Uri = Uri.of("http://localhost:${FakeKafkaHttpProxy::class.defaultPort}")
 ) : ChaoticHttpHandler() {
-    override val app = BasicAuth("") { true }
-        .then(
-            routes(
-                subscribeToTopics(consumers),
-                createConsumer(consumers, baseUri),
-                deleteConsumer(consumers),
-                commitOffsets(consumers),
-                getOffsets(consumers),
-                seekOffsets(consumers),
-                produceRecords(topics),
-                consumeRecords(consumers, topics)
-            )
-        )
+    override val app = routes(
+        BasicAuth("") { true }
+            .then(
+                routes(
+                    subscribeToTopics(consumers),
+                    createConsumer(consumers, baseUri),
+                    deleteConsumer(consumers),
+                    commitOffsets(consumers),
+                    getOffsets(consumers),
+                    seekOffsets(consumers),
+                    produceRecords(topics),
+                    consumeRecords(consumers, topics),
+                )
+            ),
+        "" bind GET to { _ -> Response(OK).body("{}") }
+    )
 
     /**
      * Convenience function to get a KafkaHttpProxy client

@@ -32,7 +32,12 @@ import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method.GET
+import org.http4k.core.Request
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.UUID
@@ -45,6 +50,11 @@ abstract class KafkaHttpProxyContract {
 
     private val kafkaHttpProxy by lazy {
         KafkaHttpProxy.Http(Credentials("", ""), uri, http)
+    }
+
+    @BeforeEach
+    fun `can get to proxy`() {
+        Assumptions.assumeTrue(http(Request(GET, uri)).status == OK)
     }
 
     @Test
