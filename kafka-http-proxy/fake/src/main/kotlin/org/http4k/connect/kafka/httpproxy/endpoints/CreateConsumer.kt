@@ -2,6 +2,7 @@ package org.http4k.connect.kafka.httpproxy.endpoints
 
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
 import org.http4k.connect.kafka.httpproxy.action.NewConsumer
+import org.http4k.connect.kafka.httpproxy.model.AutoCommitEnable.`true`
 import org.http4k.connect.kafka.httpproxy.model.Consumer
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
@@ -28,7 +29,7 @@ fun createConsumer(consumers: Storage<ConsumerState>, baseUri: Uri) =
         val consumerInstance = ConsumerInstanceId.of("$consumerGroup${consumer.name}")
 
         consumers[consumerGroup] = consumers.getOrPut(consumerGroup) {
-            ConsumerState(setOf(), consumer.enableAutocommit, mapOf())
+            ConsumerState(setOf(), consumer.enableAutocommit == `true`, mapOf())
         }.add(consumerInstance)
 
         Response(OK).with(

@@ -2,8 +2,8 @@ package org.http4k.connect.kafka.httpproxy.model
 
 data class ConsumerState(
     val instances: Set<ConsumerInstanceId>,
-    val autoCommitEnable: AutoCommitEnable,
-    val offsets: Map<Topic, TopicCommitState>
+    val autoCommit: Boolean,
+    val offsets: Map<Topic, TopicOffsetState>
 ) {
     fun committedRecords(topic: Topic) = offsets[topic]?.committed?.value ?: 0
 
@@ -13,18 +13,18 @@ data class ConsumerState(
     fun new(topic: Topic) =
         copy(
             offsets =
-            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()))
+            offsets + (topic to offsets.getOrDefault(topic, TopicOffsetState()))
         )
 
-    fun next(topic: Topic, lastOffset: Offset) =
+    fun next(topic: Topic, nextOffset: Offset) =
         copy(
             offsets =
-            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()).next(lastOffset))
+            offsets + (topic to offsets.getOrDefault(topic, TopicOffsetState()).next(nextOffset))
         )
 
     fun commitAt(topic: Topic, lastOffset: Offset) =
         copy(
             offsets =
-            offsets + (topic to offsets.getOrDefault(topic, TopicCommitState()).commitAt(lastOffset))
+            offsets + (topic to offsets.getOrDefault(topic, TopicOffsetState()).commitAt(lastOffset))
         )
 }

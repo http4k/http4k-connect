@@ -17,4 +17,3 @@ data class CommitOffsets(val offsets: List<CommitOffset>) : KafkaHttpProxyConsum
     override fun toRequest() = Request(POST, "/consumers/{group}/instances/{instance}/offsets")
         .with(Body.auto<CommitOffsetsSet>(contentType = ContentType.KAFKA_JSON_V2).toLens() of CommitOffsetsSet(offsets))
 }
-

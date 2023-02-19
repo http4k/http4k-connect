@@ -9,6 +9,7 @@ import org.http4k.connect.kafka.httpproxy.endpoints.createConsumer
 import org.http4k.connect.kafka.httpproxy.endpoints.deleteConsumer
 import org.http4k.connect.kafka.httpproxy.endpoints.getOffsets
 import org.http4k.connect.kafka.httpproxy.endpoints.produceRecords
+import org.http4k.connect.kafka.httpproxy.endpoints.seekOffsets
 import org.http4k.connect.kafka.httpproxy.endpoints.subscribeToTopics
 import org.http4k.connect.kafka.httpproxy.model.ConsumerState
 import org.http4k.connect.kafka.httpproxy.model.SendRecord
@@ -33,6 +34,7 @@ class FakeKafkaHttpProxy(
                 deleteConsumer(consumers),
                 commitOffsets(consumers),
                 getOffsets(consumers),
+                seekOffsets(consumers),
                 produceRecords(topics),
                 consumeRecords(consumers, topics)
             )

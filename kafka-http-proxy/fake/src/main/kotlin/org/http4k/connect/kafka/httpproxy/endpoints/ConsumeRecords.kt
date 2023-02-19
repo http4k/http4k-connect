@@ -1,7 +1,6 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
-import org.http4k.connect.kafka.httpproxy.model.AutoCommitEnable.`true`
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerState
 import org.http4k.connect.kafka.httpproxy.model.Offset
@@ -26,32 +25,31 @@ fun consumeRecords(consumers: Storage<ConsumerState>, topics: Storage<List<SendR
     "/consumers/{consumerGroup}/instances/{instance}/records" bind GET to { req: Request ->
         val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
 
-        consumers[group]?.let { state ->
-            val records = state.offsets
-                .flatMap { (topic, _) ->
-                    val allRecords = topics[topic] ?: emptyList()
+        val currentState = consumers[group]
+        if (currentState == null) Response(NOT_FOUND)
 
-                    val lastRecord = Offset.of(allRecords.size - 1)
+        else {
+            val (newState, records) =
+                currentState.offsets.entries
+                    .fold(currentState to emptyList<Pair<Long, TopicRecord>>()) { (accState, records), (topic) ->
+                        val allRecords = topics[topic] ?: emptyList()
 
-                    val newConsumerState = consumers[group]!!.next(topic, lastRecord)
-                    consumers[group] = newConsumerState
+                        val newState = when {
+                            currentState.autoCommit -> accState.commitAt(topic, Offset.of(allRecords.size - 1))
+                            else -> accState
+                        }.next(topic, Offset.of(allRecords.size))
 
-                    allRecords
-                        .withIndex()
-                        .drop(state.committedRecords(topic))
-                        .map { (index, it) ->
-                            it.first to TopicRecord(topic, it.second, it.third, PartitionId.of(0), Offset.of(index))
-                        }
-                        .also {
-                            if (state.autoCommitEnable == `true`)
-                                consumers[group] = newConsumerState.commitAt(topic, lastRecord)
-                        }
-                }
-                .sortedBy { it.first }
-                .map { it.second }
+                        newState to records + allRecords
+                            .withIndex()
+                            .drop(currentState.committedRecords(topic))
+                            .map { (index, it) ->
+                                it.first to TopicRecord(topic, it.second, it.third, PartitionId.of(0), Offset.of(index))
+                            }
+                    }
+
+            consumers[group] = newState
 
             Response(OK)
-                .with(Body.auto<List<TopicRecord>>().toLens() of records)
-
-        } ?: Response(NOT_FOUND)
+                .with(Body.auto<List<TopicRecord>>().toLens() of records.sortedBy { it.first }.map { it.second })
+        }
     }
