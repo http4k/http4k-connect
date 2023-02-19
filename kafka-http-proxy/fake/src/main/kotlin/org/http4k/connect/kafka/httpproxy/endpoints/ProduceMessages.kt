@@ -1,8 +1,8 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
-import org.http4k.connect.kafka.httpproxy.SendRecord
 import org.http4k.connect.kafka.httpproxy.action.ProducedMessages
+import org.http4k.connect.kafka.httpproxy.model.SendRecord
 import org.http4k.connect.kafka.httpproxy.model.Topic
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.getOrPut
@@ -18,7 +18,7 @@ import org.http4k.lens.Path
 import org.http4k.lens.value
 import org.http4k.routing.bind
 
-fun produceMessages(topics: Storage<List<SendRecord>>) =
+fun produceRecords(topics: Storage<List<SendRecord>>) =
     "/topics/{topicName}" bind POST to { req: Request ->
         val topic = Path.value(Topic).of("topicName")(req)
         val records = toLens(req)["records"]!!

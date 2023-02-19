@@ -1,8 +1,8 @@
 package org.http4k.connect.kafka.httpproxy.model
 
-import dev.forkhandles.values.LongValue
-import dev.forkhandles.values.LongValueFactory
+import dev.forkhandles.values.IntValue
+import dev.forkhandles.values.IntValueFactory
 
-class Offset private constructor(override val value: Long) : LongValue(value) {
-    companion object : LongValueFactory<Offset>(::Offset)
+class Offset private constructor(override val value: Int) : IntValue(value) {
+    companion object : IntValueFactory<Offset>(::Offset)
 }

@@ -115,7 +115,8 @@ abstract class KafkaHttpProxyContract {
 
             consumer1.subscribeToTopics(listOf(topic1)).successValue()
 
-            assertThat(consumer1.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(2))
+            val records = consumer1.consumeRecordsTwiceBecauseOfProxy(json)
+            assertThat(records.map { it.key }, equalTo(listOf("m1", "m2")))
 
             consumer1.delete().successValue()
         }
@@ -129,7 +130,7 @@ abstract class KafkaHttpProxyContract {
             consumer2.subscribeToTopics(listOf(topic1)).successValue()
 
             val records = consumer2.consumeRecordsTwiceBecauseOfProxy(json)
-            assertThat(records.size, equalTo(2))
+            assertThat(records.map { it.key }, equalTo(listOf("m1", "m2")))
 
             consumer2.commitOffsets(
                 listOf(CommitOffset(topic1, PartitionId.of(0), records.last().offset))
@@ -146,7 +147,7 @@ abstract class KafkaHttpProxyContract {
 
             consumer3.subscribeToTopics(listOf(topic1)).successValue()
 
-            assertThat(consumer3.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(2))
+            assertThat(consumer3.consumeRecordsTwiceBecauseOfProxy(json).map { it.key }, equalTo(listOf("m3", "m4")))
 
             consumer3.delete().successValue()
         }

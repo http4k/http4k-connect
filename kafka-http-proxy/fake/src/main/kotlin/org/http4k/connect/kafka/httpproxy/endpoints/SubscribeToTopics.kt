@@ -1,10 +1,8 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
-import dev.forkhandles.values.ZERO
-import org.http4k.connect.kafka.httpproxy.CommitState
 import org.http4k.connect.kafka.httpproxy.KafkaHttpProxyMoshi.auto
+import org.http4k.connect.kafka.httpproxy.model.CommitState
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
-import org.http4k.connect.kafka.httpproxy.model.Offset
 import org.http4k.connect.kafka.httpproxy.model.Subscription
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
@@ -25,7 +23,7 @@ fun subscribeToTopics(consumers: Storage<CommitState>) =
         consumers[group]?.let {
             val topics = Body.auto<Subscription>().toLens()(req).topics
             consumers[group] = topics.fold(it) { acc, topic ->
-                acc.committed(topic, Offset.ZERO)
+                acc.new(topic)
             }
             Response(NO_CONTENT)
         } ?: Response(NOT_FOUND)

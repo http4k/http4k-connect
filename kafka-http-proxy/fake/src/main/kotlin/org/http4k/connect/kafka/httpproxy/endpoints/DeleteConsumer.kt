@@ -1,6 +1,6 @@
 package org.http4k.connect.kafka.httpproxy.endpoints
 
-import org.http4k.connect.kafka.httpproxy.CommitState
+import org.http4k.connect.kafka.httpproxy.model.CommitState
 import org.http4k.connect.kafka.httpproxy.model.ConsumerGroup
 import org.http4k.connect.kafka.httpproxy.model.ConsumerInstanceId
 import org.http4k.connect.storage.Storage
