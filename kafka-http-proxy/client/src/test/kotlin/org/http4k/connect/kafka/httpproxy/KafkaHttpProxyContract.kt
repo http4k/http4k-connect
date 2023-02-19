@@ -52,13 +52,13 @@ abstract class KafkaHttpProxyContract {
     }
 
     @Test
-    open fun `can send AVRO messages and get them back`() {
+    fun `can send AVRO messages and get them back`() {
         kafkaHttpProxy.testSending(
             avro,
             { (it as Records.Avro).records.first() as AvroRecord<String, Message> }) {
             Records.Avro(
-                "{\"name\":\"field\",\"type\": \"string\"}",
-                listOf(AvroRecord(it, Message(randomString())))
+                "{\"name\":\"int\",\"type\": \"int\"}",
+                listOf(AvroRecord(null, 12))
             )
         }
     }
@@ -120,17 +120,19 @@ abstract class KafkaHttpProxyContract {
             val record1 = Json(listOf(JsonRecord("m1", Message(randomString()))))
             kafkaHttpProxy.produceMessages(topic1, record1).successValue()
 
-            consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0))))
+            println(consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0)))).successValue())
 
             assertThat(consumer.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
 
-            consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0))))
+            println(consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0)))).successValue())
 
             assertThat(consumer.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
             consumer.commitOffsets(
                 listOf(CommitOffset(topic1, PartitionId.of(0), Offset.of(1)))
             ).successValue()
             assertThat(consumer.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(0))
+
+            println(consumer.getOffsets(listOf(PartitionOffsetRequest(topic1, PartitionId.of(0)))).successValue())
         } finally {
             consumer.delete().successValue()
         }

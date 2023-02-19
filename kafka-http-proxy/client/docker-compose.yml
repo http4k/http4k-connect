@@ -25,11 +25,24 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
+  schemaregistry:
+    platform: linux/amd64
+    image: confluentinc/cp-schema-registry:5.1.2
+    depends_on:
+      - zookeeper
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8085"
+    ports:
+      - 8085:8085
+
   rest-proxy:
     image: confluentinc/cp-kafka-rest:7.3.0
     depends_on:
       - zookeeper
       - broker
+      - schemaregistry
     ports:
       - 8082:8082
     hostname: rest-proxy
@@ -38,4 +51,5 @@ services:
       KAFKA_REST_HOST_NAME: localhost
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_BOOTSTRAP_SERVERS: broker:29092
-
+      KAFKA_SCHEMA_REGISTRY_URL: "schemaregistry:8085"
+      KAFKA_REST_SCHEMA_REGISTRY_URL: "http://schemaregistry:8085"

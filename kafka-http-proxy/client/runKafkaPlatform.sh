@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker compose up -d  rest-proxy broker
+docker compose up -d rest-proxy
