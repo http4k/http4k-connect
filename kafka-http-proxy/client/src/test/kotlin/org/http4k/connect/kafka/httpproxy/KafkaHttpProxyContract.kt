@@ -107,38 +107,73 @@ abstract class KafkaHttpProxyContract {
 
         val credentials = Credentials("", "")
 
-        val consumer1 = KafkaHttpProxyConsumer.Http(
-            credentials, group,
-            Consumer(ConsumerName.of(randomString()), json, earliest, enableAutocommit = `false`), uri, http
-        ).successValue()
+        fun consumer1Consumes2RecordsAndDoesNotCommit() {
+            val consumer1 = KafkaHttpProxyConsumer.Http(
+                credentials, group,
+                Consumer(ConsumerName.of("--1"), json, earliest, enableAutocommit = `false`), uri, http
+            ).successValue()
 
-        val consumer2 = KafkaHttpProxyConsumer.Http(
-            credentials, group,
-            Consumer(ConsumerName.of(randomString()), json, earliest, enableAutocommit = `false`), uri, http
-        ).successValue()
-
-        try {
             consumer1.subscribeToTopics(listOf(topic1)).successValue()
+
+            assertThat(consumer1.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(2))
+
+            consumer1.delete().successValue()
+        }
+
+        fun consumer2GetsTheSame2RecordsAndCommitsAt2() {
+            val consumer2 = KafkaHttpProxyConsumer.Http(
+                credentials, group,
+                Consumer(ConsumerName.of("--2"), json, earliest, enableAutocommit = `false`), uri, http
+            ).successValue()
+
             consumer2.subscribeToTopics(listOf(topic1)).successValue()
 
-            val record1 = Json(listOf(JsonRecord("m1", Message(randomString()))))
-            kafkaHttpProxy.produceMessages(topic1, record1).successValue()
+            val records = consumer2.consumeRecordsTwiceBecauseOfProxy(json)
+            assertThat(records.size, equalTo(2))
 
-            assertThat(consumer1.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
-            assertThat(consumer2.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(0))
-
-            val record2 = Json(listOf(JsonRecord("m2", Message(randomString()))))
-            kafkaHttpProxy.produceMessages(topic1, record2).successValue()
-
-            assertThat(consumer1.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(1))
-            consumer1.commitOffsets(
-                listOf(CommitOffset(topic1, PartitionId.of(0), Offset.of(1)))
+            consumer2.commitOffsets(
+                listOf(CommitOffset(topic1, PartitionId.of(0), records.last().offset))
             ).successValue()
-            assertThat(consumer2.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(0))
-        } finally {
-            consumer1.delete().successValue()
+
             consumer2.delete().successValue()
         }
+
+        fun consumer3GetsOnly2NewRecords() {
+            val consumer3 = KafkaHttpProxyConsumer.Http(
+                credentials, group,
+                Consumer(ConsumerName.of("--3"), json, earliest, enableAutocommit = `false`), uri, http
+            ).successValue()
+
+            consumer3.subscribeToTopics(listOf(topic1)).successValue()
+
+            assertThat(consumer3.consumeRecordsTwiceBecauseOfProxy(json).size, equalTo(2))
+
+            consumer3.delete().successValue()
+        }
+
+        kafkaHttpProxy.produceMessages(
+            topic1, Json(
+                listOf(
+                    JsonRecord("m1", Message(randomString())),
+                    JsonRecord("m2", Message(randomString()))
+                )
+            )
+        ).successValue()
+
+        consumer1Consumes2RecordsAndDoesNotCommit()
+
+        consumer2GetsTheSame2RecordsAndCommitsAt2()
+
+        kafkaHttpProxy.produceMessages(
+            topic1, Json(
+                listOf(
+                    JsonRecord("m3", Message(randomString())),
+                    JsonRecord("m4", Message(randomString()))
+                )
+            )
+        ).successValue()
+
+        consumer3GetsOnly2NewRecords()
     }
 
     private fun <K : Any, V : Any, T : Record<K, V>> KafkaHttpProxy.testSending(
