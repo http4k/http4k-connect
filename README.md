@@ -8,8 +8,6 @@
 [comment]: <> (<img alt="jcenter free" src="https://img.shields.io/badge/JCenter%20free-%3Ev2.21.0.0-success">)
 [comment]: <> (<a href="https://codecov.io/gh/http4k/http4k-connect"><img src="https://codecov.io/gh/http4k/http4k-connect/branch/master/graph/badge.svg" /></a>)
 
-![.github/workflows/release.yaml](https://github.com/http4k/http4k-connect/workflows/.github/workflows/release.yaml/badge.svg)
-
 http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services using [http4k](https://http4k.org) compatible APIs, along with Fake implementations for usage during local testing. These are all underpinned by a variation on the uniform [Server as a Function](https://monkey.org/~marius/funsrv.pdf) model powered by the `HttpHandler` interface exposed by [http4k](https://http4k.org), so you can:
  
 1. Take advantage of the simple and powerful SaaF model and APIs used in http4k.
