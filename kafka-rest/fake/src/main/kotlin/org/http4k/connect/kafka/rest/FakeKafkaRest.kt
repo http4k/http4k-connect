@@ -23,7 +23,6 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ServerFilters.BasicAuth
-import org.http4k.filter.debug
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
@@ -48,7 +47,7 @@ class FakeKafkaRest(
                 )
             ),
         "" bind GET to { _ -> Response(OK).body("{}") }
-    ).debug()
+    )
 
     /**
      * Convenience function to get a FakeKafkaRest client

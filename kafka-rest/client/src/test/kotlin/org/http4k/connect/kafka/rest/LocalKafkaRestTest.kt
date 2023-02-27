@@ -15,7 +15,7 @@ class LocalKafkaRestTest : KafkaRestContract() {
         super.`can send AVRO messages and get them back`()
     }
 
-    override val uri = Uri.of("http://localhost:38082")
+    override val uri = Uri.of("http://localhost:8082")
 
     override val http = JavaHttpClient()
 }
