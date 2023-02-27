@@ -5,14 +5,14 @@ import org.http4k.connect.kafka.rest.KafkaRestMoshi.asFormatString
 import org.http4k.connect.kafka.rest.model.Record
 import org.http4k.connect.kafka.rest.model.Records
 import org.http4k.connect.model.Base64Blob
+import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
-import org.http4k.testing.JsonApprovalTest
 import org.http4k.testing.assertApproved
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
 
-@ExtendWith(JsonApprovalTest::class)
+@ExtendWith(ApprovalTest::class)
 class KafkaRestMoshiTest {
 
     @Test

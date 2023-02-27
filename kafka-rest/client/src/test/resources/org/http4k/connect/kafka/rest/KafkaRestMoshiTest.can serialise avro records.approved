@@ -1,11 +1,1 @@
-{
-  "records": [
-    {
-      "key": "123",
-      "value": {
-        "uuid": "00000000-0000-0000-0000-000000000000"
-      }
-    }
-  ],
-  "value_schema": "{\"type\":\"record\",\"name\":\"RandomEvent\",\"namespace\":\"http4k\",\"doc\":\"Random event\",\"fields\":[{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"},\"doc\":\"UUID\"}]}"
-}
+{"records":[{"key":"123","value":{"uuid":"00000000-0000-0000-0000-000000000000"}}],"value_schema":"{\"type\":\"record\",\"name\":\"RandomEvent\",\"namespace\":\"http4k\",\"doc\":\"Random event\",\"fields\":[{\"name\":\"uuid\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"},\"doc\":\"UUID\"}]}"}

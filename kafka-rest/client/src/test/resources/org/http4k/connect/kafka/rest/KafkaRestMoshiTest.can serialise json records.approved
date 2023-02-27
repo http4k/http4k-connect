@@ -1,10 +1,1 @@
-{
-  "records": [
-    {
-      "key": 123,
-      "value": {
-        "field": "123"
-      }
-    }
-  ]
-}
+{"records":[{"key":123,"value":{"field":"123"}}]}
