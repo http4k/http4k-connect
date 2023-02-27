@@ -1,6 +1,5 @@
 package org.http4k.connect.kafka.rest.model
 
-import com.squareup.moshi.Json
 import org.apache.avro.generic.GenericContainer
 import org.http4k.connect.model.Base64Blob
 import org.http4k.core.ContentType
@@ -8,12 +7,10 @@ import org.http4k.core.ContentType.Companion.APPLICATION_JSON
 import org.http4k.core.KAFKA_AVRO_v2
 import org.http4k.core.KAFKA_BINARY_v2
 import org.http4k.core.KAFKA_JSON_V2
-import se.ansman.kotshi.JsonSerializable
 
-@JsonSerializable
-data class Records(
+class Records private constructor(
     val records: List<Record<*, Any>>,
-    @Json(ignore = true) val contentType: ContentType = APPLICATION_JSON,
+    val contentType: ContentType = APPLICATION_JSON,
     val key_schema: String? = null,
     val value_schema: String? = null
 ) {

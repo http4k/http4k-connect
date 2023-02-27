@@ -19,6 +19,7 @@ import org.http4k.connect.model.Base64Blob
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter
 import org.http4k.format.MapAdapter
+import org.http4k.format.SimpleMoshiAdapterFactory
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
 import org.http4k.format.withStandardMappings
@@ -31,7 +32,7 @@ object KafkaRestMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KafkaRestJsonAdapterFactory)
         .add(ListAdapter)
-        .add(GenericRecordAdapter)
+        .add(SimpleMoshiAdapterFactory("org.http4k.connect.kafka.rest.model.Records" to { RecordsJsonAdapter(it) }))
         .add(MapAdapter)
         .asConfigurable()
         .withStandardMappings()
@@ -66,4 +67,5 @@ object GenericRecordAdapter {
         String(it.toByteArray())
     }
 }
+
 
