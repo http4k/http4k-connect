@@ -2,6 +2,7 @@ package org.http4k.connect.kafka.rest
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import dev.forkhandles.values.ZERO
 import http4k.RandomEvent
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.asFormatString
@@ -327,6 +328,12 @@ abstract class KafkaRestContract {
                     ).toString()
                 )
             )
+
+            assertThat(
+                getPartitions(topic1).successValue().toList().size,
+                greaterThan(0)
+            )
+
         } finally {
             deleteConsumer(group, instance)
         }

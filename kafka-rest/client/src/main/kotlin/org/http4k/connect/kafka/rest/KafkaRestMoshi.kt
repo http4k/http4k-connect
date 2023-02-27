@@ -7,6 +7,7 @@ import com.squareup.moshi.ToJson
 import org.apache.avro.generic.GenericContainer
 import org.apache.avro.io.EncoderFactory
 import org.apache.avro.specific.SpecificDatumWriter
+import org.http4k.connect.kafka.rest.model.BrokerId
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
 import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
 import org.http4k.connect.kafka.rest.model.ConsumerName
@@ -37,6 +38,7 @@ object KafkaRestMoshi : ConfigurableMoshi(
         .asConfigurable()
         .withStandardMappings()
         .value(Base64Blob)
+        .value(BrokerId)
         .value(ConsumerGroup)
         .value(ConsumerName)
         .text(BiDiMapping(ConsumerRequestTimeout::class.java,

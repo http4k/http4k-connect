@@ -8,6 +8,7 @@ import org.http4k.connect.kafka.rest.endpoints.consumeRecords
 import org.http4k.connect.kafka.rest.endpoints.createConsumer
 import org.http4k.connect.kafka.rest.endpoints.deleteConsumer
 import org.http4k.connect.kafka.rest.endpoints.getOffsets
+import org.http4k.connect.kafka.rest.endpoints.getPartitions
 import org.http4k.connect.kafka.rest.endpoints.produceRecords
 import org.http4k.connect.kafka.rest.endpoints.seekOffsets
 import org.http4k.connect.kafka.rest.endpoints.subscribeToTopics
@@ -22,6 +23,7 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ServerFilters.BasicAuth
+import org.http4k.filter.debug
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
@@ -38,6 +40,7 @@ class FakeKafkaRest(
                     createConsumer(consumers, baseUri),
                     deleteConsumer(consumers),
                     commitOffsets(consumers),
+                    getPartitions(),
                     getOffsets(consumers),
                     seekOffsets(consumers),
                     produceRecords(topics),
@@ -45,7 +48,7 @@ class FakeKafkaRest(
                 )
             ),
         "" bind GET to { _ -> Response(OK).body("{}") }
-    )
+    ).debug()
 
     /**
      * Convenience function to get a FakeKafkaRest client
