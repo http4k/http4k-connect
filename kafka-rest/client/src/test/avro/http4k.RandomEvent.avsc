@@ -1,0 +1,16 @@
+{
+  "doc": "Random event",
+  "fields": [
+    {
+      "doc": "UUID",
+      "name": "uuid",
+      "type": {
+        "logicalType": "uuid",
+        "type": "string"
+      }
+    }
+  ],
+  "name": "RandomEvent",
+  "namespace": "http4k",
+  "type": "record"
+}

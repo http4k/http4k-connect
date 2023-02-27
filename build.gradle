@@ -137,6 +137,7 @@ subprojects {
 
             test.kotlin.srcDirs += 'src/examples/kotlin'
             test.kotlin.srcDirs += 'build/generated/ksp/test/kotlin'
+            test.kotlin.srcDirs += 'build/generated-test-avro-java'
         }
     }
 

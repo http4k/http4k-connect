@@ -1,7 +1,12 @@
 package org.http4k.connect.kafka.rest
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
+import org.apache.avro.generic.GenericContainer
+import org.apache.avro.io.EncoderFactory
+import org.apache.avro.specific.SpecificDatumWriter
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
 import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
 import org.http4k.connect.kafka.rest.model.ConsumerName
@@ -19,12 +24,14 @@ import org.http4k.format.value
 import org.http4k.format.withStandardMappings
 import org.http4k.lens.BiDiMapping
 import se.ansman.kotshi.KotshiJsonAdapterFactory
+import java.io.ByteArrayOutputStream
 import java.time.Duration
 
 object KafkaRestMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KafkaRestJsonAdapterFactory)
         .add(ListAdapter)
+        .add(GenericRecordAdapter)
         .add(MapAdapter)
         .asConfigurable()
         .withStandardMappings()
@@ -44,3 +51,18 @@ object KafkaRestMoshi : ConfigurableMoshi(
 
 @KotshiJsonAdapterFactory
 object KafkaRestJsonAdapterFactory : JsonAdapter.Factory by KotshiKafkaRestJsonAdapterFactory
+
+object GenericRecordAdapter {
+    @ToJson
+    fun toJson(writer: JsonWriter, value: GenericContainer?) {
+        value?.let { writer.jsonValue(KafkaRestMoshi.asA<Map<String, Any>>(it.toAvroData())) } ?: writer.nullValue()
+    }
+
+    private fun <T : GenericContainer> T.toAvroData() = ByteArrayOutputStream().let {
+        EncoderFactory.get().jsonEncoder(schema, it, false).also {
+            SpecificDatumWriter<T>(schema).write(this, it)
+            it.flush()
+        }
+        String(it.toByteArray())
+    }
+}

@@ -19,7 +19,7 @@ data class ProduceMessages(val topic: Topic, val records: Records) :
 
     override fun toRequest() = Request(POST, "/topics/$topic")
         .header("Accept", "application/vnd.kafka.v2+json")
-        .with(CONTENT_TYPE of records.contentType())
+        .with(CONTENT_TYPE of records.contentType)
         .body(asFormatString(records))
 }
 

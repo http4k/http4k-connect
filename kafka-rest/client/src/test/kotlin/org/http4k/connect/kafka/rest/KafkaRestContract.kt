@@ -3,18 +3,16 @@ package org.http4k.connect.kafka.rest
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.values.ZERO
+import http4k.RandomEvent
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.asFormatString
 import org.http4k.connect.kafka.rest.model.AutoCommitEnable.`false`
 import org.http4k.connect.kafka.rest.model.AutoOffsetReset.earliest
-import org.http4k.connect.kafka.rest.model.AvroRecord
-import org.http4k.connect.kafka.rest.model.BinaryRecord
 import org.http4k.connect.kafka.rest.model.CommitOffset
 import org.http4k.connect.kafka.rest.model.CommitOffsetsSet
 import org.http4k.connect.kafka.rest.model.Consumer
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
 import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
 import org.http4k.connect.kafka.rest.model.ConsumerName
-import org.http4k.connect.kafka.rest.model.JsonRecord
 import org.http4k.connect.kafka.rest.model.Offset
 import org.http4k.connect.kafka.rest.model.PartitionId
 import org.http4k.connect.kafka.rest.model.PartitionOffsetRequest
@@ -24,7 +22,6 @@ import org.http4k.connect.kafka.rest.model.RecordFormat.avro
 import org.http4k.connect.kafka.rest.model.RecordFormat.binary
 import org.http4k.connect.kafka.rest.model.RecordFormat.json
 import org.http4k.connect.kafka.rest.model.Records
-import org.http4k.connect.kafka.rest.model.Records.Json
 import org.http4k.connect.kafka.rest.model.SeekOffset
 import org.http4k.connect.kafka.rest.model.Topic
 import org.http4k.connect.kafka.rest.model.TopicRecord
@@ -59,8 +56,8 @@ abstract class KafkaRestContract {
 
     @Test
     fun `can send JSON messages and get them back`() {
-        kafkaRest.testSending(json, { (it as Json).records.first() as JsonRecord<String, Message> }) {
-            Json(listOf(JsonRecord(it, Message(randomString()))))
+        kafkaRest.testSending(json, { it.records.first() }) {
+            Records.Json(listOf(Record(it, Message(randomString()))))
         }
     }
 
@@ -68,15 +65,15 @@ abstract class KafkaRestContract {
     open fun `can send AVRO messages and get them back`() {
         kafkaRest.testSending(
             avro,
-            { (it as Records.Avro).records.first() as AvroRecord<String, Message> }) {
-            Records.Avro("schema", listOf(AvroRecord(it, Message(randomString()))))
+            { it.records.first() }) {
+            Records.Avro(listOf(Record(it, RandomEvent(UUID(0, 0)))))
         }
     }
 
     @Test
     fun `can send BINARY messages and get them back`() {
-        kafkaRest.testSending(binary, { (it as Records.Binary).records.first() }) {
-            Records.Binary(listOf(BinaryRecord(Base64Blob.encode(it), Base64Blob.encode(randomString()))))
+        kafkaRest.testSending(binary, { it.records.first() }) {
+            Records.Binary(listOf(Record(Base64Blob.encode(it), Base64Blob.encode(randomString()))))
         }
     }
 
@@ -94,7 +91,7 @@ abstract class KafkaRestContract {
         try {
             consumer.subscribeToTopics(listOf(topic1)).successValue()
 
-            val record1 = Json(listOf(JsonRecord("m1", Message(randomString()))))
+            val record1 = Records.Json(listOf(Record("m1", Message(randomString()))))
             kafkaRest.produceMessages(topic1, record1).successValue()
 
             assertThat(
@@ -200,10 +197,10 @@ abstract class KafkaRestContract {
         }
 
         kafkaRest.produceMessages(
-            topic1, Json(
+            topic1, Records.Json(
                 listOf(
-                    JsonRecord("m1", Message(randomString())),
-                    JsonRecord("m2", Message(randomString()))
+                    Record("m1", Message(randomString())),
+                    Record("m2", Message(randomString()))
                 )
             )
         ).successValue()
@@ -213,10 +210,10 @@ abstract class KafkaRestContract {
         consumer2GetsTheSame2RecordsAndCommitsAt2()
 
         kafkaRest.produceMessages(
-            topic1, Json(
+            topic1, Records.Json(
                 listOf(
-                    JsonRecord("m3", Message(randomString())),
-                    JsonRecord("m4", Message(randomString()))
+                    Record("m3", Message(randomString())),
+                    Record("m4", Message(randomString()))
                 )
             )
         ).successValue()
@@ -233,10 +230,10 @@ abstract class KafkaRestContract {
         val credentials = Credentials("", "")
 
         kafkaRest.produceMessages(
-            topic1, Json(
+            topic1, Records.Json(
                 listOf(
-                    JsonRecord("m1", Message(randomString())),
-                    JsonRecord("m2", Message(randomString()))
+                    Record("m1", Message(randomString())),
+                    Record("m2", Message(randomString()))
                 )
             )
         ).successValue()
