@@ -39,7 +39,6 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:32181
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:38081
-      SCHEMA_REGISTRY_DEBUG: "true"
 
   kafka-rest:
     image: confluentinc/cp-kafka-rest:4.1.1
