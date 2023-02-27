@@ -303,7 +303,9 @@ abstract class KafkaRestContract {
                             topic1, convert(recordFrom(record4).key),
                             recordFrom(record4).value.toMapOrString(), PartitionId.of(0), Offset.of(1)
                         )
-                    ).toString()
+                    )
+                        .sortedBy { it.key.toString() }
+                        .toString()
                 )
             )
 
@@ -343,8 +345,8 @@ private fun KafkaRest.consumerRecordsTwiceBecauseOfProxy(
         consumeRecords(group, instance, format, Duration.ofMillis(1)).successValue().toList()
     )
     .distinctBy { it.key }
-    .map { it.copy(key = it.key.toString())}
-    .also { println(" I got -> " + it) }
+    .map { it.copy(key = it.key.toString()) }
+    .sortedBy { it.key.toString() }
 
 //https://github.com/confluentinc/kafka-rest/issues/432
 private fun KafkaRestConsumer.consumeRecordsTwiceBecauseOfProxy(format: RecordFormat) =
