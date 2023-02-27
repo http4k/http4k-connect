@@ -9,13 +9,13 @@ import org.http4k.core.KAFKA_BINARY_v2
 import org.http4k.core.KAFKA_JSON_V2
 
 class Records private constructor(
-    val records: List<Record<*, Any>>,
+    val records: List<Record<out Any, Any>>,
     val contentType: ContentType = APPLICATION_JSON,
     val key_schema: String? = null,
     val value_schema: String? = null
 ) {
     companion object {
-        fun Json(records: List<Record<*, *>>) = Records(records, ContentType.KAFKA_JSON_V2)
+        fun Json(records: List<Record<Any, Any>>) = Records(records, ContentType.KAFKA_JSON_V2)
         fun Avro(records: List<Record<GenericContainer, GenericContainer>>) = Records(
             records,
             ContentType.KAFKA_AVRO_v2,
