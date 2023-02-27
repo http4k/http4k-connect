@@ -33,7 +33,7 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
-import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -51,7 +51,7 @@ abstract class KafkaRestContract {
 
     @BeforeEach
     fun `can get to proxy`() {
-        Assumptions.assumeTrue(http(Request(GET, uri)).status == OK)
+        assumeTrue(http(Request(GET, uri)).status == OK)
     }
 
     @Test
@@ -65,8 +65,10 @@ abstract class KafkaRestContract {
     open fun `can send AVRO messages and get them back`() {
         kafkaRest.testSending(
             avro,
-            { it.records.first() }) {
-            Records.Avro(listOf(Record(RandomEvent(UUID(0, 0)), RandomEvent(UUID(0, 0)))))
+            { it.records.first() },
+            { it?.toMapOrString().also { println(it.toString()) } },
+        ) {
+            Records.Avro(listOf(Record(RandomEvent(UUID.nameUUIDFromBytes(it.toByteArray())), RandomEvent(UUID(0, 0)))))
         }
     }
 
@@ -259,6 +261,7 @@ abstract class KafkaRestContract {
     private fun <K : Any, V : Any, T : Record<K, V>> KafkaRest.testSending(
         format: RecordFormat,
         recordFrom: (Records) -> T,
+        convert: (Any?) -> Any? = { it },
         buildRecords: (String) -> Records
     ) {
         val topic1 = Topic.of("t1_${randomString()}")
@@ -289,15 +292,15 @@ abstract class KafkaRestContract {
                 equalTo(
                     listOf(
                         TopicRecord(
-                            topic1, recordFrom(record1).key,
+                            topic1, convert(recordFrom(record1).key),
                             recordFrom(record1).value.toMapOrString(), PartitionId.of(0), Offset.of(0)
                         ),
                         TopicRecord(
-                            topic2, recordFrom(record2).key,
+                            topic2, convert(recordFrom(record2).key),
                             recordFrom(record2).value.toMapOrString(), PartitionId.of(0), Offset.of(0)
                         ),
                         TopicRecord(
-                            topic1, recordFrom(record4).key,
+                            topic1, convert(recordFrom(record4).key),
                             recordFrom(record4).value.toMapOrString(), PartitionId.of(0), Offset.of(1)
                         )
                     ).toString()
@@ -316,7 +319,7 @@ abstract class KafkaRestContract {
                 equalTo(
                     listOf(
                         TopicRecord(
-                            topic1, recordFrom(record5).key,
+                            topic1, convert(recordFrom(record5).key),
                             recordFrom(record5).value.toMapOrString(), PartitionId.of(0), Offset.of(2)
                         ),
                     ).toString()
@@ -340,7 +343,8 @@ private fun KafkaRest.consumerRecordsTwiceBecauseOfProxy(
         consumeRecords(group, instance, format, Duration.ofMillis(1)).successValue().toList()
     )
     .distinctBy { it.key }
-    .sortedBy { it.key.toString() }
+    .map { it.copy(key = it.key.toString())}
+    .also { println(" I got -> " + it) }
 
 //https://github.com/confluentinc/kafka-rest/issues/432
 private fun KafkaRestConsumer.consumeRecordsTwiceBecauseOfProxy(format: RecordFormat) =
