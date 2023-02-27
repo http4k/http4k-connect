@@ -66,3 +66,4 @@ object GenericRecordAdapter {
         String(it.toByteArray())
     }
 }
+

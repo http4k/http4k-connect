@@ -17,7 +17,7 @@ class KafkaRestMoshiTest {
 
     @Test
     fun `can serialise avro records`(approver: Approver) {
-        approver.assertApproved(asFormatString(Records.Avro(listOf(Record("123", RandomEvent(UUID(0, 0)))))))
+        approver.assertApproved(asFormatString(Records.Avro(listOf(Record(RandomEvent(UUID(0, 0)), RandomEvent(UUID(0, 0)))))))
     }
 
     @Test

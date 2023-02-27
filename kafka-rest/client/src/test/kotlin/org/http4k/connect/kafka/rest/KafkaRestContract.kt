@@ -66,7 +66,7 @@ abstract class KafkaRestContract {
         kafkaRest.testSending(
             avro,
             { it.records.first() }) {
-            Records.Avro(listOf(Record(it, RandomEvent(UUID(0, 0)))))
+            Records.Avro(listOf(Record(RandomEvent(UUID(0, 0)), RandomEvent(UUID(0, 0)))))
         }
     }
 
