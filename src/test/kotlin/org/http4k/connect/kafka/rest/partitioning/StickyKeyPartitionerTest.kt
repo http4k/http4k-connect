@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.kafka.rest.model.PartitionId
 import org.junit.jupiter.api.Test
 
-class StickyKeyPartitionerKtTest {
+class StickyKeyPartitionerTest {
     @Test
     fun `uses the key hash for getting the partition`() {
         val p = StickyKeyRecordPartitioner<String, String>(

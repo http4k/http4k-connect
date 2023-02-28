@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 
-class NoOpPartitionerKtTest {
+class NoOpPartitionerTest {
     @Test
     fun `round robins the partitions`() {
         val p = NoOpPartitioner<String, String>(listOf())
