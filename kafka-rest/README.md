@@ -73,7 +73,6 @@ topics on each send to the REST proxy using the `/topics/$topic/partitions` call
 but can be reimplemented as needed using any caching strategy which you might wish to implement.
 
 ## # Fake
-
 The Fake provides the following endpoints, which is enough for basic consumer lifecycle and production and consumption
 of records. Note that consumers by default will start at the start of the topic stream, although they can be committed
 to.
