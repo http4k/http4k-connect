@@ -5,6 +5,7 @@ The main `KafkaRest` connector provides the following Actions:
 - CreateConsumer
 - DeleteConsumer
 - GetOffsets
+- GetPartitions
 - SeekOffsets
 - CommitOffsets
 - ConsumeRecords
@@ -89,7 +90,6 @@ to.
 - SubscribeToTopics
 
 ### Default Fake port: 30091
-
 To start:
 
 ```
