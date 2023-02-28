@@ -1,7 +1,10 @@
 package org.http4k.connect.kafka.rest.action
 
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.flatMap
 import dev.forkhandles.result4k.map
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.kClass
 import org.http4k.connect.kafka.rest.KafkaRest
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.asFormatString
@@ -12,6 +15,7 @@ import org.http4k.connect.kafka.rest.model.Records
 import org.http4k.connect.kafka.rest.model.SchemaId
 import org.http4k.connect.kafka.rest.model.Topic
 import org.http4k.connect.kafka.rest.partitioning.Partitioner
+import org.http4k.connect.kafka.rest.produceMessages
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.with
@@ -36,15 +40,16 @@ data class ProducedMessages(
 )
 
 /**
- * Rewrites the partitions of messages using the passed Partitioner
+ * Rewrites the partitions of messages using the passed Partitioner, after getting the list of partitions to write to
  */
 fun KafkaRest.produceMessages(
     topic: Topic,
     records: Records,
     fn: (List<PartitionId>) -> Partitioner<Any?, Any?>
-) = getPartitions(topic)
+): Result<ProducedMessages, RemoteFailure> = getPartitions(topic)
     .map {
         val partitioner = fn(it.map(Partition::partition).toList())
         records.copy(records = records.records
             .map { it.copy(partition = partitioner(it.key, it.value)) })
     }
+    .flatMap { produceMessages(topic, it) }
