@@ -12,7 +12,6 @@ import org.http4k.connect.kafka.rest.model.Topic
 import org.http4k.connect.kafka.rest.partitioning.RoundRobinRecordPartitioner
 import org.http4k.core.Credentials
 import org.http4k.core.Uri
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 
 class ProduceMessagesKtTest {
@@ -20,7 +19,7 @@ class ProduceMessagesKtTest {
     @Test
     fun `writing to a list of partitions using a partitioner`() {
         val kafkaRest = KafkaRest.Http(
-            Credentials("", ""), Uri.of(""), FakeKafkaRest().debug()
+            Credentials("", ""), Uri.of(""), FakeKafkaRest()
         )
 
         assertThat(

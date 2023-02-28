@@ -14,6 +14,7 @@ dependencies {
 
     testApi(libs.kotlin.reflect)
 
+    testApi(project(":http4k-connect-kafka-rest-fake"))
     testFixturesApi(Libs.api)
 }
 
