@@ -5,7 +5,7 @@ import org.http4k.connect.kClass
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.auto
 import org.http4k.connect.kafka.rest.model.Consumer
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.core.Body
 import org.http4k.core.ContentType
 import org.http4k.core.KAFKA_JSON_V2
@@ -25,4 +25,4 @@ data class CreateConsumer(
 }
 
 @JsonSerializable
-data class NewConsumer(val instance_id: ConsumerInstanceId, val base_uri: Uri)
+data class NewConsumer(val instance_id: ConsumerInstance, val base_uri: Uri)

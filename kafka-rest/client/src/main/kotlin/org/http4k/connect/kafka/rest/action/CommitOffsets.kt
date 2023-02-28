@@ -6,7 +6,7 @@ import org.http4k.connect.kafka.rest.KafkaRestMoshi.auto
 import org.http4k.connect.kafka.rest.model.CommitOffset
 import org.http4k.connect.kafka.rest.model.CommitOffsetsSet
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.core.Body
 import org.http4k.core.ContentType
 import org.http4k.core.KAFKA_JSON_V2
@@ -17,7 +17,7 @@ import org.http4k.core.with
 @Http4kConnectAction
 data class CommitOffsets(
     val group: ConsumerGroup,
-    val instance: ConsumerInstanceId,
+    val instance: ConsumerInstance,
     val offsets: List<CommitOffset>
 ) : KafkaRestAction<Unit>(kClass()) {
     override fun toRequest() = Request(POST, "/consumers/$group/instances/$instance/offsets")

@@ -1,4 +1,4 @@
-package org.http4k.connect.kafka.rest.partitioning
+package org.http4k.connect.kafka.rest.extensions
 
 import org.http4k.connect.kafka.rest.model.PartitionId
 import kotlin.random.Random

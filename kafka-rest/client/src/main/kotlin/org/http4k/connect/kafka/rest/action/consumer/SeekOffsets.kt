@@ -14,6 +14,6 @@ import org.http4k.core.with
 
 @Http4kConnectAction
 data class SeekOffsets(val offsets: List<SeekOffset>) : KafkaRestConsumerAction<Unit>(kClass()) {
-    override fun toRequest() = Request(POST, "/consumers/{group}/instances/{instance}/positions")
+    override fun toRequest() = Request(POST, "/positions")
         .with(Body.auto<SeekOffsetsSet>(contentType = ContentType.KAFKA_JSON_V2).toLens() of SeekOffsetsSet(offsets))
 }

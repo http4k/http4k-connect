@@ -12,8 +12,7 @@ import org.http4k.connect.kafka.rest.model.CommitOffset
 import org.http4k.connect.kafka.rest.model.CommitOffsetsSet
 import org.http4k.connect.kafka.rest.model.Consumer
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
-import org.http4k.connect.kafka.rest.model.ConsumerName
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.Offset
 import org.http4k.connect.kafka.rest.model.PartitionId
 import org.http4k.connect.kafka.rest.model.PartitionOffsetRequest
@@ -85,7 +84,7 @@ abstract class KafkaRestContract {
         val topic1 = Topic.of("t1_${randomString()}")
 
         val group = ConsumerGroup.of(randomString())
-        val name = ConsumerName.of(randomString())
+        val name = ConsumerInstance.of(randomString())
         val consumer = KafkaRestConsumer.Http(
             Credentials("", ""), group,
             Consumer(name, json, earliest), uri, http
@@ -124,7 +123,7 @@ abstract class KafkaRestContract {
         fun consumer1Consumes2RecordsAndDoesNotCommit() {
             val consumer1 = KafkaRestConsumer.Http(
                 credentials, group,
-                Consumer(ConsumerName.of("--1"), json, earliest, enableAutocommit = `false`), uri, http
+                Consumer(ConsumerInstance.of("--1"), json, earliest, enableAutocommit = `false`), uri, http
             ).successValue()
 
             consumer1.subscribeToTopics(listOf(topic1)).successValue()
@@ -148,7 +147,7 @@ abstract class KafkaRestContract {
         fun consumer2GetsTheSame2RecordsAndCommitsAt2() {
             val consumer2 = KafkaRestConsumer.Http(
                 credentials, group,
-                Consumer(ConsumerName.of("--2"), json, earliest, enableAutocommit = `false`), uri, http
+                Consumer(ConsumerInstance.of("--2"), json, earliest, enableAutocommit = `false`), uri, http
             ).successValue()
 
             consumer2.subscribeToTopics(listOf(topic1)).successValue()
@@ -182,7 +181,7 @@ abstract class KafkaRestContract {
         fun consumer3GetsOnly2NewRecords() {
             val consumer3 = KafkaRestConsumer.Http(
                 credentials, group,
-                Consumer(ConsumerName.of("--3"), json, earliest, enableAutocommit = `false`), uri, http
+                Consumer(ConsumerInstance.of("--3"), json, earliest, enableAutocommit = `false`), uri, http
             ).successValue()
 
             consumer3.subscribeToTopics(listOf(topic1)).successValue()
@@ -243,7 +242,7 @@ abstract class KafkaRestContract {
 
         val consumer = KafkaRestConsumer.Http(
             credentials, group,
-            Consumer(ConsumerName.of("--1"), json, earliest, enableAutocommit = `false`), uri, http
+            Consumer(ConsumerInstance.of("--1"), json, earliest, enableAutocommit = `false`), uri, http
         ).successValue()
 
         consumer.subscribeToTopics(listOf(topic1)).successValue()
@@ -270,7 +269,7 @@ abstract class KafkaRestContract {
         val topic3 = Topic.of("t3_${randomString()}")
 
         val group = ConsumerGroup.of(randomString())
-        val name = ConsumerName.of(randomString())
+        val name = ConsumerInstance.of(randomString())
 
         val instance = createConsumer(group, Consumer(name, format, earliest)).successValue().instance_id
 
@@ -345,7 +344,7 @@ abstract class KafkaRestContract {
 //https://github.com/confluentinc/kafka-rest/issues/432
 private fun KafkaRest.consumerRecordsTwiceBecauseOfProxy(
     group: ConsumerGroup,
-    instance: ConsumerInstanceId,
+    instance: ConsumerInstance,
     format: RecordFormat
 ) = (
     consumeRecords(group, instance, format, Duration.ofMillis(1)).successValue().toList() +

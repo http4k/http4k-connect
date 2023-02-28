@@ -66,7 +66,7 @@ val kafkaRest = KafkaRest.Http(
     Credentials("user", "password"), Uri.of("http://restproxy"), JavaHttpClient()
 )
 
-kafkaRest.produceMessages(Topic.of("asd"), Records.Json(listOf(Record("123", ""))), ::RoundRobinRecordPartitioner)
+kafkaRest.produceMessages(Topic.of("topic"), Records.Json(listOf(Record("123", ""))), ::RoundRobinRecordPartitioner)
 ```
 
 To keep things simple with respect to partition allocation and rebalancing, the above code will fetch the available

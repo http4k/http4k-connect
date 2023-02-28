@@ -5,7 +5,7 @@ import org.http4k.connect.kafka.rest.action.NewConsumer
 import org.http4k.connect.kafka.rest.model.AutoCommitEnable.`true`
 import org.http4k.connect.kafka.rest.model.Consumer
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.ConsumerState
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.getOrPut
@@ -26,7 +26,7 @@ fun createConsumer(consumers: Storage<ConsumerState>, baseUri: Uri) =
     "/consumers/{consumerGroup}" bind POST to { req: Request ->
         val consumerGroup = Path.value(ConsumerGroup).of("consumerGroup")(req)
         val consumer = Body.auto<Consumer>().toLens()(req)
-        val consumerInstance = ConsumerInstanceId.of("$consumerGroup${consumer.name}")
+        val consumerInstance = ConsumerInstance.of("$consumerGroup${consumer.name}")
 
         consumers[consumerGroup] = consumers.getOrPut(consumerGroup) {
             ConsumerState(setOf(), consumer.enableAutocommit == `true`, mapOf())

@@ -13,6 +13,6 @@ data class ConsumeRecords(
     val format: RecordFormat,
     val timeout: Duration? = null
 ) : KafkaRestConsumerAction<Array<TopicRecord>>(clazz = kClass()) {
-    override fun toRequest() = Request(GET, "/consumers/{group}/instances/{instance}/records")
+    override fun toRequest() = Request(GET, "/records")
         .header("Accept", format.contentType.value)
 }

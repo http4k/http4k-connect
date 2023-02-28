@@ -16,6 +16,6 @@ import org.http4k.core.with
 data class SubscribeToTopics(
     val topics: List<Topic>,
 ) : KafkaRestConsumerAction<Unit>(kClass()) {
-    override fun toRequest() = Request(POST, "/consumers/{group}/instances/{instance}/subscription")
+    override fun toRequest() = Request(POST, "/subscription")
         .with(Body.auto<Subscription>(contentType = ContentType.KAFKA_JSON_V2).toLens() of Subscription(topics))
 }

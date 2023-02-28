@@ -1,14 +1,14 @@
 package org.http4k.connect.kafka.rest.model
 
 data class ConsumerState(
-    val instances: Set<ConsumerInstanceId>,
+    val instances: Set<ConsumerInstance>,
     val autoCommit: Boolean,
     val offsets: Map<Topic, TopicOffsetState>
 ) {
     fun committedRecords(topic: Topic) = offsets[topic]?.committed?.value ?: 0
 
-    fun add(instance: ConsumerInstanceId) = copy(instances = instances + instance)
-    fun remove(instance: ConsumerInstanceId) = copy(instances = instances - instance)
+    fun add(instance: ConsumerInstance) = copy(instances = instances + instance)
+    fun remove(instance: ConsumerInstance) = copy(instances = instances - instance)
 
     fun new(topic: Topic) =
         copy(

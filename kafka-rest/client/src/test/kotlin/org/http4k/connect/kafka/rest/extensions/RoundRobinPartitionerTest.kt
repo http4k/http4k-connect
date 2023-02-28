@@ -1,4 +1,4 @@
-package org.http4k.connect.kafka.rest.partitioning
+package org.http4k.connect.kafka.rest.extensions
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

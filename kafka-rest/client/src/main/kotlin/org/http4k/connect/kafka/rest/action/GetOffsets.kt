@@ -5,7 +5,7 @@ import org.http4k.connect.kClass
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.auto
 import org.http4k.connect.kafka.rest.model.CommitOffsetsSet
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.GetOffsetsRequest
 import org.http4k.connect.kafka.rest.model.PartitionOffsetRequest
 import org.http4k.core.Body
@@ -18,7 +18,7 @@ import org.http4k.core.with
 @Http4kConnectAction
 data class GetOffsets(
     val group: ConsumerGroup,
-    val instance: ConsumerInstanceId,
+    val instance: ConsumerInstance,
     val partitions: List<PartitionOffsetRequest>
 ) : KafkaRestAction<CommitOffsetsSet>(kClass()) {
     override fun toRequest() = Request(GET, "/consumers/$group/instances/$instance/offsets")

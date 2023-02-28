@@ -9,8 +9,7 @@ import org.apache.avro.io.EncoderFactory
 import org.apache.avro.specific.SpecificDatumWriter
 import org.http4k.connect.kafka.rest.model.BrokerId
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
-import org.http4k.connect.kafka.rest.model.ConsumerName
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.ConsumerRequestTimeout
 import org.http4k.connect.kafka.rest.model.Offset
 import org.http4k.connect.kafka.rest.model.PartitionId
@@ -40,11 +39,11 @@ object KafkaRestMoshi : ConfigurableMoshi(
         .value(Base64Blob)
         .value(BrokerId)
         .value(ConsumerGroup)
-        .value(ConsumerName)
+        .value(ConsumerInstance)
         .text(BiDiMapping(ConsumerRequestTimeout::class.java,
             { ConsumerRequestTimeout.of(Duration.ofMillis(it.toLong())) }, { it.value.toMillis().toString() })
         )
-        .value(ConsumerInstanceId)
+        .value(ConsumerInstance)
         .value(Offset)
         .value(PartitionId)
         .value(SchemaId)

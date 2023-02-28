@@ -1,7 +1,7 @@
 package org.http4k.connect.kafka.rest.endpoints
 
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
-import org.http4k.connect.kafka.rest.model.ConsumerInstanceId
+import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.ConsumerState
 import org.http4k.connect.storage.Storage
 import org.http4k.connect.storage.get
@@ -18,7 +18,7 @@ import org.http4k.routing.bind
 fun deleteConsumer(consumers: Storage<ConsumerState>) =
     "/consumers/{consumerGroup}/instances/{instance}" bind DELETE to { req: Request ->
         val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
-        val instance = Path.value(ConsumerInstanceId).of("instance")(req)
+        val instance = Path.value(ConsumerInstance).of("instance")(req)
         when {
             consumers[group] == null -> Response(NOT_FOUND)
             else -> when {

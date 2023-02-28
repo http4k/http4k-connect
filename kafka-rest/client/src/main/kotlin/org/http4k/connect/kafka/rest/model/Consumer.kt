@@ -7,7 +7,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
 data class Consumer(
-    val name: ConsumerName,
+    val name: ConsumerInstance,
     val format: RecordFormat,
     @Json(name = "auto.offset.reset") val reset: AutoOffsetReset = latest,
     @Json(name = "auto.commit.enable") val enableAutocommit: AutoCommitEnable = `true`,

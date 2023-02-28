@@ -14,6 +14,6 @@ import org.http4k.core.with
 
 @Http4kConnectAction
 data class CommitOffsets(val offsets: List<CommitOffset>) : KafkaRestConsumerAction<Unit>(kClass()) {
-    override fun toRequest() = Request(POST, "/consumers/{group}/instances/{instance}/offsets")
+    override fun toRequest() = Request(POST, "/offsets")
         .with(Body.auto<CommitOffsetsSet>(contentType = ContentType.KAFKA_JSON_V2).toLens() of CommitOffsetsSet(offsets))
 }
