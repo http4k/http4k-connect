@@ -47,7 +47,6 @@ Records.Avro(
 ```
 
 ### Binary
-
 Record contents are specified using Base64 type for wire transport:
 
 ```kotlin
