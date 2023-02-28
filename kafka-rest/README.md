@@ -51,7 +51,7 @@ Records.Avro(
 Record contents are specified using Base64 type for wire transport:
 
 ```kotlin
-`Records.Binary(listOf(Record(Base64Blob.encode("123"), Base64Blob.encode("456"), PartitionId.of(123))))
+Records.Binary(listOf(Record(Base64Blob.encode("123"), Base64Blob.encode("456"), PartitionId.of(123))))
 ```
 
 ## Notes on message production
@@ -62,7 +62,7 @@ strategies
 come out of the box.
 
 ```kotlin
- val kafkaRest = KafkaRest.Http(
+val kafkaRest = KafkaRest.Http(
     Credentials("user", "password"), Uri.of("http://restproxy"), JavaHttpClient()
 )
 
