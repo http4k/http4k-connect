@@ -111,8 +111,8 @@ allprojects {
     if (hasCodeCoverage(project)) {
         jacocoTestReport {
             reports {
-                html.enabled = true
-                xml.enabled = true
+                html.getRequired().set(true)
+                xml.getRequired().set(true)
             }
             afterEvaluate {
                 classDirectories.setFrom(files(classDirectories.files.collect {
@@ -141,8 +141,9 @@ subprojects {
         }
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier = "sources"
+    tasks.register('sourcesJar', Jar) {
+        dependsOn classes
+        archiveClassifier.set("sources")
         from sourceSets.main.allSource
     }
 
@@ -154,12 +155,13 @@ subprojects {
         }
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        archiveClassifier = "javadoc"
+    tasks.register('javadocJar', Jar) {
+        dependsOn javadoc
+        archiveClassifier.set("javadoc")
         from javadoc.destinationDir
     }
 
-    task testJar(type: Jar) {
+    tasks.register('testJar', Jar) {
         classifier "test"
         from sourceSets.test.output
     }
@@ -259,9 +261,9 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         )
 
     reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
+        html.getRequired().set(true)
+        xml.getRequired().set(true)
+        csv.getRequired().set(false)
         xml.destination = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
     }
 }
