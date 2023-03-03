@@ -46,7 +46,8 @@ includeSystem("amazon", "systemsmanager")
 includeSystem("example")
 
 includeSystem("github")
-includeSystem("kafka-rest")
+includeSystem("kafka", "rest")
+includeSystem("kafka", "schemaregistry")
 
 includeCommon("google-analytics-core", "google/analytics-core")
 includeSystem("google", "analytics-ua")

@@ -6,6 +6,11 @@ import com.natpryce.hamkrest.greaterThan
 import dev.forkhandles.values.ZERO
 import http4k.RandomEvent
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.asFormatString
+import org.http4k.connect.kafka.rest.endpoints.consumeRecords
+import org.http4k.connect.kafka.rest.endpoints.createConsumer
+import org.http4k.connect.kafka.rest.endpoints.deleteConsumer
+import org.http4k.connect.kafka.rest.endpoints.getPartitions
+import org.http4k.connect.kafka.rest.endpoints.subscribeToTopics
 import org.http4k.connect.kafka.rest.model.AutoCommitEnable.`false`
 import org.http4k.connect.kafka.rest.model.AutoOffsetReset.earliest
 import org.http4k.connect.kafka.rest.model.CommitOffset

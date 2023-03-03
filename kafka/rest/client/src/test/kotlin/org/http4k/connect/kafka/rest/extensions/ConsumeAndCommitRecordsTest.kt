@@ -10,6 +10,8 @@ import org.http4k.connect.kafka.rest.FakeKafkaRest
 import org.http4k.connect.kafka.rest.Http
 import org.http4k.connect.kafka.rest.KafkaRest
 import org.http4k.connect.kafka.rest.createConsumer
+import org.http4k.connect.kafka.rest.endpoints.createConsumer
+import org.http4k.connect.kafka.rest.endpoints.subscribeToTopics
 import org.http4k.connect.kafka.rest.getOffsets
 import org.http4k.connect.kafka.rest.model.CommitOffset
 import org.http4k.connect.kafka.rest.model.CommitOffsetsSet
