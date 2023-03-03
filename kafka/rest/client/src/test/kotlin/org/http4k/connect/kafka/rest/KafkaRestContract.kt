@@ -5,12 +5,8 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import dev.forkhandles.values.ZERO
 import http4k.RandomEvent
+import http4k.RandomKey
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.asFormatString
-import org.http4k.connect.kafka.rest.endpoints.consumeRecords
-import org.http4k.connect.kafka.rest.endpoints.createConsumer
-import org.http4k.connect.kafka.rest.endpoints.deleteConsumer
-import org.http4k.connect.kafka.rest.endpoints.getPartitions
-import org.http4k.connect.kafka.rest.endpoints.subscribeToTopics
 import org.http4k.connect.kafka.rest.model.AutoCommitEnable.`false`
 import org.http4k.connect.kafka.rest.model.AutoOffsetReset.earliest
 import org.http4k.connect.kafka.rest.model.CommitOffset
@@ -42,6 +38,10 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.UUID
 
 @Suppress("UNCHECKED_CAST")
@@ -73,7 +73,14 @@ abstract class KafkaRestContract {
             { it.records.first() },
             { it?.toMapOrString().also { println(it.toString()) } },
         ) {
-            Records.Avro(listOf(Record(RandomEvent(UUID.nameUUIDFromBytes(it.toByteArray())), RandomEvent(UUID(0, 0)))))
+            Records.Avro(
+                listOf(
+                    Record(
+                        RandomKey(UUID.nameUUIDFromBytes(it.toByteArray())),
+                        RandomEvent(LocalDate.EPOCH, LocalTime.MIDNIGHT, Instant.EPOCH, LocalDateTime.MIN)
+                    )
+                )
+            )
         }
     }
 

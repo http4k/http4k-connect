@@ -8,6 +8,36 @@ import com.squareup.moshi.Types.newParameterizedType
 import org.http4k.connect.kafka.rest.model.Record
 import org.http4k.connect.kafka.rest.model.Records
 
+/**
+LocalDate -> Int
+LocalDate.ofEpochDay(daysFromEpoch.toLong())
+val epochDays = date.toEpochDay()
+return epochDays.toInt()
+
+LocalTime -> Int
+LocalTime.ofNanoOfDay(TimeUnit.MILLISECONDS.toNanos(millisFromMidnight.toLong()))
+TimeUnit.NANOSECONDS.toMillis(time.toNanoOfDay()).toInt()
+
+instant -> long
+Instant.ofEpochMilli(millisFromEpoch)
+
+LocalDateTime -> long
+val instant = timestampMillisConversion.fromLong(millisFromEpoch, schema, type)
+return LocalDateTime.ofInstant(instant, ZoneOffset.UTC)
+}
+
+override fun toLong(timestamp: LocalDateTime, schema: Schema, type: LogicalType): Long {
+val instant = timestamp.toInstant(ZoneOffset.UTC)
+return timestampMillisConversion.toLong(instant, schema, type)
+}
+
+LocalTime.ofNanoOfDay(TimeUnit.MILLISECONDS.toNanos(millisFromMidnight.toLong()))
+
+override fun toInt(time: LocalTime, schema: Schema, type: LogicalType): Int =
+TimeUnit.NANOSECONDS.toMillis(time.toNanoOfDay()).toInt()
+ */
+
+
 class RecordsJsonAdapter(moshi: Moshi) : JsonAdapter<Records>() {
     private val recordsAdapter: JsonAdapter<List<Record<*, Any>>> = moshi.adapter(
         newParameterizedType(
@@ -38,3 +68,4 @@ class RecordsJsonAdapter(moshi: Moshi) : JsonAdapter<Records>() {
         TODO("Not yet implemented")
     }
 }
+
