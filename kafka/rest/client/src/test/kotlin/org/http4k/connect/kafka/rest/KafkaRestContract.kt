@@ -42,6 +42,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.util.UUID
 
 @Suppress("UNCHECKED_CAST")
@@ -77,7 +78,7 @@ abstract class KafkaRestContract {
                 listOf(
                     Record(
                         RandomKey(UUID.nameUUIDFromBytes(it.toByteArray())),
-                        RandomEvent(LocalDate.EPOCH, LocalTime.MIDNIGHT, Instant.EPOCH, LocalDateTime.MIN)
+                        RandomEvent(LocalDate.EPOCH, LocalTime.MIDNIGHT, Instant.EPOCH, LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                     )
                 )
             )
