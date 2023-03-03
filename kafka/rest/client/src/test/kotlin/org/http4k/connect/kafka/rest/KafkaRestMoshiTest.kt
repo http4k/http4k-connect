@@ -15,6 +15,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.util.UUID
 
 @ExtendWith(ApprovalTest::class)
@@ -28,7 +29,7 @@ class KafkaRestMoshiTest {
                     listOf(
                         Record(
                             RandomKey(UUID(0, 0)),
-                            RandomEvent(LocalDate.EPOCH, LocalTime.MIDNIGHT, Instant.EPOCH, LocalDateTime.MIN)
+                            RandomEvent(LocalDate.EPOCH, LocalTime.MIDNIGHT, Instant.EPOCH, LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                         )
                     )
                 )
