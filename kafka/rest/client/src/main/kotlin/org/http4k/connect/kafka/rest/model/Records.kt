@@ -16,10 +16,10 @@ data class Records private constructor(
 ) {
     companion object {
         fun Json(records: List<Record<Any, Any>>) = Records(records, ContentType.KAFKA_JSON_V2)
-        fun Avro(records: List<Record<GenericContainer, GenericContainer>>) = Records(
+        fun Avro(records: List<Record<Any, GenericContainer>>) = Records(
             records,
             ContentType.KAFKA_AVRO_v2,
-            records.first().key?.schema?.toString(),
+            (records.first().key as? GenericContainer)?.schema?.toString(),
             records.first().value.schema.toString()
         )
 
