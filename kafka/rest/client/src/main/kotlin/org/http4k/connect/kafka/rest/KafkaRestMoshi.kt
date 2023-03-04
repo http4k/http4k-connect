@@ -7,6 +7,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import com.squareup.moshi.Types
+import org.apache.avro.Schema
 import org.apache.avro.generic.GenericContainer
 import org.apache.avro.io.EncoderFactory
 import org.apache.avro.specific.SpecificDatumWriter
@@ -51,6 +52,7 @@ object KafkaRestMoshi : ConfigurableMoshi(
         .text(BiDiMapping(ConsumerRequestTimeout::class.java,
             { ConsumerRequestTimeout.of(Duration.ofMillis(it.toLong())) }, { it.value.toMillis().toString() })
         )
+        .text(BiDiMapping(Schema::class.java, { Schema.Parser().parse(it) }, Schema::toString))
         .value(ConsumerInstance)
         .value(Offset)
         .value(PartitionId)
@@ -62,7 +64,7 @@ object KafkaRestMoshi : ConfigurableMoshi(
 @KotshiJsonAdapterFactory
 object KafkaRestJsonAdapterFactory : JsonAdapter.Factory by KotshiKafkaRestJsonAdapterFactory
 
-object GenericContainerAdapter  : JsonAdapter<GenericContainer>() {
+object GenericContainerAdapter : JsonAdapter<GenericContainer>() {
     @FromJson
     override fun fromJson(reader: JsonReader): GenericContainer? {
         TODO("Not yet implemented")
@@ -103,8 +105,8 @@ class RecordsJsonAdapter(moshi: Moshi) : JsonAdapter<Records>() {
         writer
             .beginObject()
             .name("records").apply { recordsAdapter.toJson(this, `value`.records) }
-            .name("key_schema").value(`value`.key_schema)
-            .name("value_schema").value(`value`.value_schema)
+            .name("key_schema").value(`value`.key_schema?.toString())
+            .name("value_schema").value(`value`.value_schema?.toString())
             .endObject()
     }
 

@@ -15,7 +15,7 @@ class RecordsTest {
         assertThat(
             Records.Avro(
                 listOf(Record(avroObject, avroObject))
-            ).key_schema, equalTo(avroObject.schema.toString())
+            ).key_schema, equalTo(avroObject.schema)
         )
 
         assertThat(

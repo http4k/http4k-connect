@@ -38,6 +38,22 @@ class KafkaRestMoshiTest {
     }
 
     @Test
+    fun `can serialise avro records with non avro key`(approver: Approver) {
+        approver.assertApproved(
+            asFormatString(
+                Records.Avro(
+                    listOf(
+                        Record(
+                            "foo",
+                            RandomEvent(LocalDate.EPOCH, LocalTime.MIDNIGHT, Instant.EPOCH, LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `can serialise json records`(approver: Approver) {
         approver.assertApproved(asFormatString(Records.Json(listOf(Record(123, Message("123"))))))
     }
