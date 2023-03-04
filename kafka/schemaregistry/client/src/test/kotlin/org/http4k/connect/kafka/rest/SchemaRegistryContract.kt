@@ -8,7 +8,6 @@ import org.http4k.connect.kafka.schemaregistry.SchemaRegistry
 import org.http4k.connect.kafka.schemaregistry.checkSchemaRegistered
 import org.http4k.connect.kafka.schemaregistry.model.SchemaType.AVRO
 import org.http4k.connect.kafka.schemaregistry.model.Subject
-import org.http4k.connect.kafka.schemaregistry.model.Version
 import org.http4k.connect.kafka.schemaregistry.registerSchemaVersion
 import org.http4k.connect.successValue
 import org.http4k.core.Credentials
@@ -46,7 +45,6 @@ abstract class SchemaRegistryContract {
 
             registerSchemaVersion(
                 subject,
-                Version.of(123),
                 `SCHEMA$`,
                 AVRO,
                 listOf()

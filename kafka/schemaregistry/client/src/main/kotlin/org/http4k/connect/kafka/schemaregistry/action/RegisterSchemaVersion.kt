@@ -21,12 +21,11 @@ import org.http4k.core.with
 @Http4kConnectAction
 data class RegisterSchemaVersion(
     val subject: Subject,
-    val version: Version,
     val schema: Schema,
     val schemaType: SchemaType,
     val references: List<References>
 ) : NonNullAutoMarshalledAction<SchemaId>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<SchemaId> {
-    override fun toRequest() = Request(POST, "/subjects/$subject/$version")
+    override fun toRequest() = Request(POST, "/subjects/$subject/versions")
         .with(
             Body.auto<RegisterSchemaVersionReq>(contentType = ContentType.SCHEMA_REGISTRY)
                 .toLens() of RegisterSchemaVersionReq(schema, schemaType, references)

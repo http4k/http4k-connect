@@ -16,21 +16,22 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.lens.Path
 import org.http4k.routing.bind
+import kotlin.math.absoluteValue
 
-fun registerSchema(schemas: Storage<Schema>) = "/subjects/{subject}/{version}" bind POST to
+fun registerSchema(schemas: Storage<Schema>) = "/subjects/{subject}/versions" bind POST to
     { req: Request ->
         val subject = Path.of("subject")(req)
-        val version = Path.of("version")(req)
 
         val posted = Body.auto<PostedSchema>().toLens()(req).schema
+        val version = posted.toString().hashCode().absoluteValue
         when {
-            schemas[subject + version] != null -> Response(CONFLICT)
+            schemas[subject + posted.toString().hashCode().absoluteValue] != null -> Response(CONFLICT)
             else -> {
                 schemas[subject + version] = posted
                 Response(OK)
                     .with(
                         Body.auto<SchemaId>(contentType = ContentType.SCHEMA_REGISTRY)
-                            .toLens() of SchemaId(posted.toString().hashCode().hashCode())
+                            .toLens() of SchemaId(version)
                     )
             }
         }

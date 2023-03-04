@@ -6,7 +6,7 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.kafka.schemaregistry.action.SchemaRegistryAction
 
 /**
- * Docs: https://docs.confluent.io/platform/current/schema-registry/
+ * Docs: https://docs.confluent.io/platform/current/schema-registry/develop/api.html
  */
 @Http4kConnectAdapter
 interface SchemaRegistry {
