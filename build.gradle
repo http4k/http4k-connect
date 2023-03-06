@@ -200,16 +200,16 @@ subprojects {
                 name "SonatypeStaging"
                 url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                 credentials {
-                    username nexusUsername
-                    password nexusPassword
+                    username(nexusUsername.toString())
+                    password(nexusPassword.toString())
                 }
             }
             maven {
                 name "SonatypeSnapshot"
                 url "https://oss.sonatype.org/content/repositories/snapshots/"
                 credentials {
-                    username nexusUsername
-                    password nexusPassword
+                    username(nexusUsername.toString())
+                    password(nexusPassword.toString())
                 }
             }
         }
@@ -250,7 +250,7 @@ coveralls {
     jacocoReportPath = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
 }
 
-task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+tasks.register('jacocoRootReport', org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = subprojects.test
     getSourceDirectories().from(subprojects.sourceSets.main.allSource.srcDirs)
     getClassDirectories().from(subprojects.sourceSets.main.output)
@@ -268,13 +268,13 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     }
 }
 
-tasks.create("listProjects") {
+tasks.register("listProjects") {
     doLast {
         subprojects.forEach { System.err.println(it.name) }
     }
 }
 
-tasks.create("weighDependencies") {
+tasks.register("weighDependencies") {
     doLast {
         [rootProject]
             .forEach {

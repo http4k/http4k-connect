@@ -19,7 +19,7 @@ import org.http4k.core.SCHEMA_REGISTRY
 import org.http4k.core.with
 
 @Http4kConnectAction
-data class RegisterSchemaVersion(
+data class RegisterSchema(
     val subject: Subject,
     val schema: Schema,
     val schemaType: SchemaType,

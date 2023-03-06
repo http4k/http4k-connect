@@ -19,7 +19,7 @@ import se.ansman.kotshi.JsonSerializable
 @Http4kConnectAction
 data class CheckSchemaRegistered(val subject: Subject, val schema: Schema)
     : NullableAutoMarshalledAction<RegisteredSchema>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<RegisteredSchema?> {
-    override fun toRequest() = Request(POST, "/subjects/${schema.fullName}")
+    override fun toRequest() = Request(POST, "/subjects/$subject")
         .with(Body.auto<PostedSchema>(contentType = ContentType.SCHEMA_REGISTRY).toLens() of PostedSchema(schema))
 }
 

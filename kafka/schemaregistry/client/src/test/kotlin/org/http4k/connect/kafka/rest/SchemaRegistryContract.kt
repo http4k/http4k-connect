@@ -8,7 +8,7 @@ import org.http4k.connect.kafka.schemaregistry.SchemaRegistry
 import org.http4k.connect.kafka.schemaregistry.checkSchemaRegistered
 import org.http4k.connect.kafka.schemaregistry.model.SchemaType.AVRO
 import org.http4k.connect.kafka.schemaregistry.model.Subject
-import org.http4k.connect.kafka.schemaregistry.registerSchemaVersion
+import org.http4k.connect.kafka.schemaregistry.registerSchema
 import org.http4k.connect.successValue
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
@@ -43,7 +43,7 @@ abstract class SchemaRegistryContract {
         with(schemaRegistry) {
             assertThat(checkSchemaRegistered(subject, `SCHEMA$`).successValue(), equalTo(null))
 
-            registerSchemaVersion(
+            registerSchema(
                 subject,
                 `SCHEMA$`,
                 AVRO,
