@@ -3,10 +3,10 @@ package org.http4k.connect.github
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
-import org.http4k.connect.github.api.action.GitHubCallbackAction
-import org.http4k.connect.github.callback.CallbackEvent
-import org.http4k.connect.github.callback.GitHubCallback
-import org.http4k.connect.github.callback.Http
+import org.http4k.connect.github.api.action.GitHubWebhookAction
+import org.http4k.connect.github.webhook.WebhookEventType
+import org.http4k.connect.github.webhook.GitHubWebhook
+import org.http4k.connect.github.webhook.Http
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
@@ -15,9 +15,9 @@ import org.http4k.filter.ServerFilters
 import org.http4k.filter.VerifyGitHubSignatureSha256
 import org.junit.jupiter.api.Test
 
-class TestCallbackAction : GitHubCallbackAction(CallbackEvent.check_suite)
+class TestWebhookAction : GitHubWebhookAction(WebhookEventType.check_suite)
 
-class GitHubCallbackContract {
+class GitHubWebhookContract {
     private val secret = { GitHubToken.of("secret") }
 
     private val server = ServerFilters.VerifyGitHubSignatureSha256(secret)
@@ -25,10 +25,10 @@ class GitHubCallbackContract {
             Response(OK)
         }
 
-    private val callback = GitHubCallback.Http(Uri.of("/foobar"), secret, server)
+    private val webhook = GitHubWebhook.Http(Uri.of("/foobar"), secret, server)
 
     @Test
-    fun `test callback`() {
-        assertThat(callback(TestCallbackAction()), equalTo(Success(Unit)))
+    fun `test webhook`() {
+        assertThat(webhook(TestWebhookAction()), equalTo(Success(Unit)))
     }
 }

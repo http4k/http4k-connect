@@ -13,9 +13,9 @@ import org.http4k.lens.Header
 import org.http4k.lens.X_HUB_SIGNATURE_256
 import org.junit.jupiter.api.Test
 
-class SignGitHubCallbackSha256Test {
+class SignGitHubWebhookSha256Test {
 
-    private val app = ClientFilters.SignGitHubCallbackSha256 { GitHubToken.of("secret") }
+    private val app = ClientFilters.SignGitHubWebhookSha256 { GitHubToken.of("secret") }
         .then {
             assertThat(
                 Header.X_HUB_SIGNATURE_256(it),

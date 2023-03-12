@@ -8,7 +8,7 @@ import org.http4k.lens.X_HUB_SIGNATURE_256
 import org.http4k.security.HmacSha256.hmacSHA256
 
 
-fun ClientFilters.SignGitHubCallbackSha256(token: () -> GitHubToken) = Filter { next ->
+fun ClientFilters.SignGitHubWebhookSha256(token: () -> GitHubToken) = Filter { next ->
     {
         next(
             it.with(

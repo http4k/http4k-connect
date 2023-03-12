@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.34.0.0
+- **http4k-connect-github** - Better name for GitHub webhook events  
+
 ### v3.33.4.0
 - **http4k-connect-amazon-secretsmanager-*** - Support for ARNs in FakeSecretsManager and in API.
 

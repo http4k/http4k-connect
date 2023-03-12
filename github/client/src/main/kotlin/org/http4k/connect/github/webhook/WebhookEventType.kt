@@ -1,6 +1,6 @@
-package org.http4k.connect.github.callback
+package org.http4k.connect.github.webhook
 
-enum class CallbackEvent {
+enum class WebhookEventType {
     check_run,
     check_suite,
     code_scanning_alert,

@@ -6,7 +6,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.github.callback.CallbackEvent
+import org.http4k.connect.github.webhook.WebhookEventType
 import org.http4k.core.ContentType
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -21,8 +21,8 @@ import org.http4k.lens.Header.CONTENT_TYPE
 import org.http4k.lens.X_GITHUB_EVENT
 
 @Http4kConnectAction
-abstract class GitHubCallbackAction(
-    private val event: CallbackEvent,
+abstract class GitHubWebhookAction(
+    private val event: WebhookEventType,
     private val autoMarshalling: AutoMarshalling = Moshi
 ) : Action<Result<Unit, RemoteFailure>> {
     override fun toRequest() = Request(POST, Uri.of(""))

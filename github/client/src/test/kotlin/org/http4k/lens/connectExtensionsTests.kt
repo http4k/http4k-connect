@@ -2,7 +2,7 @@ package org.http4k.lens
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.github.callback.CallbackEvent
+import org.http4k.connect.github.webhook.WebhookEventType
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.with
@@ -40,8 +40,8 @@ class HeaderTests {
 
         assertThat(
             event(
-                Request(GET, "").with(event of CallbackEvent.check_suite)
-            ), equalTo(CallbackEvent.check_suite)
+                Request(GET, "").with(event of WebhookEventType.check_suite)
+            ), equalTo(WebhookEventType.check_suite)
         )
     }
 }
