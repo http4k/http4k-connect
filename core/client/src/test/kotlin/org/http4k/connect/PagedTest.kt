@@ -9,6 +9,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
@@ -55,7 +56,7 @@ class ABarPageAction(private val token: String? = null) : BarAction<Items>,
 class PagedTest {
 
     @Test
-    fun `pagination works ok`() {
+    fun `pagination works ok when all good`() {
         var count = 2
         val bar = BarSystem.Http {
             when {
@@ -66,6 +67,22 @@ class PagedTest {
 
         assertThat(paginated(bar::invoke, ABarPageAction()).toList(),
             equalTo(listOf(Success(listOf("foo")), Success(listOf("foo"))))
+        )
+    }
+
+    @Test
+    fun `pagination stops when failure occurs`() {
+        var count = 5
+        val bar = BarSystem.Http {
+            when {
+                count-- > 4 -> Response(OK)
+                count-- > 2 -> Response(INTERNAL_SERVER_ERROR)
+                else -> Response(NO_CONTENT)
+            }
+        }
+
+        assertThat(paginated(bar::invoke, ABarPageAction()).toList(),
+            equalTo(listOf(Success(listOf("foo")), Failure(RemoteFailure(GET, Uri.of(""), INTERNAL_SERVER_ERROR))))
         )
     }
 }

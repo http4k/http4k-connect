@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.map
+import dev.forkhandles.result4k.peekFailure
 import org.http4k.core.Response
 import org.http4k.format.AutoMarshalling
 import org.http4k.lens.LensExtractor
@@ -43,7 +44,7 @@ fun <Token, ItemType, Action : PagedAction<Token, ItemType, Rsp, Action>, Rsp : 
                     rsp.items
                 }
             }
-    }
+    }.map { it.peekFailure { nextRequest = null } }
 }
 
 /**
@@ -73,6 +74,7 @@ abstract class AutomarshalledPagedAction<
                     this@AutomarshalledPagedAction(this)
                 )
             )
+
             else -> Failure(RemoteFailure(toRequest().method, toRequest().uri, status, bodyString()))
         }
     }
