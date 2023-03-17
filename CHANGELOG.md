@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.35.0.0
+- **http4k-connect-*** - Upgrade dependencies.
+
 ### v3.34.0.1
 - **http4k-connect-*** - Fixed pagination to stop when a failure is encountered.
 
@@ -22,7 +25,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-kakfa-schemaregistry*** - Changes to register schema version API contract.
 
 ### v3.33.0.0
-- **http4k-connect-*** - Upgrade dependencies,
+- **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-kakfa-schemaregistry*** - New module & fakes
 
 ### v3.32.0.0
@@ -38,18 +41,18 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-kakfa-rest*** - [Rename Module] Fixes to binary message formats and auto-commit. Add Seeking for offsets.
 
 ### v3.29.1.0
-- **http4k-connect-*** - Upgrade dependencies,
+- **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-kakfa-http-proxy*** - New module.
 
 ### v3.29.0.0
-- **http4k-connect-*** - Upgrade dependencies,
+- **http4k-connect-*** - Upgrade dependencies.
 
 ### v3.28.0.0
-- **http4k-connect-*** - Upgrade dependencies,
+- **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-sns-fake*** [Breaking] Change SNSMessage to include subject and attributes
 
 ### v3.27.1.0
-- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-ksp-generator*** - Generation of adapters is now done via KSP instead of KAPT.
 
 ### v3.27.0.2
