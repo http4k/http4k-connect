@@ -7,6 +7,7 @@ import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.kms.KMSSigningAlgorithm.Companion.KMS_ALGORITHMS
 import org.http4k.connect.amazon.kms.action.CreateKey
 import org.http4k.connect.amazon.kms.action.Decrypt
 import org.http4k.connect.amazon.kms.action.Decrypted
@@ -30,8 +31,21 @@ import org.http4k.connect.amazon.kms.model.EncryptionAlgorithm
 import org.http4k.connect.amazon.kms.model.KeyEntry
 import org.http4k.connect.amazon.kms.model.KeyMetadata
 import org.http4k.connect.amazon.kms.model.KeyUsage
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_512
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_256
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_384
+import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_512
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.storage.Storage
+import org.http4k.core.Response
+import org.http4k.core.Status.Companion.BAD_REQUEST
+import org.http4k.core.Status.Companion.OK
+import java.security.KeyFactory
+import java.security.spec.X509EncodedKeySpec
+import java.util.Base64
 import java.util.UUID
 
 
@@ -79,10 +93,31 @@ fun AmazonJsonFake.encrypt(keys: Storage<StoredCMK>) = route<Encrypt> { req ->
 
 fun AmazonJsonFake.getPublicKey(keys: Storage<StoredCMK>, publicKey: Base64Blob) = route<GetPublicKey> {
     keys[it.KeyId.toArn().value]?.let {
+        val derPublicKey = Base64Blob.of(
+            Base64.getEncoder().encodeToString(KeyFactory.getInstance("RSA").generatePublic(
+                X509EncodedKeySpec(Base64.getDecoder().decode(
+                    publicKey.decoded()
+                        .replace("-----BEGIN PUBLIC KEY-----", "")
+                        .replace("-----END PUBLIC KEY-----", "")
+                        .replace("\n", "")
+                        .replace("\r", "")
+                ))
+            ).encoded)
+        )
         PublicKey(
             KMSKeyId.of(it.arn), it.customerMasterKeySpec, it.keyUsage,
-            publicKey, emptyList(), emptyList()
+            derPublicKey, null,
+            listOf(
+                RSASSA_PKCS1_V1_5_SHA_256,
+                RSASSA_PKCS1_V1_5_SHA_384,
+                RSASSA_PKCS1_V1_5_SHA_512,
+                RSASSA_PSS_SHA_256,
+                RSASSA_PSS_SHA_384,
+                RSASSA_PSS_SHA_512
+            )
         )
+
+
     }
 }
 
@@ -93,27 +128,37 @@ fun AmazonJsonFake.scheduleKeyDeletion(keys: Storage<StoredCMK>) = route<Schedul
     }
 }
 
-fun AmazonJsonFake.sign(keys: Storage<StoredCMK>) = route<Sign> { req ->
+fun AmazonJsonFake.sign(keys: Storage<StoredCMK>, keyPairs: Map<SigningAlgorithm, KeyPair>) = route<Sign> { req ->
     keys[req.KeyId.toArn().value]?.let {
         Signed(
             KMSKeyId.of(it.arn),
-            Base64Blob.encode(
-                req.SigningAlgorithm.name
-                    + req.Message.decoded().take(50)
-            ), req.SigningAlgorithm
+            signTheBytes(req, keyPairs), req.SigningAlgorithm
         )
     }
 }
 
-fun AmazonJsonFake.verify(keys: Storage<StoredCMK>) = route<Verify> { req ->
-    keys[req.KeyId.toArn().value]?.let {
-        when {
-            req.Signature.decoded().startsWith(req.SigningAlgorithm.name) ->
-                VerifyResult(KMSKeyId.of(it.arn), true, req.SigningAlgorithm)
-            else -> null
+private fun signTheBytes(req: Sign, keyPairs: Map<SigningAlgorithm, KeyPair>) =
+    KMS_ALGORITHMS[req.SigningAlgorithm]?.sign(keyPairs[req.SigningAlgorithm]!!, req.Message)
+        ?: Base64Blob.encode(req.SigningAlgorithm.name + req.Message.decoded().take(50))
+
+fun AmazonJsonFake.verify(keys: Storage<StoredCMK>, keyPairs: Map<SigningAlgorithm, KeyPair>) =
+    route<Verify>(
+        {
+            when ((it as? VerifyResult)?.SignatureValid) {
+                true -> Response(OK).body(autoMarshalling.asFormatString(it))
+                else -> Response(BAD_REQUEST).body("""{"__type":"KMSInvalidSignatureException"}""")
+            }
+        }
+    ) { req ->
+        keys[req.KeyId.toArn().value]?.let {
+            VerifyResult(req.KeyId, verifyTheBytes(req, keyPairs), req.SigningAlgorithm)
         }
     }
-}
+
+private fun verifyTheBytes(
+    req: Verify, keyPairs: Map<SigningAlgorithm, KeyPair>
+) = KMS_ALGORITHMS[req.SigningAlgorithm]?.verify(keyPairs[req.SigningAlgorithm]!!, req.Message, req.Signature)
+    ?: req.Signature.decoded().startsWith(req.SigningAlgorithm.name)
 
 fun KMSKeyId.toArn() = when {
     value.startsWith("arn") -> ARN.of(value)
