@@ -8,7 +8,7 @@ import com.natpryce.hamkrest.hasElement
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.dynamodb.action.Query
+import org.http4k.connect.amazon.dynamodb.action.Scan
 import org.http4k.connect.amazon.dynamodb.action.copy
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Null
@@ -249,7 +249,7 @@ abstract class DynamoDbContract(
 
                 putItem(table, original).successValue()
 
-                copy(Query(table), destination) {
+                copy(Scan(table), destination) {
                     it.with(attrBool of false)
                 }
 

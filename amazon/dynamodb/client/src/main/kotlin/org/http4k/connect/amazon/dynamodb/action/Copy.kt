@@ -16,16 +16,21 @@ import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.paginated
 
 /**
- * Copies items between into another table, using BatchWriteItem to insert.
+ * Copies items that are queried into another table, using BatchWriteItem to insert, and optionally mapping.
  * Returns the Unprocessed Items from the last insert if there were any.
  */
 fun <R : Paged<Key, Item>, Self : DynamoDbPagedAction<R, Self>> DynamoDb.copy(
-    action: Self, destination: TableName, mappingFn: (Item) -> Item
-): Result<Map<String, ReqWriteItem>?, RemoteFailure> = paginated(::invoke, action)
-    .map { it.flatMap { batchWriteItem(mapOf(destination to it.map(mappingFn).map { ReqWriteItem.Put(it) })) } }
-    .takeWhile { it.valueOrNull() == null || it.valueOrNull()!!.UnprocessedItems != null }
-    .lastOrNull()
-    ?.map {
-        it.UnprocessedItems
-    }
-    ?: Success(null)
+    action: Self, destination: TableName, mappingFn: (Item) -> Item = { it }
+): Result<Map<String, ReqWriteItem>?, RemoteFailure> {
+    val map: Sequence<Result<BatchWriteItems, RemoteFailure>> = paginated(::invoke, action)
+        .map { it.flatMap { batchWriteItem(mapOf(destination to it.map(mappingFn).map { ReqWriteItem.Put(it) })) } }
+    return map
+        .takeWhile {
+            val isError = it.valueOrNull() == null
+            val hasUnprocessedItems = it.valueOrNull()!!.UnprocessedItems?.takeIf { it.isNotEmpty() } != null
+            isError || hasUnprocessedItems
+        }
+        .lastOrNull()
+        ?.map { it.UnprocessedItems }
+        ?: Success(null)
+}
