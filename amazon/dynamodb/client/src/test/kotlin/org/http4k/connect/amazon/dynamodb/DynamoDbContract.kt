@@ -244,21 +244,21 @@ abstract class DynamoDbContract(
                 )
                 waitForUpdate()
 
-                val original = createItem("hello")
-                val expected = createItem("olleh")
+                val original = createItem("hello", bool = true)
+                val expected = createItem("hello", bool = false)
 
                 putItem(table, original).successValue()
 
                 copy(Query(table), destination) {
-                    it.with(attrS.of(attrS(it).reversed()))
+                    it.with(attrBool of false)
                 }
 
                 assertThat(
-                    getItem(destination, Key(attrS of "olleh")).successValue(),
+                    getItem(destination, Key(attrS of "hello")).successValue().item,
                     equalTo(expected)
                 )
             } finally {
-                deleteTable(table)
+                deleteTable(destination)
             }
         }
     }

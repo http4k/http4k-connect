@@ -44,10 +44,11 @@ fun DynamoDb.createTable(
 fun createItem(
     string: String = "foo",
     number: Int = 123,
-    binary: Base64Blob = Base64Blob.encode("bar")
+    binary: Base64Blob = Base64Blob.encode("bar"),
+    bool: Boolean = true
 ) = Item(
     attrS of string,
-    attrBool of true,
+    attrBool of bool,
     attrB of binary,
     attrBS of setOf(binary),
     attrN of number,
