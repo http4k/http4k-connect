@@ -27,9 +27,8 @@ val attrSS = Attribute.strings().required("theStrings")
 val attrNL = Attribute.string().optional("theNull")
 val attrMissing = Attribute.string().optional("theMissing")
 
-fun TableName.Companion.sample(prefix: String = "http4k-connect", suffix: String = UUID.randomUUID().toString()): TableName {
-    return TableName.of("$prefix-$suffix")
-}
+fun TableName.Companion.sample(prefix: String = "http4k-connect", suffix: String = UUID.randomUUID().toString()) =
+    TableName.of("$prefix-$suffix")
 
 fun DynamoDb.createTable(
     tableName: TableName,
@@ -53,7 +52,11 @@ fun createItem(
     attrBS of setOf(binary),
     attrN of number,
     attrNS of setOf(number, 321),
-    attrL of listOf(AttributeValue.List(listOf(AttributeValue.Str(string))), AttributeValue.Num(number), AttributeValue.Null()),
+    attrL of listOf(
+        AttributeValue.List(listOf(AttributeValue.Str(string))),
+        AttributeValue.Num(number),
+        AttributeValue.Null()
+    ),
     attrM of Item(attrS of string, attrBool of false),
     attrSS of setOf("345", "567"),
     attrU of MyValueType(UUID(0, 1)),

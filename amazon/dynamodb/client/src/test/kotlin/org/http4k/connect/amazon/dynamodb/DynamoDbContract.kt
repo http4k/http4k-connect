@@ -8,22 +8,27 @@ import com.natpryce.hamkrest.hasElement
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.dynamodb.action.Query
+import org.http4k.connect.amazon.dynamodb.action.copy
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.List
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Str
 import org.http4k.connect.amazon.dynamodb.model.BillingMode.PROVISIONED
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.ReqGetItem
 import org.http4k.connect.amazon.dynamodb.model.ReqStatement
 import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
+import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity.TOTAL
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TransactGetItem.Companion.Get
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Delete
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Put
 import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Update
+import org.http4k.connect.amazon.dynamodb.model.with
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
@@ -94,12 +99,12 @@ abstract class DynamoDbContract(
     }
 
     @Test
-    open fun `batch operations`() {
+    fun `batch operations`() {
         with(dynamo) {
             val write = batchWriteItem(
                 mapOf(
                     table to listOf(
-                        ReqWriteItem.Put(createItem("hello2")),
+                        Put(createItem("hello2")),
                         ReqWriteItem.Delete(Item(attrS of "hello"))
                     )
                 )
@@ -169,8 +174,10 @@ abstract class DynamoDbContract(
 
             assertThat(attrN[query.first()], equalTo(321))
 
-            val scan = dynamo.scan(table,
-                ReturnConsumedCapacity = TOTAL).successValue().items
+            val scan = dynamo.scan(
+                table,
+                ReturnConsumedCapacity = TOTAL
+            ).successValue().items
 
             assertThat(attrN[scan.first()], equalTo(321))
 
@@ -221,6 +228,38 @@ abstract class DynamoDbContract(
             )
 
             waitForUpdate()
+        }
+    }
+
+    @Test
+    fun `migrate data beetween tables`() {
+        with(dynamo) {
+            val destination = TableName.sample()
+            try {
+                val hashKey = attrS
+                val rangeKey = attrN
+                assertThat(
+                    createTable(destination, hashKey = hashKey, rangeKey = rangeKey).TableDescription.ItemCount,
+                    equalTo(0)
+                )
+                waitForUpdate()
+
+                val original = createItem("hello")
+                val expected = createItem("olleh")
+
+                putItem(table, original).successValue()
+
+                copy(Query(table), destination) {
+                    it.with(attrS.of(attrS(it).reversed()))
+                }
+
+                assertThat(
+                    getItem(destination, Key(attrS of "olleh")).successValue(),
+                    equalTo(expected)
+                )
+            } finally {
+                deleteTable(table)
+            }
         }
     }
 
