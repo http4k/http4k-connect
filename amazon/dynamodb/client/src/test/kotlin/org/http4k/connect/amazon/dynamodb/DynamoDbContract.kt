@@ -32,7 +32,6 @@ import org.http4k.connect.amazon.dynamodb.model.with
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -51,7 +50,7 @@ abstract class DynamoDbContract(
     abstract val http: HttpHandler
 
     private val dynamo by lazy {
-        DynamoDb.Http(aws.region, { aws.credentials }, http.debug())
+        DynamoDb.Http(aws.region, { aws.credentials }, http)
     }
 
     private val table = TableName.sample()
@@ -254,7 +253,7 @@ abstract class DynamoDbContract(
                 }
 
                 assertThat(
-                    getItem(destination, Key(attrS of "hello")).successValue().item,
+                    getItem(destination, Key(attrS of "hello", attrN of 123)).successValue().item,
                     equalTo(expected)
                 )
             } finally {
