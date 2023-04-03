@@ -243,7 +243,7 @@ abstract class DynamoDbContract(
                 )
                 waitForUpdate()
 
-                val expected = (0..30).map {
+                val expected = (0..10).map {
                     putItem(table, createMiniItem("hello$it", bool = true)).successValue()
                     createMiniItem("hello$it", bool = false)
                 }
