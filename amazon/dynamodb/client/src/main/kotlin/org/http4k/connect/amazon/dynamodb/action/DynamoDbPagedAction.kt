@@ -10,4 +10,6 @@ import kotlin.reflect.KClass
 abstract class DynamoDbPagedAction<R : Paged<Key, Item>,
     Self : PagedAction<Key, Item, R, Self>>(clazz: KClass<R>) :
     DynamoDbAction<R>(clazz, DynamoDbMoshi),
-    PagedAction<Key, Item, R, Self>
+    PagedAction<Key, Item, R, Self> {
+    abstract val Limit: Int?
+}

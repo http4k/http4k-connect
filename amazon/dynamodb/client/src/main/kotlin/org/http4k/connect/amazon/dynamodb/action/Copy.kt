@@ -22,13 +22,13 @@ import org.http4k.connect.paginated
 fun <R : Paged<Key, Item>, Self : DynamoDbPagedAction<R, Self>> DynamoDb.copy(
     action: Self, destination: TableName, mappingFn: (Item) -> Item = { it }
 ): Result<Map<String, ReqWriteItem>?, RemoteFailure> {
-    val map: Sequence<Result<BatchWriteItems, RemoteFailure>> = paginated(::invoke, action)
+    require(action.Limit != null && action.Limit!! > 0 && action.Limit!! <= 25) { "Limit must be <=25" }
+    return paginated(::invoke, action)
         .map { it.flatMap { batchWriteItem(mapOf(destination to it.map(mappingFn).map { ReqWriteItem.Put(it) })) } }
-    return map
         .takeWhile {
-            val isError = it.valueOrNull() == null
-            val hasUnprocessedItems = it.valueOrNull()!!.UnprocessedItems?.takeIf { it.isNotEmpty() } != null
-            isError || hasUnprocessedItems
+            val succeeded = it.valueOrNull() != null
+            val hasUnprocessedItems = it.valueOrNull()?.UnprocessedItems?.takeIf { it.isNotEmpty() } != null
+            succeeded && !hasUnprocessedItems
         }
         .lastOrNull()
         ?.map { it.UnprocessedItems }

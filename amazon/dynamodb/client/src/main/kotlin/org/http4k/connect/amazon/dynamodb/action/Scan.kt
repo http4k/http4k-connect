@@ -24,7 +24,7 @@ data class Scan(
     val ExpressionAttributeValues: TokensToValues? = null,
     val ExclusiveStartKey: Key? = null,
     val IndexName: String? = null,
-    val Limit: Int? = null,
+    override val Limit: Int? = null,
     val ConsistentRead: Boolean? = null,
     val Segment: Int? = null,
     val Select: String? = null,

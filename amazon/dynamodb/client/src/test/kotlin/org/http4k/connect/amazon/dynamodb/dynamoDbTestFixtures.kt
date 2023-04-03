@@ -64,3 +64,4 @@ fun createItem(
     attrNL of null
 )
 
+fun createMiniItem(string: String, bool: Boolean = true) = Item(attrS of string, attrN of 1, attrBool of bool)

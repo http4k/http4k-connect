@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.hasElement
+import dev.forkhandles.result4k.valueOrNull
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.AwsContract
@@ -16,7 +17,6 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Str
 import org.http4k.connect.amazon.dynamodb.model.BillingMode.PROVISIONED
 import org.http4k.connect.amazon.dynamodb.model.Item
-import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.ReqGetItem
 import org.http4k.connect.amazon.dynamodb.model.ReqStatement
@@ -243,18 +243,16 @@ abstract class DynamoDbContract(
                 )
                 waitForUpdate()
 
-                val original = createItem("hello", bool = true)
-                val expected = createItem("hello", bool = false)
-
-                putItem(table, original).successValue()
-
-                copy(Scan(table), destination) {
-                    it.with(attrBool of false)
+                val expected = (0..30).map {
+                    putItem(table, createMiniItem("hello$it", bool = true)).successValue()
+                    createMiniItem("hello$it", bool = false)
                 }
 
+                copy(Scan(table, Limit = 25), destination) { it.with(attrBool of false) }
+
                 assertThat(
-                    getItem(destination, Key(attrS of "hello", attrN of 123)).successValue().item,
-                    equalTo(expected)
+                    scanPaginated(destination).toList().map { it.valueOrNull()!! }.flatten().toSet(),
+                    equalTo(expected.toSet())
                 )
             } finally {
                 deleteTable(destination)

@@ -29,7 +29,7 @@ data class Query(
     val Select: Select? = null,
     val ConsistentRead: Boolean? = null,
     val ExclusiveStartKey: Key? = null,
-    val Limit: Int? = null,
+    override val Limit: Int? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
     val ScanIndexForward: Boolean? = null,
 ) : DynamoDbPagedAction<QueryResponse, Query>(kClass()) {
