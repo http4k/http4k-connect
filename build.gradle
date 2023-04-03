@@ -12,7 +12,6 @@ buildscript {
 
     dependencies {
         classpath Libs.kotlin_gradle_plugin
-        classpath Libs.org_jetbrains_dokka_gradle_plugin
         classpath Libs.io_codearte_nexus_staging_gradle_plugin
         classpath Libs.com_github_kt3k_coveralls_gradle_plugin
         classpath Libs.com_google_devtools_ksp_com_google_devtools_ksp_gradle_plugin
@@ -29,7 +28,6 @@ allprojects {
     apply(plugin: "kotlin")
     apply(plugin: "kotlin-kapt")
     apply(plugin: "jacoco")
-    apply(plugin: "org.jetbrains.dokka")
     apply(plugin: "com.github.kt3k.coveralls")
     apply(plugin: "com.google.devtools.ksp")
     apply(plugin: "java-test-fixtures")
@@ -52,8 +50,6 @@ allprojects {
         testImplementation(Testing.junit.jupiter.params)
         testImplementation(libs.junit.jupiter)
         testImplementation(libs.testcontainers)
-
-        dokkaHtmlPlugin(Libs.org_jetbrains_dokka_gradle_plugin)
 
         if (project.name.endsWith("core-fake")) {
             api(project(":http4k-connect-core"))

@@ -72,11 +72,6 @@ object Libs {
 
     const val http4k_testing_hamkrest: String = "org.http4k:http4k-testing-hamkrest"
 
-    const val kotlin_as_java_plugin: String = "org.jetbrains.dokka:kotlin-as-java-plugin:_"
-
-    const val org_jetbrains_dokka_gradle_plugin: String =
-        "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:_"
-
     const val exposed_core: String = "org.jetbrains.exposed:exposed-core:_"
 
     const val exposed_jdbc: String = "org.jetbrains.exposed:exposed-jdbc:_"
