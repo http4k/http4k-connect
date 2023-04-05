@@ -1,22 +1,29 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.lessThan
+import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.attrB
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
+import org.http4k.connect.amazon.dynamodb.attrSS
+import org.http4k.connect.amazon.dynamodb.batchWriteItem
 import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
 import org.http4k.connect.amazon.dynamodb.deleteTable
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
+import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
 import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndexes
 import org.http4k.connect.amazon.dynamodb.model.Projection
+import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
@@ -223,6 +230,85 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
             hash1Val1,
             hash1Val2,
         )))
+    }
+
+    @Test
+    fun `query with limit`() {
+        dynamo.putItem(table, hash1Val1)
+        dynamo.putItem(table, hash1Val2)
+        dynamo.putItem(table, hash2Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1")),
+            Limit = 1
+        ).successValue()
+
+        assertThat(result.Count, equalTo(1))
+        assertThat(result.items, equalTo(listOf(hash1Val1)))
+        assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash1", attrN of 1)))
+    }
+
+    @Test
+    fun `query with ExclusiveStartKey`() {
+        val item1 = Item(attrS of "hash1", attrN of 1).also { dynamo.putItem(table, it) }
+        val item2 = Item(attrS of "hash1", attrN of 2).also { dynamo.putItem(table, it) }
+        val item3 = Item(attrS of "hash1", attrN of 3).also { dynamo.putItem(table, it) }
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1")),
+            ExclusiveStartKey = item1,
+        ).successValue()
+
+        assertThat(result.Count, equalTo(2))
+        assertThat(result.items, equalTo(listOf(item2, item3)))
+        assertThat(result.LastEvaluatedKey, absent())
+    }
+
+    @Test
+    fun `query with ExclusiveStartKey - empty`() {
+        Item(attrS of "hash1", attrN of 1).also { dynamo.putItem(table, it) }
+        Item(attrS of "hash1", attrN of 2).also { dynamo.putItem(table, it) }
+        val item3 = Item(attrS of "hash1", attrN of 3).also { dynamo.putItem(table, it) }
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1")),
+            ExclusiveStartKey = item3,
+        ).successValue()
+
+        assertThat(result.Count, equalTo(0))
+        assertThat(result.items, equalTo(emptyList()))
+        assertThat(result.LastEvaluatedKey, absent())
+    }
+
+    @Test
+    fun `query with max results for page`() {
+        val numItems = 2_000
+        val payload = (1 .. 1_000).map { "a".repeat(1_000) }.toSet()
+
+        (1..numItems).chunked(25).forEach { chunk ->
+            dynamo.batchWriteItem(
+                mapOf(
+                    table to chunk.map { index ->
+                        ReqWriteItem.Put(Item(attrS of "hash1", attrN of index, attrSS of payload))
+                    }
+                )
+            ).successValue()
+        }
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1")),
+        ).successValue()
+
+        assertThat(result.Count, present(lessThan(numItems)))
+        assertThat(result.LastEvaluatedKey, present())
     }
 }
 
