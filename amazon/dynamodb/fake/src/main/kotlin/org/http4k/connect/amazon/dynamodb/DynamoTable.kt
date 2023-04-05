@@ -12,7 +12,7 @@ data class DynamoTable(val table: TableDescription, val items: List<Item> = empt
         .let { existing -> if (existing != null) withoutItem(existing) else this }
         .let { it.copy(items = it.items + item) }
 
-    private fun Item.matches(key: Key) = toList().containsAll(key.toList())
-
     fun withoutItem(key: Key) = copy(items = items.filterNot { it.matches(key) })
+
+    private fun Item.matches(key: Key) = toList().containsAll(key.toList())
 }
