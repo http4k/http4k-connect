@@ -4,18 +4,15 @@ import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.action.Query
 import org.http4k.connect.amazon.dynamodb.action.QueryResponse
-import org.http4k.connect.amazon.dynamodb.model.KeyType
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     val table = tables[query.TableName.value] ?: return@route null
 
-    val comparator = table.keySchema(query.IndexName)
-        ?.find { it.KeyType == KeyType.RANGE }
-        ?.AttributeName
+    val comparator = table.table.keySchema(query.IndexName)
         .comparator(query.ScanIndexForward ?: true)
 
-    val items = table.items
+    val matches = table.items
         .asSequence()
         .mapNotNull {it.condition(
             expression = query.KeyConditionExpression,
@@ -28,13 +25,17 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
             expressionAttributeValues = query.ExpressionAttributeValues
         ) }
         .sortedWith(comparator)
-        .map { it.asItemResult() }
-        .take(query.Limit ?: Int.MAX_VALUE)
-        .toList()  // TODO pagination
+        .dropWhile { query.ExclusiveStartKey != null && comparator.compare(it, query.ExclusiveStartKey!!) <= 0 }
+        .toList()
+
+    val page = matches.take((query.Limit ?: table.maxPageSize).coerceAtMost(table.maxPageSize))
 
     QueryResponse(
-        Count = items.size,
-        Items = items
+        Count = page.size,
+        Items = page.map { it.asItemResult() },
+        LastEvaluatedKey = if (page.size < matches.size) {
+            page.lastOrNull()?.key(table.table)
+        } else null
     )
 }
 

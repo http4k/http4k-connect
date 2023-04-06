@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.amazon.dynamodb.model.ConsumedCapacity
+import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.ItemResult
 import org.http4k.connect.amazon.dynamodb.model.Key
@@ -23,7 +24,7 @@ data class Scan(
     val ExpressionAttributeNames: TokensToNames? = null,
     val ExpressionAttributeValues: TokensToValues? = null,
     val ExclusiveStartKey: Key? = null,
-    val IndexName: String? = null,
+    val IndexName: IndexName? = null,
     override val Limit: Int? = null,
     val ConsistentRead: Boolean? = null,
     val Segment: Int? = null,
