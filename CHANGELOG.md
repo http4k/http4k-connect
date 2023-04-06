@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.37.1.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-amazon-dynamo-fake** - Dynamodb query scan pagination. H/T @oharaandrew314
+
 ### v3.37.0.1
 - **http4k-connect-amazon-dynamo*** - Fixed `copy()` so that it does not stop on first item.
 - 
