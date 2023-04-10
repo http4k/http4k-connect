@@ -7,9 +7,14 @@ import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.Message
+import org.http4k.connect.openai.action.Size
 import org.http4k.connect.successValue
+import org.http4k.testing.ApprovalTest
+import org.http4k.testing.Approver
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(ApprovalTest::class)
 interface OpenAIContract {
 
     val openAi: OpenAI
@@ -35,5 +40,12 @@ interface OpenAIContract {
             ).successValue().model,
             equalTo(GPT3_5)
         )
+    }
+
+
+    @Test
+    fun `can generate image`(approver: Approver) {
+        val generated = openAi.generateImage(Content.of("An excellent library"), Size.`256x256`).successValue()
+        println(generated.data.first().url)
     }
 }
