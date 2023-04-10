@@ -31,6 +31,8 @@ fun main() {
 }
 ```
 
+Other examples can be found [here](https://github.com/http4k/http4k-connect/tree/master/openai/fake/src/examples/kotlin).
+
 ### Default Fake port: 45674
 
 To start:
