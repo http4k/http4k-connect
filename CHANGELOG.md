@@ -5,8 +5,6 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.38.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-openai** - New module! Start of OpenAI integration.
-- **http4k-connect-openai-fake** - New module! Spin up a testing Fake for OpenAI services.
 
 ### v3.37.1.0
 - **http4k-connect-*** - Upgrade dependencies.
