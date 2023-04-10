@@ -1,7 +1,6 @@
 package org.http4k.connect.openai
 
 import org.http4k.connect.FakeSystemContract
-import org.http4k.connect.amazon.cloudfront.FakeOpenAI
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 

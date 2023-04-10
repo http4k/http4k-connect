@@ -2,10 +2,6 @@ package org.http4k.connect.openai
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.cloudfront.ChatCompletionGenerator
-import org.http4k.connect.amazon.cloudfront.Echo
-import org.http4k.connect.amazon.cloudfront.LoremIpsum
-import org.http4k.connect.amazon.cloudfront.ReverseInput
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.action.ChatCompletion

@@ -1,7 +1,6 @@
-package org.http4k.connect.amazon.cloudfront
+package org.http4k.connect.openai
 
 import de.svenjacobs.loremipsum.LoremIpsum
-import org.http4k.connect.openai.Content
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion

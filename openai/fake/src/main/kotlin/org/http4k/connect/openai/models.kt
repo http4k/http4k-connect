@@ -1,10 +1,6 @@
-package org.http4k.connect.amazon.cloudfront
+package org.http4k.connect.openai
 
-import org.http4k.connect.openai.ObjectId
-import org.http4k.connect.openai.ObjectType
-import org.http4k.connect.openai.OpenAIOrg
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
-import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.action.Model
 import org.http4k.connect.openai.action.Permission
 import org.http4k.connect.storage.InMemory

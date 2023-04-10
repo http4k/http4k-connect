@@ -2,6 +2,7 @@ package org.http4k.connect.openai
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import org.http4k.connect.model.Base64Blob
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter
 import org.http4k.format.MapAdapter
@@ -17,6 +18,7 @@ object OpenAIMoshi : ConfigurableMoshi(
         .add(MapAdapter)
         .asConfigurable()
         .withStandardMappings()
+        .value(Base64Blob)
         .value(CompletionId)
         .value(Content)
         .value(ModelName)
