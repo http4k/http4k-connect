@@ -3,7 +3,6 @@ package org.http4k.connect.openai
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.cloudnative.env.EnvironmentKey
-import org.http4k.filter.debug
 import org.http4k.lens.value
 import org.junit.jupiter.api.Assumptions.assumeTrue
 
@@ -16,6 +15,6 @@ class RealOpenAITest : OpenAIContract {
 
     override val openAi = OpenAI.Http(
         apiKey(ENV)!!,
-        JavaHttpClient().debug(),
+        JavaHttpClient(),
         OpenAIOrg.of("org-Ydjc9eGanqJtCP70yPUwZsvs"))
 }
