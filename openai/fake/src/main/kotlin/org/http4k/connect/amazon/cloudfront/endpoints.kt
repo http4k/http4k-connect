@@ -15,6 +15,7 @@ import org.http4k.connect.openai.action.Models
 import org.http4k.connect.openai.action.Usage
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.GET
+import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
@@ -30,7 +31,7 @@ fun getModels(models: Storage<Model>) = "/v1/models" bind GET to
         )
     }
 
-fun chatCompletion(clock: Clock) = "/v1/chat/completions" bind GET to
+fun chatCompletion(clock: Clock) = "/v1/chat/completions" bind POST to
     {
         val request: ChatCompletion = autoBody<ChatCompletion>().toLens()(it)
         Response(OK).with(
@@ -41,11 +42,14 @@ fun chatCompletion(clock: Clock) = "/v1/chat/completions" bind GET to
                     ),
                     Timestamp.of(clock.instant()),
                     request.model,
-                    listOf(Choice(0,
-                        Message(System,
-                            Content.of(request.messages.first { it.role == User }.content.value.reversed())
-                        ), "stop"
-                    )
+                    listOf(
+                        Choice(
+                            0,
+                            Message(
+                                System,
+                                Content.of(request.messages.first { it.role == User }.content.value.reversed())
+                            ), "stop"
+                        )
                     ),
                     Usage(0, 0, 0)
                 )

@@ -15,7 +15,7 @@ import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
-import org.http4k.core.Method.GET
+import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.with
 import se.ansman.kotshi.ExperimentalKotshiApi
@@ -53,7 +53,7 @@ data class ChatCompletion(
         user = null
     )
 
-    override fun toRequest() = Request(GET, "/v1/chat/completions")
+    override fun toRequest() = Request(POST, "/v1/chat/completions")
         .with(OpenAIMoshi.autoBody<ChatCompletion>().toLens() of this)
 }
 
