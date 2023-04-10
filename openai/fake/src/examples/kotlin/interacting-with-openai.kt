@@ -9,9 +9,12 @@ import org.http4k.connect.openai.chatCompletion
 
 fun main() {
     val openAiToken = OpenAIToken.of("your-token-here")
+
+    // create a client
     val openai = OpenAI.Http(openAiToken)
 
+    // get a chat completion
     println(
-        openai.chatCompletion(GPT3_5, listOf(Message(User, Content.of("good afternoon"))))
+        openai.chatCompletion(GPT3_5, listOf(Message(User, Content.of("good afternoon. how are you today?"))))
     )
 }
