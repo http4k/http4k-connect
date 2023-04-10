@@ -40,6 +40,7 @@ fun generateImage(clock: Clock, baseUri: Uri) = "/v1/images/generations" bind PO
                         url -> {
                             ImageData(url = baseUri.extend(Uri.of(image)))
                         }
+
                         b64_json -> ImageData(b64_json = Base64Blob.encode(FakeOpenAI::class.java.getResourceAsStream("/public/$image")!!))
                     }
                 )
@@ -67,7 +68,7 @@ fun chatCompletion(clock: Clock, completionGenerators: Map<ModelName, ChatComple
                         ),
                         Timestamp.of(clock.instant()),
                         request.model,
-                        (completionGenerators[request.model] ?: ChatCompletionGenerator.ReverseInput)(request),
+                        (completionGenerators[request.model] ?: ChatCompletionGenerator.LoremIpsum())(request),
                         Usage(0, 0, 0)
                     )
             )
