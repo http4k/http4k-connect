@@ -23,6 +23,7 @@ import se.ansman.kotshi.JsonProperty
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class ChatCompletion(
     val model: ModelName,
     val messages: List<Message>,

@@ -16,6 +16,7 @@ import org.http4k.core.with
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class GenerateImage(
     val prompt: Content,
     val size: Size = Size.`1024x1024`,
