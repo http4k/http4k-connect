@@ -3,6 +3,7 @@
 The OpenAI connector provides the following Actions:
 
 * GetModels
+* ChatCompletion
 
 The client APIs utilise the an OpenAI API Key (Bearer Auth). There is no reflection used anywhere in the
 
