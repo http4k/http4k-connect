@@ -20,11 +20,11 @@ data class GenerateImage(
     val prompt: Content,
     val size: Size = Size.`1024x1024`,
     val response_format: ImageResponseFormat = url,
-    val n: Double = 1.0,
+    val n: Int = 1,
     val user: User? = null
 ) : NonNullAutoMarshalledAction<GeneratedImage>(kClass(), OpenAIMoshi), OpenAIAction<GeneratedImage> {
 
-    constructor(prompt: Content, size: Size) : this(prompt, size, url, 1.0, null)
+    constructor(prompt: Content, size: Size) : this(prompt, size, url, 1, null)
 
     override fun toRequest() = Request(POST, "/v1/images/generations")
         .with(OpenAIMoshi.autoBody<GenerateImage>().toLens() of this)
