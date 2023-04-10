@@ -36,7 +36,7 @@ data class ChatCompletion(
     val frequency_penalty: Double = 0.0,
     val logit_bias: Map<TokenId, Double>? = null,
     val user: User? = null
-) : NonNullAutoMarshalledAction<Completion>(kClass(), OpenAIMoshi), OpenAIAction<Completion> {
+) : NonNullAutoMarshalledAction<CompletionResponse>(kClass(), OpenAIMoshi), OpenAIAction<CompletionResponse> {
 
     constructor(model: ModelName, messages: List<Message>) : this(
         model,
@@ -75,7 +75,7 @@ data class Usage(
 )
 
 @JsonSerializable
-data class Completion(
+data class CompletionResponse(
     val id: CompletionId,
     val created: Timestamp,
     val model: ModelName,
