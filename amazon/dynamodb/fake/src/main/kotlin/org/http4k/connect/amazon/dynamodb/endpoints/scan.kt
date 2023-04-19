@@ -13,11 +13,13 @@ fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
 
     val matches = table.items
         .asSequence()
-        .mapNotNull {it.condition(
-            expression = scan.FilterExpression,
-            expressionAttributeNames = scan.ExpressionAttributeNames,
-            expressionAttributeValues = scan.ExpressionAttributeValues
-        ) }
+        .mapNotNull {
+            it.condition(
+                expression = scan.FilterExpression,
+                expressionAttributeNames = scan.ExpressionAttributeNames,
+                expressionAttributeValues = scan.ExpressionAttributeValues
+            )
+        }
         .sortedWith(comparator)
         .dropWhile { scan.ExclusiveStartKey != null && comparator.compare(it, scan.ExclusiveStartKey!!) <= 0 }
         .toList()
