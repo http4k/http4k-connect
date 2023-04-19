@@ -7,7 +7,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-*** - Upgrade dependencies.
 
 ### v3.38.0.1
-- **http4k-connect-*** - Add missing JsonSerializable annotation
+- **http4k-connect-*** -     Add missing JsonSerializable annotation
 
 ### v3.38.0.0
 - **http4k-connect-*** - Upgrade dependencies.
