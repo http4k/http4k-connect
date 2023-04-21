@@ -13,7 +13,7 @@ abstract class AbstractKafkaRestAction<R : Any>(private val clazz: KClass<R>) : 
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(asA(bodyString().takeIf { it.isNotEmpty() } ?: "{}", clazz))
-            else -> Failure(RemoteFailure(toRequest().method, toRequest().uri, status, bodyString()))
+            else -> Failure(toRemoteFailure())
         }
     }
 }

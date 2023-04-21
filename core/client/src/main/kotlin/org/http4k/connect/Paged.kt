@@ -75,7 +75,7 @@ abstract class AutomarshalledPagedAction<
                 )
             )
 
-            else -> Failure(RemoteFailure(toRequest().method, toRequest().uri, status, bodyString()))
+            else -> Failure(toRemoteFailure())
         }
     }
 

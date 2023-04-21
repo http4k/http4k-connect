@@ -12,7 +12,7 @@ abstract class NonNullAutoMarshalledAction<R : Any>(private val clazz: KClass<R>
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
-            else -> Failure(RemoteFailure(toRequest().method, toRequest().uri, status, bodyString()))
+            else -> Failure(toRemoteFailure())
         }
     }
 }
