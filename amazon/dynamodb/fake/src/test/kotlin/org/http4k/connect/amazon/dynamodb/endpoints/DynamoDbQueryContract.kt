@@ -21,7 +21,7 @@ import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
-import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndexes
+import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.Projection
 import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
 import org.http4k.connect.amazon.dynamodb.model.TableName
@@ -63,7 +63,7 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
                 GlobalSecondaryIndex(IndexName = numbersIndex, KeySchema.compound(attrN.name, attrS.name), Projection.all)
             ),
             LocalSecondaryIndexes = listOf(
-                LocalSecondaryIndexes(IndexName = stringAndBinaryIndex, KeySchema.compound(attrS.name, attrB.name), Projection.all)
+                LocalSecondaryIndex(IndexName = stringAndBinaryIndex, KeySchema.compound(attrS.name, attrB.name), Projection.all)
             ),
             BillingMode = BillingMode.PAY_PER_REQUEST
         ).successValue()

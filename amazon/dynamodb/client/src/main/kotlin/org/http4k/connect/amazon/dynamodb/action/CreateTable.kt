@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
-import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndexes
+import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.ProvisionedThroughput
 import org.http4k.connect.amazon.dynamodb.model.SSESpecification
 import org.http4k.connect.amazon.dynamodb.model.StreamSpecification
@@ -21,7 +21,7 @@ data class CreateTable(
     val KeySchema: List<KeySchema>,
     val AttributeDefinitions: List<AttributeDefinition>,
     val GlobalSecondaryIndexes: List<GlobalSecondaryIndex>? = null,
-    val LocalSecondaryIndexes: List<LocalSecondaryIndexes>? = null,
+    val LocalSecondaryIndexes: List<LocalSecondaryIndex>? = null,
     val Tags: List<Tag>? = null,
     val BillingMode: BillingMode? = null,
     val ProvisionedThroughput: ProvisionedThroughput? = null,
