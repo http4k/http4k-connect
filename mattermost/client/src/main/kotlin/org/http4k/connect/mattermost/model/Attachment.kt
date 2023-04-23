@@ -2,6 +2,7 @@
 
 package org.http4k.connect.mattermost.model
 
+import org.http4k.core.Uri
 import se.ansman.kotshi.ExperimentalKotshiApi
 import se.ansman.kotshi.JsonProperty
 import se.ansman.kotshi.JsonSerializable
@@ -15,25 +16,18 @@ data class Attachment(
     @JsonProperty("author_name")
     val authorName: String? = null,
     @JsonProperty("author_link")
-    val authorLink: String? = null,
+    val authorLink: Uri? = null,
     @JsonProperty("author_icon")
-    val authorIcon: String? = null,
+    val authorIcon: Uri? = null,
     val title: String? = null,
     @JsonProperty("title_link")
-    val titleLink: String? = null,
+    val titleLink: Uri? = null,
     val fields: List<AttachmentField>? = null,
     @JsonProperty("image_url")
-    val imageUrl: String? = null,
+    val imageUrl: Uri? = null,
     @JsonProperty("thumb_url")
-    val thumbUrl: String? = null,
+    val thumbUrl: Uri? = null,
     val footer: String? = null,
     @JsonProperty("footer_icon")
     val footerIcon: String? = null,
-)
-
-@JsonSerializable
-data class AttachmentField(
-    val title: String,
-    val value: String,
-    val short: String? = null,
 )
