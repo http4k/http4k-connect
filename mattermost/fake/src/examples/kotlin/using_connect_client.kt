@@ -1,5 +1,4 @@
 import dev.forkhandles.result4k.Result
-import org.http4k.chaos.start
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.mattermost.FakeMattermost
@@ -12,7 +11,7 @@ import org.http4k.connect.storage.Storage
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.filter.debug
-import java.util.*
+import java.util.UUID
 
 const val USE_REAL_CLIENT = false
 
@@ -30,7 +29,7 @@ fun main() {
 
     val payload = TriggerWebhookPayload(
         text = "Hello world",
-        iconUrl = "http://icon.url",
+        iconUrl = Uri.of("http://icon.url"),
     )
 
     // all operations return a Result monad of the API type
