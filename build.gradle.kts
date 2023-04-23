@@ -70,23 +70,6 @@ allprojects {
         }
 
         if (hasCodeCoverage(project)) {
-            jacocoTestReport {
-                reports {
-                    html.getRequired().set(true)
-                    xml.getRequired().set(true)
-                }
-                afterEvaluate {
-                    classDirectories.setFrom(classDirectories.files.map {
-                        fileTree(it) {
-                            exclude("**/Kotshi**/**")
-                            exclude("**/**Extensions**")
-                        }
-                    })
-                }
-            }
-        }
-
-        if (hasCodeCoverage(project)) {
             named<JacocoReport>("jacocoTestReport") {
                 reports {
                     html.required.set(true)
@@ -394,4 +377,15 @@ fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
 coveralls {
     sourceDirs = subprojects.map { it.sourceSets.getByName("main").allSource.srcDirs }.flatten().map { it.absolutePath }
     jacocoReportPath = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    afterEvaluate {
+        classDirectories.setFrom(classDirectories.files.map {
+            fileTree(it) {
+                exclude("**/Kotshi**/**")
+                exclude("**/**Extensions**")
+            }
+        })
+    }
 }
