@@ -7,7 +7,7 @@ import org.http4k.lens.value
 import org.junit.jupiter.api.Assumptions.assumeTrue
 
 class RealOpenAITest : OpenAIContract {
-    val apiKey = EnvironmentKey.value(OpenAIToken).optional("OPENAI_KEY")
+    val apiKey = EnvironmentKey.value(OpenAIToken).optional("OPENAI_KEY_")
 
     init {
         assumeTrue(apiKey(ENV) != null, "No API Key set - skipping")
