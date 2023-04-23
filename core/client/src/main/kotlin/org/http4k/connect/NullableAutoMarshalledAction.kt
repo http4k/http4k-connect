@@ -14,7 +14,7 @@ abstract class NullableAutoMarshalledAction<R : Any>(private val clazz: KClass<R
         when {
             status.successful -> Success(json.asA(bodyString(), clazz))
             status == NOT_FOUND -> Success(null)
-            else -> Failure(toRemoteFailure())
+            else -> Failure(toRemoteFailure(this))
         }
     }
 }

@@ -7,6 +7,7 @@ import org.http4k.connect.Action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.github.webhook.WebhookEventType
+import org.http4k.connect.toRemoteFailure
 import org.http4k.core.ContentType
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -32,7 +33,7 @@ abstract class GitHubWebhookAction(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(RemoteFailure(POST, Uri.of("/"), status, bodyString()))
+            else -> Failure(toRemoteFailure(this))
         }
     }
 }

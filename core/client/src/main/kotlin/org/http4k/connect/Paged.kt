@@ -75,7 +75,7 @@ abstract class AutomarshalledPagedAction<
                 )
             )
 
-            else -> Failure(toRemoteFailure())
+            else -> Failure(toRemoteFailure(this))
         }
     }
 
