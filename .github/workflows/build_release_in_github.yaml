@@ -1,6 +1,6 @@
 on:
   repository_dispatch:
-    types: [connect-release]
+    types: [http4k-connect-release]
 jobs:
   build-github-release:
     runs-on: ubuntu-latest
