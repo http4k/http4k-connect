@@ -6,7 +6,10 @@ import org.http4k.connect.kafka.schemaregistry.SchemaRegistrationMode.auto
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistrationMode.manual
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistryMoshi.auto
 import org.http4k.connect.kafka.schemaregistry.action.PostedSchema
-import org.http4k.connect.kafka.schemaregistry.action.RegisteredSchema
+import org.http4k.connect.kafka.schemaregistry.action.RegisteredSchemaVersion
+import org.http4k.connect.kafka.schemaregistry.model.SchemaId
+import org.http4k.connect.kafka.schemaregistry.model.Subject
+import org.http4k.connect.kafka.schemaregistry.model.Version
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.ContentType
@@ -30,7 +33,7 @@ fun checkSchemaRegistered(schemas: Storage<Schema>, mode: SchemaRegistrationMode
         when (schemas.keySet().firstOrNull { schemas[it] == posted }) {
             null -> when (mode) {
                 auto -> {
-                    schemas[subject + posted.toString().hashCode()] = posted
+                    schemas["$subject:${posted.toString().hashCode()}"] = posted
                     ok(subject, posted)
                 }
 
@@ -43,11 +46,11 @@ fun checkSchemaRegistered(schemas: Storage<Schema>, mode: SchemaRegistrationMode
 
 private fun ok(subject: String, schema: Schema) =
     Response(OK).with(
-        Body.auto<RegisteredSchema>(contentType = ContentType.SCHEMA_REGISTRY)
-            .toLens() of RegisteredSchema(
-            subject,
-            schema.toString().hashCode().absoluteValue,
-            schema.toString().hashCode().absoluteValue,
+        Body.auto<RegisteredSchemaVersion>(contentType = ContentType.SCHEMA_REGISTRY)
+            .toLens() of RegisteredSchemaVersion(
+            Subject.of(subject),
+            SchemaId.of(schema.toString().hashCode().absoluteValue),
+            Version.of(schema.toString().hashCode().absoluteValue),
             schema
         )
     )
