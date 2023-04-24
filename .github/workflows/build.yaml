@@ -32,12 +32,20 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build
         run: ./build-ci.sh
+      - run: echo ${{ env.GITHUB_REF }}
       - name: Cleanup Gradle Cache
           # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
           # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
+      - name: Tag automerge branch
+        if: ${{ startsWith(env.GITHUB_REF, 'auto') && github.event_name == 'pull_request' }}
+        uses: TimonVS/pr-labeler-action@v3
+        with:
+            configuration-path: .github/pr-labeler.yml
+        env:
+            GITHUB_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
       - name: Release (if required)
         run: |
           git config user.name github-actions
@@ -47,10 +55,3 @@ jobs:
         if: github.ref == 'refs/heads/master'
         env:
           GH_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
-      - name: Tag automerge branch
-        if: ${{ startsWith(env.GITHUB_REF, 'auto') && github.event_name == 'pull_request' }}
-        uses: TimonVS/pr-labeler-action@v3
-        with:
-          configuration-path: .github/pr-labeler.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
