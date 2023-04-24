@@ -9,7 +9,7 @@ import org.http4k.connect.amazon.ses.model.Destination
 import org.http4k.connect.amazon.ses.model.EmailAddress
 import org.http4k.connect.amazon.ses.model.Message
 import org.http4k.connect.amazon.ses.model.SESMessageId
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 
 @Http4kConnectAction
@@ -44,7 +44,7 @@ data class SendEmail(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SendEmailResponse.from(response))
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

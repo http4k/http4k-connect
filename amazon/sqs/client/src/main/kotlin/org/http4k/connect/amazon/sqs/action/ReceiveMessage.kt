@@ -13,7 +13,7 @@ import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import java.time.Duration
@@ -70,7 +70,7 @@ data class ReceiveMessage(
                             )
                         }.toList()
                 })
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

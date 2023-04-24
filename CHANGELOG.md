@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v3.39.0.0
 - **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-mattermost*** - [New module!] Initial support for a couple of actions. H/T @tkint
 - **http4k-connect-kakfa-schemaregistry*** - [Breaking] Added some actions and tightened up types. Breaks are purely primitive -> ValueType.
 
 ### v3.38.1.0

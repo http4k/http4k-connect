@@ -10,7 +10,7 @@ import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import java.time.ZonedDateTime
@@ -45,7 +45,7 @@ data class SendMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SentMessage.from(response))
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

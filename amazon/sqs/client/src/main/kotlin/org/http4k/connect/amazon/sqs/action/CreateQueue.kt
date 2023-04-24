@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.model.QueueName
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import java.time.ZonedDateTime
@@ -39,7 +39,7 @@ data class CreateQueue(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(CreatedQueue.from(response))
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

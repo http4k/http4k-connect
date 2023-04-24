@@ -5,7 +5,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.model.BucketName
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -25,7 +25,7 @@ data class CreateBucket(val bucketName: BucketName, val region: Region) : S3Acti
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

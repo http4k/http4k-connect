@@ -6,7 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.s3.model.BucketName
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -26,7 +26,7 @@ class ListBuckets : S3Action<BucketList> {
                 val items = (0 until buckets.length).map { BucketName.of(buckets.item(it).text()) }
                 Success(BucketList(items))
             }
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 

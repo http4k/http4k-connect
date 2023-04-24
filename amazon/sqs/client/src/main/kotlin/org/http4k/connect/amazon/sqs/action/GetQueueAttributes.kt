@@ -6,7 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.firstChildText
 import org.http4k.connect.amazon.core.sequenceOfNodes
 import org.http4k.connect.amazon.core.xmlDoc
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 
@@ -26,7 +26,7 @@ data class GetQueueAttributes(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(QueueAttributes.from(response))
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

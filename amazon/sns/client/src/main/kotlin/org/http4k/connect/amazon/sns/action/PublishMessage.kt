@@ -11,7 +11,7 @@ import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.PhoneNumber
 import org.http4k.connect.amazon.sns.model.SNSMessageId
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 
 @Http4kConnectAction
@@ -44,7 +44,7 @@ data class PublishMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(PublishedMessage.from(response))
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

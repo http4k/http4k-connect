@@ -4,7 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import java.time.ZonedDateTime
@@ -24,7 +24,7 @@ data class DeleteMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

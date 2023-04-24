@@ -4,7 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.lambda.Lambda
 import org.http4k.connect.amazon.lambda.model.FunctionName
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -25,7 +25,7 @@ class InvokeStreamFunction(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(body.stream)
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 

@@ -8,7 +8,7 @@ import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sns.model.TopicName
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 
 @Http4kConnectAction
@@ -38,7 +38,7 @@ data class CreateTopic(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(CreatedTopic.from(response))
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

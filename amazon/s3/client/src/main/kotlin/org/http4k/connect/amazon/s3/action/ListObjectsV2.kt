@@ -14,7 +14,7 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.ObjectSummary
 import org.http4k.connect.amazon.s3.model.Owner
 import org.http4k.connect.amazon.s3.model.StorageClass
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -71,7 +71,7 @@ data class ListObjectsV2(
                     )
                 )
             }
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 

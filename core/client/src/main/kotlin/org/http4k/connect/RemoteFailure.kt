@@ -9,5 +9,5 @@ data class RemoteFailure(val method: Method, val uri: Uri, val status: Status, v
     fun throwIt(): Nothing = throw Exception(toString())
 }
 
-fun <R> Action<R>.toRemoteFailure(response: Response) =
+fun <R> Action<R>.asRemoteFailure(response: Response) =
     with(toRequest()) { RemoteFailure(method, uri, response.status, response.bodyString()) }

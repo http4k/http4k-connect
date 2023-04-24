@@ -4,7 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.instancemetadata.model.ImageId
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -19,6 +19,6 @@ class GetAmiId: Ec2MetadataAction<ImageId> {
 
     override fun toResult(response: Response) = when(response.status) {
         Status.OK -> Success(response.value(ImageId))
-        else -> Failure(toRemoteFailure(response))
+        else -> Failure(asRemoteFailure(response))
     }
 }

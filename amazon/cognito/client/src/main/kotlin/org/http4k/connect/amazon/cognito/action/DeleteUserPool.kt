@@ -4,7 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.cognito.model.UserPoolId
-import org.http4k.connect.toRemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import se.ansman.kotshi.JsonSerializable
 
@@ -14,7 +14,7 @@ data class DeleteUserPool(val UserPoolId: UserPoolId) : CognitoAction<Unit>(Unit
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(Unit)
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

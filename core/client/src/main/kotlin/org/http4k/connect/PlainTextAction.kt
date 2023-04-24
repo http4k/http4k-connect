@@ -9,7 +9,7 @@ abstract class PlainTextAction : Action<Result<String, RemoteFailure>> {
     final override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(bodyString())
-            else -> Failure(toRemoteFailure(this))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }
