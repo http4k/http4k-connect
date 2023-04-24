@@ -2,8 +2,7 @@ package org.http4k.connect.mattermost
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import org.http4k.connect.mattermost.model.EmojiName
-import org.http4k.connect.mattermost.model.HexColour
+import org.http4k.connect.mattermost.model.*
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import org.http4k.format.value
@@ -17,6 +16,12 @@ object MattermostMoshi : ConfigurableMoshi(
         .withStandardMappings()
         .value(EmojiName)
         .value(HexColour)
+        .value(PostActionId)
+        .value(PostActionName)
+        .value(PostActionStyle)
+        .value(PostActionOptionText)
+        .value(PostActionOptionValue)
+        .value(PostActionCookie)
         .done()
 )
 

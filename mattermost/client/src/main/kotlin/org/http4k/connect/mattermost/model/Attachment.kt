@@ -30,4 +30,5 @@ data class Attachment(
     val footer: String? = null,
     @JsonProperty("footer_icon")
     val footerIcon: String? = null,
+    val actions: List<PostAction>? = null,
 )
