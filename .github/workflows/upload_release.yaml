@@ -44,7 +44,7 @@ jobs:
         with:
           token: '${{ secrets.ORG_PUBLIC_REPO_WORKFLOW_TRIGGERING }}'
           repository: http4k/http4k-connect
-          event-type: connect-release
+          event-type: http4k-connect-release
           client-payload: '{"version": "${{ steps.tagName.outputs.tag }}"}'
   broadcast-release:
     runs-on: ubuntu-latest
