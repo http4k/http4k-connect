@@ -25,7 +25,6 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,7 +38,7 @@ abstract class SchemaRegistryContract {
     val subject = Subject.of(UUID.randomUUID().toString())
 
     private val schemaRegistry by lazy {
-        SchemaRegistry.Http(Credentials("", ""), uri, http.debug())
+        SchemaRegistry.Http(Credentials("", ""), uri, http)
     }
 
     @BeforeEach
