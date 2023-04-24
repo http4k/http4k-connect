@@ -4,7 +4,6 @@ import dev.forkhandles.result4k.Result
 import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
-import org.http4k.core.Method
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Uri

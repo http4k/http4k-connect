@@ -7,6 +7,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadata
+import org.http4k.connect.toRemoteFailure
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -27,7 +28,7 @@ class ListEc2Profiles: Ec2CredentialsAction<List<Ec2ProfileName>> {
                 .map { Ec2ProfileName.of(it) }
                 .let { Success(it) }
             Status.CONNECTION_REFUSED -> Success(emptyList())  // not in EC2 environment
-            else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
+            else -> Failure(toRemoteFailure(response))
         }
     }
 }

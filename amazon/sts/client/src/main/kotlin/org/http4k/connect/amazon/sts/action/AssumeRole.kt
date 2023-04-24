@@ -3,7 +3,6 @@ package org.http4k.connect.amazon.sts.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
 import org.http4k.connect.amazon.core.model.Credentials
@@ -16,6 +15,7 @@ import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sts.model.RoleId
 import org.http4k.connect.amazon.sts.model.TokenCode
+import org.http4k.connect.toRemoteFailure
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -78,7 +78,7 @@ data class AssumeRole(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SimpleAssumedRole.from(this))
-            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
+            else -> Failure(toRemoteFailure(this))
         }
     }
 

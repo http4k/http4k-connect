@@ -9,6 +9,7 @@ import org.http4k.connect.amazon.core.model.Ec2ProfileName
 import org.http4k.connect.amazon.ec2credentials.Ec2Credentials
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadata
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadataMoshi
+import org.http4k.connect.toRemoteFailure
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -25,7 +26,7 @@ data class GetEc2Credentials(private val ec2ProfileName: Ec2ProfileName): Ec2Cre
         if (status.successful) {
             Success(Ec2InstanceMetadataMoshi.asA(response.bodyString()))
         } else {
-            Failure(RemoteFailure(Method.GET, uri(), response.status, response.bodyString()))
+            Failure(toRemoteFailure(this))
         }
     }
 }

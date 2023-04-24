@@ -3,16 +3,14 @@ package org.http4k.connect.amazon.ses.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.ses.model.Destination
 import org.http4k.connect.amazon.ses.model.EmailAddress
 import org.http4k.connect.amazon.ses.model.Message
 import org.http4k.connect.amazon.ses.model.SESMessageId
-import org.http4k.core.Method.POST
+import org.http4k.connect.toRemoteFailure
 import org.http4k.core.Response
-import org.http4k.core.Uri
 
 @Http4kConnectAction
 data class SendEmail(
@@ -46,7 +44,7 @@ data class SendEmail(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SendEmailResponse.from(response))
-            else -> Failure(RemoteFailure(POST, Uri.of(""), status, bodyString()))
+            else -> Failure(toRemoteFailure(this))
         }
     }
 }
