@@ -48,7 +48,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
       - name: Tag automerge branch
-        if: ${{ startsWith(env.GITHUB_REF, 'refs/heads/auto') && github.event_name == 'pull_request' }}
+        if: ${{ startsWith(env.GITHUB_REF, 'auto') && github.event_name == 'pull_request' }}
         uses: TimonVS/pr-labeler-action@v3
         with:
           configuration-path: .github/pr-labeler.yml
