@@ -32,14 +32,14 @@ data class ChatCompletion(
     val n: Int = 1,
     val stream: Boolean = false,
     val stop: Any?,
-    val max_tokens: Any = "inf",
+    val max_tokens: Int = 16,
     val presence_penalty: Double = 0.0,
     val frequency_penalty: Double = 0.0,
     val logit_bias: Map<TokenId, Double>? = null,
     val user: User? = null
 ) : NonNullAutoMarshalledAction<CompletionResponse>(kClass(), OpenAIMoshi), OpenAIAction<CompletionResponse> {
 
-    constructor(model: ModelName, messages: List<Message>) : this(
+    constructor(model: ModelName, messages: List<Message>, maxTokens: Int = 16) : this(
         model,
         messages,
         temperature = 1.0,
@@ -47,7 +47,7 @@ data class ChatCompletion(
         n = 1,
         stream = false,
         stop = null,
-        max_tokens = "inf",
+        max_tokens = maxTokens,
         presence_penalty = 0.0,
         frequency_penalty = 0.0,
         logit_bias = null,
