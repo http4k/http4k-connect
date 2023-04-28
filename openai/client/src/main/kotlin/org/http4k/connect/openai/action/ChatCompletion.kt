@@ -27,27 +27,27 @@ import se.ansman.kotshi.JsonSerializable
 data class ChatCompletion(
     val model: ModelName,
     val messages: List<Message>,
+    val max_tokens: Int = 16,
     val temperature: Double = 1.0,
     val top_p: Double = 1.0,
     val n: Int = 1,
     val stream: Boolean = false,
     val stop: Any?,
-    val max_tokens: Int = 16,
     val presence_penalty: Double = 0.0,
     val frequency_penalty: Double = 0.0,
     val logit_bias: Map<TokenId, Double>? = null,
     val user: User? = null
 ) : NonNullAutoMarshalledAction<CompletionResponse>(kClass(), OpenAIMoshi), OpenAIAction<CompletionResponse> {
 
-    constructor(model: ModelName, messages: List<Message>, maxTokens: Int = 16) : this(
+    constructor(model: ModelName, messages: List<Message>) : this(
         model,
         messages,
+        max_tokens = 16,
         temperature = 1.0,
         top_p = 1.0,
         n = 1,
         stream = false,
         stop = null,
-        max_tokens = maxTokens,
         presence_penalty = 0.0,
         frequency_penalty = 0.0,
         logit_bias = null,

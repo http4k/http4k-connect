@@ -36,8 +36,7 @@ interface OpenAIContract {
                 listOf(
                     Message(System, Content.of("You are Leonado Da Vinci")),
                     Message(User, Content.of("What is your favourite colour?"))
-                ),
-                16
+                )
             ).successValue().model,
             equalTo(GPT3_5)
         )
