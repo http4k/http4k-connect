@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.apache.avro.Schema
 import org.http4k.connect.kClass
+import org.http4k.connect.kafka.schemaregistry.model.SchemaId
 import org.http4k.connect.kafka.schemaregistry.model.SchemaName
 import org.http4k.connect.kafka.schemaregistry.model.Subject
 import org.http4k.connect.kafka.schemaregistry.model.Version
@@ -25,6 +26,7 @@ object SchemaRegistryMoshi : ConfigurableMoshi(
         .add(object : IsAnInstanceOfAdapter<Schema>(kClass()) {})
         .asConfigurable()
         .withStandardMappings()
+        .value(SchemaId)
         .value(SchemaName)
         .text(BiDiMapping(Schema::class.java, { Schema.Parser().parse(it) }, Schema::toString))
         .value(Subject)

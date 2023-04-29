@@ -9,13 +9,18 @@ import org.http4k.routing.bind
 import org.http4k.routing.header
 
 class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsService) {
-    inline fun <reified Req : Any> route(crossinline fn: (Req) -> Any?) =
+    inline fun <reified Req : Any> route(
+        crossinline responseFn: (Any) -> Response = {
+            Response(OK).body(autoMarshalling.asFormatString(it))
+        },
+        crossinline fn: (Req) -> Any?
+    ) =
         header("X-Amz-Target", "${awsService}.${Req::class.simpleName!!.removeSuffix("Request")}") bind {
             fn(autoMarshalling.asA(it.bodyString(), Req::class))
                 ?.let {
                     when (it) {
                         is Unit -> Response(OK).body("{}")
-                        else -> Response(OK).body(autoMarshalling.asFormatString(it))
+                        else -> responseFn(it)
                     }
                 }
                 ?: Response(BAD_REQUEST)

@@ -46,7 +46,7 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
         override val sortKeyAttribute: Attribute<SortKey>?,
         val projection: Projection = Projection.all
     ): Secondary<HashKey, SortKey> {
-        fun toIndex() = LocalSecondaryIndexes(
+        fun toIndex() = LocalSecondaryIndex(
             IndexName = indexName,
             KeySchema = keySchema(),
             Projection = projection

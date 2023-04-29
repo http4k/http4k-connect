@@ -3,7 +3,7 @@ package org.http4k.connect.google.analytics.ga4.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
+import org.http4k.connect.asRemoteFailure
 import org.http4k.connect.google.analytics.ga4.model.EventData
 import org.http4k.connect.google.analytics.ga4.model.EventsData
 import org.http4k.connect.google.analytics.model.Analytics
@@ -62,7 +62,7 @@ data class Collect(val data: Analytics) : GoogleAnalyticsAction<Unit>() {
     }
 
     override fun toResult(response: Response) = with(response) {
-        if (status.successful) Success(Unit) else Failure(RemoteFailure(POST, uri(), status, bodyString()))
+        if (status.successful) Success(Unit) else Failure(asRemoteFailure(this))
     }
 
     private fun uri() = Uri.of("/mp/collect")

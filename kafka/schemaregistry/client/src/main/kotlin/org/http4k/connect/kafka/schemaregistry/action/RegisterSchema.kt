@@ -7,6 +7,7 @@ import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistryMoshi
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistryMoshi.auto
+import org.http4k.connect.kafka.schemaregistry.model.SchemaId
 import org.http4k.connect.kafka.schemaregistry.model.SchemaName
 import org.http4k.connect.kafka.schemaregistry.model.SchemaType
 import org.http4k.connect.kafka.schemaregistry.model.Subject
@@ -24,7 +25,7 @@ data class RegisterSchema(
     val schema: Schema,
     val schemaType: SchemaType,
     val references: List<References>
-) : NonNullAutoMarshalledAction<SchemaId>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<SchemaId> {
+) : NonNullAutoMarshalledAction<RegisteredSchema>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<RegisteredSchema> {
     override fun toRequest() = Request(POST, "/subjects/$subject/versions")
         .with(
             Body.auto<RegisterSchemaVersionReq>(contentType = ContentType.SCHEMA_REGISTRY)
@@ -40,7 +41,7 @@ data class References(
 )
 
 @JsonSerialize
-data class SchemaId(val id: Int)
+data class RegisteredSchema(val id: SchemaId)
 
 @JsonSerialize
 data class RegisterSchemaVersionReq(

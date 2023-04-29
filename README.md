@@ -72,7 +72,7 @@ FakeExample().start()
 ```groovy
 dependencies {
     // install the platform...
-    implementation platform("org.http4k:http4k-connect-bom:3.35.0.0")
+    implementation platform("org.http4k:http4k-connect-bom:3.39.2.0")
 
     // ...then choose a client
     implementation "org.http4k:http4k-connect-amazon-s3"
@@ -102,10 +102,12 @@ dependencies {
     - [InstanceMetadataService](./amazon/instancemetadata) -> `"org.http4k:http4k-connect-amazon-instancemetadata"` / `"org.http4k:http4k-connect-amazon-instancemetadata-fake"`
 - [GitHub V3, App, Callback](./github) -> `"org.http4k:http4k-connect-github"`
 - Google Analytics
-    - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`
     - [GA4](./google/analytics-ga4) -> `"org.http4k:http4k-connect-google-analytics-ga4"` / `"org.http4k:http4k-connect-google-analytic-ga4-fake"`
+    - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`
 - Kafka
     - [Rest Proxy](kafka/rest) -> `"org.http4k:http4k-connect-kafka-rest"` / `"org.http4k:http4k-connect-kafka-rest-fake"`
+- [Mattermost Webhook](./mattermost) -> `"org.http4k:http4k-connect-mattermost"` / `"org.http4k:http4k-connect-mattermost-fake"`
+- [OpenAI](./openai) -> `"org.http4k:http4k-connect-openai"` / `"org.http4k:http4k-connect-openai-fake"`
 - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
 ## Supported Storage backends (named http4k-connect-storage-{technology}>)

@@ -3,7 +3,6 @@ package org.http4k.connect.amazon.sns.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.asList
 import org.http4k.connect.amazon.core.text
@@ -12,7 +11,7 @@ import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.PhoneNumber
 import org.http4k.connect.amazon.sns.model.SNSMessageId
-import org.http4k.core.Method.POST
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 
 @Http4kConnectAction
@@ -45,7 +44,7 @@ data class PublishMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(PublishedMessage.from(response))
-            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

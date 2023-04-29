@@ -3,7 +3,6 @@ package org.http4k.connect.amazon.sqs.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.children
 import org.http4k.connect.amazon.core.firstChild
 import org.http4k.connect.amazon.core.firstChildText
@@ -14,7 +13,7 @@ import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.core.Method.POST
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import java.time.Duration
@@ -71,7 +70,7 @@ data class ReceiveMessage(
                             )
                         }.toList()
                 })
-            else -> Failure(RemoteFailure(POST, Uri.of(""), status, bodyString()))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

@@ -6,6 +6,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Action
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.AwsService
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.ContentType
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -28,7 +29,7 @@ abstract class AwsJsonAction<R : Any>(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
-            else -> Failure(RemoteFailure(POST, uri(), status, bodyString()))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 

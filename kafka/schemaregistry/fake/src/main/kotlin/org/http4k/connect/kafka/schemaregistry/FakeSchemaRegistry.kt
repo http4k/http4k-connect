@@ -5,6 +5,10 @@ import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistrationMode.manual
 import org.http4k.connect.kafka.schemaregistry.endpoints.checkSchemaRegistered
+import org.http4k.connect.kafka.schemaregistry.endpoints.getSchemaById
+import org.http4k.connect.kafka.schemaregistry.endpoints.getSubjectVersion
+import org.http4k.connect.kafka.schemaregistry.endpoints.getSubjectVersions
+import org.http4k.connect.kafka.schemaregistry.endpoints.getSubjects
 import org.http4k.connect.kafka.schemaregistry.endpoints.registerSchema
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
@@ -27,7 +31,11 @@ class FakeSchemaRegistry(
             .then(
                 routes(
                     checkSchemaRegistered(schemas, mode),
-                    registerSchema(schemas)
+                    registerSchema(schemas),
+                    getSubjects(schemas),
+                    getSubjectVersion(schemas),
+                    getSubjectVersions(schemas),
+                    getSchemaById(schemas)
                 )
             ),
         "" bind GET to { _ -> Response(OK).body("{}") }

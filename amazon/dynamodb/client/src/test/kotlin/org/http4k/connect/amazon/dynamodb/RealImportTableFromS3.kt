@@ -14,9 +14,10 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.putObject
 import org.http4k.connect.successValue
+import org.junit.jupiter.api.Disabled
 import java.time.Duration
-import java.time.Instant
 
+@Disabled
 class RealImportTableFromS3Test : ImportTableFromS3Contract() {
     override val aws = configAwsEnvironment()
     override val http = JavaHttpClient()

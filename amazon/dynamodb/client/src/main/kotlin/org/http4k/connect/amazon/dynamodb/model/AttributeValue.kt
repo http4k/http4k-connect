@@ -23,23 +23,21 @@ data class AttributeValue internal constructor(
     val SS: Set<String>? = null
 ): Comparable<AttributeValue> {
 
-    override fun toString(): String {
-        return "AttributeValue(" +
-            when {
-                B != null -> "B=$B"
-                BOOL != null -> "BOOL=$BOOL"
-                BS != null -> "BS=$BS"
-                L != null -> "L=$L"
-                M != null -> "M=$M"
-                N != null -> "N=$N"
-                NS != null -> "NS=$NS"
-                NULL != null -> "NULL=$NULL"
-                S != null -> "S=$S"
-                SS != null -> "SS=$SS"
-                else -> error("illegal!")
-            } +
-            ")"
-    }
+    override fun toString() = "AttributeValue(" +
+        when {
+            B != null -> "B=$B"
+            BOOL != null -> "BOOL=$BOOL"
+            BS != null -> "BS=$BS"
+            L != null -> "L=$L"
+            M != null -> "M=$M"
+            N != null -> "N=$N"
+            NS != null -> "NS=$NS"
+            NULL != null -> "NULL=$NULL"
+            S != null -> "S=$S"
+            SS != null -> "SS=$SS"
+            else -> error("illegal!")
+        } +
+        ")"
 
     override fun hashCode() = when {
         B != null -> B.hashCode()

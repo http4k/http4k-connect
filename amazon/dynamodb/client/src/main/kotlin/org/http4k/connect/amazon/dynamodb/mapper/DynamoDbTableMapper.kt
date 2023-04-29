@@ -125,7 +125,7 @@ class DynamoDbTableMapper<Document : Any, HashKey : Any, SortKey : Any>(
     ): Result<TableDescriptionResponse, RemoteFailure> {
         val attributeDefinitions = primarySchema.attributeDefinitions().toMutableSet()
         val globalIndexes = mutableListOf<GlobalSecondaryIndex>()
-        val localIndexes = mutableListOf<LocalSecondaryIndexes>()
+        val localIndexes = mutableListOf<LocalSecondaryIndex>()
 
         for (schema in secondarySchemas) {
             attributeDefinitions += schema.attributeDefinitions()

@@ -45,6 +45,8 @@ includeSystem("amazon", "systemsmanager")
 includeSystem("example")
 
 includeSystem("github")
+includeSystem("mattermost")
+includeSystem("openai")
 includeSystem("kafka", "rest")
 includeSystem("kafka", "schemaregistry")
 

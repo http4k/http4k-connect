@@ -3,7 +3,6 @@ package org.http4k.connect.amazon.sqs.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.asList
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.textOptional
@@ -11,7 +10,7 @@ import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.core.Method
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import java.time.ZonedDateTime
@@ -46,7 +45,7 @@ data class SendMessage(
     override fun toResult(response: Response) = with(response) {
         when {
             status.successful -> Success(SentMessage.from(response))
-            else -> Failure(RemoteFailure(Method.POST, Uri.of(""), status, bodyString()))
+            else -> Failure(asRemoteFailure(this))
         }
     }
 }

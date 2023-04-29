@@ -3,10 +3,10 @@ package org.http4k.connect.amazon.instancemetadata.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
 import org.http4k.connect.amazon.instancemetadata.InstanceMetadataServiceMoshi
 import org.http4k.connect.amazon.instancemetadata.model.Ec2Credentials
+import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -23,6 +23,6 @@ data class GetSecurityCredentials(private val ec2ProfileName: Ec2ProfileName): E
 
     override fun toResult(response: Response) = when(response.status) {
         Status.OK -> Success(lens(response))
-        else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
+        else -> Failure(asRemoteFailure(response))
     }
 }

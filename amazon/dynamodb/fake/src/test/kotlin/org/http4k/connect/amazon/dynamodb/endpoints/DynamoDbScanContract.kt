@@ -1,18 +1,25 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasElement
 import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.lessThan
+import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
+import org.http4k.connect.amazon.dynamodb.attrSS
+import org.http4k.connect.amazon.dynamodb.batchWriteItem
 import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
+import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
+import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
@@ -55,6 +62,7 @@ abstract class DynamoDbScanContract: DynamoDbSource {
         assertThat(result.items, hasElement(item1))
         assertThat(result.items, hasElement(item2))
         assertThat(result.items, hasElement(item3))
+        assertThat(result.LastEvaluatedKey, absent())
     }
 
     @Test
@@ -69,6 +77,7 @@ abstract class DynamoDbScanContract: DynamoDbSource {
         assertThat(result.items, hasSize(equalTo(2)))
         assertThat(result.items, hasElement(item1))
         assertThat(result.items, hasElement(item2))
+        assertThat(result.LastEvaluatedKey, absent())
     }
 
     @Test
@@ -77,6 +86,51 @@ abstract class DynamoDbScanContract: DynamoDbSource {
 
         assertThat(result.Count, equalTo(2))
         assertThat(result.items, hasSize(equalTo(2)))
+        assertThat(result.LastEvaluatedKey, present())
+    }
+
+    @Test
+    fun `scan multiple pages`() {
+        val page1 = dynamo.scan(
+            TableName = table,
+            Limit = 2
+        ).successValue()
+
+        assertThat(page1.Count, equalTo(2))
+        assertThat(page1.items, hasSize(equalTo(2)))
+        assertThat(page1.LastEvaluatedKey, present())
+
+        val page2 = dynamo.scan(
+            TableName = table,
+            ExclusiveStartKey = page1.LastEvaluatedKey
+        ).successValue()
+
+        assertThat(page2.Count, equalTo(1))
+        page2.items.forEach { assertThat(page1.items, hasElement(it).not()) }
+        assertThat(page2.LastEvaluatedKey, absent())
+    }
+
+    @Test
+    fun `scan with max results for page`() {
+        val numItems = 2_000
+        val payload = (1 .. 1_000).map { "a".repeat(1_000) }.toSet()
+
+        (1..numItems).chunked(25).forEach { chunk ->
+            dynamo.batchWriteItem(
+                mapOf(
+                    table to chunk.map { index ->
+                        ReqWriteItem.Put(Item(attrS of "hash$index", attrSS of payload))
+                    }
+                )
+            ).successValue()
+        }
+
+        val result = dynamo.scan(
+            TableName = table
+        ).successValue()
+
+        assertThat(result.Count, present(lessThan(numItems)))
+        assertThat(result.LastEvaluatedKey, present())
     }
 }
 

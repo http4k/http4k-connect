@@ -27,9 +27,8 @@ val attrSS = Attribute.strings().required("theStrings")
 val attrNL = Attribute.string().optional("theNull")
 val attrMissing = Attribute.string().optional("theMissing")
 
-fun TableName.Companion.sample(prefix: String = "http4k-connect", suffix: String = UUID.randomUUID().toString()): TableName {
-    return TableName.of("$prefix-$suffix")
-}
+fun TableName.Companion.sample(prefix: String = "http4k-connect", suffix: String = UUID.randomUUID().toString()) =
+    TableName.of("$prefix-$suffix")
 
 fun DynamoDb.createTable(
     tableName: TableName,
@@ -45,18 +44,24 @@ fun DynamoDb.createTable(
 fun createItem(
     string: String = "foo",
     number: Int = 123,
-    binary: Base64Blob = Base64Blob.encode("bar")
+    binary: Base64Blob = Base64Blob.encode("bar"),
+    bool: Boolean = true
 ) = Item(
     attrS of string,
-    attrBool of true,
+    attrBool of bool,
     attrB of binary,
     attrBS of setOf(binary),
     attrN of number,
     attrNS of setOf(number, 321),
-    attrL of listOf(AttributeValue.List(listOf(AttributeValue.Str(string))), AttributeValue.Num(number), AttributeValue.Null()),
+    attrL of listOf(
+        AttributeValue.List(listOf(AttributeValue.Str(string))),
+        AttributeValue.Num(number),
+        AttributeValue.Null()
+    ),
     attrM of Item(attrS of string, attrBool of false),
     attrSS of setOf("345", "567"),
     attrU of MyValueType(UUID(0, 1)),
     attrNL of null
 )
 
+fun createMiniItem(string: String, bool: Boolean = true) = Item(attrS of string, attrN of 1, attrBool of bool)

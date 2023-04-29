@@ -16,7 +16,7 @@ jobs:
           # required by release-tag.sh to allow pushing with another credentials so other workflows are triggered
           persist-credentials: false
       - name: Setup Java
-        uses: actions/setup-java@v3.9.0
+        uses: actions/setup-java@v3.10.0
         with:
           distribution: adopt
           java-version: 11
@@ -30,6 +30,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - run: |
+            echo 'GitHub ref: $env:GITHUB_REF'
       - name: Build
         run: ./build-ci.sh
       - name: Cleanup Gradle Cache
@@ -38,6 +40,13 @@ jobs:
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
+      - name: Tag automerge branch
+        if: ${{ startsWith(env.GITHUB_REF, 'auto') && github.event_name == 'pull_request' }}
+        uses: TimonVS/pr-labeler-action@v3
+        with:
+            configuration-path: .github/pr-labeler.yml
+        env:
+            GITHUB_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
       - name: Release (if required)
         run: |
           git config user.name github-actions
@@ -47,10 +56,3 @@ jobs:
         if: github.ref == 'refs/heads/master'
         env:
           GH_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
-      - name: Tag automerge branch
-        if: ${{ startsWith(env.GITHUB_REF, 'refs/heads/auto') && github.event_name == 'pull_request' }}
-        uses: TimonVS/pr-labeler-action@v3
-        with:
-          configuration-path: .github/pr-labeler.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}

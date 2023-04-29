@@ -3,6 +3,46 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.39.2.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-amazon-dynamodb** - Helper methods for creating sets and lists of value types.
+
+### v3.39.1.0
+- **http4k-connect-openai** - Set a sensible limit on the number of max tokens in chat completions.
+
+### v3.39.0.1
+- **http4k-connect-kakfa-schemaregistry*** - [Fix] Don't break on registering the same schema.
+
+### v3.39.0.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-mattermost*** - [New module!] Initial support for a couple of actions. H/T @tkint
+- **http4k-connect-kakfa-schemaregistry*** - [Breaking] Added some actions and tightened up types. Breaks are purely primitive -> ValueType.
+
+### v3.38.1.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-*** - New release process.
+
+### v3.38.0.1
+- **http4k-connect-*** - Add missing JsonSerializable annotation
+
+### v3.38.0.0
+- **http4k-connect-*** - Upgrade dependencies.
+
+### v3.37.1.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-amazon-dynamo-fake** - Dynamodb query scan pagination. H/T @oharaandrew314
+
+### v3.37.0.1
+- **http4k-connect-amazon-dynamo*** - Fixed `copy()` so that it does not stop on first item.
+- 
+### v3.37.0.0
+- **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.8.20
+- **http4k-connect-amazon-dynamo*** - Added `copy()` operation.
+
+### v3.36.0.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-kms-fake-*** - Real fake keys are now used for signing and verifying bytes.
+
 ### v3.35.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 
