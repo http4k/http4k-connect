@@ -7,6 +7,3 @@ import java.time.OffsetDateTime
 @JvmName("valueOffsetDateTime")
 fun <VALUE : Value<OffsetDateTime>> Attribute.Companion.value(vf: ValueFactory<VALUE, OffsetDateTime>) =
     offsetDateTime().value(vf)
-
-@JvmName("valueListOffsetDateTime")
-fun <VALUE : Value<OffsetDateTime>> Attribute.Companion.list(vf: ValueFactory<VALUE, OffsetDateTime>) = vf.stringList()

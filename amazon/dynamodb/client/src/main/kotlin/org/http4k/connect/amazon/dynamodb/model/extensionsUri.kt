@@ -6,6 +6,3 @@ import org.http4k.core.Uri
 
 @JvmName("valueUri")
 fun <VALUE : Value<Uri>> Attribute.Companion.value(vf: ValueFactory<VALUE, Uri>) = uri().value(vf)
-
-@JvmName("valueListUri")
-fun <VALUE : Value<Uri>> Attribute.Companion.list(vf: ValueFactory<VALUE, Uri>) = vf.stringList()

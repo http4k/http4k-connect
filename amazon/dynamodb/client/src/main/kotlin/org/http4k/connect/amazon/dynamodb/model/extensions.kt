@@ -58,3 +58,4 @@ fun <T> Attribute.Companion.map(next: BiDiMapping<Item, T>) = map().map(next)
 
 fun <P : Any, VALUE : Value<P>> Attribute.AttrLensSpec<P>.value(vf: ValueFactory<VALUE, P>) = map(vf::of, vf::unwrap)
 
+fun <T : Any, VALUE : Value<T>> Attribute.Companion.list(vf: ValueFactory<VALUE, T>) = vf.stringList()

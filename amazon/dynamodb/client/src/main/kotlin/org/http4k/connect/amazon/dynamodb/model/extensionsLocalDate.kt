@@ -7,6 +7,3 @@ import java.time.LocalDate
 @JvmName("valueLocalDate")
 fun <VALUE : Value<LocalDate>> Attribute.Companion.value(vf: ValueFactory<VALUE, LocalDate>) =
     localDate().value(vf)
-
-@JvmName("valueListLocalDate")
-fun <VALUE : Value<LocalDate>> Attribute.Companion.list(vf: ValueFactory<VALUE, LocalDate>) = vf.stringList()
