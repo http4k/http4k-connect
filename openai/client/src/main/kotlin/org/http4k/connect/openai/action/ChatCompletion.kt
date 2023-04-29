@@ -39,10 +39,10 @@ data class ChatCompletion(
     val user: User? = null
 ) : NonNullAutoMarshalledAction<CompletionResponse>(kClass(), OpenAIMoshi), OpenAIAction<CompletionResponse> {
 
-    constructor(model: ModelName, messages: List<Message>) : this(
+    constructor(model: ModelName, messages: List<Message>, max_tokens: Int = 16) : this(
         model,
         messages,
-        max_tokens = 16,
+        max_tokens = max_tokens,
         temperature = 1.0,
         top_p = 1.0,
         n = 1,
