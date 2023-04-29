@@ -32,7 +32,7 @@ data class ChatCompletion(
     val top_p: Double = 1.0,
     val n: Int = 1,
     val stream: Boolean = false,
-    val stop: Any?,
+    val stop: Any? = null,
     val presence_penalty: Double = 0.0,
     val frequency_penalty: Double = 0.0,
     val logit_bias: Map<TokenId, Double>? = null,
