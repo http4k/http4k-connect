@@ -47,8 +47,23 @@ private data class ExpiringCredentials(val credentials: AwsCredentials, val expi
     }
 }
 
-// TODO support web identity
+@Deprecated("Renamed", ReplaceWith("StsProfile(credentialsPath, profileName, getStsClient, clock, gracePeriod)"))
 fun CredentialsChain.Companion.Profile(
+    credentialsPath: Path,
+    profileName: ProfileName,
+    getStsClient: (AwsCredentials) -> STS,
+    clock: Clock = Clock.systemUTC(),
+    gracePeriod: Duration = Duration.ofSeconds(300),
+): CredentialsChain = StsProfile(credentialsPath, profileName, getStsClient, clock, gracePeriod)
+
+@Deprecated("Renamed", ReplaceWith("StsProfile(env)"))
+fun CredentialsChain.Companion.Profile(env: Environment = Environment.ENV): CredentialsChain = StsProfile(env)
+
+@Deprecated("Renamed", ReplaceWith("StsProfile(env)"))
+fun CredentialsProvider.Companion.Profile(env: Environment = Environment.ENV): CredentialsProvider = StsProfile(env)
+
+// TODO support web identity
+fun CredentialsChain.Companion.StsProfile(
     credentialsPath: Path,
     profileName: ProfileName,
     getStsClient: (AwsCredentials) -> STS,
@@ -83,14 +98,11 @@ fun CredentialsChain.Companion.Profile(
     }
 }
 
-fun CredentialsChain.Companion.Profile(env: Environment) = CredentialsChain.Profile(
+fun CredentialsChain.Companion.StsProfile(env: Environment = Environment.ENV) = CredentialsChain.StsProfile(
     credentialsPath = AWS_CREDENTIAL_PROFILES_FILE(env),
     profileName = AWS_PROFILE(env),
     getStsClient = { credentials -> STS.Http(env, credentialsProvider = { credentials }) }
 )
 
-fun CredentialsProvider.Companion.Profile(env: Environment) = CredentialsChain.Profile(
-    credentialsPath = AWS_CREDENTIAL_PROFILES_FILE(env),
-    profileName = AWS_PROFILE(env),
-    getStsClient = { credentials -> STS.Http(env, credentialsProvider = { credentials }) }
-).provider()
+fun CredentialsProvider.Companion.StsProfile(env: Environment = Environment.ENV) =
+    CredentialsChain.StsProfile(env).provider()
