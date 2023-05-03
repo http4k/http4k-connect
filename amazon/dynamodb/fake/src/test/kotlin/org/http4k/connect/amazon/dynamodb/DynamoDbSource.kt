@@ -6,7 +6,6 @@ import org.http4k.connect.assumeDockerDaemonRunning
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters
-import org.http4k.filter.debug
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -18,7 +17,7 @@ class FakeDynamoDbSource: DynamoDbSource {
     override val dynamo = DynamoDb.Http(
         fakeAwsEnvironment.region,
         { fakeAwsEnvironment.credentials },
-        FakeDynamoDb().debug()
+        FakeDynamoDb()
     )
 }
 
@@ -36,9 +35,5 @@ class LocalDynamoDbSource: DynamoDbSource {
         .withExposedPorts(8000)
         .also { it.start() }
 
-    override val dynamo = DynamoDb.Http(
-        fakeAwsEnvironment.region,
-        { fakeAwsEnvironment.credentials },
-        http.debug()
-    )
+    override val dynamo = DynamoDb.Http(fakeAwsEnvironment.region, { fakeAwsEnvironment.credentials }, http)
 }

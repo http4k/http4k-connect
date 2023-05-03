@@ -15,6 +15,7 @@ import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.textOptional
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sts.STSAction
 import org.http4k.connect.amazon.sts.model.RoleId
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED

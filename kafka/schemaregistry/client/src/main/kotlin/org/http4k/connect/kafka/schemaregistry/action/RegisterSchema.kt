@@ -5,6 +5,7 @@ import org.apache.avro.Schema
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
+import org.http4k.connect.kafka.schemaregistry.SchemaRegistryAction
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistryMoshi
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistryMoshi.auto
 import org.http4k.connect.kafka.schemaregistry.model.SchemaId
@@ -25,7 +26,8 @@ data class RegisterSchema(
     val schema: Schema,
     val schemaType: SchemaType,
     val references: List<References>
-) : NonNullAutoMarshalledAction<RegisteredSchema>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<RegisteredSchema> {
+) : NonNullAutoMarshalledAction<RegisteredSchema>(kClass(), SchemaRegistryMoshi),
+    SchemaRegistryAction<RegisteredSchema> {
     override fun toRequest() = Request(POST, "/subjects/$subject/versions")
         .with(
             Body.auto<RegisterSchemaVersionReq>(contentType = ContentType.SCHEMA_REGISTRY)

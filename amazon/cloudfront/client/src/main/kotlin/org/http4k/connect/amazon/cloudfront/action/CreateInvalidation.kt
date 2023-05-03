@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.cloudfront.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.cloudfront.CloudFrontAction
 import org.http4k.connect.amazon.cloudfront.model.CallerReference
 import org.http4k.connect.amazon.cloudfront.model.DistributionId
 import org.http4k.connect.asRemoteFailure

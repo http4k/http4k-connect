@@ -3,6 +3,7 @@ package org.http4k.connect.kafka.schemaregistry.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.NullableAutoMarshalledAction
 import org.http4k.connect.kClass
+import org.http4k.connect.kafka.schemaregistry.SchemaRegistryAction
 import org.http4k.connect.kafka.schemaregistry.SchemaRegistryMoshi
 import org.http4k.connect.kafka.schemaregistry.model.Subject
 import org.http4k.connect.kafka.schemaregistry.model.Version

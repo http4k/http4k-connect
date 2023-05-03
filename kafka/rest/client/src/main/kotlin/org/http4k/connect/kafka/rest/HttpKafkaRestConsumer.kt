@@ -2,9 +2,10 @@ package org.http4k.connect.kafka.rest
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.mapFailure
-import org.http4k.connect.kafka.rest.action.consumer.KafkaRestConsumerAction
-import org.http4k.connect.kafka.rest.model.Consumer
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
+import org.http4k.connect.kafka.rest.v2.KafkaRestConsumerAction
+import org.http4k.connect.kafka.rest.v2.createConsumer
+import org.http4k.connect.kafka.rest.v2.model.Consumer
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -21,10 +22,9 @@ fun KafkaRestConsumer.Companion.Http(
     http: HttpHandler
 ) = object : KafkaRestConsumer {
 
-    private val http = BasicAuth(credentials)
-        .then(http)
+    private val http = BasicAuth(credentials).then(http)
 
-    override fun <R : Any> invoke(action: KafkaRestConsumerAction<R>) = action.toResult(
+    override fun <R : Any?> invoke(action: KafkaRestConsumerAction<R>) = action.toResult(
         this.http(action.toRequest().let { it.uri(baseUri.extend(it.uri)) })
     )
 }

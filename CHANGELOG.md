@@ -3,6 +3,12 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.40.0.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-*** - Support for multiple action types in a single module.
+- **http4k-connect-*** - [Deprecation] Action types have been moved to super-package. Custom Actions will need to be updated.
+- **http4k-connect-kakfa-rest*** - [Breaking] Rearrangement of action modules and start to support V3 endpoints.
+
 ### v3.39.2.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-dynamodb** - Helper methods for creating sets and lists of value types.

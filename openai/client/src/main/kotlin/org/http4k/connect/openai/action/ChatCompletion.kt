@@ -10,6 +10,7 @@ import org.http4k.connect.openai.Content
 import org.http4k.connect.openai.ModelName
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.ObjectType.Companion.ChatCompletion
+import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.Timestamp

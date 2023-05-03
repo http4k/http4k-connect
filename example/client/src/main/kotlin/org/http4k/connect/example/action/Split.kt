@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
+import org.http4k.connect.example.ExampleAction
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response

@@ -7,6 +7,7 @@ import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
 import org.http4k.connect.openai.ObjectId
 import org.http4k.connect.openai.ObjectType
+import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.OpenAIOrg
 import org.http4k.connect.openai.Timestamp

@@ -2,7 +2,6 @@ package org.http4k.connect.github.api
 
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.github.GitHubToken
-import org.http4k.connect.github.api.action.GitHubAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

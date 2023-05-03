@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.kms.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
+import org.http4k.connect.amazon.kms.KMSAction
 import org.http4k.connect.amazon.kms.model.KeyEntry
 import se.ansman.kotshi.JsonSerializable
 

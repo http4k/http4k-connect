@@ -22,7 +22,7 @@ class Http4kConnectAdapterKspProcessor(
             .getSymbolsWithAnnotation(Http4kConnectAdapter::class.qualifiedName!!)
             .forEach {
                 it.accept(Http4kConnectAdapterVisitor { logger.info(it.toString()) }, allActions)
-                    .writeTo(codeGenerator = codeGenerator, aggregating = false)
+                    .forEach { it.writeTo(codeGenerator = codeGenerator, aggregating = false) }
             }
         return emptyList()
     }

@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.cognito.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.cognito.CognitoAction
 import org.http4k.connect.amazon.cognito.model.AccountRecoverySetting
 import org.http4k.connect.amazon.cognito.model.AdminCreateUserConfig
 import org.http4k.connect.amazon.cognito.model.AliasAttribute

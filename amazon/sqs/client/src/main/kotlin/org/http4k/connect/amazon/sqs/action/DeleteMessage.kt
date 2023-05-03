@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.sqs.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response

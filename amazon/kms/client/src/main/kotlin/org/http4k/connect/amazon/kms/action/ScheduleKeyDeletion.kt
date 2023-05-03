@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.kms.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.kms.KMSAction
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

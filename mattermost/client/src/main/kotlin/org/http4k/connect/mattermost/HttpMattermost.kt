@@ -1,7 +1,6 @@
 package org.http4k.connect.mattermost
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.mattermost.action.MattermostAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

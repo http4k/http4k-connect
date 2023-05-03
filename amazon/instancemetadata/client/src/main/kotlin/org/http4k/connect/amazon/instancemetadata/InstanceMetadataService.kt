@@ -1,9 +1,8 @@
 package org.http4k.connect.amazon.instancemetadata
 
+import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.instancemetadata.action.Ec2MetadataAction
-import dev.forkhandles.result4k.Result
 
 @Http4kConnectAdapter
 interface InstanceMetadataService {

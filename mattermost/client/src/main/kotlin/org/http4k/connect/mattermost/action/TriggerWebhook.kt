@@ -4,6 +4,7 @@ package org.http4k.connect.mattermost.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.PlainTextAction
+import org.http4k.connect.mattermost.MattermostAction
 import org.http4k.connect.mattermost.MattermostMoshi.autoBody
 import org.http4k.connect.mattermost.model.Attachment
 import org.http4k.connect.mattermost.model.EmojiName

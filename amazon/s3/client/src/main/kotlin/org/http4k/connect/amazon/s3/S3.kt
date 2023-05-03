@@ -6,8 +6,6 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsServiceCompanion
 import org.http4k.connect.amazon.s3.action.GetObject
 import org.http4k.connect.amazon.s3.action.PutObject
-import org.http4k.connect.amazon.s3.action.S3Action
-import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
 import java.io.InputStream
 

@@ -7,6 +7,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.model.Ec2ProfileName
 import org.http4k.connect.amazon.ec2credentials.Ec2Credentials
+import org.http4k.connect.amazon.ec2credentials.Ec2CredentialsAction
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadata
 import org.http4k.connect.amazon.ec2credentials.Ec2InstanceMetadataMoshi
 import org.http4k.connect.asRemoteFailure

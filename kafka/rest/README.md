@@ -1,7 +1,11 @@
 # Kafka Rest Proxy
 
-The main `KafkaRest` connector provides the following Actions:
+There are 2 distinct APIs in the Rest proxy:
 
+# v2
+
+The main `KafkaRest` connector provides the following v2 Actions:
+- 
 - CreateConsumer
 - DeleteConsumer
 - GetOffsets
@@ -72,6 +76,12 @@ kafkaRest.produceMessages(Topic.of("topic"), Records.Json(listOf(Record("123", "
 To keep things simple with respect to partition allocation and rebalancing, the above code will fetch the available
 topics on each send to the REST proxy using the `/topics/$topic/partitions` call. This is obviously not very efficient,
 but can be reimplemented as needed using any caching strategy which you might wish to implement.
+
+# v3
+
+The main `KafkaRest` connector provides the following v2 Actions:
+
+- none
 
 ## # Fake
 The Fake provides the following endpoints, which is enough for basic consumer lifecycle and production and consumption

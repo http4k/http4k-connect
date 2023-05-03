@@ -1,6 +1,5 @@
 package org.http4k.connect.kafka.schemaregistry
 
-import org.http4k.connect.kafka.schemaregistry.action.SchemaRegistryAction
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri

@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.cognito.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.cognito.CognitoAction
 import org.http4k.connect.amazon.cognito.model.AccessToken
 import org.http4k.connect.amazon.cognito.model.Session
 import org.http4k.connect.amazon.cognito.model.UserCode

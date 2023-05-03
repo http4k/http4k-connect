@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.github.api.GitHub
 import org.http4k.connect.github.api.Http
-import org.http4k.connect.github.api.action.GitHubAction
+import org.http4k.connect.github.api.GitHubAction
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response

@@ -17,11 +17,17 @@ import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.ConsumerRequestTimeout
 import org.http4k.connect.kafka.rest.model.Offset
 import org.http4k.connect.kafka.rest.model.PartitionId
-import org.http4k.connect.kafka.rest.model.Record
-import org.http4k.connect.kafka.rest.model.Records
 import org.http4k.connect.kafka.rest.model.SchemaId
 import org.http4k.connect.kafka.rest.model.Topic
+import org.http4k.connect.kafka.rest.v2.model.Record
+import org.http4k.connect.kafka.rest.v2.model.Records
+import org.http4k.connect.kafka.rest.v3.model.ClusterId
+import org.http4k.connect.kafka.rest.v3.model.RecordData
+import org.http4k.connect.kafka.rest.v3.model.RecordData.Binary
+import org.http4k.connect.kafka.rest.v3.model.RecordData.Json
+import org.http4k.connect.kafka.rest.v3.model.ResourceName
 import org.http4k.connect.model.Base64Blob
+import org.http4k.core.ContentType.Companion.APPLICATION_JSON
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.IsAnInstanceOfAdapter
 import org.http4k.format.ListAdapter
@@ -39,7 +45,8 @@ object KafkaRestMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(KafkaRestJsonAdapterFactory)
         .add(ListAdapter)
-        .add(SimpleMoshiAdapterFactory("org.http4k.connect.kafka.rest.model.Records" to { RecordsJsonAdapter(it) }))
+        .add(SimpleMoshiAdapterFactory(Records::class.qualifiedName!! to { RecordsJsonAdapter(it) }))
+        .add(SimpleMoshiAdapterFactory(RecordData::class.qualifiedName!! to { RecordDataJsonAdapter(it) }))
         .add(GenericContainerAdapter)
         .add(object : IsAnInstanceOfAdapter<GenericContainer>(GenericContainer::class) {})
         .add(MapAdapter)
@@ -47,6 +54,8 @@ object KafkaRestMoshi : ConfigurableMoshi(
         .withStandardMappings()
         .value(Base64Blob)
         .value(BrokerId)
+        .value(ResourceName)
+        .value(ClusterId)
         .value(ConsumerGroup)
         .value(ConsumerInstance)
         .text(BiDiMapping(ConsumerRequestTimeout::class.java,
@@ -58,7 +67,8 @@ object KafkaRestMoshi : ConfigurableMoshi(
         .value(PartitionId)
         .value(SchemaId)
         .value(Topic)
-        .done()
+        .done(),
+    defaultContentType = APPLICATION_JSON.withNoDirectives()
 )
 
 @KotshiJsonAdapterFactory
@@ -66,9 +76,7 @@ object KafkaRestJsonAdapterFactory : JsonAdapter.Factory by KotshiKafkaRestJsonA
 
 object GenericContainerAdapter : JsonAdapter<GenericContainer>() {
     @FromJson
-    override fun fromJson(reader: JsonReader): GenericContainer? {
-        TODO("Not yet implemented")
-    }
+    override fun fromJson(reader: JsonReader): GenericContainer? = throw UnsupportedOperationException()
 
     @ToJson
     override fun toJson(writer: JsonWriter, value: GenericContainer?) {
@@ -110,7 +118,27 @@ class RecordsJsonAdapter(moshi: Moshi) : JsonAdapter<Records>() {
             .endObject()
     }
 
-    override fun fromJson(reader: JsonReader): Records? {
-        TODO("Not yet implemented")
+    override fun fromJson(reader: JsonReader) = throw UnsupportedOperationException()
+}
+
+class RecordDataJsonAdapter(private val moshi: Moshi) : JsonAdapter<RecordData<*>>() {
+
+    override fun toJson(writer: JsonWriter, `value`: RecordData<*>?) {
+        if (`value` == null) {
+            writer.nullValue()
+            return
+        }
+        writer
+            .beginObject()
+            .name("type").value(`value`.type.name)
+            .name("data").apply {
+                when (`value`) {
+                    is Binary -> value(`value`.data.value)
+                    is Json -> jsonValue(`value`.data)
+                }
+            }
+            .endObject()
     }
+
+    override fun fromJson(reader: JsonReader): RecordData<*> = throw UnsupportedOperationException()
 }
