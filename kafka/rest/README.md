@@ -137,7 +137,7 @@ partitions on each send to the REST proxy using the `/kafka/v3/clusters/$id/topi
 obviously not very efficient,
 but can be reimplemented as needed using any caching strategy which you might wish to implement.
 
-## # Fake
+## Fake
 
 The Fake provides the all of the above endpoints listed for v2 and v3, which is enough for basic consumer lifecycle and
 production and consumption
