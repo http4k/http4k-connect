@@ -11,10 +11,13 @@ import org.http4k.connect.kafka.rest.v3.KafkaRestV3Action
 import org.http4k.connect.kafka.rest.v3.model.ClusterId
 import org.http4k.connect.kafka.rest.v3.model.Record
 import org.http4k.connect.kafka.rest.v3.model.RecordFormat
+import org.http4k.core.ContentType
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.core.with
+import org.http4k.lens.Header
 import se.ansman.kotshi.JsonSerializable
 import java.time.Instant
 
@@ -22,6 +25,7 @@ import java.time.Instant
 data class ProduceRecords(val id: ClusterId, val topic: Topic, val records: List<Record>) :
     NullableKafkaRestAction<Array<ProducedRecord>> (kClass()), KafkaRestV3Action<Array<ProducedRecord>?> {
     override fun toRequest() = Request(POST, "/kafka/v3/clusters/$id/topics/$topic/records")
+        .with(Header.CONTENT_TYPE of ContentType.APPLICATION_JSON.withNoDirectives())
         .body(records.joinToString("\n", transform = ::asFormatString))
 
     override fun toResult(response: Response) =

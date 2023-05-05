@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.40.1.2
+- **http4k-connect-kakfa-rest*** - Correct content type for producing records to Kafka v3.
+
 ### v3.40.1.1
 - **http4k-connect-kakfa-rest*** - Add `produceRecordsWithPartitions()` for production and partitioning in V3 API.
 
