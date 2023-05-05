@@ -141,7 +141,7 @@ interface KafkaRestV3Contract {
                 .map { it.key to it.value },
             equalTo(
                 listOf(
-                    "foo2" to mapOf("bar2" to "foo2")
+                    "foo1" to mapOf("bar1" to "foo1")
                 )
             )
         )
