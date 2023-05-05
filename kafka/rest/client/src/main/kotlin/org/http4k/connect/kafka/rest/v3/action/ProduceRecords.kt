@@ -29,7 +29,7 @@ data class ProduceRecords(val id: ClusterId, val topic: Topic, val records: List
         .body(records.joinToString("\n", transform = ::asFormatString))
 
     override fun toResult(response: Response) =
-        super.toResult(response.body("[" + response.bodyString().replace('\n', ',') + "]"))
+        super.toResult(response.body("[" + response.bodyString().trimEnd('\n').replace('\n', ',') + "]"))
 }
 
 @JsonSerializable

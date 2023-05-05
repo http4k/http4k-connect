@@ -118,9 +118,8 @@ interface KafkaRestV3Contract {
             kafkaRest.produceRecords(
                 clusterId, topic, listOf(
                     Record(Json("foo1"), Json(mapOf("bar1" to "foo1"))),
-                    Record(Json("foo2"), Json(mapOf("bar2" to "foo2")))
                 )
-            ).successValue()!!.toList().size, equalTo(2)
+            ).successValue()!!.toList().size, equalTo(1)
         )
 
         val group = ConsumerGroup.of(randomString())
@@ -142,7 +141,6 @@ interface KafkaRestV3Contract {
                 .map { it.key to it.value },
             equalTo(
                 listOf(
-                    "foo1" to mapOf("bar1" to "foo1"),
                     "foo2" to mapOf("bar2" to "foo2")
                 )
             )

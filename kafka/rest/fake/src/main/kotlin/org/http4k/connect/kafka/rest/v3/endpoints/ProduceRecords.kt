@@ -47,5 +47,5 @@ fun produceRecords(topics: Storage<List<SendRecord>>) =
 
         Response(OK)
             .with(Header.CONTENT_TYPE of APPLICATION_JSON.withNoDirectives())
-            .body(produced.joinToString("\n", transform = ::asFormatString))
+            .body(produced.joinToString("\n", transform = ::asFormatString) + "\n")
     }
