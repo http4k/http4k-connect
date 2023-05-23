@@ -4,7 +4,6 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.kClass
 import org.http4k.connect.kafka.rest.action.NonNullKafkaRestAction
 import org.http4k.connect.kafka.rest.v2.KafkaRestConsumerAction
-import org.http4k.connect.kafka.rest.v2.KafkaRestV2Action
 import org.http4k.connect.kafka.rest.v2.model.RecordFormat
 import org.http4k.connect.kafka.rest.v2.model.TopicRecord
 import org.http4k.core.Method.GET

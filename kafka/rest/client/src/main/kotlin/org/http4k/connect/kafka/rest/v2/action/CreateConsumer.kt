@@ -8,7 +8,6 @@ import org.http4k.connect.kafka.rest.model.ConsumerGroup
 import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.v2.KafkaRestV2Action
 import org.http4k.connect.kafka.rest.v2.model.Consumer
-import org.http4k.connect.kafka.rest.v2.model.TopicRecord
 import org.http4k.core.Body
 import org.http4k.core.ContentType
 import org.http4k.core.KAFKA_JSON_V2

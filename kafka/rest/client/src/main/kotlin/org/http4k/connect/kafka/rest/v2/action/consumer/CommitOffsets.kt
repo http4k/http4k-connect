@@ -5,7 +5,6 @@ import org.http4k.connect.kClass
 import org.http4k.connect.kafka.rest.KafkaRestMoshi.auto
 import org.http4k.connect.kafka.rest.action.NonNullKafkaRestAction
 import org.http4k.connect.kafka.rest.v2.KafkaRestConsumerAction
-import org.http4k.connect.kafka.rest.v2.KafkaRestV2Action
 import org.http4k.connect.kafka.rest.v2.model.CommitOffset
 import org.http4k.connect.kafka.rest.v2.model.CommitOffsetsSet
 import org.http4k.core.Body
