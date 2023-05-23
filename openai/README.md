@@ -4,6 +4,7 @@ The OpenAI connector provides the following Actions:
 
 * GetModels
 * ChatCompletion
+* CreateEmbeddings
 * GenerateImage
 
 New actions can be created easily using the same transport.

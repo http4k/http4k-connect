@@ -26,6 +26,7 @@ class FakeOpenAI(
                     routes(
                         getModels(models),
                         chatCompletion(clock, completionGenerators),
+                        createEmbeddings(models),
                         generateImage(clock, baseUri),
                     )
                 ),

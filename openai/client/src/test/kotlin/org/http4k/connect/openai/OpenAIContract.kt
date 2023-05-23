@@ -3,6 +3,7 @@ package org.http4k.connect.openai
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
+import org.http4k.connect.openai.ModelName.Companion.TEXT_EMBEDDING_ADA_002
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
@@ -43,6 +44,15 @@ interface OpenAIContract {
         )
     }
 
+    @Test
+    fun `get embeddings`() {
+        assertThat(
+            openAi.createEmbeddings(TEXT_EMBEDDING_ADA_002,
+                listOf(Content.of("What is your favourite colour?"))
+            ).successValue().model,
+            equalTo(TEXT_EMBEDDING_ADA_002)
+        )
+    }
 
     @Test
     fun `can generate image`(approver: Approver) {

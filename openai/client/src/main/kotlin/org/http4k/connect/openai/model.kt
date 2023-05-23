@@ -24,6 +24,7 @@ class ObjectType private constructor(value: String) : StringValue(value) {
         val List = ObjectType.of("list")
         val Model = ObjectType.of("model")
         val ChatCompletion = ObjectType.of("chat.completion")
+        val Embedding = ObjectType.of("embedding")
         val ModelPermission = ObjectType.of("model_permission")
     }
 }
@@ -44,6 +45,7 @@ class ModelName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ModelName>(::ModelName) {
         val GPT4 = ModelName.of("gpt-4")
         val GPT3_5 = ModelName.of("gpt-3.5-turbo")
+        val TEXT_EMBEDDING_ADA_002 = ModelName.of("text-embedding-ada-002")
     }
 }
 
@@ -69,3 +71,4 @@ class Content private constructor(value: String) : StringValue(value) {
 class CompletionId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<CompletionId>(::CompletionId)
 }
+

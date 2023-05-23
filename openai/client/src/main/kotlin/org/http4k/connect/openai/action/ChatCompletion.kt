@@ -69,12 +69,6 @@ data class Choice(
     val index: Int, val message: Message, val finish_reason: String
 )
 
-@JsonSerializable
-data class Usage(
-    val prompt_tokens: Int,
-    val completion_tokens: Int,
-    val total_tokens: Int
-)
 
 @JsonSerializable
 data class CompletionResponse(
