@@ -2,6 +2,7 @@ package org.http4k.connect.openai
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.startsWith
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
 import org.http4k.connect.openai.ModelName.Companion.TEXT_EMBEDDING_ADA_002
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
@@ -39,8 +40,8 @@ interface OpenAIContract {
                     Message(User, Content.of("What is your favourite colour?"))
                 ),
                 1000
-            ).successValue().model,
-            equalTo(GPT3_5)
+            ).successValue().model.value,
+            startsWith("gpt-3.5-turbo")
         )
     }
 
@@ -49,8 +50,8 @@ interface OpenAIContract {
         assertThat(
             openAi.createEmbeddings(TEXT_EMBEDDING_ADA_002,
                 listOf(Content.of("What is your favourite colour?"))
-            ).successValue().model,
-            equalTo(TEXT_EMBEDDING_ADA_002)
+            ).successValue().model.value,
+            startsWith("text-embedding-ada-002")
         )
     }
 
