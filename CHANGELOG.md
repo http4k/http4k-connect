@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v3.40.3.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-openai** - Add CreateEmbeddings call.
+
 ### v3.40.2.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-kms-fake*** - [Fix] Encryption.decryption works with binary messages
