@@ -1,0 +1,47 @@
+package myplugin.oauth
+
+import myplugin.InMemoryStorageProvider
+import myplugin.oauth.OAuthPluginSettings.COOKIE_DOMAIN
+import myplugin.oauth.OAuthPluginSettings.EMAIL
+import myplugin.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
+import myplugin.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
+import myplugin.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
+import org.http4k.cloudnative.env.Environment
+import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.connect.openai.auth.OAuth
+import org.http4k.connect.openai.auth.oauth.SecureStrings
+import org.http4k.connect.openai.auth.oauth.SecureStrings.Companion.Random
+import org.http4k.connect.openai.auth.oauth.StorageOAuthMachinery
+import org.http4k.connect.openai.auth.oauth.StorageProvider
+import org.http4k.connect.openai.info
+import org.http4k.connect.openai.model.AuthedSystem.Companion.openai
+import org.http4k.connect.openai.openAiPlugin
+import java.time.Clock
+import java.time.Clock.systemUTC
+import java.time.Duration.ofMinutes
+
+/**
+ * Main creation pattern for an OpenAI plugin
+ */
+fun OAuthPlugin(
+    env: Environment = ENV,
+    clock: Clock = systemUTC(),
+    strings: SecureStrings = Random(),
+    storageProvider: StorageProvider = InMemoryStorageProvider
+) = openAiPlugin(
+    info(
+        apiVersion = "1.0",
+        humanDescription = "oauthplugin" to "my oauth plugin",
+        pluginUrl = PLUGIN_BASE_URL(env),
+        contactEmail = EMAIL(env),
+    ),
+    OAuth(
+        PLUGIN_BASE_URL(env),
+        mapOf(openai to OPENAI_VERIFICATION_TOKEN(env)),
+        OPEN_AI_CLIENT_CREDENTIALS(env),
+        StorageOAuthMachinery(storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock),
+        clock,
+        ""
+    ),
+    greetingEndpoint()
+)

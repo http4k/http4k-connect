@@ -28,40 +28,43 @@ includeStorage("s3")
 includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
-includeSystem("amazon", "cloudfront")
-includeSystem("amazon", "cognito")
-includeSystem("amazon", "containercredentials")
-includeSystem("amazon", "ec2credentials")
-includeSystem("amazon", "instancemetadata")
-includeSystem("amazon", "dynamodb")
-includeSystem("amazon", "kms")
-includeSystem("amazon", "lambda")
-includeSystem("amazon", "s3")
-includeSystem("amazon", "secretsmanager")
-includeSystem("amazon", "sns")
-includeSystem("amazon", "ses")
-includeSystem("amazon", "sqs")
-includeSystem("amazon", "sts")
-includeSystem("amazon", "systemsmanager")
+includeVendorSystem("amazon", "cloudfront")
+includeVendorSystem("amazon", "cognito")
+includeVendorSystem("amazon", "containercredentials")
+includeVendorSystem("amazon", "ec2credentials")
+includeVendorSystem("amazon", "instancemetadata")
+includeVendorSystem("amazon", "dynamodb")
+includeVendorSystem("amazon", "kms")
+includeVendorSystem("amazon", "lambda")
+includeVendorSystem("amazon", "s3")
+includeVendorSystem("amazon", "secretsmanager")
+includeVendorSystem("amazon", "sns")
+includeVendorSystem("amazon", "ses")
+includeVendorSystem("amazon", "sqs")
+includeVendorSystem("amazon", "sts")
+includeVendorSystem("amazon", "systemsmanager")
 includeSystem("example")
 
 includeSystem("github")
 includeSystem("mattermost")
-includeSystem("openai")
-includeSystem("kafka", "rest")
-includeSystem("kafka", "schemaregistry")
+includeSystem("openai", "plugin")
+includeVendorSystem("kafka", "rest")
+includeVendorSystem("kafka", "schemaregistry")
 
 includeCommon("google-analytics-core", "google/analytics-core")
-includeSystem("google", "analytics-ua")
-includeSystem("google", "analytics-ga4")
+includeVendorSystem("google", "analytics-ua")
+includeVendorSystem("google", "analytics-ga4")
 
-fun includeSystem(system: String) {
+fun includeSystem(system: String, vararg extraModules: String) {
     val projectName = "http4k-connect-$system"
     includeWithName(projectName, "$system/client")
     includeWithName("$projectName-fake", "$system/fake")
+    extraModules.forEach {
+        includeWithName("$projectName-$it", "$system/$it")
+    }
 }
 
-fun includeSystem(owner: String, system: String) {
+fun includeVendorSystem(owner: String, system: String) {
     val projectName = "http4k-connect-$owner-$system"
     includeWithName(projectName, "$owner/$system/client")
     includeWithName("$projectName-fake", "$owner/$system/fake")
