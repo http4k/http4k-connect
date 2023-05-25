@@ -1,6 +1,6 @@
-package addressbook.service
+package addressbook.local
 
-import addressbook.service.ServicePluginSettings.PORT
+import addressbook.local.LocalPluginSettings.PORT
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.then
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive
@@ -14,7 +14,7 @@ import org.http4k.server.asServer
  */
 fun main() {
     Cors(UnsafeGlobalPermissive)
-        .then(ServicePlugin(ENV))
+        .then(LocalPlugin(ENV))
         .debug()
         .asServer(SunHttp(PORT(ENV)))
         .start()

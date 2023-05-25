@@ -4,10 +4,6 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.openai.auth.AuthToken.Basic
 import org.http4k.connect.openai.auth.AuthToken.Bearer
-import org.http4k.connect.openai.auth.oauth.StorageOAuthMachinery
-import org.http4k.connect.openai.auth.oauth.StorageProvider
-import org.http4k.connect.storage.InMemory
-import org.http4k.connect.storage.Storage
 import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
@@ -15,7 +11,6 @@ import org.http4k.core.RequestContexts
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
-import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.filter.ServerFilters.InitialiseRequestContext
@@ -24,8 +19,6 @@ import org.http4k.lens.Header
 import org.http4k.lens.RequestContextKey.required
 import org.http4k.security.AccessToken
 import org.junit.jupiter.api.Test
-import java.time.Clock
-import java.time.Duration.ofSeconds
 
 class AuthTokenTest {
 
@@ -63,25 +56,4 @@ class AuthTokenTest {
         assertThat(withRC(req.removeHeaders()).status, equalTo(UNAUTHORIZED))
         assertThat(withRC(req).status, equalTo(OK))
     }
-
-    @Test
-    fun `test oauth`() {
-        OAuth(
-            Uri.of("http://foo"),
-            mapOf(),
-            Credentials("user", "password"),
-            StorageOAuthMachinery(
-                InMemoryStorageProvider,
-                { "random" },
-                ofSeconds(1),
-                "example.com",
-                Clock.systemUTC()
-            ),
-            Clock.systemUTC()
-        )
-    }
-}
-
-private object InMemoryStorageProvider : StorageProvider {
-    override fun <T : Any> invoke() = Storage.InMemory<T>()
 }

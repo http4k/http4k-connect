@@ -2,6 +2,7 @@ package addressbook.user
 
 import addressbook.shared.GetAllUsers
 import addressbook.shared.GetAnAddress
+import addressbook.shared.GetMyAddress
 import addressbook.shared.UserDirectory
 import addressbook.shared.UserId
 import addressbook.user.UserPluginSettings.EMAIL
@@ -36,7 +37,7 @@ fun UserPlugin(env: Environment = ENV): RoutingHttpHandler {
                     contactEmail = EMAIL(env),
                 ),
                 UserLevelAuth(userDirectory.authUser(userPrincipal)),
-                GetMyAddress(userPrincipal, userDirectory),
+                GetMyAddress(userDirectory, userPrincipal),
                 GetAnAddress(userDirectory),
                 GetAllUsers(userDirectory)
             )

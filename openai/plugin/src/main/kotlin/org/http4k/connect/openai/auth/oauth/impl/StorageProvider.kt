@@ -1,4 +1,4 @@
-package org.http4k.connect.openai.auth.oauth
+package org.http4k.connect.openai.auth.oauth.impl
 
 import org.http4k.connect.storage.Storage
 

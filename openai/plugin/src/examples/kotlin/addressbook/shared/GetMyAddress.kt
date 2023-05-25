@@ -1,7 +1,5 @@
-package addressbook.user
+package addressbook.shared
 
-import addressbook.shared.UserDirectory
-import addressbook.shared.UserId
 import org.http4k.contract.meta
 import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.TEXT_PLAIN
@@ -18,8 +16,8 @@ import org.http4k.lens.string
  * Lookup address for the principal, which has been stored during the auth process
  */
 fun GetMyAddress(
-    principal: BiDiLens<Request, UserId>,
-    userDirectory: UserDirectory
+    userDirectory: UserDirectory,
+    principal: BiDiLens<Request, UserId>
 ) = "address" meta {
     summary = "Lookup my address"
     returning(OK, addressLens to "10 Downing Street, London")

@@ -1,6 +1,7 @@
-package org.http4k.connect.openai.auth.oauth
+package org.http4k.connect.openai.auth.oauth.impl
 
 import dev.forkhandles.result4k.Success
+import org.http4k.connect.openai.auth.oauth.SecureStrings
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Request
 import org.http4k.core.Response

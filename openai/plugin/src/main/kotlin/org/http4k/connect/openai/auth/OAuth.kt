@@ -1,71 +1,72 @@
 package org.http4k.connect.openai.auth
 
+import org.http4k.connect.openai.auth.AuthToken.Bearer
 import org.http4k.connect.openai.auth.oauth.OAuthMachinery
+import org.http4k.connect.openai.auth.oauth.internal.MachineryAccessTokens
+import org.http4k.connect.openai.auth.oauth.internal.MachineryAuthorizationCodes
 import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
-import org.http4k.core.ContentType
-import org.http4k.core.ContentType.Companion.APPLICATION_JSON
-import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
-import org.http4k.core.Request
+import org.http4k.core.Method.POST
+import org.http4k.core.RequestContexts
+import org.http4k.core.Response
+import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.core.Uri
 import org.http4k.core.then
+import org.http4k.core.with
+import org.http4k.filter.ServerFilters.InitialiseRequestContext
+import org.http4k.lens.Header
+import org.http4k.lens.RequestContextKey
+import org.http4k.lens.RequestContextLens
 import org.http4k.routing.bind
-import org.http4k.security.oauth.server.ClientId
-import org.http4k.security.oauth.server.ClientValidator
 import org.http4k.security.oauth.server.OAuthServer
 import java.time.Clock
 
-class OAuth(
+class OAuth<T : Any>(
     baseUrl: Uri,
+    config: OAuthConfig,
+    machinery: OAuthMachinery<T>,
+    apiPrincipalKey: RequestContextLens<T>,
+    authChallenge: AuthChallenge<T>,
     tokens: Map<AuthedSystem, VerificationToken>,
-    openAiClientCredentials: Credentials,
-    storage: OAuthMachinery,
     clock: Clock,
-    scope: String = "",
-    contentType: ContentType = APPLICATION_JSON.withNoDirectives(),
 ) : PluginAuth {
 
     override val manifestDescription = mapOf(
         "type" to "oauth",
         "client_url" to baseUrl.path("/authorize"),
-        "scope" to scope,
+        "scope" to config.scope,
         "authorization_url" to baseUrl.path("/token"),
-        "authorization_content_type" to contentType,
+        "authorization_content_type" to config.contentType,
         "verification_tokens" to tokens
     )
 
-    override val securityFilter = AuthToken.Bearer(storage::validate).securityFilter
+    private val codeContexts = RequestContexts()
+
+    private val codePrincipal = RequestContextKey.required<T>(codeContexts)
 
     private val server = OAuthServer(
         "/token",
-        storage,
-        StaticOpenAiClientValidator(openAiClientCredentials, scope),
-        storage,
-        storage,
+        machinery,
+        StaticOpenAiClientValidator(config),
+        MachineryAuthorizationCodes(machinery, codePrincipal),
+        MachineryAccessTokens(machinery),
         clock,
-        refreshTokens = storage
+        refreshTokens = machinery
     )
+
+    override val securityFilter = Bearer(apiPrincipalKey) { machinery[it] }.securityFilter
 
     override val authRoutes = listOf(
         server.tokenRoute,
-        "/authorize" bind GET to server.authenticationStart.then(server.authenticationComplete)
+        "/authorize" bind GET to server.authenticationStart.then(authChallenge.challenge),
+        "/authorize" bind POST to InitialiseRequestContext(codeContexts)
+            .then { request ->
+                when (val principal = authChallenge(request)) {
+                    null -> Response(SEE_OTHER).with(Header.LOCATION of request.uri)
+                    else -> server.authenticationComplete(request.with(codePrincipal of principal))
+                }
+            }
     )
 }
 
-internal class StaticOpenAiClientValidator(
-    private val openAiClientCredentials: Credentials,
-    private val scope: String
-) : ClientValidator {
-    override fun validateClientId(request: Request, clientId: ClientId) =
-        clientId == ClientId(openAiClientCredentials.user)
-
-    override fun validateCredentials(request: Request, clientId: ClientId, clientSecret: String) =
-        Credentials(clientId.value, clientSecret) == openAiClientCredentials
-
-    override fun validateRedirection(request: Request, clientId: ClientId, redirectionUri: Uri) =
-        redirectionUri == Uri.of("https://chat.openai.com/aip/plugin-some_plugin_id/oauth/callback")
-
-    override fun validateScopes(request: Request, clientId: ClientId, scopes: List<String>) =
-        scopes == listOf(scope)
-}

@@ -10,6 +10,7 @@ import org.http4k.lens.RequestContextLens
  */
 fun UserDirectory.authUser(userPrincipal: RequestContextLens<UserId>) =
     AuthToken.Basic("realm", userPrincipal) { credentials ->
-        UserId.of(credentials.user)
-            .takeIf { auth(credentials) }
+        auth(credentials)
+            ?.credentials?.user
+            ?.let(UserId::of)
     }
