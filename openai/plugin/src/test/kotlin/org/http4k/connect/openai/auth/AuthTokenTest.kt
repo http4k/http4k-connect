@@ -1,13 +1,13 @@
-package org.http4k.connect.openai.model
+package org.http4k.connect.openai.auth
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import addressbook.InMemoryStorageProvider
-import org.http4k.connect.openai.auth.AuthToken
-import org.http4k.connect.openai.auth.OAuth
-import org.http4k.connect.openai.auth.oauth.StorageOAuthMachinery
 import org.http4k.connect.openai.auth.AuthToken.Basic
 import org.http4k.connect.openai.auth.AuthToken.Bearer
+import org.http4k.connect.openai.auth.oauth.StorageOAuthMachinery
+import org.http4k.connect.openai.auth.oauth.StorageProvider
+import org.http4k.connect.storage.InMemory
+import org.http4k.connect.storage.Storage
 import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
@@ -70,8 +70,18 @@ class AuthTokenTest {
             Uri.of("http://foo"),
             mapOf(),
             Credentials("user", "password"),
-            StorageOAuthMachinery(InMemoryStorageProvider, { "random" }, ofSeconds(1), "example.com", Clock.systemUTC()),
+            StorageOAuthMachinery(
+                InMemoryStorageProvider,
+                { "random" },
+                ofSeconds(1),
+                "example.com",
+                Clock.systemUTC()
+            ),
             Clock.systemUTC()
         )
     }
+}
+
+private object InMemoryStorageProvider : StorageProvider {
+    override fun <T : Any> invoke() = Storage.InMemory<T>()
 }

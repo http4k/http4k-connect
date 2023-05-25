@@ -5,6 +5,7 @@ import addressbook.oauth.OAuthPluginSettings.EMAIL
 import addressbook.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
 import addressbook.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
 import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
+import addressbook.shared.GetAllUsers
 import addressbook.shared.GetAnAddress
 import addressbook.shared.UserDirectory
 import org.http4k.cloudnative.env.Environment
@@ -19,6 +20,7 @@ import org.http4k.connect.openai.model.AuthedSystem.Companion.openai
 import org.http4k.connect.openai.openAiPlugin
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
+import org.http4k.routing.RoutingHttpHandler
 import java.time.Clock
 import java.time.Clock.systemUTC
 import java.time.Duration.ofMinutes
@@ -31,23 +33,27 @@ fun OAuthPlugin(
     clock: Clock = systemUTC(),
     strings: SecureStrings = Random(),
     storageProvider: StorageProvider = InMemoryStorageProvider
-) = openAiPlugin(
-    info(
-        apiVersion = "1.0",
-        humanDescription = "oauthplugin" to "A plugin which uses oauth",
-        pluginUrl = PLUGIN_BASE_URL(env),
-        contactEmail = EMAIL(env),
-    ),
-    OAuth(
-        PLUGIN_BASE_URL(env),
-        mapOf(openai to OPENAI_VERIFICATION_TOKEN(env)),
-        OPEN_AI_CLIENT_CREDENTIALS(env),
-        StorageOAuthMachinery(storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock),
-        clock,
-        ""
-    ),
-    GetAnAddress(UserDirectory())
-)
+): RoutingHttpHandler {
+    val userDirectory = UserDirectory()
+    return openAiPlugin(
+        info(
+            apiVersion = "1.0",
+            humanDescription = "oauthplugin" to "A plugin which uses oauth",
+            pluginUrl = PLUGIN_BASE_URL(env),
+            contactEmail = EMAIL(env),
+        ),
+        OAuth(
+            PLUGIN_BASE_URL(env),
+            mapOf(openai to OPENAI_VERIFICATION_TOKEN(env)),
+            OPEN_AI_CLIENT_CREDENTIALS(env),
+            StorageOAuthMachinery(storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock),
+            clock,
+            ""
+        ),
+        GetAnAddress(userDirectory),
+        GetAllUsers(userDirectory)
+    )
+}
 
 object InMemoryStorageProvider : StorageProvider {
     override fun <T : Any> invoke() = Storage.InMemory<T>()

@@ -1,5 +1,7 @@
 package addressbook.user
 
+import addressbook.shared.GetAllUsers
+import addressbook.shared.GetAnAddress
 import addressbook.shared.UserDirectory
 import addressbook.shared.UserId
 import addressbook.user.UserPluginSettings.EMAIL
@@ -16,7 +18,8 @@ import org.http4k.lens.RequestContextKey
 import org.http4k.routing.RoutingHttpHandler
 
 /**
- * Main creation pattern for an OpenAI plugin
+ * Because we have the principal, this plugin has an extra endpoint for looking up the
+ * authed user's address
  */
 fun UserPlugin(env: Environment = ENV): RoutingHttpHandler {
     val userDirectory = UserDirectory()
@@ -33,7 +36,9 @@ fun UserPlugin(env: Environment = ENV): RoutingHttpHandler {
                     contactEmail = EMAIL(env),
                 ),
                 UserLevelAuth(userDirectory.authUser(userPrincipal)),
-                GetMyAddress(userPrincipal, userDirectory)
+                GetMyAddress(userPrincipal, userDirectory),
+                GetAnAddress(userDirectory),
+                GetAllUsers(userDirectory)
             )
         )
 }

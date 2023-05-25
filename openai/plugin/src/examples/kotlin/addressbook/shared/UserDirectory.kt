@@ -7,13 +7,15 @@ import org.http4k.core.Credentials
  */
 class UserDirectory {
     private val store = mapOf(
-        "sherlock" to UserDetails("Sherlock Holmes", "watson", "221b Baker St, London"),
-        "paddington" to UserDetails("Paddington Bear", "marmalade", "Waterloo Station, London")
+        UserId.of("sherlock") to UserDetails("Sherlock Holmes", "watson", "221b Baker St, London"),
+        UserId.of("paddington") to UserDetails("Paddington Bear", "marmalade", "Waterloo Station, London")
     )
 
     fun auth(credentials: Credentials) = find(UserId.of(credentials.user))
         ?.password == credentials.password
 
-    fun find(user: UserId): UserDetails? = store[user.value]
+    fun find(user: UserId): UserDetails? = store[user]
+
+    fun all() = store.keys
 }
 
