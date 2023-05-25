@@ -1,6 +1,6 @@
 package myplugin.oauth
 
-import myplugin.credentials
+import myplugin.shared.credentials
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
@@ -15,8 +15,8 @@ import org.http4k.lens.value
 object OAuthPluginSettings {
     val PORT by EnvironmentKey.int().of().required()
     val PLUGIN_BASE_URL by EnvironmentKey.uri().of().required()
-    val EMAIL by EnvironmentKey.value(Email).of().defaulted(Email.of("foo@example.com"))
+    val EMAIL by EnvironmentKey.value(Email).of().required()
     val OPEN_AI_CLIENT_CREDENTIALS by EnvironmentKey.credentials().of().required()
     val OPENAI_VERIFICATION_TOKEN by EnvironmentKey.value(VerificationToken).of().required()
-    val COOKIE_DOMAIN by EnvironmentKey.of().defaulted("example.com")
+    val COOKIE_DOMAIN by EnvironmentKey.of().required()
 }

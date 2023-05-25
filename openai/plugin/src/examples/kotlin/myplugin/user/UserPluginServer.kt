@@ -9,8 +9,8 @@ import org.http4k.server.asServer
 /**
  * Binds the Plugin to a server and starts it as a JVM app
  */
-fun SimplePluginServer(env: Environment = ENV) = UserPlugin(env).asServer(SunHttp(PORT(env)))
+fun UserPluginServer(env: Environment = ENV) = UserPlugin(env).asServer(SunHttp(PORT(env)))
 
 fun main() {
-    SimplePluginServer().start()
+    UserPluginServer().start()
 }

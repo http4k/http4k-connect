@@ -1,11 +1,12 @@
 package myplugin.oauth
 
-import myplugin.InMemoryStorageProvider
 import myplugin.oauth.OAuthPluginSettings.COOKIE_DOMAIN
 import myplugin.oauth.OAuthPluginSettings.EMAIL
 import myplugin.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
 import myplugin.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
 import myplugin.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
+import myplugin.shared.UserDirectory
+import myplugin.user.GetAnAddress
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.OAuth
@@ -16,6 +17,8 @@ import org.http4k.connect.openai.auth.oauth.StorageProvider
 import org.http4k.connect.openai.info
 import org.http4k.connect.openai.model.AuthedSystem.Companion.openai
 import org.http4k.connect.openai.openAiPlugin
+import org.http4k.connect.storage.InMemory
+import org.http4k.connect.storage.Storage
 import java.time.Clock
 import java.time.Clock.systemUTC
 import java.time.Duration.ofMinutes
@@ -43,5 +46,9 @@ fun OAuthPlugin(
         clock,
         ""
     ),
-    greetingEndpoint()
+    GetAnAddress(UserDirectory())
 )
+
+object InMemoryStorageProvider : StorageProvider {
+    override fun <T : Any> invoke() = Storage.InMemory<T>()
+}
