@@ -1,4 +1,4 @@
-package myplugin.shared
+package addressbook.shared
 
 data class UserDetails(
     val name: String,

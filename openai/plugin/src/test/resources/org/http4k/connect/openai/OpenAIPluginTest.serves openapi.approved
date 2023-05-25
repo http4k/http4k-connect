@@ -1,8 +1,8 @@
 {
   "info": {
-    "title": "myplugin",
+    "title": "addressbook",
     "version": "1.0",
-    "description": "myplugin"
+    "description": "addressbook"
   },
   "tags": [
   ],

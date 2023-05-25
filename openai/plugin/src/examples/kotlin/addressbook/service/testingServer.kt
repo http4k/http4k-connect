@@ -1,6 +1,6 @@
-package myplugin.service
+package addressbook.service
 
-import myplugin.service.ServicePluginSettings.PORT
+import addressbook.service.ServicePluginSettings.PORT
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.then
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive

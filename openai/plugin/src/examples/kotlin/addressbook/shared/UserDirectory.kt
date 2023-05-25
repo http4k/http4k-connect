@@ -1,6 +1,5 @@
-package myplugin.shared
+package addressbook.shared
 
-import myplugin.user.UserId
 import org.http4k.core.Credentials
 
 /**

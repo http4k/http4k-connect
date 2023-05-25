@@ -1,4 +1,4 @@
-package myplugin.user
+package addressbook.shared
 
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue

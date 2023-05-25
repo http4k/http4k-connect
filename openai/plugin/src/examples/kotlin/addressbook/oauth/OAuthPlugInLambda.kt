@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package myplugin.oauth
+package addressbook.oauth
 
 import org.http4k.serverless.ApiGatewayV2LambdaFunction
 

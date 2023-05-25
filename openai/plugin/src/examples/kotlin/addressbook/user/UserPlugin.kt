@@ -1,11 +1,11 @@
-package myplugin.user
+package addressbook.user
 
-import myplugin.shared.UserDirectory
-import myplugin.user.UserPluginSettings.EMAIL
-import myplugin.user.UserPluginSettings.PLUGIN_BASE_URL
+import addressbook.shared.UserDirectory
+import addressbook.shared.UserId
+import addressbook.user.UserPluginSettings.EMAIL
+import addressbook.user.UserPluginSettings.PLUGIN_BASE_URL
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
-import org.http4k.connect.openai.auth.AuthToken.Basic
 import org.http4k.connect.openai.auth.UserLevelAuth
 import org.http4k.connect.openai.info
 import org.http4k.connect.openai.openAiPlugin
@@ -13,7 +13,6 @@ import org.http4k.core.RequestContexts
 import org.http4k.core.then
 import org.http4k.filter.ServerFilters.InitialiseRequestContext
 import org.http4k.lens.RequestContextKey
-import org.http4k.lens.RequestContextLens
 import org.http4k.routing.RoutingHttpHandler
 
 /**
@@ -38,13 +37,4 @@ fun UserPlugin(env: Environment = ENV): RoutingHttpHandler {
             )
         )
 }
-
-/**
- * Populate a known user if their password matches
- */
-private fun UserDirectory.authUser(userPrincipal: RequestContextLens<UserId>) =
-    Basic("realm", userPrincipal) { credentials ->
-        UserId.of(credentials.user)
-            .takeIf { auth(credentials) }
-    }
 

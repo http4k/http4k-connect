@@ -1,11 +1,11 @@
-package myplugin.service
+package addressbook.service
 
-import myplugin.service.ServicePluginSettings.EMAIL
-import myplugin.service.ServicePluginSettings.OPENAI_API_KEY
-import myplugin.service.ServicePluginSettings.OPENAI_VERIFICATION_TOKEN
-import myplugin.service.ServicePluginSettings.PLUGIN_BASE_URL
-import myplugin.shared.UserDirectory
-import myplugin.user.GetAnAddress
+import addressbook.service.ServicePluginSettings.EMAIL
+import addressbook.service.ServicePluginSettings.OPENAI_API_KEY
+import addressbook.service.ServicePluginSettings.OPENAI_VERIFICATION_TOKEN
+import addressbook.service.ServicePluginSettings.PLUGIN_BASE_URL
+import addressbook.shared.GetAnAddress
+import addressbook.shared.UserDirectory
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.AuthToken.Bearer

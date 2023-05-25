@@ -1,4 +1,4 @@
-package myplugin.shared
+package addressbook.shared
 
 import org.http4k.cloudnative.env.Environment
 import org.http4k.core.Credentials

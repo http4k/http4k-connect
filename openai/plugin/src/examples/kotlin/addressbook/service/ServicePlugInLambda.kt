@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package myplugin.service
+package addressbook.service
 
 import org.http4k.serverless.ApiGatewayV2LambdaFunction
 

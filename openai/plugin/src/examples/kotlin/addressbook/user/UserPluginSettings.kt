@@ -1,4 +1,4 @@
-package myplugin.user
+package addressbook.user
 
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.connect.openai.model.Email

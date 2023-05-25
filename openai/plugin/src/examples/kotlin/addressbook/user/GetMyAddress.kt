@@ -1,6 +1,7 @@
-package myplugin.user
+package addressbook.user
 
-import myplugin.shared.UserDirectory
+import addressbook.shared.UserDirectory
+import addressbook.shared.UserId
 import org.http4k.contract.meta
 import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.TEXT_PLAIN

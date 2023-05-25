@@ -1,6 +1,6 @@
-package myplugin.oauth
+package addressbook.oauth
 
-import myplugin.shared.credentials
+import addressbook.shared.credentials
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken

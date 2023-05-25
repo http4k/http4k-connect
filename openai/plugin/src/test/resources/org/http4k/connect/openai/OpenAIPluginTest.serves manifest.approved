@@ -1,7 +1,7 @@
 {
-  "name_for_human": "myplugin",
+  "name_for_human": "addressbook",
   "description_for_human": "my great plugin",
-  "name_for_model": "myplugin",
+  "name_for_model": "addressbook",
   "description_for_model": "my great plugin",
   "api": {
     "url": "http://localhost:9000/openapi.json",

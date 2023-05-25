@@ -3,7 +3,6 @@ package org.http4k.connect.openai
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.openai.auth.AuthToken
-import org.http4k.connect.openai.auth.AuthToken.Basic.*
 import org.http4k.connect.openai.auth.UserLevelAuth
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.testing.OpenApiPluginRequirements
@@ -32,7 +31,7 @@ class OpenAIPluginTest : OpenApiPluginRequirements {
     override val openAiPlugin = openAiPlugin(
         info(
             apiVersion = "1.0",
-            humanDescription = "myplugin" to "my great plugin",
+            humanDescription = "addressbook" to "my great plugin",
             pluginUrl = Uri.of("http://localhost:9000"),
             contactEmail = Email.of("foo@bar"),
         ),

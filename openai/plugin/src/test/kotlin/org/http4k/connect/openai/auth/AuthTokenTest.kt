@@ -2,7 +2,7 @@ package org.http4k.connect.openai.model
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import myplugin.InMemoryStorageProvider
+import addressbook.InMemoryStorageProvider
 import org.http4k.connect.openai.auth.AuthToken
 import org.http4k.connect.openai.auth.OAuth
 import org.http4k.connect.openai.auth.oauth.StorageOAuthMachinery
