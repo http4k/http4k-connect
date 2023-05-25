@@ -18,7 +18,5 @@ interface OAuthMachinery<T : Any> :
     AccessTokenStore<T>,
     AuthCodeStore<T> {
 
-    fun validate(accessToken: AccessToken): Boolean
-
     companion object
 }
