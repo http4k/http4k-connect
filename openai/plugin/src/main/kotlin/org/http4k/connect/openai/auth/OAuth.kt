@@ -1,9 +1,10 @@
 package org.http4k.connect.openai.auth
 
-import org.http4k.connect.openai.auth.AuthToken.Bearer
 import org.http4k.connect.openai.auth.oauth.OAuthMachinery
 import org.http4k.connect.openai.auth.oauth.internal.MachineryAccessTokens
 import org.http4k.connect.openai.auth.oauth.internal.MachineryAuthorizationCodes
+import org.http4k.connect.openai.auth.oauth.internal.PopulatingBearerToken
+import org.http4k.connect.openai.auth.oauth.internal.StaticOpenAiClientValidator
 import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.core.Method.GET
@@ -55,7 +56,7 @@ class OAuth<T : Any>(
         refreshTokens = machinery
     )
 
-    override val securityFilter = Bearer(apiPrincipalKey) { machinery[it] }.securityFilter
+    override val securityFilter = PopulatingBearerToken(machinery, apiPrincipalKey)
 
     override val authRoutes = listOf(
         server.tokenRoute,

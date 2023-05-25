@@ -15,21 +15,21 @@ import java.time.Instant
 /**
  * Simple implementation of OAuthMachinery, backed by storage providers.
  */
-fun <T : Any> StorageOAuthMachinery(
+fun <Principal : Any> StorageOAuthMachinery(
     storageProvider: StorageProvider,
     strings: SecureStrings,
     validity: Duration,
     cookieDomain: String,
     clock: Clock
-): OAuthMachinery<T> {
+): OAuthMachinery<Principal> {
     val tokenStorage = storageProvider<Instant>()
     val accessTokens = StorageAccessTokens(tokenStorage, strings, validity, clock)
-    return object : OAuthMachinery<T>,
+    return object : OAuthMachinery<Principal>,
         AccessTokens by accessTokens,
         AuthorizationCodes by StorageAuthorizationCodes(storageProvider(), clock, strings, validity),
         AuthRequestTracking by StorageAuthRequestTracking(storageProvider(), cookieDomain, clock, strings, validity),
         RefreshTokens by StorageRefreshTokens(storageProvider(), accessTokens),
-        AccessTokenStore<T> by StorageAccessTokenStore(storageProvider()),
-        AuthCodeStore<T> by StorageAuthCodeStore(storageProvider()) {
+        AccessTokenStore<Principal> by StorageAccessTokenStore(storageProvider()),
+        AuthCodeStore<Principal> by StorageAuthCodeStore(storageProvider()) {
     }
 }

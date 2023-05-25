@@ -10,7 +10,7 @@ import org.http4k.security.oauth.server.TokenRequest
 import org.http4k.security.oauth.server.UnsupportedGrantType
 import org.http4k.security.oauth.server.accesstoken.AuthorizationCodeAccessTokenRequest
 
-internal fun <T : Any> MachineryAccessTokens(machinery: OAuthMachinery<T>) = object : AccessTokens {
+internal fun <Principal : Any> MachineryAccessTokens(machinery: OAuthMachinery<Principal>) = object : AccessTokens {
     override fun create(clientId: ClientId, tokenRequest: TokenRequest) =
         Failure(UnsupportedGrantType("client_credentials"))
 
@@ -20,7 +20,6 @@ internal fun <T : Any> MachineryAccessTokens(machinery: OAuthMachinery<T>) = obj
         authorizationCode: AuthorizationCode
     ) = machinery.create(clientId, tokenRequest, authorizationCode)
         .peek { token ->
-            machinery[authorizationCode]
-                ?.let { machinery[token] = it }
+            machinery[authorizationCode]?.also { machinery[token] = it }
         }
 }

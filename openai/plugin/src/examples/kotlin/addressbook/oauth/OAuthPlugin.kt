@@ -21,8 +21,6 @@ import org.http4k.connect.openai.auth.oauth.impl.StorageProvider
 import org.http4k.connect.openai.info
 import org.http4k.connect.openai.model.AuthedSystem.Companion.openai
 import org.http4k.connect.openai.openAiPlugin
-import org.http4k.connect.storage.InMemory
-import org.http4k.connect.storage.Storage
 import org.http4k.core.RequestContexts
 import org.http4k.lens.RequestContextKey
 import org.http4k.routing.RoutingHttpHandler
@@ -43,7 +41,7 @@ fun OAuthPlugin(
     val contexts = RequestContexts()
     val userPrincipal = RequestContextKey.required<UserId>(contexts)
 
-    val storage = StorageOAuthMachinery<UserId>(storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock)
+    val machinery = StorageOAuthMachinery<UserId>(storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock)
 
     return openAiPlugin(
         info(
@@ -55,7 +53,7 @@ fun OAuthPlugin(
         OAuth(
             PLUGIN_BASE_URL(env),
             OAuthConfig(OPEN_AI_CLIENT_CREDENTIALS(env)),
-            storage,
+            machinery,
             userPrincipal,
             UserIdAuthChallenge(userDirectory),
             mapOf(openai to OPENAI_VERIFICATION_TOKEN(env)),
@@ -67,6 +65,3 @@ fun OAuthPlugin(
     )
 }
 
-object InMemoryStorageProvider : StorageProvider {
-    override fun <T : Any> invoke() = Storage.InMemory<T>()
-}

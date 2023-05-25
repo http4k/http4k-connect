@@ -1,6 +1,5 @@
 package org.http4k.connect.openai.auth.oauth
 
-import org.http4k.security.AccessToken
 import org.http4k.security.oauth.server.AccessTokens
 import org.http4k.security.oauth.server.AuthRequestTracking
 import org.http4k.security.oauth.server.AuthorizationCodes
@@ -17,6 +16,5 @@ interface OAuthMachinery<T : Any> :
     AuthRequestTracking,
     AccessTokenStore<T>,
     AuthCodeStore<T> {
-
     companion object
 }
