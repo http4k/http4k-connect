@@ -1,4 +1,4 @@
-package myplugin.simple
+package myplugin.user
 
 import org.http4k.contract.div
 import org.http4k.contract.meta

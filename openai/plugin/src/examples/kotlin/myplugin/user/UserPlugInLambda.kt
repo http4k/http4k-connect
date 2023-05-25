@@ -1,11 +1,10 @@
 @file:Suppress("unused")
 
-package myplugin.simple
+package myplugin.user
 
-import myplugin.oauth.OAuthPlugin
 import org.http4k.serverless.ApiGatewayV2LambdaFunction
 
 /**
  * Bind the plugin to an AWS Serverless function
  */
-class SimplePlugInLambda : ApiGatewayV2LambdaFunction(OAuthPlugin())
+class UserPlugInLambda : ApiGatewayV2LambdaFunction(UserPlugin())

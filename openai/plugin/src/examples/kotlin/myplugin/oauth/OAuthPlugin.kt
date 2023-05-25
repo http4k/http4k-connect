@@ -31,7 +31,7 @@ fun OAuthPlugin(
 ) = openAiPlugin(
     info(
         apiVersion = "1.0",
-        humanDescription = "oauthplugin" to "my oauth plugin",
+        humanDescription = "oauthplugin" to "A plugin which uses oauth",
         pluginUrl = PLUGIN_BASE_URL(env),
         contactEmail = EMAIL(env),
     ),

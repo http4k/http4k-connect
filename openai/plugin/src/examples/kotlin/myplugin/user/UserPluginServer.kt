@@ -1,6 +1,6 @@
-package myplugin.simple
+package myplugin.user
 
-import myplugin.simple.SimplePluginSettings.PORT
+import myplugin.user.UserPluginSettings.PORT
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.server.SunHttp
@@ -9,7 +9,7 @@ import org.http4k.server.asServer
 /**
  * Binds the Plugin to a server and starts it as a JVM app
  */
-fun SimplePluginServer(env: Environment = ENV) = SimplePlugin(env).asServer(SunHttp(PORT(env)))
+fun SimplePluginServer(env: Environment = ENV) = UserPlugin(env).asServer(SunHttp(PORT(env)))
 
 fun main() {
     SimplePluginServer().start()

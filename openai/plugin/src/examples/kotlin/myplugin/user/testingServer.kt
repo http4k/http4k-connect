@@ -1,6 +1,6 @@
-package myplugin.simple
+package myplugin.user
 
-import myplugin.simple.SimplePluginSettings.PORT
+import myplugin.user.UserPluginSettings.PORT
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.core.then
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive
@@ -14,7 +14,7 @@ import org.http4k.server.asServer
  */
 fun main() {
     Cors(UnsafeGlobalPermissive)
-        .then(SimplePlugin(ENV))
+        .then(UserPlugin(ENV))
         .debug()
         .asServer(SunHttp(PORT(ENV)))
         .start()
