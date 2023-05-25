@@ -2,9 +2,10 @@ package org.http4k.connect.openai
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.openai.auth.UserAuth
+import org.http4k.connect.openai.auth.AuthToken
+import org.http4k.connect.openai.auth.AuthToken.Basic.*
+import org.http4k.connect.openai.auth.UserLevelAuth
 import org.http4k.connect.openai.model.Email
-import org.http4k.connect.openai.auth.PluginToken.Basic
 import org.http4k.connect.openai.testing.OpenApiPluginRequirements
 import org.http4k.contract.div
 import org.http4k.contract.meta
@@ -35,8 +36,8 @@ class OpenAIPluginTest : OpenApiPluginRequirements {
             pluginUrl = Uri.of("http://localhost:9000"),
             contactEmail = Email.of("foo@bar"),
         ),
-        UserAuth(
-            Basic("realm") { it: Credentials -> it == credentials }
+        UserLevelAuth(
+            AuthToken.Basic("realm") { it: Credentials -> it == credentials }
         ),
         Path.of("foo") / Path.of("bar") meta {
             summary = "A great api endpoint"

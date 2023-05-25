@@ -35,7 +35,7 @@ class OAuth(
         "verification_tokens" to tokens
     )
 
-    override val securityFilter = PluginToken.Bearer(storage::validate).securityFilter
+    override val securityFilter = AuthToken.Bearer(storage::validate).securityFilter
 
     private val server = OAuthServer(
         "/token",

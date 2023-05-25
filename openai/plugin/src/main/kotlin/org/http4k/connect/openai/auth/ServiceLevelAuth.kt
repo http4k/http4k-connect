@@ -4,11 +4,11 @@ import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.routing.RoutingHttpHandler
 
-class ServiceAuth(
-    pluginToken: PluginToken,
+class ServiceLevelAuth(
+    pluginToken: AuthToken,
     tokens: Map<AuthedSystem, VerificationToken>
 ) : PluginAuth {
-    override val manifestDescription =  mapOf(
+    override val manifestDescription = mapOf(
         "type" to "service_http",
         "authorization_type" to pluginToken.type,
         "verification_tokens" to tokens
