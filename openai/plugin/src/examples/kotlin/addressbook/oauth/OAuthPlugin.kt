@@ -41,7 +41,10 @@ fun OAuthPlugin(
     val contexts = RequestContexts()
     val userPrincipal = RequestContextKey.required<UserId>(contexts)
 
-    val machinery = StorageOAuthMachinery<UserId>(storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock)
+    val machinery = StorageOAuthMachinery(
+        storageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock,
+        UserIdAuthChallenge(userDirectory)
+    )
 
     return openAiPlugin(
         info(
@@ -55,7 +58,6 @@ fun OAuthPlugin(
             OAuthConfig(OPEN_AI_CLIENT_CREDENTIALS(env)),
             machinery,
             userPrincipal,
-            UserIdAuthChallenge(userDirectory),
             mapOf(openai to OPENAI_VERIFICATION_TOKEN(env)),
             clock
         ),

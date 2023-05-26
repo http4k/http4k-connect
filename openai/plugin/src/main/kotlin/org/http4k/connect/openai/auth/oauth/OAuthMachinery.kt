@@ -1,5 +1,6 @@
 package org.http4k.connect.openai.auth.oauth
 
+import org.http4k.connect.openai.auth.AuthChallenge
 import org.http4k.security.AccessToken
 import org.http4k.security.oauth.server.AccessTokens
 import org.http4k.security.oauth.server.AuthRequestTracking
@@ -15,7 +16,8 @@ interface OAuthMachinery<Principal : Any> :
     AccessTokens,
     RefreshTokens,
     AuthorizationCodes,
-    AuthRequestTracking {
+    AuthRequestTracking,
+    AuthChallenge<Principal> {
 
     operator fun get(key: AccessToken): Principal?
     operator fun set(key: AuthorizationCode, data: Principal)
