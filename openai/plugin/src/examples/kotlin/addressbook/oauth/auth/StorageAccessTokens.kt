@@ -1,4 +1,4 @@
-package org.http4k.connect.openai.auth.oauth.impl
+package addressbook.oauth.auth
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success

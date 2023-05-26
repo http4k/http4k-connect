@@ -3,7 +3,7 @@ package org.http4k.connect.openai
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.openai.auth.AuthToken
-import org.http4k.connect.openai.auth.UserLevelAuth
+import org.http4k.connect.openai.auth.user.UserLevelAuth
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.testing.OpenApiPluginRequirements
 import org.http4k.contract.div

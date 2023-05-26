@@ -1,6 +1,5 @@
-package addressbook.oauth
+package addressbook.oauth.auth
 
-import org.http4k.connect.openai.auth.oauth.impl.StorageProvider
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 

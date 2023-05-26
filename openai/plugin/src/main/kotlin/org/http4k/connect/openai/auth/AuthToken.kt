@@ -7,6 +7,9 @@ import org.http4k.core.Filter
 import org.http4k.lens.RequestContextLens
 import org.http4k.security.AccessToken
 
+/**
+ * Represents the token type which can be used for User and Service authed plugins.
+ */
 interface AuthToken {
     val securityFilter: Filter
     val type: String

@@ -1,4 +1,4 @@
-package org.http4k.connect.openai.auth
+package org.http4k.connect.openai.auth.oauth
 
 import org.http4k.core.ContentType
 import org.http4k.core.Credentials

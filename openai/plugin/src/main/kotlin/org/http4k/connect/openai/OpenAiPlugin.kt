@@ -1,7 +1,7 @@
 package org.http4k.connect.openai
 
-import org.http4k.connect.openai.auth.NoAuth
 import org.http4k.connect.openai.auth.PluginAuth
+import org.http4k.connect.openai.auth.noauth.NoAuth
 import org.http4k.connect.openai.endpoints.GetManifest
 import org.http4k.connect.openai.endpoints.ProtectPluginRoutes
 import org.http4k.connect.openai.endpoints.ServeLogo

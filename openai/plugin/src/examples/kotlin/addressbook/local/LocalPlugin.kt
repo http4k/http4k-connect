@@ -7,7 +7,7 @@ import addressbook.shared.GetAnAddress
 import addressbook.shared.UserDirectory
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
-import org.http4k.connect.openai.auth.NoAuth
+import org.http4k.connect.openai.auth.noauth.NoAuth
 import org.http4k.connect.openai.info
 import org.http4k.connect.openai.openAiPlugin
 import org.http4k.routing.RoutingHttpHandler

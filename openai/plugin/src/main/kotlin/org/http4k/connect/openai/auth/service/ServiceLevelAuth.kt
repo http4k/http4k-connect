@@ -1,9 +1,15 @@
-package org.http4k.connect.openai.auth
+package org.http4k.connect.openai.auth.service
 
+import org.http4k.connect.openai.auth.AuthToken
+import org.http4k.connect.openai.auth.PluginAuth
 import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.routing.RoutingHttpHandler
 
+/**
+ * Service plugin auth. The plugin API is protected by credentials set by the plugin owner into OpenAI.
+ * This means that there is no possible response personalisation available to the plugin.
+ */
 class ServiceLevelAuth(
     pluginToken: AuthToken,
     tokens: Map<AuthedSystem, VerificationToken>
