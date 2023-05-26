@@ -1,16 +1,18 @@
 package org.http4k.connect.openai.auth
 
+import dev.forkhandles.result4k.peek
 import org.http4k.connect.openai.auth.oauth.OAuthMachinery
-import org.http4k.connect.openai.auth.oauth.internal.MachineryAuthorizationCodes
-import org.http4k.connect.openai.auth.oauth.internal.PopulatingBearerToken
 import org.http4k.connect.openai.auth.oauth.internal.StaticOpenAiClientValidator
 import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
+import org.http4k.core.Filter
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
+import org.http4k.core.Request
 import org.http4k.core.RequestContexts
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.SEE_OTHER
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
@@ -19,6 +21,9 @@ import org.http4k.lens.Header.LOCATION
 import org.http4k.lens.RequestContextKey
 import org.http4k.lens.RequestContextLens
 import org.http4k.routing.bind
+import org.http4k.security.AccessToken
+import org.http4k.security.oauth.server.AuthRequest
+import org.http4k.security.oauth.server.AuthorizationCodes
 import org.http4k.security.oauth.server.OAuthServer
 import java.time.Clock
 
@@ -43,19 +48,30 @@ class OAuth<T : Any>(
 
     private val codeContexts = RequestContexts()
 
-    private val codePrincipal = RequestContextKey.required<T>(codeContexts)
+    private val codePrincipalKey = RequestContextKey.required<T>(codeContexts)
 
     private val server = OAuthServer(
         "/token",
         machinery,
         StaticOpenAiClientValidator(config),
-        MachineryAuthorizationCodes(machinery, codePrincipal),
+        object : AuthorizationCodes by machinery {
+            override fun create(request: Request, authRequest: AuthRequest, response: Response) =
+                machinery.create(request, authRequest, response)
+                    .peek { code -> machinery[code] = codePrincipalKey(request) }
+        },
         machinery,
         clock,
         refreshTokens = machinery
     )
 
-    override val securityFilter = PopulatingBearerToken(machinery, apiPrincipalKey)
+    override val securityFilter = Filter { next ->
+        {
+            when (val principal = it.bearerToken()?.let { machinery[AccessToken(it)] }) {
+                null -> Response(UNAUTHORIZED)
+                else -> next(it.with(apiPrincipalKey of principal))
+            }
+        }
+    }
 
     override val authRoutes = listOf(
         server.tokenRoute,
@@ -64,9 +80,14 @@ class OAuth<T : Any>(
             .then { request ->
                 when (val principal = authChallenge(request)) {
                     null -> Response(SEE_OTHER).with(LOCATION of request.uri)
-                    else -> server.authenticationComplete(request.with(codePrincipal of principal))
+                    else -> server.authenticationComplete(request.with(codePrincipalKey of principal))
                 }
             }
     )
 }
 
+private fun Request.bearerToken(): String? = header("Authorization")
+    ?.trim()
+    ?.takeIf { it.startsWith("Bearer") }
+    ?.substringAfter("Bearer")
+    ?.trim()
