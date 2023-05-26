@@ -5,16 +5,18 @@ import org.http4k.connect.openai.auth.PluginAuth
 import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.core.Filter
-import org.http4k.core.Method
+import org.http4k.core.Method.GET
+import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.RequestContexts
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
-import org.http4k.filter.ServerFilters
-import org.http4k.lens.Header
+import org.http4k.filter.ServerFilters.InitialiseRequestContext
+import org.http4k.lens.Header.LOCATION
 import org.http4k.lens.RequestContextKey
 import org.http4k.lens.RequestContextLens
 import org.http4k.routing.bind
@@ -46,7 +48,7 @@ class OAuth<T : Any>(
     )
 
     private val server = OAuthServer(
-        "/token",
+        "/oauth2/token",
         machinery,
         StaticOpenAiClientValidator(config),
         object : AuthorizationCodes by machinery {
@@ -61,7 +63,7 @@ class OAuth<T : Any>(
     private val contexts = RequestContexts()
     private val principalKey = RequestContextKey.required<T>(contexts)
 
-    override val securityFilter = ServerFilters.InitialiseRequestContext(contexts)
+    override val securityFilter = InitialiseRequestContext(contexts)
         .then(Filter { next ->
             {
                 when (it.bearerToken()?.let { machinery[AccessToken(it)] }) {
@@ -73,10 +75,10 @@ class OAuth<T : Any>(
 
     override val authRoutes = listOf(
         server.tokenRoute,
-        "/authorize" bind Method.GET to server.authenticationStart.then(machinery.challenge),
-        "/authorize" bind Method.POST to { request ->
+        "/authorize" bind GET to server.authenticationStart.then(machinery.challenge),
+        "/authorize" bind POST to { request ->
             when (val principal = machinery(request)) {
-                null -> Response(Status.SEE_OTHER).with(Header.LOCATION of request.uri)
+                null -> Response(SEE_OTHER).with(LOCATION of request.uri)
                 else -> server.authenticationComplete(request.with(principalKey of principal))
             }
         }

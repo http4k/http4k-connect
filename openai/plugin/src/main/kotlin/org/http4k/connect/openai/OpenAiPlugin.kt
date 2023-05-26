@@ -70,7 +70,7 @@ fun openAiPlugin(
                 postSecurityFilter = ProtectPluginRoutes(auth)
                 this.routes += routes.toList()
             },
-            ServeLogo()
-        )
+            ServeLogo(),
+        ) + auth.authRoutes
         ).toTypedArray()
 )

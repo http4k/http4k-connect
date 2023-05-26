@@ -5,6 +5,7 @@ import addressbook.oauth.OAuthPluginSettings.EMAIL
 import addressbook.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
 import addressbook.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
 import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
+import addressbook.oauth.OAuthPluginSettings.REDIRECTION_URLS
 import addressbook.oauth.auth.InMemoryStorageProvider
 import addressbook.oauth.auth.LoginAuthenticate
 import addressbook.oauth.auth.StorageOAuthMachinery
@@ -55,7 +56,7 @@ fun OAuthPlugin(
                 ),
                 OAuth(
                     PLUGIN_BASE_URL(env),
-                    OAuthConfig(OPEN_AI_CLIENT_CREDENTIALS(env)),
+                    OAuthConfig(OPEN_AI_CLIENT_CREDENTIALS(env), redirectionUris = REDIRECTION_URLS(env)),
                     StorageOAuthMachinery(
                         InMemoryStorageProvider, strings, ofMinutes(1), COOKIE_DOMAIN(env), clock,
                         LoginAuthenticate(userDirectory)

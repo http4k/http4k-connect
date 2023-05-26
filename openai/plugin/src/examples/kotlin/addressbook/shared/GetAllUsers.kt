@@ -14,9 +14,9 @@ import org.http4k.format.Moshi.auto
  */
 fun GetAllUsers(userDirectory: UserDirectory) = "users" meta {
     summary = "Lookup all users"
-    returning(OK, usersLens to setOf(UserId.of("alice"), UserId.of("bob")))
+    returning(OK, usersLens to listOf(UserId.of("alice"), UserId.of("bob")))
 } bindContract GET to { _: Request ->
-    Response(OK).with(usersLens of userDirectory.all())
+    Response(OK).with(usersLens of userDirectory.all().toList())
 }
 
-private val usersLens = Body.auto<Set<UserId>>().toLens()
+private val usersLens = Body.auto<List<UserId>>().toLens()
