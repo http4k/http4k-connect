@@ -16,8 +16,9 @@ import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 
-fun StorageAccessTokens(
-    tokenStorage: Storage<Instant>,
+fun <Principal : Any> StorageAccessTokens(
+    tokenToPrincipal: Storage<Pair<Principal, Instant>>,
+    codeToPrincipal: Storage<Principal>,
     strings: SecureStrings,
     validity: Duration,
     clock: Clock
@@ -35,6 +36,10 @@ fun StorageAccessTokens(
             expiresIn = validity.seconds,
             scope = tokenRequest.scopes.joinToString(" "),
             refreshToken = RefreshToken(strings())
-        ).also { tokenStorage[it.value] = clock.instant() + validity }
+        ).also { token ->
+            codeToPrincipal[authorizationCode.value]?.also {
+                tokenToPrincipal[token.value] = it to (clock.instant() + validity)
+            }
+        }
     )
 }

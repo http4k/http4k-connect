@@ -1,11 +1,11 @@
 package org.http4k.connect.openai.auth.oauth.impl
 
-import org.http4k.connect.openai.auth.oauth.AccessTokenStore
-import org.http4k.connect.openai.auth.oauth.AuthCodeStore
 import org.http4k.connect.openai.auth.oauth.OAuthMachinery
 import org.http4k.connect.openai.auth.oauth.SecureStrings
+import org.http4k.security.AccessToken
 import org.http4k.security.oauth.server.AccessTokens
 import org.http4k.security.oauth.server.AuthRequestTracking
+import org.http4k.security.oauth.server.AuthorizationCode
 import org.http4k.security.oauth.server.AuthorizationCodes
 import org.http4k.security.oauth.server.refreshtoken.RefreshTokens
 import java.time.Clock
@@ -22,14 +22,22 @@ fun <Principal : Any> StorageOAuthMachinery(
     cookieDomain: String,
     clock: Clock
 ): OAuthMachinery<Principal> {
-    val tokenStorage = storageProvider<Instant>()
-    val accessTokens = StorageAccessTokens(tokenStorage, strings, validity, clock)
+    val tokenStorage = storageProvider<Pair<Principal, Instant>>()
+    val codeStorage = storageProvider<Principal>()
+
+    val accessTokens = StorageAccessTokens(tokenStorage, codeStorage, strings, validity, clock)
+
     return object : OAuthMachinery<Principal>,
         AccessTokens by accessTokens,
-        AuthorizationCodes by StorageAuthorizationCodes(storageProvider(), clock, strings, validity),
+        AuthorizationCodes by StorageAuthorizationCodes(storageProvider(), codeStorage, clock, strings, validity),
         AuthRequestTracking by StorageAuthRequestTracking(storageProvider(), cookieDomain, clock, strings, validity),
-        RefreshTokens by StorageRefreshTokens(storageProvider(), accessTokens),
-        AccessTokenStore<Principal> by StorageAccessTokenStore(storageProvider()),
-        AuthCodeStore<Principal> by StorageAuthCodeStore(storageProvider()) {
+        RefreshTokens by StorageRefreshTokens(storageProvider(), accessTokens) {
+
+        override fun get(key: AccessToken) = tokenStorage[key.value]?.first
+
+        override operator fun set(key: AuthorizationCode, data: Principal) {
+            codeStorage[key.value] = data
+        }
+
     }
 }

@@ -9,12 +9,12 @@ import org.http4k.security.oauth.server.MissingAuthorizationCode
 import org.http4k.security.oauth.server.refreshtoken.RefreshTokens
 
 fun StorageRefreshTokens(
-    refreshTokens: Storage<AccessToken>,
+    refreshTokenToAccessToken: Storage<AccessToken>,
     accessTokens: AccessTokens
 ) = RefreshTokens { clientId, tokenRequest, refreshToken ->
-    refreshTokens[refreshToken.value]
+    refreshTokenToAccessToken[refreshToken.value]
         ?.let {
             accessTokens.create(clientId, tokenRequest)
-                .peek { refreshTokens[refreshToken.value] = it }
+                .peek { refreshTokenToAccessToken[refreshToken.value] = it }
         } ?: Failure(MissingAuthorizationCode)
 }

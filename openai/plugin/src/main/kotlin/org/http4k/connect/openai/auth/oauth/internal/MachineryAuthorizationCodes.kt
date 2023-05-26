@@ -9,10 +9,14 @@ import org.http4k.security.oauth.server.AuthRequest
 import org.http4k.security.oauth.server.AuthorizationCode
 import org.http4k.security.oauth.server.AuthorizationCodes
 
-internal fun <Principal : Any> MachineryAuthorizationCodes(machinery: OAuthMachinery<Principal>, principalKey: Lens<Request, Principal>) =
+internal fun <Principal : Any> MachineryAuthorizationCodes(
+    machinery: OAuthMachinery<Principal>,
+    codePrincipalKey: Lens<Request, Principal>
+) =
     object : AuthorizationCodes {
         override fun create(request: Request, authRequest: AuthRequest, response: Response) =
-            machinery.create(request, authRequest, response).peek { machinery[it] = principalKey(request) }
+            machinery.create(request, authRequest, response)
+                .peek { machinery[it] = codePrincipalKey(request) }
 
-        override fun detailsFor(code: AuthorizationCode) = machinery.detailsFor(code).also { machinery -= code }
+        override fun detailsFor(code: AuthorizationCode) = machinery.detailsFor(code)
     }

@@ -11,12 +11,12 @@ import org.http4k.lens.RequestContextLens
 import org.http4k.security.AccessToken
 
 class PopulatingBearerToken<Principal : Any>(
-    private val machinery: OAuthMachinery<Principal>,
+    private val accessTokenStore: OAuthMachinery<Principal>,
     private val apiPrincipalKey: RequestContextLens<Principal>
 ) : Filter {
 
     override fun invoke(next: HttpHandler): HttpHandler = {
-        when (val principal = it.bearerToken()?.let { machinery[AccessToken(it)] }) {
+        when (val principal = it.bearerToken()?.let { accessTokenStore[AccessToken(it)] }) {
             null -> Response(UNAUTHORIZED)
             else -> next(it.with(apiPrincipalKey of principal))
         }

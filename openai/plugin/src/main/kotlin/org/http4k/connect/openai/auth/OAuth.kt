@@ -1,7 +1,6 @@
 package org.http4k.connect.openai.auth
 
 import org.http4k.connect.openai.auth.oauth.OAuthMachinery
-import org.http4k.connect.openai.auth.oauth.internal.MachineryAccessTokens
 import org.http4k.connect.openai.auth.oauth.internal.MachineryAuthorizationCodes
 import org.http4k.connect.openai.auth.oauth.internal.PopulatingBearerToken
 import org.http4k.connect.openai.auth.oauth.internal.StaticOpenAiClientValidator
@@ -16,7 +15,7 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.filter.ServerFilters.InitialiseRequestContext
-import org.http4k.lens.Header
+import org.http4k.lens.Header.LOCATION
 import org.http4k.lens.RequestContextKey
 import org.http4k.lens.RequestContextLens
 import org.http4k.routing.bind
@@ -51,7 +50,7 @@ class OAuth<T : Any>(
         machinery,
         StaticOpenAiClientValidator(config),
         MachineryAuthorizationCodes(machinery, codePrincipal),
-        MachineryAccessTokens(machinery),
+        machinery,
         clock,
         refreshTokens = machinery
     )
@@ -64,7 +63,7 @@ class OAuth<T : Any>(
         "/authorize" bind POST to InitialiseRequestContext(codeContexts)
             .then { request ->
                 when (val principal = authChallenge(request)) {
-                    null -> Response(SEE_OTHER).with(Header.LOCATION of request.uri)
+                    null -> Response(SEE_OTHER).with(LOCATION of request.uri)
                     else -> server.authenticationComplete(request.with(codePrincipal of principal))
                 }
             }

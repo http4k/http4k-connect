@@ -12,8 +12,9 @@ import org.http4k.security.oauth.server.AuthorizationCodes
 import java.time.Clock
 import java.time.Duration
 
-fun StorageAuthorizationCodes(
-    storage: Storage<AuthorizationCodeDetails>,
+fun <Principal : Any> StorageAuthorizationCodes(
+    authDetailsStorage: Storage<AuthorizationCodeDetails>,
+    codeStorage: Storage<Principal>,
     clock: Clock,
     strings: SecureStrings,
     validity: Duration
@@ -24,13 +25,16 @@ fun StorageAuthorizationCodes(
         response: Response
     ) = Success(AuthorizationCode(strings())
         .also {
-            storage[it.value] = AuthorizationCodeDetails(
+            authDetailsStorage[it.value] = AuthorizationCodeDetails(
                 authRequest.client, authRequest.redirectUri!!, clock.instant() + validity, null, false,
                 authRequest.responseType
             )
         })
 
-    override fun detailsFor(code: AuthorizationCode) = storage[code.value]
-        ?.also { storage.remove(code.value) }
+    override fun detailsFor(code: AuthorizationCode) = authDetailsStorage[code.value]
+        ?.also {
+            authDetailsStorage.remove(code.value)
+            codeStorage.remove(code.value)
+        }
         ?: error("unknown code")
 }
