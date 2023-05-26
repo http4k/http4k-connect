@@ -12,9 +12,8 @@ import org.http4k.security.oauth.server.AuthorizationCodes
 import java.time.Clock
 import java.time.Duration
 
-fun <Principal : Any> StorageAuthorizationCodes(
+fun StorageAuthorizationCodes(
     authDetailsStorage: Storage<AuthorizationCodeDetails>,
-    codeStorage: Storage<Principal>,
     clock: Clock,
     strings: SecureStrings,
     validity: Duration
@@ -32,9 +31,6 @@ fun <Principal : Any> StorageAuthorizationCodes(
         })
 
     override fun detailsFor(code: AuthorizationCode) = authDetailsStorage[code.value]
-        ?.also {
-            authDetailsStorage.remove(code.value)
-            codeStorage.remove(code.value)
-        }
+        ?.also { authDetailsStorage.remove(code.value) }
         ?: error("unknown code")
 }

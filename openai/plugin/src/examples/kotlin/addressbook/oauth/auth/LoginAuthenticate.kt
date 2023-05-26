@@ -19,9 +19,9 @@ fun LoginAuthenticate(userDirectory: UserDirectory) = object : Authenticate<User
             """
             <html>
                 <form method="POST">
-                    <input name="userId"/>
-                    <input name="password"/>
-                    <button type="submit">Please authenticate</button>
+                    <input name="userId" value="sherlock"/><br/>
+                    <input name="password" value="watson"/><br/>
+                    <button type="submit">Authenticate</button>
                 </form>
             </html>
             """.trimIndent()

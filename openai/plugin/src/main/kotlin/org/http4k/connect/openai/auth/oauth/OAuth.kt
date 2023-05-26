@@ -10,8 +10,8 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.RequestContexts
 import org.http4k.core.Response
-import org.http4k.core.Status
 import org.http4k.core.Status.Companion.SEE_OTHER
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.core.with
@@ -63,20 +63,19 @@ class OAuth<T : Any>(
     private val contexts = RequestContexts()
     private val principalKey = RequestContextKey.required<T>(contexts)
 
-    override val securityFilter = InitialiseRequestContext(contexts)
-        .then(Filter { next ->
-            {
-                when (it.bearerToken()?.let { machinery[AccessToken(it)] }) {
-                    null -> Response(Status.UNAUTHORIZED)
-                    else -> next(it.with(apiPrincipalKey of principalKey(it)))
-                }
+    override val securityFilter = Filter { next ->
+        {
+            when (val principal = it.bearerToken()?.let { machinery[AccessToken(it)] }) {
+                null -> Response(UNAUTHORIZED)
+                else -> next(it.with(apiPrincipalKey of principal))
             }
-        })
+        }
+    }
 
     override val authRoutes = listOf(
         server.tokenRoute,
         "/authorize" bind GET to server.authenticationStart.then(machinery.challenge),
-        "/authorize" bind POST to { request ->
+        "/authorize" bind POST to InitialiseRequestContext(contexts).then { request ->
             when (val principal = machinery(request)) {
                 null -> Response(SEE_OTHER).with(LOCATION of request.uri)
                 else -> server.authenticationComplete(request.with(principalKey of principal))

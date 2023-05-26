@@ -17,5 +17,5 @@ internal fun StaticOpenAiClientValidator(config: OAuthConfig) = object : ClientV
         config.redirectionUris.contains(redirectionUri)
 
     override fun validateScopes(request: Request, clientId: ClientId, scopes: List<String>) =
-        scopes == listOf(config.scope.split(" "))
+        scopes == listOf(config.scope)
 }
