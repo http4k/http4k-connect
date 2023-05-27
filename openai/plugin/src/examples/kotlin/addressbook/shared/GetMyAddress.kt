@@ -9,7 +9,6 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
-import org.http4k.lens.BiDiLens
 import org.http4k.lens.string
 
 /**
@@ -17,12 +16,12 @@ import org.http4k.lens.string
  */
 fun GetMyAddress(
     userDirectory: UserDirectory,
-    principal: BiDiLens<Request, UserId>
+    principal: (Request) -> UserId?
 ) = "address" meta {
     summary = "Lookup my address"
     returning(OK, addressLens to "10 Downing Street, London")
 } bindContract GET to { req: Request ->
-    when (val userDetails = userDirectory.find(principal(req))) {
+    when (val userDetails = principal(req)?.let { userDirectory.find(it) }) {
         null -> Response(NOT_FOUND)
         else -> Response(OK).with(addressLens of userDetails.address)
     }

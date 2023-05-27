@@ -39,7 +39,7 @@ fun FakeOpenAI(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
 ): HttpHandler {
-    val oAuthPersistence = InsecureCookieBasedOAuthPersistence("openai", ofSeconds(5), clock)
+    val oAuthPersistence = InsecureCookieBasedOAuthPersistence("openai", ofSeconds(60), clock)
     val oAuthProvider = OAuthProvider(
         OAuthProviderConfig(pluginUrl, "/authorize", "/oauth2/token", credentials),
         http,
@@ -66,7 +66,8 @@ fun main() {
         REDIRECTION_URLS of listOf(Uri.of("http://localhost:9000/oauth2/callback"))
     )
 
-    FakeOpenAI(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env)).asServer(SunHttp(9000)).start()
+    FakeOpenAI(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env))
+        .asServer(SunHttp(9000)).start()
 
     Cors(UnsafeGlobalPermissive)
         .then(OAuthPlugin(env))

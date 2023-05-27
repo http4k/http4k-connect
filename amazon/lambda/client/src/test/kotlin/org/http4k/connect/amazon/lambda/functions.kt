@@ -19,9 +19,8 @@ val functions = functions(
     "http" bind InvocationFnLoader {
         Response(OK).body(it.bodyString() + it.bodyString())
     },
-    "stream" bind { env: Map<String, String> ->
+    "stream" bind { _: Map<String, String> ->
         FnHandler { e: InputStream, _ ->
-            println(e.available())
             e
         }
     }

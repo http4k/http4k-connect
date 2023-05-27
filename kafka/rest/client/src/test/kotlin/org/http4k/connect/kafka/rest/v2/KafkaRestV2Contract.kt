@@ -75,7 +75,7 @@ interface KafkaRestV2Contract {
         kafkaRest.testSending(
             avro,
             { it.records.first() },
-            { it?.toMapOrString().also { println(it.toString()) } },
+            { it?.toMapOrString() },
         ) {
             Records.Avro(
                 listOf(

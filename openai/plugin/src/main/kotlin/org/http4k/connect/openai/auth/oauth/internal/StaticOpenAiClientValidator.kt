@@ -1,5 +1,6 @@
-package org.http4k.connect.openai.auth.oauth
+package org.http4k.connect.openai.auth.oauth.internal
 
+import org.http4k.connect.openai.auth.oauth.OAuthConfig
 import org.http4k.core.Credentials
 import org.http4k.core.Request
 import org.http4k.core.Uri

@@ -24,7 +24,6 @@ fun getOffsets(consumers: Storage<ConsumerState>) =
         val group = Path.value(ConsumerGroup).of("consumerGroup")(req)
         consumers[group]
             ?.let {
-                println(it)
                 Response(OK)
                     .with(Body.auto<CommitOffsetsSet>().toLens() of CommitOffsetsSet(
                         it.offsets

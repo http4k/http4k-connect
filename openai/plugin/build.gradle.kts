@@ -13,4 +13,6 @@ dependencies {
     testApi(Libs.http4k_serverless_lambda)
     testApi(Libs.http4k_cloudnative)
     testApi(Libs.http4k_testing_approval)
+
+    testApi("com.nimbusds:nimbus-jose-jwt:_")
 }

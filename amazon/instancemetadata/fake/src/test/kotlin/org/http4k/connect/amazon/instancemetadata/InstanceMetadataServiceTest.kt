@@ -52,8 +52,8 @@ class InstanceMetadataServiceTest {
 
     @Test
     fun `get credentials - reuse if not expired`() = assertThat(
-        client.getSecurityCredentials(profile).successValue().also { println(it) },
-        equalTo(client.getSecurityCredentials(profile).successValue().also { println(it) })
+        client.getSecurityCredentials(profile).successValue(),
+        equalTo(client.getSecurityCredentials(profile).successValue())
     )
 
     @Test

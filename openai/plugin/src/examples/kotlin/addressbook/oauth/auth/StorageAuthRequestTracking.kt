@@ -1,6 +1,5 @@
 package addressbook.oauth.auth
 
-import org.http4k.connect.openai.auth.oauth.SecureStrings
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -15,7 +14,6 @@ fun StorageAuthRequestTracking(
     storage: Storage<AuthRequest>,
     cookieDomain: String,
     clock: Clock,
-    strings: SecureStrings,
     validity: Duration
 ) = object : AuthRequestTracking {
     private val cookieName = "t"
@@ -23,13 +21,10 @@ fun StorageAuthRequestTracking(
     override fun resolveAuthRequest(request: Request): AuthRequest? =
         request.cookie(cookieName)
             ?.value
-            ?.let { trackingId ->
-                storage[trackingId]
-                    ?.also { storage.remove(trackingId) }
-            }
+            ?.let { storage[it]?.apply { storage.remove(it) } }
 
     override fun trackAuthRequest(request: Request, authRequest: AuthRequest, response: Response) =
-        strings().let {
+        String.random().let {
             storage[it] = authRequest
             response.cookie(expiring(cookieName, it, validity))
         }

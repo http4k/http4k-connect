@@ -84,7 +84,6 @@ interface KafkaRestV3Contract {
         consumer1.subscribeToTopics(listOf(topic)).successValue()
 
         val records = consumer1.consumeRecordsTwiceBecauseOfProxy(json)
-        println(records)
         assertThat(records
             .map { it.key.toString() to it.value.toString() }
             .map { Base64Blob.of(it.first).decoded() to Base64Blob.of(it.second).decoded() },

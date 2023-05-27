@@ -34,7 +34,7 @@ fun fromAttributeValue(value: AttributeValue): Any? = value.N
 
 @Suppress("UNCHECKED_CAST")
 private fun toAttributeValue(value: Any?): AttributeValue = when (value) {
-    null -> AttributeValue.Null().also { println("HOOR") }
+    null -> AttributeValue.Null()
     is Number -> AttributeValue.Num(value)
     is Boolean -> AttributeValue.Bool(value)
     is Map<*, *> -> (value as Map<String, Any?>).let {

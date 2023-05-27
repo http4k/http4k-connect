@@ -48,7 +48,8 @@ interface OpenAIContract {
     @Test
     fun `get embeddings`() {
         assertThat(
-            openAi.createEmbeddings(TEXT_EMBEDDING_ADA_002,
+            openAi.createEmbeddings(
+                TEXT_EMBEDDING_ADA_002,
                 listOf(Content.of("What is your favourite colour?"))
             ).successValue().model.value,
             startsWith("text-embedding-ada-002")
@@ -57,7 +58,6 @@ interface OpenAIContract {
 
     @Test
     fun `can generate image`(approver: Approver) {
-        val generated = openAi.generateImage(Content.of("An excellent library"), Size.`256x256`).successValue()
-        println(generated.data.first().url)
+        openAi.generateImage(Content.of("An excellent library"), Size.`256x256`).successValue()
     }
 }

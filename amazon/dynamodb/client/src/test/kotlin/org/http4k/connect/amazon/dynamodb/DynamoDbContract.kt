@@ -272,9 +272,6 @@ abstract class DynamoDbContract(
             .successValue()
             .TableNames
             .filter { it.value.startsWith("http4k-connect") }
-            .forEach {
-                println("DELETING$it")
-                dynamo.deleteTable(it)
-            }
+            .forEach { dynamo.deleteTable(it) }
     }
 }

@@ -1,7 +1,7 @@
 package addressbook.oauth.auth
 
 import dev.forkhandles.result4k.Success
-import org.http4k.connect.openai.auth.oauth.SecureStrings
+import dev.forkhandles.result4k.peek
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -15,20 +15,19 @@ import java.time.Duration
 fun StorageAuthorizationCodes(
     authDetailsStorage: Storage<AuthorizationCodeDetails>,
     clock: Clock,
-    strings: SecureStrings,
     validity: Duration
 ) = object : AuthorizationCodes {
     override fun create(
         request: Request,
         authRequest: AuthRequest,
         response: Response
-    ) = Success(AuthorizationCode(strings())
-        .also {
+    ) = Success(AuthorizationCode(String.random()))
+        .peek {
             authDetailsStorage[it.value] = AuthorizationCodeDetails(
                 authRequest.client, authRequest.redirectUri!!, clock.instant() + validity, null, false,
                 authRequest.responseType
             )
-        })
+        }
 
     override fun detailsFor(code: AuthorizationCode) = authDetailsStorage[code.value]
         ?.also { authDetailsStorage.remove(code.value) }
