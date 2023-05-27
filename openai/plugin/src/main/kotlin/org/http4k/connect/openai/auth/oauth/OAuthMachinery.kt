@@ -6,20 +6,20 @@ import org.http4k.security.oauth.server.AuthorizationCodes
 import org.http4k.security.oauth.server.refreshtoken.RefreshTokens
 
 /**
- * An arrangement of all the pieces of storage and generation various entities of the OAuth flow.
+ * An arrangement of all the pieces of storage and generation various entities of the OAuth flow
  * and to track the in-flight requests.
  */
 class OAuthMachinery<Principal : Any>(
+    authenticate: Authenticate<Principal>,
+    principalStore: PrincipalStore<Principal>,
     accessTokens: AccessTokens,
     refreshTokens: RefreshTokens,
     authorizationCodes: AuthorizationCodes,
-    authRequestTracking: AuthRequestTracking,
-    authenticate: Authenticate<Principal>,
-    principalStore: PrincipalStore<Principal>
+    authRequestTracking: AuthRequestTracking
 ) :
+    Authenticate<Principal> by authenticate,
+    PrincipalStore<Principal> by principalStore,
     AccessTokens by accessTokens,
     RefreshTokens by refreshTokens,
     AuthorizationCodes by authorizationCodes,
-    AuthRequestTracking by authRequestTracking,
-    Authenticate<Principal> by authenticate,
-    PrincipalStore<Principal> by principalStore
+    AuthRequestTracking by authRequestTracking

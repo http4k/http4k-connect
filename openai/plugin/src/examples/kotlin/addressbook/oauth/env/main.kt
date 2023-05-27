@@ -23,7 +23,6 @@ import org.http4k.core.with
 import org.http4k.filter.ClientFilters.BearerAuth
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive
 import org.http4k.filter.ServerFilters.Cors
-import org.http4k.filter.debug
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.security.InsecureCookieBasedOAuthPersistence
@@ -32,6 +31,7 @@ import org.http4k.security.OAuthProviderConfig
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 import java.time.Clock
+import java.time.Duration.ofSeconds
 
 fun FakeOpenAI(
     pluginUrl: Uri,
@@ -39,7 +39,7 @@ fun FakeOpenAI(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
 ): HttpHandler {
-    val oAuthPersistence = InsecureCookieBasedOAuthPersistence("openao", clock = clock)
+    val oAuthPersistence = InsecureCookieBasedOAuthPersistence("openai", ofSeconds(5), clock)
     val oAuthProvider = OAuthProvider(
         OAuthProviderConfig(pluginUrl, "/authorize", "/oauth2/token", credentials),
         http,
@@ -70,7 +70,6 @@ fun main() {
 
     Cors(UnsafeGlobalPermissive)
         .then(OAuthPlugin(env))
-        .debug()
         .asServer(SunHttp(PORT(env)))
         .start()
 

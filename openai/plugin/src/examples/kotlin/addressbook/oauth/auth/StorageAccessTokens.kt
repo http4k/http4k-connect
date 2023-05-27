@@ -12,14 +12,12 @@ import org.http4k.security.oauth.server.ClientId
 import org.http4k.security.oauth.server.TokenRequest
 import org.http4k.security.oauth.server.UnsupportedGrantType
 import org.http4k.security.oauth.server.accesstoken.AuthorizationCodeAccessTokenRequest
-import java.time.Clock
 import java.time.Duration
 
 fun <Principal : Any> StorageAccessTokens(
     principleStore: PrincipalStore<Principal>,
     strings: SecureStrings,
-    validity: Duration,
-    clock: Clock
+    tokenLifespan: Duration,
 ) = object : AccessTokens {
     override fun create(clientId: ClientId, tokenRequest: TokenRequest) =
         Failure(UnsupportedGrantType("client_credentials"))
@@ -31,13 +29,11 @@ fun <Principal : Any> StorageAccessTokens(
     ) = Success(
         AccessToken(
             strings(),
-            expiresIn = validity.seconds,
+            expiresIn = tokenLifespan.seconds,
             scope = tokenRequest.scopes.joinToString(" "),
             refreshToken = RefreshToken(strings())
         ).also { token ->
-            principleStore[authorizationCode]?.also {
-                principleStore[token] = it to (clock.instant() + validity)
-            }
+            principleStore[authorizationCode]?.also { principleStore[token] = it }
         }
     )
 }
