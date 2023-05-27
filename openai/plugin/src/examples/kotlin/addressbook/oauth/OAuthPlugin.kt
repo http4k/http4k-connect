@@ -7,7 +7,7 @@ import addressbook.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
 import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.oauth.OAuthPluginSettings.REDIRECTION_URLS
 import addressbook.oauth.auth.InMemoryStorageProvider
-import addressbook.oauth.auth.LoginAuthenticate
+import addressbook.oauth.auth.LoginChallenge
 import addressbook.oauth.auth.StorageOAuthMachinery
 import addressbook.shared.GetAllUsers
 import addressbook.shared.GetAnAddress
@@ -31,7 +31,6 @@ import org.http4k.routing.RoutingHttpHandler
 import java.time.Clock
 import java.time.Clock.systemUTC
 import java.time.Duration.ofMinutes
-import java.time.Duration.ofSeconds
 
 /**
  * A plugin which is protected by an OAuth AuthorizationCode flow (using a custom login screen)
@@ -59,8 +58,8 @@ fun OAuthPlugin(
                     PLUGIN_BASE_URL(env),
                     OAuthConfig(OPEN_AI_CLIENT_CREDENTIALS(env), redirectionUris = REDIRECTION_URLS(env)),
                     StorageOAuthMachinery(
-                        InMemoryStorageProvider, strings, ofMinutes(1), ofSeconds(2), COOKIE_DOMAIN(env), clock,
-                        LoginAuthenticate(userDirectory)
+                        InMemoryStorageProvider, strings, ofMinutes(1), ofMinutes(60), COOKIE_DOMAIN(env), clock,
+                        LoginChallenge(userDirectory)
                     ),
                     userPrincipal,
                     mapOf(openai to OPENAI_VERIFICATION_TOKEN(env)),

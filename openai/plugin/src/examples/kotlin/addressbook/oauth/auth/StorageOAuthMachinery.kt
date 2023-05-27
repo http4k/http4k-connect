@@ -1,8 +1,8 @@
 package addressbook.oauth.auth
 
-import org.http4k.connect.openai.auth.oauth.Authenticate
 import org.http4k.connect.openai.auth.oauth.OAuthMachinery
 import org.http4k.connect.openai.auth.oauth.SecureStrings
+import org.http4k.connect.openai.auth.oauth.UserChallenge
 import java.time.Clock
 import java.time.Duration
 
@@ -16,13 +16,13 @@ fun <Principal : Any> StorageOAuthMachinery(
     tokenLifespan: Duration,
     cookieDomain: String,
     clock: Clock,
-    authenticate: Authenticate<Principal>
+    userChallenge: UserChallenge<Principal>
 ): OAuthMachinery<Principal> {
     val principalStore = StoragePrincipalStore<Principal>(storageProvider(), storageProvider(), clock)
     val accessTokens = StorageAccessTokens(principalStore, strings, tokenLifespan)
 
     return OAuthMachinery(
-        authenticate,
+        userChallenge,
         principalStore,
         accessTokens,
         StorageRefreshTokens(storageProvider(), accessTokens),

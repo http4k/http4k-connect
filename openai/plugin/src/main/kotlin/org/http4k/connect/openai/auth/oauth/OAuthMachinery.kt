@@ -10,14 +10,14 @@ import org.http4k.security.oauth.server.refreshtoken.RefreshTokens
  * and to track the in-flight requests.
  */
 class OAuthMachinery<Principal : Any>(
-    authenticate: Authenticate<Principal>,
+    authenticate: UserChallenge<Principal>,
     principalStore: PrincipalStore<Principal>,
     accessTokens: AccessTokens,
     refreshTokens: RefreshTokens,
     authorizationCodes: AuthorizationCodes,
     authRequestTracking: AuthRequestTracking
 ) :
-    Authenticate<Principal> by authenticate,
+    UserChallenge<Principal> by authenticate,
     PrincipalStore<Principal> by principalStore,
     AccessTokens by accessTokens,
     RefreshTokens by refreshTokens,
