@@ -19,11 +19,13 @@ import addressbook.shared.UserDirectory
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.oauth.OAuth
-import org.http4k.connect.openai.auth.oauth.OAuthConfig
+import org.http4k.connect.openai.auth.oauth.OAuthPluginConfig
+import org.http4k.connect.openai.auth.oauth.openaiPlugin
 import org.http4k.connect.openai.info
 import org.http4k.connect.openai.model.AuthedSystem.Companion.openai
 import org.http4k.connect.openai.openAiPlugin
 import org.http4k.routing.RoutingHttpHandler
+import org.http4k.security.OAuthProvider
 import java.time.Clock
 import java.time.Clock.systemUTC
 import java.time.Duration.ofMinutes
@@ -47,8 +49,10 @@ fun OAuthPlugin(
             contactEmail = EMAIL(env),
         ),
         OAuth(
-            PLUGIN_BASE_URL(env),
-            OAuthConfig(OPEN_AI_CLIENT_CREDENTIALS(env), redirectionUris = REDIRECTION_URLS(env)),
+            OAuthPluginConfig(
+                OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env)),
+                REDIRECTION_URLS(env)
+            ),
             accessTokens,
             LoginPrincipalChallenge(userDirectory),
             StoragePrincipalStore(storageProvider()),

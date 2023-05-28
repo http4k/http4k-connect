@@ -9,7 +9,6 @@ import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
-import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.routing.bind
 import org.http4k.security.oauth.server.AuthRequestTracking
@@ -22,8 +21,7 @@ import java.time.Clock
  * http4k-security-oauth and some new ones to help with creation of a plugin.
  */
 class OAuth<Principal : Any>(
-    baseUrl: Uri,
-    config: OAuthConfig,
+    config: OAuthPluginConfig,
     principalTokens: PrincipalTokens<Principal>,
     principalChallenge: PrincipalChallenge<Principal>,
     principalStore: PrincipalStore<Principal>,
@@ -35,15 +33,15 @@ class OAuth<Principal : Any>(
 
     override val manifestDescription = mapOf(
         "type" to "oauth",
-        "client_url" to baseUrl.path("/authorize"),
+        "client_url" to config.providerConfig.authPath,
         "scope" to config.scope,
-        "authorization_url" to baseUrl.path("/token"),
+        "authorization_url" to config.providerConfig.tokenPath,
         "authorization_content_type" to config.contentType,
         "verification_tokens" to tokens
     )
 
     private val server = OAuthServer(
-        "/oauth2/token",
+        config.providerConfig.tokenPath,
         authRequestTracking,
         StaticOpenAiClientValidator(config),
         PluginAuthorizationCodes(authorizationCodes, principalStore, principalChallenge),
@@ -56,8 +54,8 @@ class OAuth<Principal : Any>(
 
     override val authRoutes = listOf(
         server.tokenRoute,
-        "/authorize" bind GET to server.authenticationStart.then(principalChallenge.challenge),
-        "/authorize" bind POST to server.authenticationStart
+        config.providerConfig.authPath bind GET to server.authenticationStart.then(principalChallenge.challenge),
+        config.providerConfig.authPath bind POST to server.authenticationStart
             .then(principalChallenge.handleChallenge)
             .then(server.authenticationComplete)
     )

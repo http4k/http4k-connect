@@ -10,6 +10,7 @@ import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.oauth.OAuthPluginSettings.PORT
 import addressbook.oauth.OAuthPluginSettings.REDIRECTION_URLS
 import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.connect.openai.auth.oauth.openaiPlugin
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.core.Credentials
@@ -18,6 +19,7 @@ import org.http4k.core.then
 import org.http4k.core.with
 import org.http4k.filter.CorsPolicy.Companion.UnsafeGlobalPermissive
 import org.http4k.filter.ServerFilters.Cors
+import org.http4k.security.OAuthProvider
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
@@ -36,7 +38,7 @@ fun main() {
         REDIRECTION_URLS of listOf(Uri.of("http://localhost:9000/oauth2/callback"))
     )
 
-    FakeOpenAI(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env))
+    FakeOpenAI(OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env)))
         .asServer(SunHttp(9000)).start()
 
     Cors(UnsafeGlobalPermissive)
