@@ -21,7 +21,6 @@ import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.TEXT_HTML
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
-import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
@@ -107,7 +106,7 @@ fun serveGeneratedContent() = static(Classpath("public"))
 fun index(plugins: List<OpenAIPluginId>): RoutingHttpHandler {
     val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), TEXT_HTML).toLens()
 
-    return "/" bind GET to { req: Request -> Response(OK).with(lens of Index(plugins)) }
+    return "/" bind GET to { Response(OK).with(lens of Index(plugins)) }
 }
 
 data class Index(val plugins: List<OpenAIPluginId>) : ViewModel
