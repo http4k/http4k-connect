@@ -6,7 +6,6 @@ import org.http4k.connect.amazon.cognito.Keys
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.security.AccessToken
 import org.http4k.security.oauth.server.AccessTokens
-import org.http4k.security.oauth.server.AuthorizationCode
 import org.http4k.security.oauth.server.ClientId
 import org.http4k.security.oauth.server.TokenRequest
 import org.http4k.security.oauth.server.accesstoken.AuthorizationCodeAccessTokenRequest
@@ -33,11 +32,10 @@ class CognitoAccessTokens(
     override fun create(
         clientId: ClientId,
         tokenRequest: AuthorizationCodeAccessTokenRequest,
-        authorizationCode: AuthorizationCode
     ): Success<AccessToken> {
         val now = clock.instant()
 
-        val email = authorizationCode.value.base64Decoded()
+        val email = tokenRequest.authorizationCode.value.base64Decoded()
 
         val uuid = UUID.nameUUIDFromBytes(email.toByteArray())
 

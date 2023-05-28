@@ -7,7 +7,6 @@ import org.http4k.connect.openai.auth.oauth.SecureStrings
 import org.http4k.security.AccessToken
 import org.http4k.security.oauth.core.RefreshToken
 import org.http4k.security.oauth.server.AccessTokens
-import org.http4k.security.oauth.server.AuthorizationCode
 import org.http4k.security.oauth.server.ClientId
 import org.http4k.security.oauth.server.TokenRequest
 import org.http4k.security.oauth.server.UnsupportedGrantType
@@ -25,7 +24,6 @@ fun <Principal : Any> StorageAccessTokens(
     override fun create(
         clientId: ClientId,
         tokenRequest: AuthorizationCodeAccessTokenRequest,
-        authorizationCode: AuthorizationCode
     ) = Success(
         AccessToken(
             strings(),
@@ -33,7 +31,7 @@ fun <Principal : Any> StorageAccessTokens(
             scope = tokenRequest.scopes.joinToString(" "),
             refreshToken = RefreshToken(strings())
         ).also { token ->
-            principleStore[authorizationCode]?.also { principleStore[token] = it }
+            principleStore[tokenRequest.authorizationCode]?.also { principleStore[token] = it }
         }
     )
 }
