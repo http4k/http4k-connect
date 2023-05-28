@@ -13,6 +13,7 @@ fun main() {
 
     FakeOpenAI(
         plugins = arrayOf(
+            startNoAuthPlugin(),
             startOAuthPlugin(openAiPort),
             startServicePlugin(),
             startUserPlugin()

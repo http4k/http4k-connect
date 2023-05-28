@@ -1,7 +1,7 @@
-package addressbook.local
+package addressbook.noauth
 
-import addressbook.local.LocalPluginSettings.EMAIL
-import addressbook.local.LocalPluginSettings.PLUGIN_BASE_URL
+import addressbook.noauth.NoAuthPluginSettings.EMAIL
+import addressbook.noauth.NoAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.shared.GetAllUsers
 import addressbook.shared.GetAnAddress
 import addressbook.shared.UserDirectory
@@ -15,12 +15,12 @@ import org.http4k.routing.RoutingHttpHandler
 /**
  * A service-level plugin operates by authing the calling service only.
  */
-fun LocalPlugin(env: Environment = ENV): RoutingHttpHandler {
+fun NoAuthPlugin(env: Environment = ENV): RoutingHttpHandler {
     val userDirectory = UserDirectory()
     return openAiPlugin(
         info(
             apiVersion = "1.0",
-            humanDescription = "localplugin" to "A plugin which uses no auth",
+            humanDescription = "noauthplugin" to "A plugin which uses no auth",
             pluginUrl = PLUGIN_BASE_URL(env),
             contactEmail = EMAIL(env),
         ),

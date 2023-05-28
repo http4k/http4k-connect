@@ -5,16 +5,15 @@ import org.http4k.connect.openai.plugins.internal.ForwardCallsToPluginServer
 import org.http4k.connect.openai.plugins.internal.LoadOpenApi
 import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
+import org.http4k.core.NoOp
 import org.http4k.core.Uri
 import org.http4k.routing.routes
 import java.time.Clock
 
 /**
- * Plugin implementation which plugs into the FakeOpenAI server. It uses Basic or Bearer
- * auth to auth against the server.
+ * Plugin implementation which plugs into the FakeOpenAI server. There is no Auth
  */
-fun ServicePluginIntegration(
-    securityTokenFilter: Filter,
+fun NoAuthPluginIntegration(
     pluginId: OpenAIPluginId,
     pluginUri: Uri
 ) = object : PluginIntegration {
@@ -26,9 +25,9 @@ fun ServicePluginIntegration(
             routes(
                 LoadOpenApi(pluginId, openAiUrl, http, pluginUri),
                 ForwardCallsToPluginServer(pluginId, http, pluginUri) {
-                    securityTokenFilter
+                    Filter.NoOp
                 }
             ),
-            securityTokenFilter
+            Filter.NoOp
         )
 }

@@ -30,9 +30,9 @@ fun startOAuthPlugin(openAiPort: Int): PluginIntegration {
     val pluginId = OpenAIPluginId.of("oauthplugin")
 
     val env = ENV.with(
-        PORT of 10000,
+        PORT of 20000,
         OPENAI_PLUGIN_ID of pluginId,
-        PLUGIN_BASE_URL of Uri.of("http://localhost:10000"),
+        PLUGIN_BASE_URL of Uri.of("http://localhost:20000"),
         OPENAI_CLIENT_CREDENTIALS of Credentials("foo", "bar"),
         EMAIL of Email.of("foo@bar.com"),
         COOKIE_DOMAIN of "localhost",

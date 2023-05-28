@@ -10,8 +10,8 @@ import org.http4k.routing.routes
 import java.time.Clock
 
 /**
- * Plugin implementation which plugs into the FakeOpenAI server. It performs the
- * oauth flow to the plugin, obtaining a token and driving the login.
+ * Plugin implementation which plugs into the FakeOpenAI server. It uses Basic or Bearer
+ * auth to auth against the server.
  */
 fun UserPluginIntegration(
     securityFilter: Filter,
@@ -32,4 +32,5 @@ fun UserPluginIntegration(
             securityFilter
         )
 }
+
 

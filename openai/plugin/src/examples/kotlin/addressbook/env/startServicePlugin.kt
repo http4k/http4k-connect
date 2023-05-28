@@ -24,8 +24,8 @@ import org.http4k.server.asServer
 
 fun startServicePlugin(): PluginIntegration {
     val env = ENV.with(
-        PORT of 20000,
-        PLUGIN_BASE_URL of Uri.of("http://localhost:20000"),
+        PORT of 30000,
+        PLUGIN_BASE_URL of Uri.of("http://localhost:30000"),
         OPENAI_API_KEY of AccessToken("foobar"),
         EMAIL of Email.of("foo@bar.com"),
         OPENAI_VERIFICATION_TOKEN of VerificationToken.of("barfoo")
