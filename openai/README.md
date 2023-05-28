@@ -42,13 +42,6 @@ fun main() {
 Other examples can be found [here](https://github.com/http4k/http4k-connect/tree/master/openai/fake/src/examples/kotlin).
 
 # OpenAI Plugin SDK
-<<<<<<< Updated upstream
-=======
-
-## Fake OpenAI Server
-
-### Default Fake port: 45674
->>>>>>> Stashed changes
 
 The OpenAPI Plugin SDK provides APIs to simply write OpenAI compliant plugins with the minimum of fuss. Simply 
 use the `openAiPlugin()` function to compose your function, adding the configuration for the authorization and 
