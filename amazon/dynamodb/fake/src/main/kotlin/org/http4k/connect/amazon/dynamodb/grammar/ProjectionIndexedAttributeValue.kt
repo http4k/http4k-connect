@@ -8,6 +8,7 @@ import parser4k.inOrder
 import parser4k.mapLeftAssoc
 import parser4k.ref
 
+@Suppress("UNCHECKED_CAST")
 object ProjectionIndexedAttributeValue : ExprFactory {
     override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> =
         inOrder(ref(parser), token("["), number, token("]"))
