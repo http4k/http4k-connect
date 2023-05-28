@@ -2,8 +2,8 @@ package org.http4k.connect.openai.auth
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.openai.auth.AuthToken.Basic
-import org.http4k.connect.openai.auth.AuthToken.Bearer
+import org.http4k.connect.openai.auth.PluginAuthToken.Basic
+import org.http4k.connect.openai.auth.PluginAuthToken.Bearer
 import org.http4k.core.Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
@@ -20,7 +20,7 @@ import org.http4k.lens.RequestContextKey.required
 import org.http4k.security.AccessToken
 import org.junit.jupiter.api.Test
 
-class AuthTokenTest {
+class PluginAuthTokenTest {
 
     private val validCreds = Credentials("user", "password")
     private val validToken = AccessToken("foobar")
@@ -48,7 +48,7 @@ class AuthTokenTest {
         Bearer { it == validToken }.assertAuthsOk(validRequest)
     }
 
-    private fun AuthToken.assertAuthsOk(req: Request) {
+    private fun PluginAuthToken.assertAuthsOk(req: Request) {
         val withRC = InitialiseRequestContext(store)
             .then(securityFilter)
             .then { Response(OK) }.debug()

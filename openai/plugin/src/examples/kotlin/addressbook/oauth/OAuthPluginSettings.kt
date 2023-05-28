@@ -2,7 +2,7 @@ package addressbook.oauth
 
 import addressbook.shared.credentials
 import org.http4k.cloudnative.env.EnvironmentKey
-import org.http4k.connect.openai.auth.oauth.PluginId
+import org.http4k.connect.openai.auth.OpenAIPluginId
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.core.Uri
@@ -20,7 +20,7 @@ object OAuthPluginSettings {
     val PLUGIN_BASE_URL by EnvironmentKey.uri().of().required()
     val EMAIL by EnvironmentKey.value(Email).of().required()
     val COOKIE_DOMAIN by EnvironmentKey.of().required()
-    val OPENAI_PLUGIN_ID by EnvironmentKey.value(PluginId).of().required()
+    val OPENAI_PLUGIN_ID by EnvironmentKey.value(OpenAIPluginId).of().required()
     val OPENAI_CLIENT_CREDENTIALS by EnvironmentKey.credentials().of().required()
     val OPENAI_VERIFICATION_TOKEN by EnvironmentKey.value(VerificationToken).of().required()
     val REDIRECTION_URLS = EnvironmentKey.uri().multi.defaulted("REDIRECTION_URLS",

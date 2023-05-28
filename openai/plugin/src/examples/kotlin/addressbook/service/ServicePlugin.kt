@@ -9,7 +9,7 @@ import addressbook.shared.GetAnAddress
 import addressbook.shared.UserDirectory
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.ENV
-import org.http4k.connect.openai.auth.AuthToken.Bearer
+import org.http4k.connect.openai.auth.PluginAuthToken.Bearer
 import org.http4k.connect.openai.auth.service.ServiceLevelAuth
 import org.http4k.connect.openai.info
 import org.http4k.connect.openai.model.AuthedSystem.Companion.openai

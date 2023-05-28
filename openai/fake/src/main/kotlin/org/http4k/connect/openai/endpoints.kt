@@ -15,9 +15,13 @@ import org.http4k.connect.openai.action.ImageResponseFormat.url
 import org.http4k.connect.openai.action.Model
 import org.http4k.connect.openai.action.Models
 import org.http4k.connect.openai.action.Usage
+import org.http4k.connect.openai.auth.OpenAIPluginId
 import org.http4k.connect.storage.Storage
+import org.http4k.core.Body
+import org.http4k.core.ContentType.Companion.TEXT_HTML
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
+import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
@@ -25,8 +29,12 @@ import org.http4k.core.Uri
 import org.http4k.core.extend
 import org.http4k.core.with
 import org.http4k.routing.ResourceLoader.Companion.Classpath
+import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.static
+import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.ViewModel
+import org.http4k.template.viewModel
 import java.time.Clock
 import java.util.UUID
 import kotlin.math.absoluteValue
@@ -95,3 +103,11 @@ fun chatCompletion(clock: Clock, completionGenerators: Map<ModelName, ChatComple
         }
 
 fun serveGeneratedContent() = static(Classpath("public"))
+
+fun index(plugins: List<OpenAIPluginId>): RoutingHttpHandler {
+    val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), TEXT_HTML).toLens()
+
+    return "/" bind GET to { req: Request -> Response(OK).with(lens of Index(plugins)) }
+}
+
+data class Index(val plugins: List<OpenAIPluginId>) : ViewModel

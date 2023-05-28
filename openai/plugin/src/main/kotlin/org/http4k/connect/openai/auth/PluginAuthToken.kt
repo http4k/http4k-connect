@@ -10,7 +10,7 @@ import org.http4k.security.AccessToken
 /**
  * Represents the token type which can be used for User and Service authed plugins.
  */
-interface AuthToken {
+interface PluginAuthToken {
     val securityFilter: Filter
     val type: String
 
@@ -18,7 +18,7 @@ interface AuthToken {
         key: RequestContextLens<Principal>?,
         check: (Credentials) -> Principal?,
         realm: String,
-    ) : AuthToken {
+    ) : PluginAuthToken {
 
         /**
          * Use when you need access to the stored principal
@@ -51,7 +51,7 @@ interface AuthToken {
     class Bearer<Principal> private constructor(
         check: (AccessToken) -> Principal?,
         key: RequestContextLens<Principal>?
-    ) : AuthToken {
+    ) : PluginAuthToken {
 
         /**
          * Use when you need access to the stored principal

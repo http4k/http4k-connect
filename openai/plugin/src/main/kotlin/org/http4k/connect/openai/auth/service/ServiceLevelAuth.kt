@@ -1,7 +1,7 @@
 package org.http4k.connect.openai.auth.service
 
-import org.http4k.connect.openai.auth.AuthToken
 import org.http4k.connect.openai.auth.PluginAuth
+import org.http4k.connect.openai.auth.PluginAuthToken
 import org.http4k.connect.openai.model.AuthedSystem
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.routing.RoutingHttpHandler
@@ -11,7 +11,7 @@ import org.http4k.routing.RoutingHttpHandler
  * This means that there is no possible response personalisation available to the plugin.
  */
 class ServiceLevelAuth(
-    pluginToken: AuthToken,
+    pluginToken: PluginAuthToken,
     tokens: Map<AuthedSystem, VerificationToken>
 ) : PluginAuth {
     override val manifestDescription = mapOf(

@@ -16,6 +16,6 @@ object ServicePluginSettings {
     val PORT by EnvironmentKey.int().of().defaulted(9000)
     val PLUGIN_BASE_URL by EnvironmentKey.uri().of().required()
     val EMAIL by EnvironmentKey.value(Email).of().required()
-    val OPENAI_API_KEY by EnvironmentKey.map { AccessToken(it) }.of().required()
+    val OPENAI_API_KEY by EnvironmentKey.map({ AccessToken(it) }, AccessToken::value).of().required()
     val OPENAI_VERIFICATION_TOKEN by EnvironmentKey.value(VerificationToken).of().required()
 }
