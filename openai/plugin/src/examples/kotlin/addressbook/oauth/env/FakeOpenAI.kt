@@ -23,7 +23,7 @@ import java.time.Duration
 fun FakeOpenAI(
     pluginId: PluginId,
     pluginOAuthConfig: OAuthProviderConfig,
-    openAiUrl: Uri = Uri.of("http://localhost:9000"),
+    openAiUrl: Uri,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
 ): HttpHandler {
@@ -40,7 +40,7 @@ fun FakeOpenAI(
 
     return routes(
         "/aip/plugin-${pluginId}/oauth/callback" bind GET to oAuthProvider.callback,
-        "/" bind GET to oAuthProvider.authFilter.then {
+        "/${pluginId}" bind GET to oAuthProvider.authFilter.then {
             val openAiServer = BearerAuth(oAuthPersistence.retrieveToken(it)!!.value)
                 .then(http)
             openAiServer(Request(GET, pluginOAuthConfig.apiBase.path("/address")))

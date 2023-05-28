@@ -43,7 +43,8 @@ fun main() {
 
     FakeOpenAI(
         OPENAI_PLUGIN_ID(env),
-        OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPENAI_CLIENT_CREDENTIALS(env))
+        OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPENAI_CLIENT_CREDENTIALS(env)),
+        Uri.of("http://localhost:9000")
     )
         .asServer(SunHttp(9000)).start()
 
@@ -52,5 +53,5 @@ fun main() {
         .asServer(SunHttp(PORT(env)))
         .start()
 
-    println("Login to http://localhost:9000")
+    println("Login to http://localhost:9000/${OPENAI_PLUGIN_ID(env)}")
 }
