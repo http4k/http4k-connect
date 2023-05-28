@@ -1,6 +1,7 @@
 package addressbook.oauth.env
 
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.openai.auth.oauth.PluginId
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
@@ -20,24 +21,28 @@ import java.time.Duration
  * oauth flow to the plugin, obtaining a token and driving the login.
  */
 fun FakeOpenAI(
-    pluginOAuthconfig: OAuthProviderConfig,
+    pluginId: PluginId,
+    pluginOAuthConfig: OAuthProviderConfig,
+    openAiUrl: Uri = Uri.of("http://localhost:9000"),
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemUTC()
+    clock: Clock = Clock.systemUTC(),
 ): HttpHandler {
-    val oAuthPersistence = InsecureCookieBasedOAuthPersistence("openai", Duration.ofSeconds(60), clock)
+    val oAuthPersistence = InsecureCookieBasedOAuthPersistence(
+        pluginOAuthConfig.apiBase.toString(), Duration.ofSeconds(60), clock)
+
     val oAuthProvider = OAuthProvider(
-        pluginOAuthconfig,
+        pluginOAuthConfig,
         http,
-        Uri.of("http://localhost:9000/oauth2/callback"),
+        openAiUrl.path("/aip/plugin-${pluginId}/oauth/callback"),
         emptyList(),
         oAuthPersistence
     )
 
     return routes(
-        "/oauth2/callback" bind GET to oAuthProvider.callback,
+        "/aip/plugin-${pluginId}/oauth/callback" bind GET to oAuthProvider.callback,
         "/" bind GET to oAuthProvider.authFilter.then {
             val openAiServer = BearerAuth(oAuthPersistence.retrieveToken(it)!!.value)
                 .then(http)
-            openAiServer(Request(GET, pluginOAuthconfig.apiBase.path("/address")))
+            openAiServer(Request(GET, pluginOAuthConfig.apiBase.path("/address")))
         })
 }

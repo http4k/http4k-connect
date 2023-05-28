@@ -2,9 +2,11 @@ package addressbook.oauth
 
 import addressbook.shared.credentials
 import org.http4k.cloudnative.env.EnvironmentKey
+import org.http4k.connect.openai.auth.oauth.PluginId
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.core.Uri
+import org.http4k.lens.composite
 import org.http4k.lens.int
 import org.http4k.lens.of
 import org.http4k.lens.uri
@@ -17,10 +19,13 @@ object OAuthPluginSettings {
     val PORT by EnvironmentKey.int().of().required()
     val PLUGIN_BASE_URL by EnvironmentKey.uri().of().required()
     val EMAIL by EnvironmentKey.value(Email).of().required()
-    val OPEN_AI_CLIENT_CREDENTIALS by EnvironmentKey.credentials().of().required()
-    val OPENAI_VERIFICATION_TOKEN by EnvironmentKey.value(VerificationToken).of().required()
     val COOKIE_DOMAIN by EnvironmentKey.of().required()
-    val REDIRECTION_URLS by EnvironmentKey.uri().multi.of().defaulted(
-        listOf(Uri.of("https://chat.openai.com/aip/plugin-some_plugin_id/oauth/callback"))
+    val OPENAI_PLUGIN_ID by EnvironmentKey.value(PluginId).of().required()
+    val OPENAI_CLIENT_CREDENTIALS by EnvironmentKey.credentials().of().required()
+    val OPENAI_VERIFICATION_TOKEN by EnvironmentKey.value(VerificationToken).of().required()
+    val REDIRECTION_URLS = EnvironmentKey.uri().multi.defaulted("REDIRECTION_URLS",
+        EnvironmentKey.composite {
+            listOf(Uri.of("https://chat.openai.com/aip/plugin-${OPENAI_PLUGIN_ID(it)}/oauth/callback"))
+        }
     )
 }

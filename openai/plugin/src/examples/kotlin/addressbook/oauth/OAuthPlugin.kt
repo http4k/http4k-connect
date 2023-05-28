@@ -2,8 +2,9 @@ package addressbook.oauth
 
 import addressbook.oauth.OAuthPluginSettings.COOKIE_DOMAIN
 import addressbook.oauth.OAuthPluginSettings.EMAIL
+import addressbook.oauth.OAuthPluginSettings.OPENAI_CLIENT_CREDENTIALS
+import addressbook.oauth.OAuthPluginSettings.OPENAI_PLUGIN_ID
 import addressbook.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
-import addressbook.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
 import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.oauth.OAuthPluginSettings.REDIRECTION_URLS
 import addressbook.oauth.auth.InMemoryStorageProvider
@@ -50,7 +51,8 @@ fun OAuthPlugin(
         ),
         OAuth(
             OAuthPluginConfig(
-                OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env)),
+                OPENAI_PLUGIN_ID(env),
+                OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPENAI_CLIENT_CREDENTIALS(env)),
                 REDIRECTION_URLS(env)
             ),
             accessTokens,

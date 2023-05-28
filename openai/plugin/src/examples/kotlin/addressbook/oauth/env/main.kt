@@ -4,12 +4,14 @@ package addressbook.oauth.env
 import addressbook.oauth.OAuthPlugin
 import addressbook.oauth.OAuthPluginSettings.COOKIE_DOMAIN
 import addressbook.oauth.OAuthPluginSettings.EMAIL
+import addressbook.oauth.OAuthPluginSettings.OPENAI_CLIENT_CREDENTIALS
+import addressbook.oauth.OAuthPluginSettings.OPENAI_PLUGIN_ID
 import addressbook.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
-import addressbook.oauth.OAuthPluginSettings.OPEN_AI_CLIENT_CREDENTIALS
 import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.oauth.OAuthPluginSettings.PORT
 import addressbook.oauth.OAuthPluginSettings.REDIRECTION_URLS
 import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.connect.openai.auth.oauth.PluginId
 import org.http4k.connect.openai.auth.oauth.openaiPlugin
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
@@ -30,15 +32,19 @@ import org.http4k.server.asServer
 fun main() {
     val env = ENV.with(
         PORT of 8000,
+        OPENAI_PLUGIN_ID of PluginId.of("myplugin"),
         EMAIL of Email.of("foo@bar.com"),
         COOKIE_DOMAIN of "localhost",
         PLUGIN_BASE_URL of Uri.of("http://localhost:8000"),
-        OPEN_AI_CLIENT_CREDENTIALS of Credentials("foo", "bar"),
+        OPENAI_CLIENT_CREDENTIALS of Credentials("foo", "bar"),
         OPENAI_VERIFICATION_TOKEN of VerificationToken.of("supersecret"),
-        REDIRECTION_URLS of listOf(Uri.of("http://localhost:9000/oauth2/callback"))
+        REDIRECTION_URLS of listOf(Uri.of("http://localhost:9000/aip/plugin-myplugin/oauth/callback"))
     )
 
-    FakeOpenAI(OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPEN_AI_CLIENT_CREDENTIALS(env)))
+    FakeOpenAI(
+        OPENAI_PLUGIN_ID(env),
+        OAuthProvider.openaiPlugin(PLUGIN_BASE_URL(env), OPENAI_CLIENT_CREDENTIALS(env))
+    )
         .asServer(SunHttp(9000)).start()
 
     Cors(UnsafeGlobalPermissive)
