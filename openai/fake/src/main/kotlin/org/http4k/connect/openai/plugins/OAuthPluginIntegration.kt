@@ -20,14 +20,14 @@ import java.time.Duration
  * Plugin implementation which plugs into the FakeOpenAI server. It performs the
  * oauth flow to the plugin, obtaining a token and driving the login.
  */
-fun OAuthPluginIntegrationBuilder(
+fun OAuthPluginIntegration(
     pluginId: OpenAIPluginId,
     pluginOAuthConfig: OAuthProviderConfig,
-) = object : PluginIntegrationBuilder {
+) = object : PluginIntegration {
 
     override val pluginId = pluginId
 
-    override fun buildIntegration(openAiUrl: Uri, http: HttpHandler, clock: Clock): PluginIntegration {
+    override fun buildIntegration(openAiUrl: Uri, http: HttpHandler, clock: Clock): IntegratedPlugin {
         val oAuthPersistence = InsecureCookieBasedOAuthPersistence(
             pluginOAuthConfig.apiBase.toString(), Duration.ofSeconds(60), clock
         )
@@ -40,7 +40,7 @@ fun OAuthPluginIntegrationBuilder(
             oAuthPersistence
         )
 
-        return PluginIntegration(
+        return IntegratedPlugin(
             pluginId,
             routes(
                 "/aip/plugin-${pluginId}/oauth/callback" bind GET to oAuthProvider.callback,

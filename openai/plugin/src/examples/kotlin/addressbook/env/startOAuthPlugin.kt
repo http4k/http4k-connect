@@ -14,8 +14,8 @@ import org.http4k.connect.openai.auth.OpenAIPluginId
 import org.http4k.connect.openai.auth.oauth.openaiPlugin
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
-import org.http4k.connect.openai.plugins.OAuthPluginIntegrationBuilder
-import org.http4k.connect.openai.plugins.PluginIntegrationBuilder
+import org.http4k.connect.openai.plugins.OAuthPluginIntegration
+import org.http4k.connect.openai.plugins.PluginIntegration
 import org.http4k.core.Credentials
 import org.http4k.core.Uri
 import org.http4k.core.then
@@ -26,7 +26,7 @@ import org.http4k.security.OAuthProvider
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 
-fun startOAuthPlugin(openAiPort: Int): PluginIntegrationBuilder {
+fun startOAuthPlugin(openAiPort: Int): PluginIntegration {
     val pluginId = OpenAIPluginId.of("oauthplugin")
 
     val env = ENV.with(
@@ -47,7 +47,7 @@ fun startOAuthPlugin(openAiPort: Int): PluginIntegrationBuilder {
         .asServer(SunHttp(PORT(env)))
         .start()
 
-    return OAuthPluginIntegrationBuilder(
+    return OAuthPluginIntegration(
         OPENAI_PLUGIN_ID(env),
         OAuthProvider.openaiPlugin(
             PLUGIN_BASE_URL(env),

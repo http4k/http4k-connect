@@ -13,15 +13,15 @@ import java.time.Clock
  * Plugin implementation which plugs into the FakeOpenAI server. It performs the
  * oauth flow to the plugin, obtaining a token and driving the login.
  */
-fun UserPluginIntegrationBuilder(
+fun UserPluginIntegration(
     securityFilter: Filter,
     pluginId: OpenAIPluginId,
     pluginUri: Uri
-) = object : PluginIntegrationBuilder {
+) = object : PluginIntegration {
     override val pluginId = pluginId
 
     override fun buildIntegration(openAiUrl: Uri, http: HttpHandler, clock: Clock) =
-        PluginIntegration(
+        IntegratedPlugin(
             pluginId,
             routes(
                 LoadOpenApi(pluginId, openAiUrl, http, pluginUri),

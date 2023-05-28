@@ -5,7 +5,7 @@ import org.http4k.chaos.defaultLocalUri
 import org.http4k.chaos.start
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.openai.action.Model
-import org.http4k.connect.openai.plugins.PluginIntegrationBuilder
+import org.http4k.connect.openai.plugins.PluginIntegration
 import org.http4k.connect.storage.Storage
 import org.http4k.contract.ui.swagger.swaggerUiWebjar
 import org.http4k.core.HttpHandler
@@ -23,7 +23,7 @@ class FakeOpenAI(
     clock: Clock = systemUTC(),
     baseUri: Uri = FakeOpenAI::class.defaultLocalUri,
     http: HttpHandler = JavaHttpClient(),
-    vararg plugins: PluginIntegrationBuilder
+    vararg plugins: PluginIntegration
 ) : ChaoticHttpHandler() {
 
     override val app =

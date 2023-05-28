@@ -8,17 +8,17 @@ import org.http4k.core.Uri
 import org.http4k.routing.RoutingHttpHandler
 import java.time.Clock
 
-interface PluginIntegrationBuilder {
+interface PluginIntegration {
     val pluginId: OpenAIPluginId
 
     fun buildIntegration(
         openAiUrl: Uri,
         http: HttpHandler = JavaHttpClient(),
         clock: Clock = Clock.systemUTC()
-    ): PluginIntegration
+    ): IntegratedPlugin
 }
 
-data class PluginIntegration(
+data class IntegratedPlugin(
     val pluginId: OpenAIPluginId,
     val httpHandler: RoutingHttpHandler,
     val filter: Filter
