@@ -9,7 +9,11 @@ import org.http4k.security.oauth.server.AuthRequest
 import org.http4k.security.oauth.server.AuthRequestTracking
 import java.time.Clock
 import java.time.Duration
+import java.util.UUID
 
+/**
+ * Example AuthTrackingRequest generation and storage
+ */
 fun StorageAuthRequestTracking(
     storage: Storage<AuthRequest>,
     cookieDomain: String,
@@ -24,7 +28,7 @@ fun StorageAuthRequestTracking(
             ?.let { storage[it]?.apply { storage.remove(it) } }
 
     override fun trackAuthRequest(request: Request, authRequest: AuthRequest, response: Response) =
-        String.random().let {
+        UUID.randomUUID().toString().let {
             storage[it] = authRequest
             response.cookie(expiring(cookieName, it, validity))
         }

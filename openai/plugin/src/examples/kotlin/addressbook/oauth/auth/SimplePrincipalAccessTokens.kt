@@ -10,6 +10,9 @@ import org.http4k.security.oauth.core.RefreshToken
 import org.http4k.security.oauth.server.ClientId
 import org.http4k.security.oauth.server.TokenRequest
 
+/**
+ * Creates OAuth tokens and resolves the principal.
+ */
 class SimplePrincipalAccessTokens : PrincipalTokens<UserId> {
     override fun resolve(accessToken: AccessToken): UserId = UserId.of(accessToken.value)
 

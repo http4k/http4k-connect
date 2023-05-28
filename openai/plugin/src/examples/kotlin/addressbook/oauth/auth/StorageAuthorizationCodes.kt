@@ -11,7 +11,11 @@ import org.http4k.security.oauth.server.AuthorizationCodeDetails
 import org.http4k.security.oauth.server.AuthorizationCodes
 import java.time.Clock
 import java.time.Duration
+import java.util.UUID
 
+/**
+ * Example AuthorizationCode generation and storage
+ */
 fun StorageAuthorizationCodes(
     authDetailsStorage: Storage<AuthorizationCodeDetails>,
     clock: Clock,
@@ -21,7 +25,7 @@ fun StorageAuthorizationCodes(
         request: Request,
         authRequest: AuthRequest,
         response: Response
-    ) = Success(AuthorizationCode(String.random()))
+    ) = Success(AuthorizationCode(UUID.randomUUID().toString()))
         .peek {
             authDetailsStorage[it.value] = AuthorizationCodeDetails(
                 authRequest.client, authRequest.redirectUri!!, clock.instant() + validity, null, false,
