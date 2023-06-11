@@ -5,6 +5,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -13,7 +14,7 @@ import java.util.Locale
 class Http4kConnectAdapterVisitor(private val log: (Any?) -> Unit) :
     KSEmptyVisitor<List<KSAnnotated>, List<FileSpec>>() {
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: List<KSAnnotated>) =
-        classDeclaration.http4kConnectActionTypes.map { it.resolve() }.map {
+        classDeclaration.http4kConnectActionTypes.map(KSTypeReference::resolve).map {
             log(
                 "Processing http4k-connect adapter: " + classDeclaration.simpleName.asString() +
                     " with action type: $it"

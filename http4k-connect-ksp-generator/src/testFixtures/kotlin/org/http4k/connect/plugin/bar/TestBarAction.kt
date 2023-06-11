@@ -1,8 +1,9 @@
 package org.http4k.connect.plugin.bar
 
+import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.plugin.foo.FooAction
+import org.http4k.connect.RemoteFailure
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -13,5 +14,5 @@ data class TestBarAction(val input: String, val input2: String) : BarAction<Stri
 
     override fun toRequest() = Request(Method.GET, "")
 
-    override fun toResult(response: Response) = Success(input)
+    override fun toResult(response: Response): Result<String, RemoteFailure> = Success(input)
 }

@@ -10,9 +10,15 @@ import com.google.devtools.ksp.visitor.KSEmptyVisitor
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
+import dev.forkhandles.result4k.Result4k
 import org.http4k.connect.PagedAction
+import org.http4k.connect.RemoteFailure
 import java.util.Locale
 
 class Http4kConnectActionVisitor(private val log: (Any?) -> Unit) :
@@ -46,6 +52,12 @@ private fun generateActionPagination(
     actionClass, adapterClazz, ctr, "Paginated", CodeBlock.of(
         "return org.http4k.connect.paginated(::invoke, %T(${ctr.parameters.joinToString(", ") { it.name!!.asString() }}))",
         actionClass.asType(emptyList()).toTypeName()
+    ), Sequence::class.asClassName().parameterizedBy(
+        Result4k::class.asClassName().parameterizedBy(List::class.asClassName().parameterizedBy(
+            actionClass.getAllSuperTypes().toList()
+                .first { it.toClassName() == PagedAction::class.asClassName() }
+                .arguments[1].toTypeName()
+        ), RemoteFailure::class.asTypeName())
     )
 )
 
@@ -55,14 +67,15 @@ private fun generateActionExtension(
     ctr: KSFunctionDeclaration
 ) = generateExtensionFunction(
     actionClass, adapterClazz, ctr, "",
-
     CodeBlock.of(
         when (actionClass.classKind) {
             OBJECT -> "return invoke(%T)"
             else -> "return invoke(%T(${ctr.parameters.joinToString(", ") { it.name!!.asString() }}))"
         },
         actionClass.asType(emptyList()).toTypeName()
-    )
+    ),
+    actionClass.getAllFunctions()
+        .first { it.simpleName.getShortName() == "toResult" }.returnType!!.toTypeName()
 )
 
 private fun generateExtensionFunction(
@@ -70,12 +83,14 @@ private fun generateExtensionFunction(
     adapterClazz: KSClassDeclaration,
     ctr: KSFunctionDeclaration,
     suffix: String,
-    codeBlock: CodeBlock
+    codeBlock: CodeBlock,
+    returnType: TypeName
 ): FunSpec {
     val baseFunction = FunSpec.builder(
         actionClazz.simpleName.asString().replaceFirstChar { it.lowercase(Locale.getDefault()) } + suffix)
         .addKdoc("@see ${actionClazz.qualifiedName!!.asString().replace('/', '.')}")
         .receiver(adapterClazz.toClassName())
+        .returns(returnType)
         .addCode(codeBlock)
 
     ctr.parameters.forEach {

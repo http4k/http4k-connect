@@ -42,7 +42,7 @@ fun generateImage(clock: Clock, baseUri: Uri) = "/v1/images/generations" bind PO
     {
         val request = autoBody<GenerateImage>().toLens()(it)
 
-        val image = "/${request.size.name + ".png"}"
+        val logo = request.size.name + ".png"
 
         Response(OK).with(
             autoBody<GeneratedImage>().toLens() of GeneratedImage(
@@ -50,10 +50,10 @@ fun generateImage(clock: Clock, baseUri: Uri) = "/v1/images/generations" bind PO
                 listOf(
                     when (request.response_format) {
                         url -> {
-                            ImageData(url = baseUri.extend(Uri.of(image)))
+                            ImageData(url = baseUri.extend(Uri.of("/$logo")))
                         }
 
-                        b64_json -> ImageData(b64_json = Base64Blob.encode(FakeOpenAI::class.java.getResourceAsStream("/public/$image")!!))
+                        b64_json -> ImageData(b64_json = Base64Blob.encode(FakeOpenAI::class.java.getResourceAsStream("/public/$logo")!!))
                     }
                 )
             )
