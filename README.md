@@ -106,6 +106,7 @@ dependencies {
     - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`
 - Kafka
     - [Rest Proxy](kafka/rest) -> `"org.http4k:http4k-connect-kafka-rest"` / `"org.http4k:http4k-connect-kafka-rest-fake"`
+    - [Schema Registry](kafka/schemaregistry) -> `"org.http4k:http4k-connect-kafka-schemaregistry"` / `"org.http4k:http4k-connect-kafka-schemaregistry-fake"`
 - [Mattermost Webhook](./mattermost) -> `"org.http4k:http4k-connect-mattermost"` / `"org.http4k:http4k-connect-mattermost-fake"`
 - [OpenAI](./openai) -> `"org.http4k:http4k-connect-openai"` / `"org.http4k:http4k-connect-openai-plugin"`/ `"org.http4k:http4k-connect-openai-fake"`
 - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
