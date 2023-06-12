@@ -49,15 +49,19 @@ private fun generateActionPagination(
     adapterClazz: KSClassDeclaration,
     ctr: KSFunctionDeclaration
 ) = generateExtensionFunction(
-    actionClass, adapterClazz, ctr, "Paginated", CodeBlock.of(
+    actionClass, adapterClazz, ctr, "Paginated",
+    CodeBlock.of(
         "return org.http4k.connect.paginated(::invoke, %T(${ctr.parameters.joinToString(", ") { it.name!!.asString() }}))",
         actionClass.asType(emptyList()).toTypeName()
-    ), Sequence::class.asClassName().parameterizedBy(
-        Result4k::class.asClassName().parameterizedBy(List::class.asClassName().parameterizedBy(
-            actionClass.getAllSuperTypes().toList()
-                .first { it.toClassName() == PagedAction::class.asClassName() }
-                .arguments[1].toTypeName()
-        ), RemoteFailure::class.asTypeName())
+    ),
+    Sequence::class.asClassName().parameterizedBy(
+        Result4k::class.asClassName().parameterizedBy(
+            (actionClass.getAllFunctions()
+                .first { it.simpleName.getShortName() == "toResult" }
+                .returnType!!.resolve().arguments[0].type!!.resolve().declaration as KSClassDeclaration)
+                .getAllProperties().first { it.simpleName.getShortName() == "items" }.type.toTypeName(),
+            RemoteFailure::class.asTypeName()
+        )
     )
 )
 

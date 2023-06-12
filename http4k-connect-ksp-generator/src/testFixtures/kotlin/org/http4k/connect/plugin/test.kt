@@ -9,7 +9,8 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.connect.plugin.bar.BarAction
 import org.http4k.connect.plugin.foo.FooAction
 import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Uri
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.asConfigurable
 import se.ansman.kotshi.JsonSerializable
@@ -24,8 +25,8 @@ interface TestAdapter {
 }
 
 fun TestAdapter.Companion.Impl() = object : TestAdapter {
-    override fun <R> invoke(action: FooAction<R>) = action.toResult(Response(Status.OK))
-    override fun <R> invoke(action: BarAction<R>) = action.toResult(Response(Status.OK))
+    override fun <R> invoke(action: FooAction<R>) = action.toResult(Response(OK).body("[]"))
+    override fun <R> invoke(action: BarAction<R>) = action.toResult(Response(OK))
 }
 
 object TestMoshi : ConfigurableMoshi(
@@ -41,8 +42,8 @@ data class TestBean(val value: String)
 @KotshiJsonAdapterFactory
 object TestJsonFactory : JsonAdapter.Factory by KotshiTestJsonFactory
 
-data class TestPaged(val token: String) : Paged<String, String> {
-    override fun token() = token
+data class TestPaged(val token: String?) : Paged<Uri, String> {
+    override fun token() = token?.let { Uri.of(it) }
 
     override val items = emptyList<String>()
 }

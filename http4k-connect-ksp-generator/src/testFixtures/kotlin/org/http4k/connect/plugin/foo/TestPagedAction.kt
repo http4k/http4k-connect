@@ -9,13 +9,15 @@ import org.http4k.connect.plugin.TestPaged
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Uri
 
 @Http4kConnectAction
-data class TestPagedAction(val input: String) : FooAction<TestPaged>,
-    PagedAction<String, String, TestPaged, TestPagedAction> {
-    override fun next(token: String) = this
+data class TestPagedAction(val input: String, val input2: TestEnum) : FooAction<TestPaged>,
+    PagedAction<Uri, String, TestPaged, TestPagedAction> {
+    override fun next(token: Uri) = this
 
     override fun toRequest() = Request(GET, "")
 
     override fun toResult(response: Response): Result4k<TestPaged, RemoteFailure> = Success(TestPaged(input))
 }
+
