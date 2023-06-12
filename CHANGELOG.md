@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.0.0.0 (uncut)
+- **http4k-*** : Upgrade to http4k platform v5 version.
+- **http4k-*** : [Breaking] Remove all previous deprecations from all modules for v4. To upgrade cleanly, first upgrade to `v3.43.0.0` and then re-upgrade to `v5.0.0.0`. This will ensure that you only have to deal with Deprecations between the major versions.
+
 ### v3.43.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.8.22
 
