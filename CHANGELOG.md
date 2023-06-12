@@ -10,7 +10,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-openai-fake** - Support for NoAuth plugin installation.
 
 ### v3.42.0.0
-- **http4k-connect-openai-plugin** - [New module!] OpenAI plugin development SDK. http4k-connect provides APIs to create plugins for all 3 plugin authorization types - User, Service and OAuth.
+- **http4k-connect-openai-plugin** - [New module] OpenAI plugin development SDK. http4k-connect provides APIs to create plugins for all 3 plugin authorization types - User, Service and OAuth.
 - **http4k-connect-openai-fake** - Plugins can now be installed into the `FakeOpenAI` server. All 3 plugin auth types
 are supported. 
 
@@ -50,13 +50,14 @@ are supported.
 
 ### v3.39.1.0
 - **http4k-connect-openai** - Set a sensible limit on the number of max tokens in chat completions.
+- **http4k-connect-openai** - [New module] Client and fake.
 
 ### v3.39.0.1
 - **http4k-connect-kakfa-schemaregistry*** - [Fix] Don't break on registering the same schema.
 
 ### v3.39.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-mattermost*** - [New module!] Initial support for a couple of actions. H/T @tkint
+- **http4k-connect-mattermost*** - [New module] Initial support for a couple of actions. H/T @tkint
 - **http4k-connect-kakfa-schemaregistry*** - [Breaking] Added some actions and tightened up types. Breaks are purely primitive -> ValueType.
 
 ### v3.38.1.0
@@ -107,7 +108,7 @@ are supported.
 
 ### v3.33.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-kakfa-schemaregistry*** - New module & fakes
+- **http4k-connect-kakfa-schemaregistry*** - [New module] Client and fake.
 
 ### v3.32.0.0
 - **http4k-connect-kakfa-rest*** - Add helpers for consuming and producing.
@@ -123,7 +124,7 @@ are supported.
 
 ### v3.29.1.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-kakfa-http-proxy*** - New module.
+- **http4k-connect-kakfa-http-proxy*** - [New module] For sending messages to Kafka without the need for the entire Kafka broker infrastructure.
 
 ### v3.29.0.0
 - **http4k-connect-*** - Upgrade dependencies.
@@ -144,12 +145,12 @@ are supported.
 
 ### v3.27.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.8.0
-- **http4k-connect-ksp-generator*** - New module! A version of Action and Adapter code generator written using KSP.
+- **http4k-connect-ksp-generator*** - [New module] A version of Action and Adapter code generator written using KSP.
 - **http4k-connect-amazon-instancemetadata** - Add Amazon RegionProvider with environment, profile, and imds support. H/T @oharaandrew314
 
 ### v3.26.4.0
 - **http4k-connect-*** - Upgrade dependencies
-- **http4k-connect-amazon-instancemetadata** - New module!  Query metadata and credentials from the current Amazon EC2 environment. H/T @oharaandrew314
+- **http4k-connect-amazon-instancemetadata** - [New module]  Query metadata and credentials from the current Amazon EC2 environment. H/T @oharaandrew314
 - **http4k-connect-amazon-ec2credentials** - Deprecated.  Use the **http4k-connect-amazon-instancemetadata** module
 
 ### v3.26.3.0
@@ -190,7 +191,7 @@ are supported.
 - **http4k-connect-*** - Upgrade dependencies.
 
 ### v3.24.0.0
-- **http4k-connect-google-analytics*** - Split Google Analytics clients to support UA and GA4.
+- **http4k-connect-google-analytics*** - [New module] Split Google Analytics clients to support UA and GA4.
 
 ### v3.23.2.0
 - **http4k-connect-*** - Upgrade dependencies. 
@@ -254,7 +255,7 @@ are supported.
 
 ### v3.18.1.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-*** - Added convienience automarshalling for pagination.
+- **http4k-connect-*** - Added convenience automarshalling for pagination.
 - **http4k-connect-amazon-dynamodb-fake** - New actions supported: `Query`, `Scan`, `Updateitem`. H/T @oharaandrew314 for the contributions.
 
 ### v3.18.0.0
@@ -275,8 +276,8 @@ are supported.
 
 ### v3.17.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-amazon-containercredentials** -Added loading of credentials from Container Credentials service.
-- **http4k-connect-amazon-containercredentials-fake** - Fake for the above.
+- **http4k-connect-amazon-containercredentials** Added loading of credentials from Container Credentials service.
+- **http4k-connect-amazon-containercredentials-fake** - [New module] Fake for the above.
 - **http4k-connect-amazon-sts-*** - [Unlikely break] Repackaged Credentials to core.
 
 ### v3.16.6.0
@@ -347,8 +348,7 @@ are supported.
 
 ### v3.11.1.0
 - **http4k-connect-*** - Upgrade dependencies
-- **http4k-amazon-ses*** - New module for SES. @H/T ToastShaman
-- **http4k-amazon-ses-fake*** - New module for SES. @H/T ToastShaman
+- **http4k-amazon-ses*** - [New module] client and Fake for SES. @H/T ToastShaman
 
 ### v3.11.0.1
 - **http4k-connect-*** - Upgrade dependencies
@@ -424,7 +424,7 @@ are supported.
 - **http4k-connect-amazon-s3-fake** - Fix #56 - S3(Fake): preserve encoding in bucketGetKey - H/T @tkint 
 
 ### v3.4.1.0
-- **http4k-connect-google-analytics** - Added support for GA events.
+- **http4k-connect-google-analytics** - [New module] Added support for GA events.
 
 ### v3.4.0.0
 - **http4k-connect-amazon-*** - Region is now not reliant on default AWS format. This helps with on-prem installations with non-standard region format.
@@ -451,7 +451,7 @@ are supported.
 - **http4k-connect-amazon-dynamodb** : [Slight break] `BatchGetItem` and `BatchWriteItem` actions had incorrect key names for response classes.
 
 ### v3.1.1.0
-- **http4k-connect-amazon-cognito** - New module (WIP). Base actions for user client and pool creation are implemented, no fake as yet.
+- **http4k-connect-amazon-cognito** - [New module] Base actions for user client and pool creation are implemented, no fake as yet.
 
 ### v3.1.0.1
 - **http4k-connect-amazon-dynamodb** : Removed non-nullable field on ConsumedCapacity.
@@ -509,8 +509,8 @@ are supported.
 - **http4k-connect-*** : Friendlify JavaDocs.
 
 ### v2.18.1.0
-- **http4k-connect-amazon-cloudfront** : New module.
-- **http4k-connect-amazon-cloudfront-fake* : New module.
+- **http4k-connect-amazon-cloudfront** : [New module]
+- **http4k-connect-amazon-cloudfront-fake* : [New module]
 
 ### v2.18.0.0
 - **http4k-connect-amazon-dynamodb** : Further tweaking of the Item and Key mapping typealiases to make API easier to use.
@@ -519,14 +519,14 @@ are supported.
 - **http4k-connect-amazon-dynamodb** : Reworked DynamoDb API to be typesafe, tightened up types in responses, added Scan.
 
 ### v2.16.0.0
-- **http4k-connect-amazon-dynamodb** : New client module. No fake as yet.
+- **http4k-connect-amazon-dynamodb** : [New module] New client module. No fake as yet.
 - **http4k-connect-amazon-*** : [Break] Rename `Base64Blob.encoded()` -> `Base64Blob.encode()` for clarity.
 
 ### v2.15.4.0
 - **http4k-connect-github** : Add infra for main GitHub adapter. No custom actions implemented yet.
 
 ### v2.15.3.0
-- **http4k-connect-github** : New module containing only basic callback infrastructure and Filters for checking requests.
+- **http4k-connect-github** : [New module] Containing only basic callback infrastructure and Filters for checking requests.
 
 ### v2.15.2.0
 - **http4k-connect-*** : upgrade http4k. This should Fix #17 (Enable custom domain in S3).
@@ -566,8 +566,8 @@ interface MyAdapter<R> : Action<Result<R, RemoteFailure>>
 - **http4k-connect-storage-core** : New module, containing storage abstractions which can be used without the fakes.
 
 ### v2.11.0.0
-- **http4k-connect-amazon-sns** : New module.
-- **http4k-connect-amazon-sns-fake* : New module.
+- **http4k-connect-amazon-sns** : [New module]
+- **http4k-connect-amazon-sns-fake* : [New module]
 - **http4k-connect-** : Make all action classes Data classes so they are test friendly
 - **http4k-connect-amazon-sqs** : [Breaking] Tags is now a `List<Tag>` instead of a `Map<String, String>`.
 
@@ -611,16 +611,16 @@ interface MyAdapter<R> : Action<Result<R, RemoteFailure>>
 - **http4k-connect-** : Remove need for AWSCredentialScope - just use Region instead since each service already knows the scope required.
 
 ### v2.3.2.0
-- **http4k-connect-amazon-sqs* : New module.
-- **http4k-connect-amazon-sqs-fake* : New module. See README for limitations of FakeSQS.
+- **http4k-connect-amazon-sqs* : [New module] Client and fake.
+- **http4k-connect-amazon-sqs-fake* : [New module] See README for limitations of FakeSQS.
 - **http4k-connect-amazon-sts* : Added STSCredentialsProvider to refresh credentials when required.
 
 ### v2.3.1.1
 - **http4k-connect-** : Fix #11 thread safety of DocumentBuilderFactory.
 
 ### v2.3.1.0
-- **http4k-connect-amazon-lambda* : New module. Support for invoking AWS Lambda functions.
-- **http4k-connect-amazon-lambda-fake* : New module. Includes FakeLambda runtime to run/deploy named HttpHandlers into.
+- **http4k-connect-amazon-lambda* : [New module] Support for invoking AWS Lambda functions.
+- **http4k-connect-amazon-lambda-fake* : [New module] Includes FakeLambda runtime to run/deploy named HttpHandlers into.
 
 ### v2.3.0.0
 - **http4k-connect-** : Use Kotshi generated adapters instead of Kotlin Reflection, allowing removal of large Kotlin Reflection JAR. Note that the Kotlin-reflect dependency must be explicitly excluded due to transitivity in your projects.
@@ -647,19 +647,19 @@ interface MyAdapter<R> : Action<Result<R, RemoteFailure>>
 - **http4k-connect-amazon-kms-fake** : Simplify signing.
 
 ### v1.0.0.0
-- **http4k-connect-amazon-kms** : New client module.
-- **http4k-connect-amazon-kms-fake** : New client fake module.
-- **http4k-connect-amazon-s3** : New client module.
-- **http4k-connect-amazon-s3-fake** : New client fake module.
-- **http4k-connect-amazon-secretsmanager** : New client module.
-- **http4k-connect-amazon-secretsmanager-fake** : New client fake module.
-- **http4k-connect-amazon-systemsmanager** : New client module.
-- **http4k-connect-amazon-systemsmanager-fake** : New client fake module.
-- **http4k-connect-google-analytics** : New client module.
-- **http4k-connect-storage-http** : New storage module.
-- **http4k-connect-storage-jdbc** : New storage module.
-- **http4k-connect-storage-redis** : New storage module.
-- **http4k-connect-storage-s3** : New storage module.
+- **http4k-connect-amazon-kms** : [New module] New client module.
+- **http4k-connect-amazon-kms-fake** : [New module] New client fake module.
+- **http4k-connect-amazon-s3** : [New module] New client module.
+- **http4k-connect-amazon-s3-fake** : [New module] New client fake module.
+- **http4k-connect-amazon-secretsmanager** : [New module] New client module.
+- **http4k-connect-amazon-secretsmanager-fake** : [New module] New client fake module.
+- **http4k-connect-amazon-systemsmanager** : [New module] New client module.
+- **http4k-connect-amazon-systemsmanager-fake** : [New module] New client fake module.
+- **http4k-connect-google-analytics** : [New module] New client module.
+- **http4k-connect-storage-http** : [New module] New storage module.
+- **http4k-connect-storage-jdbc** : [New module] New storage module.
+- **http4k-connect-storage-redis** : [New module] New storage module.
+- **http4k-connect-storage-s3** : [New module] New storage module.
 
 ### v0.20.0.0
 - Initial release.
