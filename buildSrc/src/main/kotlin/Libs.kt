@@ -39,9 +39,6 @@ object Libs {
 
     const val values4k: String = "dev.forkhandles:values4k"
 
-    const val io_codearte_nexus_staging_gradle_plugin: String =
-        "io.codearte.nexus-staging:io.codearte.nexus-staging.gradle.plugin:_"
-
     const val lettuce_core: String = "io.lettuce:lettuce-core:_"
 
     const val mockk: String = "io.mockk:mockk:_"

@@ -15,7 +15,6 @@ class SchemaRegistryMoshiTest {
     @Test
     fun `can serialise schema`(approver: Approver) {
         val input = RandomKey(UUID.randomUUID()).schema
-        println(input.toString())
         approver.assertApproved(SchemaRegistryMoshi.asFormatString(input))
     }
 }

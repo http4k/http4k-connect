@@ -15,5 +15,5 @@ jobs:
         with:
           token: ${{ secrets.TOOLBOX_REPO_TOKEN }}
           repository: ${{ matrix.repo }}
-          event-type: http4k-release
+          event-type: http4k-connect-release
           client-payload: '{"version": "${{ github.event.client_payload.version }}"}'

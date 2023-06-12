@@ -5,6 +5,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.ses.SESAction
 import org.http4k.connect.amazon.ses.model.Destination
 import org.http4k.connect.amazon.ses.model.EmailAddress
 import org.http4k.connect.amazon.ses.model.Message

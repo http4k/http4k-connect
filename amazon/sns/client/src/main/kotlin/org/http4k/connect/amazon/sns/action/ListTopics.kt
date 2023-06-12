@@ -9,6 +9,7 @@ import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.sequenceOfNodes
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sns.SNSAction
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 

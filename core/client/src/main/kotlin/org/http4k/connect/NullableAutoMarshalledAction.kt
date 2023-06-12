@@ -9,10 +9,9 @@ import org.http4k.format.AutoMarshalling
 import kotlin.reflect.KClass
 
 abstract class NullableAutoMarshalledAction<R : Any>(private val clazz: KClass<R>, private val json: AutoMarshalling) :
-    Action<Result<R?, RemoteFailure>> {
-    override fun toResult(response: Response) = with(response) {
+    Action<Result<R?, RemoteFailure>> { override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(json.asA(bodyString(), clazz))
+            status.successful -> Success(json.asA(bodyString().takeIf { it.isNotEmpty() } ?: "{}", clazz))
             status == NOT_FOUND -> Success(null)
             else -> Failure(asRemoteFailure(this))
         }

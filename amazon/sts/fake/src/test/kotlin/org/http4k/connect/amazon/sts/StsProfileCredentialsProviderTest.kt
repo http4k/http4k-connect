@@ -42,7 +42,7 @@ class StsProfileCredentialsProviderTest {
     }
 
     private fun getCredentials(name: ProfileName): AwsCredentials? {
-        return CredentialsChain.Profile(
+        return CredentialsChain.StsProfile(
             credentialsPath = profileFile,
             profileName = name,
             getStsClient = { FakeSTS(clock).client() }

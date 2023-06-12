@@ -13,6 +13,7 @@ import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sts.STSAction
 import org.http4k.connect.amazon.sts.model.RoleId
 import org.http4k.connect.amazon.sts.model.TokenCode
 import org.http4k.connect.asRemoteFailure

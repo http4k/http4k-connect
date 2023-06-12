@@ -3,7 +3,6 @@ package org.http4k.connect.kafka.schemaregistry
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAdapter
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.kafka.schemaregistry.action.SchemaRegistryAction
 
 /**
  * Docs: https://docs.confluent.io/platform/current/schema-registry/develop/api.html

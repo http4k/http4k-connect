@@ -1,6 +1,7 @@
 package org.http4k.connect.kafka.rest
 
-import org.http4k.connect.kafka.rest.action.KafkaRestAction
+import org.http4k.connect.kafka.rest.v2.KafkaRestV2Action
+import org.http4k.connect.kafka.rest.v3.KafkaRestV3Action
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -20,5 +21,6 @@ fun KafkaRest.Companion.Http(
         .then(SetHostFrom(baseUri))
         .then(http)
 
-    override fun <R : Any> invoke(action: KafkaRestAction<R>) = action.toResult(this.http(action.toRequest()))
+    override fun <R : Any?> invoke(action: KafkaRestV2Action<R>) = action.toResult(this.http(action.toRequest()))
+    override fun <R : Any?> invoke(action: KafkaRestV3Action<R>) = action.toResult(this.http(action.toRequest()))
 }

@@ -10,6 +10,7 @@ import org.http4k.connect.openai.Content
 import org.http4k.connect.openai.ModelName
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.ObjectType.Companion.ChatCompletion
+import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.Timestamp
@@ -68,12 +69,6 @@ data class Choice(
     val index: Int, val message: Message, val finish_reason: String
 )
 
-@JsonSerializable
-data class Usage(
-    val prompt_tokens: Int,
-    val completion_tokens: Int,
-    val total_tokens: Int
-)
 
 @JsonSerializable
 data class CompletionResponse(

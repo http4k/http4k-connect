@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.core.firstChildText
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.s3.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.ObjectSummary
 import org.http4k.connect.amazon.s3.model.Owner

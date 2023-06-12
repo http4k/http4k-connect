@@ -7,6 +7,7 @@ import org.http4k.connect.amazon.core.model.asList
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.textOptional
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId

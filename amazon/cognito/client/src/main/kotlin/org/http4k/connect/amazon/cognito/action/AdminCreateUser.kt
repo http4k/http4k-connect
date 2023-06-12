@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.cognito.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.cognito.CognitoAction
 import org.http4k.connect.amazon.cognito.model.AttributeType
 import org.http4k.connect.amazon.cognito.model.DeliveryMedium
 import org.http4k.connect.amazon.cognito.model.MessageAction

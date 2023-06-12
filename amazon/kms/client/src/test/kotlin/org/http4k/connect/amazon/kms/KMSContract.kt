@@ -31,7 +31,8 @@ abstract class KMSContract(http: HttpHandler) : AwsContract() {
 
     @Test
     fun `encrypt-decrypt key lifecycle`() {
-        val plaintext = Base64Blob.encode("hello there")
+        val plaintextString = Base64Blob.encode("hello there")
+        val plaintextBinary = Base64Blob.of("GiD3+7WHA+0nJYnGIB3E25tm5rJqwlYi2IpLzEDRqE0ymw==")
 
         val creation = kms.createKey(RSA_3072, ENCRYPT_DECRYPT).successValue()
 
@@ -44,12 +45,19 @@ abstract class KMSContract(http: HttpHandler) : AwsContract() {
             val describe = kms.describeKey(keyId).successValue()
             assertThat(describe.KeyMetadata.KeyId, equalTo(keyId))
 
-            val encrypt = kms.encrypt(keyId, plaintext, RSAES_OAEP_SHA_256).successValue()
-            assertThat(encrypt.KeyId.toARN().value, endsWith(keyId.value))
+            val encryptText = kms.encrypt(keyId, plaintextString, RSAES_OAEP_SHA_256).successValue()
+            assertThat(encryptText.KeyId.toARN().value, endsWith(keyId.value))
 
-            val decrypt = kms.decrypt(keyId, encrypt.CiphertextBlob, RSAES_OAEP_SHA_256).successValue()
-            assertThat(decrypt.KeyId.toARN().value, endsWith(keyId.value))
-            assertThat(decrypt.Plaintext, equalTo(plaintext))
+            val decryptText = kms.decrypt(keyId, encryptText.CiphertextBlob, RSAES_OAEP_SHA_256).successValue()
+            assertThat(decryptText.KeyId.toARN().value, endsWith(keyId.value))
+            assertThat(decryptText.Plaintext, equalTo(plaintextString))
+
+            val encryptBinary = kms.encrypt(keyId, plaintextBinary, RSAES_OAEP_SHA_256).successValue()
+            assertThat(encryptBinary.KeyId.toARN().value, endsWith(keyId.value))
+
+            val decryptBinary = kms.decrypt(keyId, encryptBinary.CiphertextBlob, RSAES_OAEP_SHA_256).successValue()
+            assertThat(decryptBinary.KeyId.toARN().value, endsWith(keyId.value))
+            assertThat(decryptBinary.Plaintext, equalTo(plaintextBinary))
 
             val publicKey = kms.getPublicKey(keyId).successValue()
             assertThat(publicKey.KeyId.toARN().value, endsWith(keyId.value))

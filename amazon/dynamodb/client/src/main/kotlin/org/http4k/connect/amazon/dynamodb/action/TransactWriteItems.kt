@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.dynamodb.DynamoDbAction
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.dynamodb.model.ConsumedCapacity
 import org.http4k.connect.amazon.dynamodb.model.ItemCollectionMetrics

@@ -5,7 +5,6 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
-import org.http4k.connect.amazon.s3.action.S3Action
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

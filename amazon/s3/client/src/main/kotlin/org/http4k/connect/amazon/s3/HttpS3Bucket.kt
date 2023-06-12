@@ -5,7 +5,6 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.s3.action.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri

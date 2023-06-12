@@ -5,41 +5,45 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.ksp.toClassName
 import java.util.Locale
 
-class Http4kConnectAdapterVisitor(private val log: (Any?) -> Unit) : KSEmptyVisitor<List<KSAnnotated>, FileSpec>() {
-    override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: List<KSAnnotated>): FileSpec {
-        log(
-            "Processing http4k-connect adapter: " + classDeclaration.simpleName.asString() +
-                " with action type: ${classDeclaration.http4kConnectActionType}"
-        )
+class Http4kConnectAdapterVisitor(private val log: (Any?) -> Unit) :
+    KSEmptyVisitor<List<KSAnnotated>, List<FileSpec>>() {
+    override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: List<KSAnnotated>) =
+        classDeclaration.http4kConnectActionTypes.map(KSTypeReference::resolve).map {
+            log(
+                "Processing http4k-connect adapter: " + classDeclaration.simpleName.asString() +
+                    " with action type: $it"
+            )
+            FileSpec.builder(
+                it.toClassName().packageName,
+                classDeclaration.simpleName.asString().lowercase(Locale.getDefault()) + "Extensions"
+            )
+                .apply {
+                    data.filterForActionsOf(it)
+                        .flatMap { it.accept(Http4kConnectActionVisitor(log), classDeclaration) }
+                        .forEach(::addFunction)
+                }
+                .build()
 
-        return FileSpec.builder(
-            classDeclaration.packageName.asString(),
-            classDeclaration.simpleName.asString().lowercase(Locale.getDefault()) + "Extensions"
-        )
-            .apply {
-                data.filterForActionsOf(classDeclaration)
-                    .flatMap { it.accept(Http4kConnectActionVisitor(log), classDeclaration) }
-                    .forEach(::addFunction)
-            }
-            .build()
-
-    }
+        }.toList()
 
     override fun defaultHandler(node: KSNode, data: List<KSAnnotated>) = error("unsupported")
 }
 
-private val KSClassDeclaration.http4kConnectActionType
+internal val KSClassDeclaration.http4kConnectActionTypes
     get() = getAllFunctions()
-        .first { it.simpleName.getShortName() == "invoke" }
-        .parameters.first().type
+        .filter { it.simpleName.getShortName() == "invoke" }
+        .map { it.parameters.first().type }
 
-fun List<KSAnnotated>.filterForActionsOf(adapter: KSClassDeclaration) =
+
+fun List<KSAnnotated>.filterForActionsOf(actionType: KSType) =
     filterIsInstance<KSClassDeclaration>()
         .filter {
             it.getAllSuperTypes().map(KSType::starProjection)
-                .contains(adapter.http4kConnectActionType.resolve().starProjection())
+                .contains(actionType.starProjection())
         }

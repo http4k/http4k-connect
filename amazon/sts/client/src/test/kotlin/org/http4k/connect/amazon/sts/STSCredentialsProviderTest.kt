@@ -16,7 +16,6 @@ import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
-import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.connect.amazon.sts.action.SimpleAssumedRole
 import org.http4k.connect.amazon.sts.model.RoleId
 import org.junit.jupiter.api.Test

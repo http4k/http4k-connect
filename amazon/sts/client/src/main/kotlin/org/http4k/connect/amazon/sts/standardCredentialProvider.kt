@@ -15,7 +15,6 @@ import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import org.http4k.connect.amazon.sts.action.AssumedRole
-import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
 import java.time.Clock
 import java.time.Duration

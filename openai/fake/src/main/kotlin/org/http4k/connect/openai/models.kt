@@ -31,6 +31,31 @@ val davinciModel = Model(
     null
 )
 
+val embeddingModel = Model(
+    ObjectId.of("text-embedding-ada-002"),
+    ObjectType.Model,
+    Timestamp.of(1649358449),
+    OPENAI,
+    listOf(
+        Permission(
+            ObjectId.of("modelperm-text-embedding-ada-002"),
+            ObjectType.ModelPermission,
+            Timestamp.of(1669085501),
+            allow_create_engine = false,
+            allow_sampling = true,
+            allow_logprobs = true,
+            allow_search_indices = false,
+            allow_view = true,
+            allow_fine_tuning = false,
+            organization = OpenAIOrg.ALL,
+            group = null,
+            is_blocking = false
+        )
+    ),
+    ObjectId.of("text-davinci-002"),
+    null
+)
+
 val curieModel = Model(
     ObjectId.of("text-curie-002"),
     ObjectType.Model,
@@ -82,7 +107,7 @@ val babbageModel = Model(
 )
 
 val DEFAULT_OPEN_AI_MODELS = Storage.InMemory<Model>().apply {
-    setOf(babbageModel, curieModel, davinciModel).forEach {
+    setOf(babbageModel, curieModel, davinciModel, embeddingModel).forEach {
         set(it.id.value, it)
     }
 }

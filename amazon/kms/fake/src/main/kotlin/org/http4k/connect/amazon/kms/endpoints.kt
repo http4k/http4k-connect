@@ -77,7 +77,7 @@ fun AmazonJsonFake.describeKey(keys: Storage<StoredCMK>) = route<DescribeKey> { 
 
 fun AmazonJsonFake.decrypt(keys: Storage<StoredCMK>) = route<Decrypt> { req ->
     keys[req.KeyId.toArn().value]?.let {
-        val plainText = Base64Blob.encode(req.CiphertextBlob.decoded().reversed())
+        val plainText = Base64Blob.encode(req.CiphertextBlob.decodedBytes().reversed().toByteArray())
         Decrypted(KMSKeyId.of(it.arn), plainText, req.EncryptionAlgorithm ?: EncryptionAlgorithm.SYMMETRIC_DEFAULT)
     }
 }
@@ -85,7 +85,7 @@ fun AmazonJsonFake.decrypt(keys: Storage<StoredCMK>) = route<Decrypt> { req ->
 fun AmazonJsonFake.encrypt(keys: Storage<StoredCMK>) = route<Encrypt> { req ->
     keys[req.KeyId.toArn().value]?.let {
         Encrypted(
-            KMSKeyId.of(it.arn), Base64Blob.encode(req.Plaintext.decoded().reversed()), req.EncryptionAlgorithm
+            KMSKeyId.of(it.arn), Base64Blob.encode(req.Plaintext.decodedBytes().reversed().toByteArray()), req.EncryptionAlgorithm
                 ?: EncryptionAlgorithm.SYMMETRIC_DEFAULT
         )
     }

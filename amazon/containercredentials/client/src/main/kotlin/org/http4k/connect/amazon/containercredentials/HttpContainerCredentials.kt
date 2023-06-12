@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.containercredentials
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.containercredentials.action.ContainerCredentialsAction
 import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
 import org.http4k.core.NoOp

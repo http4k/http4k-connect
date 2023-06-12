@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.core.model.asList
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.textOptional
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sns.SNSAction
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.PhoneNumber
 import org.http4k.connect.amazon.sns.model.SNSMessageId

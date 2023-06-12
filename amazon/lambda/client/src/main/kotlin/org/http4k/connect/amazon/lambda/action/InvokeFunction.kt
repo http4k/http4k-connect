@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.lambda.action
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.lambda.Lambda
+import org.http4k.connect.amazon.lambda.LambdaAction
 import org.http4k.connect.amazon.lambda.model.FunctionName
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method.POST

@@ -7,7 +7,6 @@ import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
-import org.http4k.connect.amazon.sts.action.STSAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.Payload.Mode.Signed

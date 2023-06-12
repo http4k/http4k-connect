@@ -1,7 +1,7 @@
 package org.http4k.connect.github.webhook
 
 import org.http4k.connect.github.GitHubToken
-import org.http4k.connect.github.api.action.GitHubWebhookAction
+import org.http4k.connect.github.api.GitHubWebhookAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.http4k.core.then

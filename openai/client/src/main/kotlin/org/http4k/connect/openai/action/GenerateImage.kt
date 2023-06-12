@@ -5,6 +5,7 @@ import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.openai.Content
+import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.User

@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.containercredentials.ContainerCredentials
+import org.http4k.connect.amazon.containercredentials.ContainerCredentialsAction
 import org.http4k.connect.amazon.containercredentials.ContainerCredentialsMoshi
 import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.asRemoteFailure

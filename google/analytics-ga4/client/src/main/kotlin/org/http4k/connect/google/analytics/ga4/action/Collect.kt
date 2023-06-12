@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.google.analytics.ga4.GoogleAnalyticsAction
 import org.http4k.connect.google.analytics.ga4.model.EventData
 import org.http4k.connect.google.analytics.ga4.model.EventsData
 import org.http4k.connect.google.analytics.model.Analytics

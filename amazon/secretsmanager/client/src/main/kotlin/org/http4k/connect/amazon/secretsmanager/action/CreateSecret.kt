@@ -4,6 +4,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.secretsmanager.SecretsManagerAction
 import org.http4k.connect.amazon.secretsmanager.model.VersionId
 import org.http4k.connect.model.Base64Blob
 import se.ansman.kotshi.JsonSerializable

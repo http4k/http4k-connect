@@ -3,17 +3,10 @@ package org.http4k.connect.kafka.rest
 import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.defaultPort
 import org.http4k.chaos.start
-import org.http4k.connect.kafka.rest.endpoints.commitOffsets
-import org.http4k.connect.kafka.rest.endpoints.consumeRecords
-import org.http4k.connect.kafka.rest.endpoints.createConsumer
-import org.http4k.connect.kafka.rest.endpoints.deleteConsumer
-import org.http4k.connect.kafka.rest.endpoints.getOffsets
-import org.http4k.connect.kafka.rest.endpoints.getPartitions
-import org.http4k.connect.kafka.rest.endpoints.produceRecords
-import org.http4k.connect.kafka.rest.endpoints.seekOffsets
-import org.http4k.connect.kafka.rest.endpoints.subscribeToTopics
 import org.http4k.connect.kafka.rest.model.ConsumerState
 import org.http4k.connect.kafka.rest.model.SendRecord
+import org.http4k.connect.kafka.rest.v2.v2Routes
+import org.http4k.connect.kafka.rest.v3.v3Routes
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Credentials
@@ -35,15 +28,8 @@ class FakeKafkaRest(
         BasicAuth("") { true }
             .then(
                 routes(
-                    subscribeToTopics(consumers),
-                    createConsumer(consumers, baseUri),
-                    deleteConsumer(consumers),
-                    commitOffsets(consumers),
-                    getPartitions(),
-                    getOffsets(consumers),
-                    seekOffsets(consumers),
-                    produceRecords(topics),
-                    consumeRecords(consumers, topics),
+                    v2Routes(consumers, topics, baseUri),
+                    v3Routes(topics, baseUri)
                 )
             ),
         "" bind GET to { _ -> Response(OK).body("{}") }

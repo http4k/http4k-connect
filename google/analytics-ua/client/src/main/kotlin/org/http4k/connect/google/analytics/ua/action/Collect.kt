@@ -7,6 +7,7 @@ import org.http4k.connect.asRemoteFailure
 import org.http4k.connect.google.analytics.model.Analytics
 import org.http4k.connect.google.analytics.model.Event
 import org.http4k.connect.google.analytics.model.PageView
+import org.http4k.connect.google.analytics.ua.GoogleAnalyticsAction
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response

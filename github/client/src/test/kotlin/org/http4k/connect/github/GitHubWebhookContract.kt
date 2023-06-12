@@ -3,7 +3,7 @@ package org.http4k.connect.github
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
-import org.http4k.connect.github.api.action.GitHubWebhookAction
+import org.http4k.connect.github.api.GitHubWebhookAction
 import org.http4k.connect.github.webhook.WebhookEventType
 import org.http4k.connect.github.webhook.GitHubWebhook
 import org.http4k.connect.github.webhook.Http

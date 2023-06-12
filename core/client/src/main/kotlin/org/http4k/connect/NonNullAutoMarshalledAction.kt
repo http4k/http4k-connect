@@ -7,11 +7,13 @@ import org.http4k.core.Response
 import org.http4k.format.AutoMarshalling
 import kotlin.reflect.KClass
 
-abstract class NonNullAutoMarshalledAction<R : Any>(private val clazz: KClass<R>, protected val autoMarshalling: AutoMarshalling) :
-    Action<Result<R, RemoteFailure>> {
+abstract class NonNullAutoMarshalledAction<R : Any>(
+    private val clazz: KClass<R>,
+    protected val autoMarshalling: AutoMarshalling
+) : Action<Result<R, RemoteFailure>> {
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
+            status.successful -> Success(autoMarshalling.asA(bodyString().takeIf { it.isNotEmpty() } ?: "{}", clazz))
             else -> Failure(asRemoteFailure(this))
         }
     }

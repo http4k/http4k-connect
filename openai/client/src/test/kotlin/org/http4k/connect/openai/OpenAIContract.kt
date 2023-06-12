@@ -2,7 +2,9 @@ package org.http4k.connect.openai
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.startsWith
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
+import org.http4k.connect.openai.ModelName.Companion.TEXT_EMBEDDING_ADA_002
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
@@ -38,15 +40,24 @@ interface OpenAIContract {
                     Message(User, Content.of("What is your favourite colour?"))
                 ),
                 1000
-            ).successValue().model,
-            equalTo(GPT3_5)
+            ).successValue().model.value,
+            startsWith("gpt-3.5-turbo")
         )
     }
 
+    @Test
+    fun `get embeddings`() {
+        assertThat(
+            openAi.createEmbeddings(
+                TEXT_EMBEDDING_ADA_002,
+                listOf(Content.of("What is your favourite colour?"))
+            ).successValue().model.value,
+            startsWith("text-embedding-ada-002")
+        )
+    }
 
     @Test
     fun `can generate image`(approver: Approver) {
-        val generated = openAi.generateImage(Content.of("An excellent library"), Size.`256x256`).successValue()
-        println(generated.data.first().url)
+        openAi.generateImage(Content.of("An excellent library"), Size.`256x256`).successValue()
     }
 }

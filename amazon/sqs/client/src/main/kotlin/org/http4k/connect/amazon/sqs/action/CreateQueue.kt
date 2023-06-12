@@ -6,6 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
+import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
