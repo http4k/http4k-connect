@@ -87,6 +87,8 @@ Plugins are just `HttpHandlers` and as such can be mixed into existing applicati
 
 The FakeOpenAI server also provides support for running plugins locally and interacting with them as "installed" in the fake.
 
+There is a full working example of how to create and deploy plugins in the [examples repository](https://github.com/http4k/http4k-connect-examples/tree/master/developing-openai-plugins).
+
 ## Fake OpenAI Server
 
 The Fake OpenAI provides the below actions and can be spun up as a server, meaning it is perfect for using in test
