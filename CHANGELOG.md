@@ -3,7 +3,7 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v5.0.0.0 (uncut)
+### v5.0.0.0
 - **http4k-connect*** : Upgrade to http4k platform v5 version.
 - **http4k-connect*** : [Breaking] Remove all previous deprecations from all modules for v4. To upgrade cleanly, first upgrade to `v3.43.0.0` and then re-upgrade to `v5.0.0.0`. This will ensure that you only have to deal with Deprecations between the major versions.
 - **http4k-connect-kapt-generator** : [Breaking] This generator module has been removed due to the replacement of Kapt with KSP. To fix, migrate to use the KSP gradle plugin with the `http4k-connect-ksp-generator` module instead. There are no more changes required as it is a drop-in replacement.

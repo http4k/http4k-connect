@@ -212,7 +212,7 @@ abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
 
             verifySoftwareToken(UserCode.of("123456"), AccessToken.of("1234"), challenge.Session).successValue()
 
-            val nextChallenge = respondToAuthChallenge(
+            respondToAuthChallenge(
                 client.ClientId, NEW_PASSWORD_REQUIRED, mapOf(
                     NEW_PASSWORD_REQUIRED to "",
                 )
