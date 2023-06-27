@@ -21,7 +21,7 @@ import org.http4k.core.with
 import org.http4k.filter.ClientFilters.BasicAuth
 import org.http4k.filter.debug
 import org.http4k.lens.Path
-import org.http4k.security.oauth.server.OAuthServerMoshi.auto
+import org.http4k.security.oauth.format.OAuthMoshi.auto
 import org.http4k.testing.Approver
 import org.junit.jupiter.api.Test
 

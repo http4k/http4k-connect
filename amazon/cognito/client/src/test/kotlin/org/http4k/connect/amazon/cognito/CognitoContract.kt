@@ -47,7 +47,7 @@ import org.http4k.security.InsecureCookieBasedOAuthPersistence
 import org.http4k.security.OAuthProvider
 import org.http4k.security.OAuthProviderConfig
 import org.http4k.security.oauth.client.OAuthClientCredentials
-import org.http4k.security.oauth.server.OAuthServerMoshi.autoBody
+import org.http4k.security.oauth.format.OAuthMoshi.autoBody
 import org.jose4j.jwk.JsonWebKeySet
 import org.jose4j.jws.JsonWebSignature
 import org.junit.jupiter.api.Disabled
