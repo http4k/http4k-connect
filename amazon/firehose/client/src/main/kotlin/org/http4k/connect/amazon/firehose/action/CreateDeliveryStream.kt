@@ -4,6 +4,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.DeliveryStreamType
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.firehose.FirehoseAction
 import org.http4k.connect.amazon.model.DeliveryStreamEncryptionConfigurationInput
 import org.http4k.connect.amazon.model.DeliveryStreamName
 import org.http4k.connect.amazon.model.ElasticsearchDestinationConfiguration
