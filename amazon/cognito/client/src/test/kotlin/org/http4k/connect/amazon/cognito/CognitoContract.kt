@@ -12,11 +12,11 @@ import org.http4k.connect.amazon.cognito.model.ChallengeName.NEW_PASSWORD_REQUIR
 import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
 import org.http4k.connect.amazon.cognito.model.OAuthFlow.client_credentials
-import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.UserPoolId
-import org.http4k.connect.amazon.cognito.model.Username
+import org.http4k.connect.amazon.core.model.Password
+import org.http4k.connect.amazon.core.model.Username
 import org.http4k.connect.successValue
 import org.http4k.core.ContentType.Companion.APPLICATION_FORM_URLENCODED
 import org.http4k.core.Credentials
