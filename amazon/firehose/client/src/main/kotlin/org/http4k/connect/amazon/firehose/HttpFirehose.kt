@@ -6,7 +6,6 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.AWS_CREDENTIALS
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.firehose.action.FirehoseAction
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.Payload

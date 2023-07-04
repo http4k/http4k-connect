@@ -5,10 +5,10 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.DeliveryStreamType.DirectPut
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Base64Blob
 import org.http4k.connect.amazon.model.DeliveryStreamName
 import org.http4k.connect.amazon.model.Record
 import org.http4k.connect.amazon.model.S3DestinationConfiguration
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Disabled

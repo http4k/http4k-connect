@@ -1,7 +1,6 @@
 # Firehose
 
 The Firehose connector provides the following Actions:
-
      *  PutRecord
      *  PutRecordBatch
 
