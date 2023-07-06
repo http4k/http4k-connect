@@ -122,11 +122,11 @@ fun AmazonJsonFake.scheduleKeyDeletion(keys: Storage<StoredCMK>) = route<Schedul
     }
 }
 
-fun AmazonJsonFake.sign(keys: Storage<StoredCMK>) = route<Sign> { req ->
+fun AmazonJsonFake.sign(keys: Storage<StoredCMK>, crypto: Provider) = route<Sign> { req ->
     keys[req.KeyId.toArn().value]?.let {
         Signed(
             KMSKeyId.of(it.arn),
-            signTheBytes(req, it.privateKey!!), req.SigningAlgorithm
+            signTheBytes(req, it.loadPrivateKey(crypto)!!), req.SigningAlgorithm
         )
     }
 }
@@ -135,7 +135,7 @@ private fun signTheBytes(req: Sign, key: PrivateKey) =
     KMS_ALGORITHMS[req.SigningAlgorithm]?.sign(key, req.Message)
         ?: Base64Blob.encode(req.SigningAlgorithm.name + req.Message.decoded().take(50))
 
-fun AmazonJsonFake.verify(keys: Storage<StoredCMK>) =
+fun AmazonJsonFake.verify(keys: Storage<StoredCMK>, crypto: Provider) =
     route<Verify>(
         {
             when ((it as? VerifyResult)?.SignatureValid) {
@@ -145,7 +145,7 @@ fun AmazonJsonFake.verify(keys: Storage<StoredCMK>) =
         }
     ) { req ->
         keys[req.KeyId.toArn().value]?.let {
-            VerifyResult(req.KeyId, verifyTheBytes(req, it.publicKey!!), req.SigningAlgorithm)
+            VerifyResult(req.KeyId, verifyTheBytes(req, it.loadPublicKey(crypto)!!), req.SigningAlgorithm)
         }
     }
 

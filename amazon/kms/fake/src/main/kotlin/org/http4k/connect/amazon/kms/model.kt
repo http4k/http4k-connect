@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.kms
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Timestamp
@@ -9,6 +8,7 @@ import org.http4k.connect.amazon.kms.model.KeyUsage
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm
 import org.http4k.connect.model.Base64Blob
 import java.security.KeyFactory
+import java.security.Provider
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 
@@ -33,13 +33,6 @@ val EncryptionKeyContent.keySpec get() = when(format) {
     else -> error("Unsupported format: $format")
 }
 
-private val StoredCMK.keyFactory get() = when(customerMasterKeySpec) {
-    CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> KeyFactory.getInstance("RSA")
-    CustomerMasterKeySpec.ECC_NIST_P256, CustomerMasterKeySpec.ECC_NIST_P384, CustomerMasterKeySpec.ECC_NIST_P521 -> KeyFactory.getInstance("ECDSA", BouncyCastleProvider())
-    CustomerMasterKeySpec.ECC_SECG_P256K1 -> null
-    CustomerMasterKeySpec.SYMMETRIC_DEFAULT -> null
-}
-
 val StoredCMK.signingAlgorithms get() = when(customerMasterKeySpec) {
     CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> listOf(
         SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256,
@@ -58,8 +51,15 @@ val StoredCMK.signingAlgorithms get() = when(customerMasterKeySpec) {
     CustomerMasterKeySpec.SYMMETRIC_DEFAULT -> emptyList()
 }
 
-val StoredCMK.publicKey get() = publicKeyContent?.keySpec
-    ?.let { keyFactory?.generatePublic(it) }
+private fun StoredCMK.keyFactory(crypto: Provider) = when(customerMasterKeySpec) {
+    CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> KeyFactory.getInstance("RSA", crypto)
+    CustomerMasterKeySpec.ECC_NIST_P256, CustomerMasterKeySpec.ECC_NIST_P384, CustomerMasterKeySpec.ECC_NIST_P521 -> KeyFactory.getInstance("ECDSA", crypto)
+    CustomerMasterKeySpec.ECC_SECG_P256K1 -> null
+    CustomerMasterKeySpec.SYMMETRIC_DEFAULT -> null
+}
 
-val StoredCMK.privateKey get() = privateKeyContent?.keySpec
-    ?.let { keyFactory?.generatePrivate(it) }
+fun StoredCMK.loadPublicKey(crypto: Provider) = publicKeyContent?.keySpec
+    ?.let { keyFactory(crypto)?.generatePublic(it) }
+
+fun StoredCMK.loadPrivateKey(crypto: Provider) = privateKeyContent?.keySpec
+    ?.let { keyFactory(crypto)?.generatePrivate(it) }

@@ -27,8 +27,8 @@ class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaoticHttpHandle
             api.getPublicKey(keys),
             api.listKeys(keys),
             api.scheduleKeyDeletion(keys),
-            api.sign(keys),
-            api.verify(keys)
+            api.sign(keys, crypto),
+            api.verify(keys, crypto)
         )
     )
 
