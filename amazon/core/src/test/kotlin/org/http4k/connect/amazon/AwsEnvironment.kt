@@ -18,10 +18,12 @@ val fakeAwsEnvironment = AwsEnvironment(
 )
 
 fun configAwsEnvironment(): AwsEnvironment {
+    val env = Environment.ENV
+
     try {
-        val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
-        val env = Environment.fromConfigFile(config) overrides
-            Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
+//        val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
+//        val env = Environment.fromConfigFile(config) overrides
+//            Environment.fromConfigFile(File(System.getProperty("user.home"), ".aws/credentials"))
 
         val region = EnvironmentKey.required("profile-http4k-connect-region")(env)
         return AwsEnvironment(
