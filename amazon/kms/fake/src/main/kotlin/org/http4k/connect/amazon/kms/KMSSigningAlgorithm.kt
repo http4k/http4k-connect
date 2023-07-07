@@ -1,12 +1,6 @@
 package org.http4k.connect.amazon.kms
 
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.openssl.PEMEncryptedKeyPair
-import org.bouncycastle.openssl.PEMKeyPair
-import org.bouncycastle.openssl.PEMParser
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
-import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.ECDSA_SHA_256
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.ECDSA_SHA_384
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.ECDSA_SHA_512
@@ -17,7 +11,8 @@ import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_256
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_384
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm.RSASSA_PSS_SHA_512
 import org.http4k.connect.model.Base64Blob
-import java.io.StringReader
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.security.Signature
 import java.security.spec.MGF1ParameterSpec
 import java.security.spec.MGF1ParameterSpec.SHA256
@@ -25,26 +20,11 @@ import java.security.spec.MGF1ParameterSpec.SHA384
 import java.security.spec.MGF1ParameterSpec.SHA512
 import java.security.spec.PSSParameterSpec
 
+
 sealed class KMSSigningAlgorithm(val javaAlgo: String) {
-    abstract fun verify(pair: KeyPair, message: Base64Blob, signature: Base64Blob): Boolean
+    abstract fun verify(key: PublicKey, message: Base64Blob, signature: Base64Blob): Boolean
 
-    abstract fun sign(pair: KeyPair, message: Base64Blob): Base64Blob
-
-    protected fun readPrivateKey(pair: KeyPair) = JcaPEMKeyConverter().run {
-        val provider = BouncyCastleProvider()
-        setProvider(provider)
-
-        val pemObject = PEMParser(StringReader(String(pair.private.decodedBytes()))).readObject()
-        getKeyPair(
-            when (pemObject) {
-                is PEMEncryptedKeyPair -> pemObject.decryptKeyPair(
-                    JcePEMDecryptorProviderBuilder().setProvider(provider).build(pair.password.toCharArray())
-                )
-
-                else -> pemObject as PEMKeyPair
-            }
-        ).private
-    }
+    abstract fun sign(key: PrivateKey, message: Base64Blob): Base64Blob
 
     companion object {
         val KMS_ALGORITHMS = mapOf(
@@ -67,19 +47,20 @@ class RSA_PSS(
     private val mgf: MGF1ParameterSpec,
     private val saltLength: Int,
     private val parameterAlgorithm: String
-) :
-    KMSSigningAlgorithm(algo) {
-    override fun verify(pair: KeyPair, message: Base64Blob, signature: Base64Blob) =
-        Signature.getInstance(javaAlgo, BouncyCastleProvider()).run {
-            val parser = PEMParser(StringReader(String(pair.public.decodedBytes())))
-            initVerify(JcaPEMKeyConverter().getPublicKey(parser.readObject() as SubjectPublicKeyInfo))
+) : KMSSigningAlgorithm(algo) {
+
+    private val crypto = BouncyCastleProvider()
+
+    override fun verify(key: PublicKey, message: Base64Blob, signature: Base64Blob) =
+        Signature.getInstance(javaAlgo, crypto).run {
+            initVerify(key)
             update(message.decodedBytes())
             verify(signature.decodedBytes())
         }
 
-    override fun sign(pair: KeyPair, message: Base64Blob) = Base64Blob.encode(
-        Signature.getInstance(javaAlgo, BouncyCastleProvider()).run {
-            initSign(readPrivateKey(pair))
+    override fun sign(key: PrivateKey, message: Base64Blob) = Base64Blob.encode(
+        Signature.getInstance(javaAlgo, crypto).run {
+            initSign(key)
             setParameter(PSSParameterSpec(parameterAlgorithm, "MGF1", mgf, saltLength, 1))
             update(message.decodedBytes())
             sign()
@@ -87,17 +68,19 @@ class RSA_PSS(
 }
 
 class RSA_PCKS1_V1_5(algo: String) : KMSSigningAlgorithm(algo) {
-    override fun verify(pair: KeyPair, message: Base64Blob, signature: Base64Blob) =
-        Signature.getInstance(javaAlgo, BouncyCastleProvider()).run {
-            val parser = PEMParser(StringReader(String(pair.public.decodedBytes())))
-            initVerify(JcaPEMKeyConverter().getPublicKey(parser.readObject() as SubjectPublicKeyInfo))
+
+    private val crypto = BouncyCastleProvider()
+
+    override fun verify(key: PublicKey, message: Base64Blob, signature: Base64Blob) =
+        Signature.getInstance(javaAlgo, crypto).run {
+            initVerify(key)
             update(message.decodedBytes())
             verify(signature.decodedBytes())
         }
 
-    override fun sign(pair: KeyPair, message: Base64Blob) = Base64Blob.encode(
-        Signature.getInstance(javaAlgo, BouncyCastleProvider()).run {
-            initSign(readPrivateKey(pair))
+    override fun sign(key: PrivateKey, message: Base64Blob) = Base64Blob.encode(
+        Signature.getInstance(javaAlgo, crypto).run {
+            initSign(key)
             update(message.decodedBytes())
             sign()
         })
@@ -105,10 +88,11 @@ class RSA_PCKS1_V1_5(algo: String) : KMSSigningAlgorithm(algo) {
 }
 
 class ECDSA(algo: String) : KMSSigningAlgorithm(algo) {
-    override fun verify(pair: KeyPair, message: Base64Blob, signature: Base64Blob) =
-        Signature.getInstance(javaAlgo, BouncyCastleProvider()).run {
-            val parser = PEMParser(StringReader(String(pair.public.decodedBytes())))
-            initVerify(JcaPEMKeyConverter().getPublicKey(parser.readObject() as SubjectPublicKeyInfo))
+    private val crypto = BouncyCastleProvider()
+
+    override fun verify(key: PublicKey, message: Base64Blob, signature: Base64Blob) =
+        Signature.getInstance(javaAlgo, crypto).run {
+            initVerify(key)
             update(message.decodedBytes())
             try {
                 verify(signature.decodedBytes())
@@ -117,9 +101,9 @@ class ECDSA(algo: String) : KMSSigningAlgorithm(algo) {
             }
         }
 
-    override fun sign(pair: KeyPair, message: Base64Blob) = Base64Blob.encode(
-        Signature.getInstance(javaAlgo, BouncyCastleProvider()).run {
-            initSign(readPrivateKey(pair))
+    override fun sign(key: PrivateKey, message: Base64Blob) = Base64Blob.encode(
+        Signature.getInstance(javaAlgo, crypto).run {
+            initSign(key)
             update(message.decodedBytes())
             sign()
         })
