@@ -18,6 +18,8 @@ class FakeFirehose(records: Storage<List<Record>> = Storage.InMemory()) : Chaoti
 
     override val app = routes(
         "/" bind POST to routes(
+            api.createDeliveryStream(records),
+            api.deleteDeliveryStream(records),
             api.putRecord(records),
             api.putRecordBatch(records)
         )

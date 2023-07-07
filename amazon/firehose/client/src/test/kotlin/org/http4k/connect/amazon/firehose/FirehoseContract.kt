@@ -11,6 +11,7 @@ import org.http4k.connect.amazon.model.S3DestinationConfiguration
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -18,7 +19,7 @@ import java.util.UUID
 abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
 
     private val firehose by lazy {
-        Firehose.Http(aws.region, { aws.credentials }, http)
+        Firehose.Http(aws.region, { aws.credentials }, http.debug())
     }
 
     private val deliveryStreamName = DeliveryStreamName.of("connect")
