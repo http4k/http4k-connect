@@ -9,13 +9,10 @@ import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.ResourceId
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.Username
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
-
-class Username private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<Username>(::Username)
-}
 
 class PoolName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<PoolName>(::PoolName)
@@ -27,10 +24,6 @@ class CloudFrontDomain private constructor(value: String) : StringValue(value) {
 
 class UserPoolId private constructor(value: String) : ResourceId(value) {
     companion object : NonBlankStringValueFactory<UserPoolId>(::UserPoolId)
-}
-
-class Password private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<Password>(::Password)
 }
 
 class ClientId private constructor(value: String) : ResourceId(value) {

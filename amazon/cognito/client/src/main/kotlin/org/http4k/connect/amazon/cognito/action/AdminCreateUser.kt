@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.cognito.model.DeliveryMedium
 import org.http4k.connect.amazon.cognito.model.MessageAction
 import org.http4k.connect.amazon.cognito.model.User
 import org.http4k.connect.amazon.cognito.model.UserPoolId
-import org.http4k.connect.amazon.cognito.model.Username
+import org.http4k.connect.amazon.core.model.Username
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
