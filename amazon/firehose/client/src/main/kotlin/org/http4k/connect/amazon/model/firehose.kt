@@ -236,7 +236,7 @@ enum class S3BackupMode {
 
 @JsonSerializable
 data class HttpEndpointDestinationConfiguration(
-    val S3Configuration: S3DestinationConfiguration,
+    val S3Configuration: S3DestinationConfiguration?,
     val BufferingHints: BufferingHints? = null,
     val CloudWatchLoggingOptions: CloudWatchLoggingOptions? = null,
     val EndpointConfiguration: EndpointConfiguration? = null,

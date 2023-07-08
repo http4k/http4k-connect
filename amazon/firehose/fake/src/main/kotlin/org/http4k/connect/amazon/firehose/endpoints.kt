@@ -4,9 +4,12 @@ import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.firehose.action.BatchResult
 import org.http4k.connect.amazon.firehose.action.CreateDeliveryStream
 import org.http4k.connect.amazon.firehose.action.CreatedDeliveryStream
 import org.http4k.connect.amazon.firehose.action.DeleteDeliveryStream
+import org.http4k.connect.amazon.firehose.action.DeliveryStreams
+import org.http4k.connect.amazon.firehose.action.ListDeliveryStreams
 import org.http4k.connect.amazon.firehose.action.PutRecord
 import org.http4k.connect.amazon.firehose.action.PutRecordBatch
 import org.http4k.connect.amazon.firehose.action.RecordAdded
@@ -19,13 +22,15 @@ import java.util.UUID
 fun AmazonJsonFake.putRecord(records: Storage<List<Record>>) = route<PutRecord> {
     val final = records[it.DeliveryStreamName.value] ?: listOf()
     records[it.DeliveryStreamName.value] = final + it.Record
-    RecordAdded(false, UUID.randomUUID().toString())
+    RecordAdded(false, UUID.nameUUIDFromBytes(it.Record.Data.decodedBytes()).toString())
 }
 
 fun AmazonJsonFake.putRecordBatch(records: Storage<List<Record>>) = route<PutRecordBatch> {
     val final = records[it.DeliveryStreamName.value] ?: listOf()
     records[it.DeliveryStreamName.value] = final + it.Records
-    RequestResponses(null, null, UUID.randomUUID().toString())
+    BatchResult(true, 0, it.Records.map {
+        RequestResponses(null, null, UUID.nameUUIDFromBytes(it.Data.decodedBytes()).toString())
+    })
 }
 
 fun AmazonJsonFake.createDeliveryStream(records: Storage<List<Record>>) = route<CreateDeliveryStream> {
@@ -33,8 +38,13 @@ fun AmazonJsonFake.createDeliveryStream(records: Storage<List<Record>>) = route<
     CreatedDeliveryStream(it.DeliveryStreamName.toArn())
 }
 
+fun AmazonJsonFake.listDeliveryStreams(records: Storage<List<Record>>) = route<ListDeliveryStreams> {
+    DeliveryStreams(records.keySet().map { DeliveryStreamName.of(it) }, false)
+}
+
 fun AmazonJsonFake.deleteDeliveryStream(records: Storage<List<Record>>) = route<DeleteDeliveryStream> {
     records.remove(it.DeliveryStreamName.value)
+    Unit
 }
 
 private fun DeliveryStreamName.toArn() = ARN.of(

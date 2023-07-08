@@ -1,6 +1,9 @@
 # Firehose
 
 The Firehose connector provides the following Actions:
+     *  CreateDeliveryStream
+     *  DeleteDeliveryStream
+     *  ListDeliveryStreams
      *  PutRecord
      *  PutRecordBatch
 

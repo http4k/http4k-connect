@@ -3,8 +3,9 @@ package org.http4k.connect.amazon.firehose
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
-import org.http4k.filter.debug
+import org.junit.jupiter.api.Disabled
 
-class RealFirehoseTest : FirehoseContract(JavaHttpClient().debug()), RealAwsEnvironment {
+@Disabled("This requires other AWS resources which we do not have")
+class RealFirehoseTest : FirehoseContract(JavaHttpClient()), RealAwsEnvironment {
     override val aws get() = configAwsEnvironment()
 }

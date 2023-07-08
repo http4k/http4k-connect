@@ -11,21 +11,19 @@ import org.http4k.connect.amazon.model.S3DestinationConfiguration
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
 
     private val firehose by lazy {
-        Firehose.Http(aws.region, { aws.credentials }, http.debug())
+        Firehose.Http(aws.region, { aws.credentials }, http)
     }
 
     private val deliveryStreamName = DeliveryStreamName.of(UUID.randomUUID().toString())
 
     @Test
-    fun `create and delete delivery stream`() {
+    fun `delivery stream lifecycle`() {
         with(firehose) {
             try {
                 createDeliveryStream(
@@ -40,31 +38,22 @@ abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
                     listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName),
                     equalTo(true)
                 )
+
+                putRecord(
+                    deliveryStreamName,
+                    Record(Base64Blob.encode(UUID.randomUUID().toString()))
+                ).successValue()
+
+                putRecordBatch(
+                    deliveryStreamName,
+                    listOf(Record(Base64Blob.encode(UUID.randomUUID().toString())))
+                ).successValue()
+
             }
 
             finally {
                 deleteDeliveryStream(deliveryStreamName).successValue()
             }
-        }
-    }
-
-    @Test
-    @Disabled
-    fun `send records`() {
-        with(firehose) {
-            assertThat(
-                listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName),
-                equalTo(true)
-            )
-            putRecord(
-                deliveryStreamName,
-                Record(Base64Blob.encode(UUID.randomUUID().toString()))
-            ).successValue()
-
-            putRecordBatch(
-                deliveryStreamName,
-                listOf(Record(Base64Blob.encode(UUID.randomUUID().toString())))
-            ).successValue()
         }
     }
 }
