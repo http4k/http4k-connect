@@ -41,5 +41,5 @@ private fun DeliveryStreamName.toArn() = ARN.of(
     Firehose.awsService,
     Region.of("us-east-1"),
     AwsAccount.of("0"),
-    "deliverystream", this // is this right?
+    "deliverystream", this
 )

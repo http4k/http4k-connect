@@ -22,25 +22,27 @@ abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
         Firehose.Http(aws.region, { aws.credentials }, http.debug())
     }
 
-    private val deliveryStreamName = DeliveryStreamName.of("connect")
+    private val deliveryStreamName = DeliveryStreamName.of(UUID.randomUUID().toString())
 
     @Test
     fun `create and delete delivery stream`() {
-        val deliveryStreamName = DeliveryStreamName.of(UUID.randomUUID().toString())
         with(firehose) {
             try {
                 createDeliveryStream(
                     S3DestinationConfiguration(
-                        BucketARN = ARN.of(""),
-                        RoleARN = ARN.of("")
+                        BucketARN = ARN.of("arn:partition:kms:ldn-north-1:001234567890:key:foobar"),
+                        RoleARN = ARN.of("arn:partition:kms:ldn-north-1:001234567890:key:foobar")
                     ),
                     deliveryStreamName, DirectPut
                 ).successValue()
+
                 assertThat(
                     listDeliveryStreams().successValue().DeliveryStreamNames.contains(deliveryStreamName),
                     equalTo(true)
                 )
-            } finally {
+            }
+
+            finally {
                 deleteDeliveryStream(deliveryStreamName).successValue()
             }
         }
