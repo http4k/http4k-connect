@@ -5,9 +5,6 @@
 <a href="https://github.com/http4k/http4k-connect/actions?query=workflow%3A.github%2Fworkflows%2Fbuild.yaml"><img alt="build" src="https://github.com/http4k/http4k-connect/workflows/.github/workflows/build.yaml/badge.svg"></a>
 <a href="https://mvnrepository.com/artifact/org.http4k"><img alt="download" src="https://img.shields.io/maven-central/v/org.http4k/http4k-connect-core"></a>
 
-[comment]: <> (<img alt="jcenter free" src="https://img.shields.io/badge/JCenter%20free-%3Ev2.21.0.0-success">)
-[comment]: <> (<a href="https://codecov.io/gh/http4k/http4k-connect"><img src="https://codecov.io/gh/http4k/http4k-connect/branch/master/graph/badge.svg" /></a>)
-
 http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services using [http4k](https://http4k.org) compatible APIs, along with Fake implementations for usage during local testing. These are all underpinned by a variation on the uniform [Server as a Function](https://monkey.org/~marius/funsrv.pdf) model powered by the `HttpHandler` interface exposed by [http4k](https://http4k.org), so you can:
  
 1. Take advantage of the simple and powerful SaaF model and APIs used in http4k.
@@ -72,7 +69,7 @@ FakeExample().start()
 ```groovy
 dependencies {
     // install the platform...
-    implementation platform("org.http4k:http4k-connect-bom:5.1.0.0")
+    implementation platform("org.http4k:http4k-connect-bom:5.1.2.0")
 
     // ...then choose a client
     implementation "org.http4k:http4k-connect-amazon-s3"
@@ -89,7 +86,9 @@ dependencies {
 
 - AWS
     - [CloudFront](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-cloudfront"` / `"org.http4k:http4k-connect-amazon-cloudfront-fake"`
-    - [DynamoDb](./amazon/dynamodb) -> `"org.http4k:http4k-connect-amazon-dynamodb"`
+    - [DynamoDb](./amazon/dynamodb) -> `"org.http4k:http4k-connect-amazon-dynamodb"` / `"org.http4k:http4k-connect-amazon-dynamodb-fake"`
+    - [EventBridge](./amazon/eventbridge) -> `"org.http4k:http4k-connect-amazon-eventbridge"` / `"org.http4k:http4k-connect-amazon-eventbridge-fake"`
+    - [Firehose](./amazon/firehose) -> `"org.http4k:http4k-connect-amazon-firehose"` / `"org.http4k:http4k-connect-amazon-firehose-fake"`
     - [KMS](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-kms"` / `"org.http4k:http4k-connect-amazon-kms-fake"`
     - [Lambda](./amazon/lambda) -> `"org.http4k:http4k-connect-amazon-lambda"` / `"org.http4k:http4k-connect-amazon-lambda-fake"`
     - [S3](./amazon/s3) -> `"org.http4k:http4k-connect-amazon-s3"` / `"org.http4k:http4k-connect-amazon-s3-fake"`

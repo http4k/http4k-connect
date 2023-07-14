@@ -1,6 +1,6 @@
 on:
   pull_request:
-    types: [labeled]
+    types: [opened, reopened]
     branches:
       - auto/*
 jobs:

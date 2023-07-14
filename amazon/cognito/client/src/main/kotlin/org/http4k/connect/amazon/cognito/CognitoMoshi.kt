@@ -8,14 +8,14 @@ import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.ClientSecret
 import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
 import org.http4k.connect.amazon.cognito.model.IdToken
-import org.http4k.connect.amazon.cognito.model.Password
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.RefreshToken
 import org.http4k.connect.amazon.cognito.model.SecretCode
 import org.http4k.connect.amazon.cognito.model.Session
 import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.UserPoolId
-import org.http4k.connect.amazon.cognito.model.Username
+import org.http4k.connect.amazon.core.model.Password
+import org.http4k.connect.amazon.core.model.Username
 import org.http4k.format.AwsCoreJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter

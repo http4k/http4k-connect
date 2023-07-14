@@ -28,7 +28,9 @@ abstract class AwsJsonAction<R : Any>(
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(autoMarshalling.asA(bodyString(), clazz))
+            status.successful -> Success(autoMarshalling.asA(
+                bodyString().takeIf { it.isNotEmpty() } ?: "{}",
+                clazz))
             else -> Failure(asRemoteFailure(this))
         }
     }
