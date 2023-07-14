@@ -128,9 +128,7 @@ fun TableDescription.keySchema(indexName: IndexName? = null): List<KeySchema>? {
         ?.KeySchema
 }
 
-fun Item.key(table: TableDescription): Key {
-    val schema = table.keySchema() ?: error("No key defined!")
-
+fun Item.key(schema: List<KeySchema>): Key {
     return schema.mapNotNull { key ->
         val value = this[key.AttributeName]
         if (value == null) null else key.AttributeName to value

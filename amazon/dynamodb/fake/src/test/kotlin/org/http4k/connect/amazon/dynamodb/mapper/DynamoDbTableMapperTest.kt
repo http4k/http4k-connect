@@ -42,7 +42,7 @@ class DynamoDbTableMapperTest {
 
     init {
         tableMapper.createTable(byOwner, byDob)
-        tableMapper += listOf(toggles, smokie, bandit)
+        tableMapper += listOf(toggles, smokie, bandit, kratos, athena)
     }
 
     private fun table() = storage["cats"]!!
@@ -70,7 +70,7 @@ class DynamoDbTableMapperTest {
     fun `scan table`() {
         assertThat(
             tableMapper.primaryIndex().scan().toSet(),
-            equalTo(setOf(toggles, smokie, bandit))
+            equalTo(setOf(toggles, smokie, bandit, kratos, athena))
         )
     }
 
@@ -104,35 +104,35 @@ class DynamoDbTableMapperTest {
     fun `delete item`() {
         tableMapper -= toggles
 
-        assertThat(table().items, hasSize(equalTo(2)))
+        assertThat(table().items, hasSize(equalTo(4)))
     }
 
     @Test
     fun `delete missing item`() {
         tableMapper.delete(UUID.randomUUID())
 
-        assertThat(table().items, hasSize(equalTo(3)))
+        assertThat(table().items, hasSize(equalTo(5)))
     }
 
     @Test
     fun `delete batch`() {
         tableMapper -= listOf(smokie, bandit)
 
-        assertThat(table().items, hasSize(equalTo(1)))
+        assertThat(table().items, hasSize(equalTo(3)))
     }
 
     @Test
     fun `delete batch by ids`() {
         tableMapper.batchDelete(smokie.id, bandit.id)
 
-        assertThat(table().items, hasSize(equalTo(1)))
+        assertThat(table().items, hasSize(equalTo(3)))
     }
 
     @Test
     fun `delete batch by keys`() {
         tableMapper.batchDelete(listOf(smokie.id to null, bandit.id to null))
 
-        assertThat(table().items, hasSize(equalTo(1)))
+        assertThat(table().items, hasSize(equalTo(3)))
     }
 
     @Test
@@ -149,6 +149,40 @@ class DynamoDbTableMapperTest {
         ).toList()
 
         assertThat(results, equalTo(listOf(smokie, bandit)))
+    }
+
+    @Test
+    fun `query page`() {
+        // page 1 of 2
+        assertThat(tableMapper.index(byOwner).queryPage(owner1, limit = 2), equalTo(DynamoDbPage(
+            items = listOf(athena, kratos),
+            nextHashKey = owner1,
+            nextSortKey = kratos.name
+        )))
+
+        // page 2 of 2
+        assertThat(tableMapper.index(byOwner).queryPage(owner1, limit = 2, exclusiveStartKey = kratos.name), equalTo(DynamoDbPage(
+            items = listOf(toggles),
+            nextHashKey = null,
+            nextSortKey = null
+        )))
+    }
+
+    @Test
+    fun `scan page`() {
+        // page 1 of 1
+        assertThat(tableMapper.index(byOwner).scanPage(limit = 3), equalTo(DynamoDbPage(
+            items = listOf(bandit, smokie, athena),
+            nextHashKey = owner1,
+            nextSortKey = athena.name
+        )))
+
+        // page 2 of 2
+        assertThat(tableMapper.index(byOwner).scanPage(limit = 3, exclusiveStartKey = owner1 to athena.name), equalTo(DynamoDbPage(
+            items = listOf(kratos, toggles),
+            nextHashKey = null,
+            nextSortKey = null
+        )))
     }
 
     @Test
