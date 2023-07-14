@@ -15,7 +15,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.1.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.9.0.
-- **http4k-connect-amazon-kms-fake** - The client will now generate unique key pairs for each CMK. H/T @oharaandrew314
+- **http4k-connect-amazon-kms-fake** - Will now generate unique key pairs for each CMK. H/T @oharaandrew314
 - **http4k-connect-amazon-kms-fake** - [Fix] Getting the public key for an ECDSA CMKD will now work as expected. H/T @oharaandrew314
 
 ### v5.0.1.0
