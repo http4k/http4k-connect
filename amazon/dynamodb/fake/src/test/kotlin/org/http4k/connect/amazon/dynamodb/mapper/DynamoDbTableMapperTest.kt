@@ -169,7 +169,7 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
-    fun `scan page`() {
+    fun `scan page - secondary index`() {
         // page 1 of 1
         assertThat(tableMapper.index(byOwner).scanPage(limit = 3), equalTo(DynamoDbPage(
             items = listOf(bandit, smokie, athena),
@@ -180,6 +180,23 @@ class DynamoDbTableMapperTest {
         // page 2 of 2
         assertThat(tableMapper.index(byOwner).scanPage(limit = 3, exclusiveStartKey = owner1 to athena.name), equalTo(DynamoDbPage(
             items = listOf(kratos, toggles),
+            nextHashKey = null,
+            nextSortKey = null
+        )))
+    }
+
+    @Test
+    fun `scan page - primary index with no sort key`() {
+        // page 1 of 1
+        assertThat(tableMapper.primaryIndex().scanPage(limit = 3), equalTo(DynamoDbPage(
+            items = listOf(smokie, kratos, bandit),
+            nextHashKey = bandit.id,
+            nextSortKey = null
+        )))
+
+        // page 2 of 2
+        assertThat(tableMapper.primaryIndex().scanPage(limit = 3, exclusiveStartKey = bandit.id to null), equalTo(DynamoDbPage(
+            items = listOf(toggles, athena),
             nextHashKey = null,
             nextSortKey = null
         )))
