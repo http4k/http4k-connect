@@ -33,3 +33,17 @@ internal val bandit = Cat(
     name = "Bandit",
     born = LocalDate.of(2018, 7, 1)
 )
+
+internal val kratos = Cat(
+    ownerId = owner1,
+    id = UUID.fromString("bf191fc3-b660-477b-8b9f-fc4a856f20af"),
+    name = "Kratos",
+    born = LocalDate.of(2022, 9, 4)
+)
+
+internal val athena = Cat(
+    ownerId = owner1,
+    id = UUID.fromString("fb153ca2-e241-41df-9fe2-8858c6f6d1b0"),
+    name = "Athena",
+    born = LocalDate.of(2022, 9, 4)
+)

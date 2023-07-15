@@ -287,6 +287,32 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
     }
 
     @Test
+    fun `query by index - with limit`() {
+        dynamo.putItem(table, hash1Val1)
+        dynamo.putItem(table, hash1Val2)
+        dynamo.putItem(table, hash2Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            IndexName = numbersIndex,
+            KeyConditionExpression = "$attrN = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(1)),
+            ScanIndexForward = false,
+            Limit = 1
+        ).successValue()
+
+        assertThat(result.Count, equalTo(1))
+        assertThat(result.items, equalTo(listOf(
+            hash2Val1,
+        )))
+        // ensure next key matches current index
+        assertThat(result.LastEvaluatedKey, equalTo(mapOf(
+            attrN.name to hash2Val1[attrN.name]!!,
+            attrS.name to hash2Val1[attrS.name]!!
+        )))
+    }
+
+    @Test
     fun `query with max results for page`() {
         val numItems = 2_000
         val payload = (1 .. 1_000).map { "a".repeat(1_000) }.toSet()

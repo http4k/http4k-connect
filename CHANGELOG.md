@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.1.3.0 (Uncut)
+- **http4k-connect-amazon-dynamodb** - Add scanPage and queryPage operations to DynamoDb table mapper. Pagination can now be controlled by the caller. H/T @oharaandrew314
+- **http4k-connect-amazon-dynamodb-fake** - [Fix] query and scan will now return the correct LastEvaluatedKey based on the current index. H/T @oharaandrew314
+
 ### v5.1.2.0
 - **http4k-connect-amazon-eventbridge** - [New module] Adapter and fake implementation.
 
@@ -11,7 +15,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.1.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.9.0.
-- **http4k-connect-amazon-kms-fake** - Vend unique rsa ecdsa keypairs. H/T @oharaandrew314
+- **http4k-connect-amazon-kms-fake** - Will now generate unique key pairs for each CMK. H/T @oharaandrew314
+- **http4k-connect-amazon-kms-fake** - [Fix] Getting the public key for an ECDSA CMK will now work as expected. H/T @oharaandrew314
 
 ### v5.0.1.0
 - **http4k-connect-*** - Upgrade dependencies

@@ -8,9 +8,9 @@ import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     val table = tables[query.TableName.value] ?: return@route null
+    val schema = table.table.keySchema(query.IndexName)
 
-    val comparator = table.table.keySchema(query.IndexName)
-        .comparator(query.ScanIndexForward ?: true)
+    val comparator = schema.comparator(query.ScanIndexForward ?: true)
 
     val matches = table.items
         .asSequence()
@@ -33,8 +33,8 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     QueryResponse(
         Count = page.size,
         Items = page.map { it.asItemResult() },
-        LastEvaluatedKey = if (page.size < matches.size) {
-            page.lastOrNull()?.key(table.table)
+        LastEvaluatedKey = if (page.size < matches.size && schema != null) {
+            page.lastOrNull()?.key(schema)
         } else null
     )
 }

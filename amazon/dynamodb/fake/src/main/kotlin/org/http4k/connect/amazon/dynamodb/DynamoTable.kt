@@ -8,7 +8,7 @@ import org.http4k.connect.amazon.dynamodb.model.TableDescription
 data class DynamoTable(val table: TableDescription, val items: List<Item> = emptyList(), val maxPageSize: Int = 1_000) {
     fun retrieve(key: Key) = items.firstOrNull { it.matches(key) }
 
-    fun withItem(item: Item) = retrieve(item.key(table))
+    fun withItem(item: Item) = retrieve(item.key(table.KeySchema!!))
         .let { existing -> if (existing != null) withoutItem(existing) else this }
         .let { it.copy(items = it.items + item) }
 
