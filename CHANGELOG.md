@@ -5,7 +5,9 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.1.3.0 (Uncut)
 - **http4k-connect-amazon-dynamodb** - Add scanPage and queryPage operations to DynamoDb table mapper. Pagination can now be controlled by the caller. H/T @oharaandrew314
+- **http4k-connect-amazon-dynamodb-fake** - putItem not supports a `ConditionExpression`.
 - **http4k-connect-amazon-dynamodb-fake** - [Fix] query and scan will now return the correct LastEvaluatedKey based on the current index. H/T @oharaandrew314
+- **http4k-connect-amazon-dynamodb-fake** - [Fix] Condition Expressions now support name substitutions in the `attribute_exists` and `attribute_not_exists` functions
 
 ### v5.1.2.0
 - **http4k-connect-amazon-eventbridge** - [New module] Adapter and fake implementation.

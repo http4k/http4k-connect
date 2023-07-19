@@ -99,6 +99,13 @@ class DynamoDbConditionalGrammarTest {
     }
 
     @Test
+    fun `attribute exists - substitution of names`() {
+        val item = Item(attr1 of "123")
+        assertTrue("attribute_exists(#key1)", item, names = mapOf("#key1" to attr1.name))
+        assertFalse("attribute_exists(#key1)", item, names = mapOf("#key1" to attr2.name))
+    }
+
+    @Test
     fun `attribute value`() {
         assertThat(
             DynamoDbConditionalGrammar.parse("attr1").eval(ItemWithSubstitutions(Item(attr1 of "123"))),
@@ -226,6 +233,13 @@ class DynamoDbConditionalGrammarTest {
         val item = Item(attr1 of "123")
         assertTrue("attribute_not_exists(attr2)", item)
         assertFalse("attribute_not_exists(attr1)", item)
+    }
+
+    @Test
+    fun `attributes not exists - substitution of names`() {
+        val item = Item(attr1 of "123")
+        assertTrue("attribute_not_exists(#key1)", item, names = mapOf("#key1" to attr2.name))
+        assertFalse("attribute_not_exists(#key1)", item, names = mapOf("#key1" to attr1.name))
     }
 
     @Test
