@@ -13,17 +13,14 @@ fun AmazonJsonFake.putItem(tables: Storage<DynamoTable>) = route<PutItem> { req 
     if (req.ConditionExpression != null) {
         val existing = table.retrieve(req.Item.key(table.table.KeySchema!!))
         if (existing != null) {
-            val matches = existing.condition(
+            existing.condition(
                 expression = req.ConditionExpression,
                 expressionAttributeNames = req.ExpressionAttributeNames,
                 expressionAttributeValues = req.ExpressionAttributeValues
-            ) != null
-            if (!matches) {
-                return@route JsonError(
-                    "com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException",
-                    "The conditional request failed"
-                )
-            }
+            ) ?: return@route JsonError(
+                "com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException",
+                "The conditional request failed"
+            )
         }
     }
 
