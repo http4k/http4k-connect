@@ -13,6 +13,9 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
         crossinline responseFn: (Any) -> Response = {
             Response(OK).body(autoMarshalling.asFormatString(it))
         },
+        crossinline errorFn: (JsonError) -> Response = {
+            Response(BAD_REQUEST).body(autoMarshalling.asFormatString(it))
+        },
         crossinline fn: (Req) -> Any?
     ) =
         header("X-Amz-Target", "${awsService}.${Req::class.simpleName!!.removeSuffix("Request")}") bind {
@@ -20,18 +23,11 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
                 ?.let {
                     when (it) {
                         is Unit -> Response(OK).body("{}")
+                        is JsonError -> errorFn(it)
                         else -> responseFn(it)
                     }
                 }
-                ?: Response(BAD_REQUEST)
-                    .body(
-                        autoMarshalling.asFormatString(
-                            JsonError(
-                                "ResourceNotFoundException",
-                                "$awsService can't find the specified item."
-                            )
-                        )
-                    )
+                ?: JsonError("ResourceNotFoundException","$awsService can't find the specified item.").let(errorFn)
         }
 }
 

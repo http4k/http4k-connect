@@ -2,6 +2,8 @@ package org.http4k.connect.amazon.dynamodb.endpoints
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.result4k.failureOrNull
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
@@ -19,6 +21,9 @@ import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.successValue
+import org.http4k.core.Method
+import org.http4k.core.Status
+import org.http4k.core.Uri
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -62,6 +67,53 @@ abstract class DynamoDbPutItemContract: DynamoDbSource {
             dynamo.getItem(table, Key(attrS of "hash1")).successValue().item,
             equalTo(updated)
         )
+    }
+
+    @Test
+    fun `conditional put item - key does not exist`() {
+        val item = Item(attrS of "hash1", attrN of 1)
+
+        dynamo.putItem(table, item).successValue()
+
+        assertThat(dynamo.putItem(
+            TableName = table,
+            Item = item,
+            ConditionExpression = "attribute_not_exists(#key1)",
+            ExpressionAttributeNames = mapOf("#key1" to attrS.name)
+        ).failureOrNull(), equalTo(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException","Message":"The conditional request failed"}"""
+        )))
+    }
+
+    @Test
+    fun `conditional put item - comparison`() {
+        val item = Item(attrS of "hash1", attrN of 1)
+
+        dynamo.putItem(table, item).successValue()
+
+        assertThat(dynamo.putItem(
+            TableName = table,
+            Item = item,
+            ConditionExpression = "#key1 > :val1",
+            ExpressionAttributeNames = mapOf("#key1" to attrN.name),
+            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(1))
+        ).failureOrNull(), equalTo(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException","Message":"The conditional request failed"}"""
+        )))
+
+        dynamo.putItem(
+            TableName = table,
+            Item = item,
+            ConditionExpression = "#key1 > :val1",
+            ExpressionAttributeNames = mapOf("#key1" to attrN.name),
+            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(0))
+        ).successValue()
     }
 }
 
