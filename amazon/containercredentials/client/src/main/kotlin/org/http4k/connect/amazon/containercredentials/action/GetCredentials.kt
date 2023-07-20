@@ -25,7 +25,10 @@ data class GetCredentials(private val uri: Uri) : ContainerCredentialsAction<Cre
 
     override fun toResult(response: Response) = with(response) {
         when {
-            status.successful -> Success(ContainerCredentialsMoshi.asA<GetCredentialsResponse>(bodyString()).asCredentials())
+            status.successful -> Success(
+                ContainerCredentialsMoshi.asA<GetCredentialsResponse>(bodyString()).asCredentials()
+            )
+
             else -> Failure(asRemoteFailure(this))
         }
     }
@@ -44,9 +47,8 @@ data class GetCredentialsResponse(
             "NOT_SUPPLIED", null -> null
             else -> ARN.of(RoleArn)
         }
-        return Credentials(Token,AccessKeyId, SecretAccessKey, Expiration, roleArn)
+        return Credentials(Token, AccessKeyId, SecretAccessKey, Expiration, roleArn)
     }
 }
-
 
 fun ContainerCredentials.getCredentials(uri: Uri) = this(GetCredentials(uri))
