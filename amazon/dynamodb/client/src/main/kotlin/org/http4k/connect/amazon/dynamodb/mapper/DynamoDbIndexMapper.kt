@@ -12,35 +12,37 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
     private val schema: DynamoDbTableMapperSchema<HashKey, SortKey>
 ) {
     fun scan(
-        filter: String? = null,
-        names: Map<String, AttributeName>? = null,
-        values: Map<String, AttributeValue>? = null
+        FilterExpression: String? = null,
+        ExpressionAttributeNames: Map<String, AttributeName>? = null,
+        ExpressionAttributeValues: Map<String, AttributeValue>? = null,
+        PageSize: Int? = null,
     ): Sequence<Document> {
         return dynamoDb.scanPaginated(
             TableName = tableName,
-            FilterExpression = filter,
-            ExpressionAttributeNames = names,
-            ExpressionAttributeValues = values
+            FilterExpression = FilterExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues,
+            Limit = PageSize
         ).flatMap { result ->
             result.onFailure { it.reason.throwIt() }
         }.map(itemLens)
     }
 
     fun scanPage(
-        filter: String? = null,
-        names: Map<String, AttributeName>? = null,
-        values: Map<String, AttributeValue>? = null,
-        exclusiveStartKey: Pair<HashKey, SortKey?>? = null,
-        limit: Int? = null
+        FilterExpression: String? = null,
+        ExpressionAttributeNames: Map<String, AttributeName>? = null,
+        ExpressionAttributeValues: Map<String, AttributeValue>? = null,
+        ExclusiveStartKey: Pair<HashKey, SortKey?>? = null,
+        Limit: Int? = null,
     ): DynamoDbPage<Document, HashKey, SortKey> {
         val page = dynamoDb.scan(
             TableName = tableName,
             IndexName = schema.indexName,
-            FilterExpression = filter,
-            ExpressionAttributeNames = names,
-            ExpressionAttributeValues = values,
-            ExclusiveStartKey = exclusiveStartKey?.let { schema.key(exclusiveStartKey.first, exclusiveStartKey.second) },
-            Limit = limit
+            FilterExpression = FilterExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues,
+            ExclusiveStartKey = ExclusiveStartKey?.let { schema.key(ExclusiveStartKey.first, ExclusiveStartKey.second) },
+            Limit = Limit
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
@@ -51,46 +53,56 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
     }
 
     fun query(
-        filter: String? = null,
-        names: Map<String, AttributeName>? = null,
-        values: Map<String, AttributeValue>? = null,
-        scanIndexForward: Boolean = true
+        KeyConditionExpression: String? = null,
+        FilterExpression: String? = null,
+        ExpressionAttributeNames: Map<String, AttributeName>? = null,
+        ExpressionAttributeValues: Map<String, AttributeValue>? = null,
+        ScanIndexForward: Boolean = true,
+        PageSize: Int? = null,
     ): Sequence<Document> {
         return dynamoDb.queryPaginated(
             TableName = tableName,
             IndexName = schema.indexName,
-            KeyConditionExpression = filter,
-            ExpressionAttributeNames = names,
-            ExpressionAttributeValues = values,
-            ScanIndexForward = scanIndexForward
+            KeyConditionExpression = KeyConditionExpression,
+            FilterExpression = FilterExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues,
+            ScanIndexForward = ScanIndexForward,
+            Limit = PageSize
         ).flatMap { result ->
             result.onFailure { it.reason.throwIt() }
         }.map(itemLens)
     }
 
-    fun query(hashKey: HashKey, scanIndexForward: Boolean = true): Sequence<Document> {
+    fun query(
+        hashKey: HashKey,
+        ScanIndexForward: Boolean = true,
+        PageSize: Int? = null,
+    ): Sequence<Document> {
         return query(
-            filter = "${schema.hashKeyAttribute} = :val1",
-            values = mapOf(":val1" to schema.hashKeyAttribute.asValue(hashKey)),
-            scanIndexForward = scanIndexForward
+            KeyConditionExpression = "#key1 = :val1",
+            ExpressionAttributeNames = mapOf("#key1" to schema.hashKeyAttribute.name),
+            ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(hashKey)),
+            ScanIndexForward = ScanIndexForward,
+            PageSize = PageSize
         )
     }
 
     fun queryPage(
-        hashKey: HashKey,
-        scanIndexForward: Boolean = true,
-        exclusiveStartKey: SortKey? = null,
-        limit: Int? = null
+        HashKey: HashKey,
+        ScanIndexForward: Boolean = true,
+        ExclusiveStartKey: SortKey? = null,
+        Limit: Int? = null,
     ): DynamoDbPage<Document, HashKey, SortKey> {
         val page = dynamoDb.query(
             TableName = tableName,
             IndexName = schema.indexName,
             KeyConditionExpression = "#key1 = :val1",
             ExpressionAttributeNames = mapOf("#key1" to schema.hashKeyAttribute.name),
-            ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(hashKey)),
-            ScanIndexForward = scanIndexForward,
-            ExclusiveStartKey = exclusiveStartKey?.let { schema.key(hashKey, exclusiveStartKey) },
-            Limit = limit
+            ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(HashKey)),
+            ScanIndexForward = ScanIndexForward,
+            ExclusiveStartKey = ExclusiveStartKey?.let { schema.key(HashKey, ExclusiveStartKey) },
+            Limit = Limit
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
