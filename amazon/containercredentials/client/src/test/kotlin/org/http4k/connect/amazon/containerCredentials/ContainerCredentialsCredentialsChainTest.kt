@@ -1,13 +1,11 @@
 package org.http4k.connect.amazon.containerCredentials
 
-import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.containercredentials.ContainerCredentials
@@ -18,8 +16,6 @@ import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.Expiration
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
-import org.http4k.core.Response
-import org.http4k.core.Status
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -27,9 +23,8 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import kotlin.math.abs
 
-class ContainerCredentialsCredentialsProviderTest {
+class ContainerCredentialsCredentialsChainTest {
 
     private val containerCredentials = mockk<ContainerCredentials>()
     private val now = Instant.now()
@@ -37,7 +32,7 @@ class ContainerCredentialsCredentialsProviderTest {
 
     private val relativePathUri = Uri.of("/hello")
 
-    private val provider = CredentialsProvider.ContainerCredentials(
+    private val provider = CredentialsChain.ContainerCredentials(
         containerCredentials,
         relativePathUri,
         clock,
@@ -79,17 +74,6 @@ class ContainerCredentialsCredentialsProviderTest {
         verify(exactly = 2) { containerCredentials(GetCredentials(relativePathUri)) }
     }
 
-    @Test
-    fun `credentials chain gracefully fails outside container`() {
-        val chain = CredentialsChain.ContainerCredentials(
-            env = Environment.ENV,
-            http = { Response(Status.INTERNAL_SERVER_ERROR) },
-            clock = clock
-        )
-
-        assertThat(chain(), absent())
-    }
-
     private fun credentialsExpiringAt(expiry: Instant, counter: Int) = Credentials(
         SessionToken.of("SessionToken"),
         AccessKeyId.of(counter.toString()),
@@ -97,16 +81,4 @@ class ContainerCredentialsCredentialsProviderTest {
         Expiration.of(ZonedDateTime.ofInstant(expiry, ZoneId.of("UTC"))),
         ARN.of("arn:aws:sts:us-east-1:000000000001:role:myrole")
     )
-}
-
-class TestClock(private var time: Instant) : Clock() {
-    override fun getZone(): ZoneId = TODO("Not yet implemented")
-
-    override fun withZone(zone: ZoneId?): Clock = TODO("Not yet implemented")
-
-    override fun instant(): Instant = time
-
-    fun tickBy(duration: Duration) {
-        time = time.plus(duration)
-    }
 }
