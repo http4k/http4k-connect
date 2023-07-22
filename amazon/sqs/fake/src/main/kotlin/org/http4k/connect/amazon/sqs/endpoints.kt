@@ -154,6 +154,36 @@ fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("A
         ?: Response(BAD_REQUEST).body("Queue named $queue not found")
 }
 
+fun deleteMessageBatch(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessageBatch" }
+    .asRouter().bind fn@{ req: Request ->
+        val queueName = req.form("QueueUrl")!!.queueName()
+        val queue = queues[queueName] ?: return@fn Response(BAD_REQUEST).body("Queue named $queueName not found")
+
+        val messages = (1 until Int.MAX_VALUE)
+            .asSequence()
+            .map { index ->
+                val id = req
+                    .form("DeleteMessageBatchRequestEntry.$index.Id")?.let(SQSMessageId::of)
+                    ?: return@map null
+                val handle = req
+                    .form("DeleteMessageBatchRequestEntry.$index.ReceiptHandle")?.let(ReceiptHandle::of)
+                    ?: return@map null
+
+                id to handle
+            }
+            .takeWhile { it != null }
+            .filterNotNull()
+            .mapNotNull { (id, handle) -> queue.find { it.messageId == id && it.receiptHandle == handle } }
+            .toSet()
+
+        queues[queueName] = queue - messages
+
+        val result = DeleteMessageBatchResponse(
+            entries = messages.map { DeleteMessageBatchResultEntry(it.messageId) }
+        )
+        Response(OK).with(viewModelLens of result)
+    }
+
 val viewModelLens by lazy {
     Body.viewModel(HandlebarsTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()
 }
