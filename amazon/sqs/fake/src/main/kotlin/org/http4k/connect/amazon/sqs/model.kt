@@ -29,6 +29,9 @@ object DeleteQueueResponse : ViewModel
 
 object DeleteMessageResponse : ViewModel
 
+data class DeleteMessageBatchResultEntry(val id: SQSMessageId)
+data class DeleteMessageBatchResponse(val entries: List<DeleteMessageBatchResultEntry>): ViewModel
+
 fun SQSMessage.md5OfBody() = body.md5()
 
 fun String.md5() = BigInteger(
