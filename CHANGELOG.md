@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.1.4.0 (uncut)
+- **http4k-connect-amazon-sqs** - Add `DeleteMessageBatch` action.  H/T @oharaandrew314
+
 ### v5.1.3.0
 - **http4k-connect-amazon-dynamodb** - Add scanPage and queryPage operations to DynamoDb table mapper. Pagination can now be controlled by the caller. H/T @oharaandrew314
 - **http4k-connect-amazon-dynamodb-fake** - putItem now supports a `ConditionExpression`.

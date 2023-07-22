@@ -14,6 +14,8 @@ import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Response
 import org.http4k.core.Uri
 
+typealias DeleteMessageBatchEntry = Pair<SQSMessageId, ReceiptHandle>
+
 @Http4kConnectAction
 data class DeleteMessageBatch(
     val queueUrl: Uri,
@@ -36,8 +38,6 @@ data class DeleteMessageBatch(
         }
     }
 }
-
-typealias DeleteMessageBatchEntry = Pair<SQSMessageId, ReceiptHandle>
 
 private fun DeleteMessageBatchEntry.toMappings(index: Int) = listOf(
     "DeleteMessageBatchRequestEntry.$index.Id" to first.value,
