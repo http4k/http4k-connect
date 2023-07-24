@@ -1,11 +1,14 @@
 package org.http4k.connect.amazon.containerCredentials
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.http4k.cloudnative.env.Environment
+import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.containercredentials.ContainerCredentials
 import org.http4k.connect.amazon.containercredentials.action.GetCredentials
@@ -15,6 +18,8 @@ import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.Expiration
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
+import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -71,6 +76,17 @@ class ContainerCredentialsCredentialsProviderTest {
         assertThat(provider(), equalTo(secondCreds.asHttp4k()))
 
         verify(exactly = 2) { containerCredentials(GetCredentials(relativePathUri)) }
+    }
+
+    @Test
+    fun `credentials chain gracefully fails outside container`() {
+        val chain = CredentialsChain.ContainerCredentials(
+            env = Environment.ENV,
+            http = { Response(Status.INTERNAL_SERVER_ERROR) },
+            clock = clock
+        )
+
+        assertThat(chain(), absent())
     }
 
     private fun credentialsExpiringAt(expiry: Instant, counter: Int) = Credentials(
