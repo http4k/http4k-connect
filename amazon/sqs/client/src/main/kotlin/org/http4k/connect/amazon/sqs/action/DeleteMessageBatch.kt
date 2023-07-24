@@ -6,6 +6,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.core.firstChildText
+import org.http4k.connect.amazon.core.sequenceOfNodes
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
@@ -28,11 +29,10 @@ data class DeleteMessageBatch(
     override fun toResult(response: Response): Result4k<List<SQSMessageId>, RemoteFailure> = with(response) {
         when {
             status.successful -> {
-                val entries = xmlDoc().getElementsByTagName("DeleteMessageBatchResultEntry")
-                (0 until entries.length)
-                    .map { entries.item(it) }
+                xmlDoc().getElementsByTagName("DeleteMessageBatchResultEntry")
+                    .sequenceOfNodes()
                     .map { SQSMessageId.of(it.firstChildText("Id")!!) }
-                    .let { Success(it) }
+                    .let { Success(it.toList()) }
             }
             else -> Failure(asRemoteFailure(this))
         }

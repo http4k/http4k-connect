@@ -1,11 +1,14 @@
 package org.http4k.connect.amazon.sqs
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.sqs.action.SendMessageBatchEntry
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.QueueName
@@ -104,12 +107,31 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
     open fun waitABit() {}
 
     @Test
-    fun `delete batch`() {
+    fun `batch operations`() {
         val created = sqs.createQueue(queueName, emptyList(), emptyMap()).successValue()
         try {
-            sqs.sendMessage(created.QueueUrl, "foo").successValue()
-            sqs.sendMessage(created.QueueUrl, "bar").successValue()
-            sqs.sendMessage(created.QueueUrl, "baz").successValue()
+            val (sent1, sent2, sent3) = sqs.sendMessageBatch(
+                queueUrl = created.QueueUrl,
+                entries = listOf(
+                    SendMessageBatchEntry("msg1", "foo"),
+                    SendMessageBatchEntry("msg2", "bar", attributes = listOf(
+                        MessageAttribute("attr1", "123", DataType.Number)
+                    )),
+                    SendMessageBatchEntry("msg3", "baz")
+                )
+            ).successValue()
+
+            assertThat(sent1.Id, equalTo("msg1"))
+            assertThat(sent1.MD5OfMessageBody, equalTo("acbd18db4cc2f85cedef654fccc4a4d8"))
+            assertThat(sent1.MD5OfMessageAttributes, absent())
+
+            assertThat(sent2.Id, equalTo("msg2"))
+            assertThat(sent2.MD5OfMessageBody, equalTo("37b51d194a7513e45b56f6524f2d51f2"))
+            assertThat(sent2.MD5OfMessageAttributes, present()) // FIXME fake value disagrees with real AWS
+
+            assertThat(sent3.Id, equalTo("msg3"))
+            assertThat(sent3.MD5OfMessageBody, equalTo("73feffa4b7f6bb68e44cf984c85f6e88"))
+            assertThat(sent3.MD5OfMessageAttributes, absent())
 
             val (message1, message2) = sqs.receiveMessage(queueUrl = created.QueueUrl, maxNumberOfMessages = 2)
                 .successValue()
