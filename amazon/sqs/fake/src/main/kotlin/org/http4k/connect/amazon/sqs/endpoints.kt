@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.sqs
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.sqs.action.SentMessageBatchEntry
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
@@ -105,13 +106,48 @@ fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Act
     } ?: Response(BAD_REQUEST).body("Queue named $queue not found")
 }
 
-private fun attributesFrom(req: Request): List<MessageAttribute> {
+fun sendMessageBatch(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "SendMessageBatch" }
+    .asRouter().bind fn@{ req: Request ->
+        val queueName = req.form("QueueUrl")!!.queueName()
+        val queue = queues[queueName] ?: return@fn Response(BAD_REQUEST).body("Queue named $queueName not found")
+
+        val results = (1 until Int.MAX_VALUE)
+            .asSequence()
+            .map { index ->
+                val body = req.form("SendMessageBatchRequestEntry.$index.MessageBody") ?: return@map null
+                val message = SQSMessage(
+                    messageId = SQSMessageId.of(UUID.randomUUID().toString()),
+                    body = body,
+                    md5OfBody = body.md5(),
+                    receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString()),
+                    attributes = attributesFrom(req, "SendMessageBatchRequestEntry.$index.")
+                )
+
+                val result = SentMessageBatchEntry(
+                    Id = req.form("SendMessageBatchRequestEntry.$index.Id") ?: return@map null,
+                    MessageId = message.messageId,
+                    MD5OfMessageBody = message.md5OfBody(),
+                    MD5OfMessageAttributes = if (message.attributes.isNotEmpty()) message.md5OfAttributes() else null
+                )
+
+                message to result
+            }
+            .takeWhile { it != null }
+            .filterNotNull()
+            .toList()
+
+        queues[queueName] = queue + results.map { it.first }
+
+        Response(OK).with(viewModelLens of SendMessageBatchResponse(results.map { it.second }))
+    }
+
+private fun attributesFrom(req: Request, prefix: String = ""): List<MessageAttribute> {
     val names = req.formAsMap()
-        .filter { it.key.startsWith("MessageAttribute") }
+        .filter { it.key.startsWith("${prefix}MessageAttribute") }
         .filter { it.key.endsWith(".Name") }
         .map {
             it.value.first()!!.removePrefix("[").removeSuffix("]") to
-                it.key.removePrefix("MessageAttribute.").removeSuffix(".Name")
+                it.key.removePrefix("${prefix}MessageAttribute.").removeSuffix(".Name")
         }
 
     val cleanedValues = req.formAsMap().mapKeys {
@@ -123,9 +159,9 @@ private fun attributesFrom(req: Request): List<MessageAttribute> {
     return names.map {
         MessageAttribute(
             it.first,
-            cleanedValues["MessageAttribute.${it.second}.Value"]
+            cleanedValues["${prefix}MessageAttribute.${it.second}.Value"]
             !!.toString().removePrefix("[").removeSuffix("]"),
-            DataType.valueOf(cleanedValues["MessageAttribute.${it.second}.Value.DataType"]!![0]!!)
+            DataType.valueOf(cleanedValues["${prefix}MessageAttribute.${it.second}.Value.DataType"]!![0]!!)
         )
     }
 }

@@ -1,5 +1,6 @@
 package org.http4k.connect.amazon.sqs
 
+import org.http4k.connect.amazon.sqs.action.SentMessageBatchEntry
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Uri
@@ -20,6 +21,10 @@ data class SendMessageResponse(
     val md5OfMessageBody = message.md5OfBody()
     val md5OfMessageAttributes = message.md5OfAttributes()
 }
+
+data class SendMessageBatchResponse(
+    val entries: List<SentMessageBatchEntry>
+): ViewModel
 
 data class ListQueuesResponse(val queues: List<String>) : ViewModel
 
