@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - run: |
-            echo 'GitHub ref: ${{ env.GITHUB_REF }}'
+            echo 'GitHub ref: ${{ env.GITHUB_HEAD_REF }}'
       - name: Build
         run: ./build-ci.sh
       - name: Cleanup Gradle Cache
@@ -45,7 +45,7 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
       - name: Tag automerge branch
-        if: ${{ startsWith(env.GITHUB_REF, 'refs/heads/auto') && github.event_name == 'pull_request' }}
+        if: ${{ startsWith(env.GITHUB_HEAD_REF, 'auto') && github.event_name == 'pull_request' }}
         uses: TimonVS/pr-labeler-action@v3
         with:
             configuration-path: .github/pr-labeler.yml
