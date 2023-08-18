@@ -3,10 +3,12 @@ package org.http4k.connect.amazon.cognito
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.cognito.model.AccessToken
+import org.http4k.connect.amazon.cognito.model.AttributeName
 import org.http4k.connect.amazon.cognito.model.ClientId
 import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.ClientSecret
 import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
+import org.http4k.connect.amazon.cognito.model.Destination
 import org.http4k.connect.amazon.cognito.model.IdToken
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.RefreshToken
@@ -36,9 +38,11 @@ object CognitoMoshi : ConfigurableMoshi(
         .withStandardMappings()
         .withAwsCoreMappings()
         .value(AccessToken)
+        .value(AttributeName)
         .value(ClientId)
         .value(ClientName)
         .value(ClientSecret)
+        .value(Destination)
         .value(IdToken)
         .value(RefreshToken)
         .value(Password)

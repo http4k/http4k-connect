@@ -403,3 +403,18 @@ data class Jwk(
 
 @JsonSerializable
 data class Jwks(val keys: List<Jwk>)
+
+class Destination private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<Destination>(::Destination)
+}
+
+class AttributeName private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<AttributeName>(::AttributeName)
+}
+
+@JsonSerializable
+data class CodeDeliveryDetails(
+    val AttributeName: AttributeName?,
+    val DeliveryMedium: DeliveryMedium?,
+    val Destination: Destination?
+)

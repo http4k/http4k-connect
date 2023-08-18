@@ -10,6 +10,7 @@ The Cognito connector provides the following Actions:
 - AdminResetUserPassword
 - AdminSetUserPassword
 - AssociateSoftwareToken
+- ConfirmForgotPassword
 - CreateResourceServer
 - CreateUserPool
 - CreateUserPoolClient
@@ -17,6 +18,7 @@ The Cognito connector provides the following Actions:
 - DeleteUserPool
 - DeleteUserPoolClient
 - DeleteUserPoolDomain
+- ForgotPassword
 - GetJwks
 - ListUserPools
 - InitiateAuth
