@@ -62,6 +62,14 @@ class SecretCode private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<SecretCode>(::SecretCode)
 }
 
+class ConfirmationCode private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ConfirmationCode>(::ConfirmationCode)
+}
+
+class SecretHash private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<SecretHash>(::SecretHash)
+}
+
 data class NewDeviceMetadata(
     val DeviceGroupKey: String? = null,
     val DeviceKey: String? = null
