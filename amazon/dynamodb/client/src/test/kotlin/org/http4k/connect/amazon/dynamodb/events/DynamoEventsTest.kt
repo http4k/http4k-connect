@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb.events
 import com.amazonaws.services.lambda.runtime.Context
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.mock4k.mock
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
@@ -17,7 +18,6 @@ import org.http4k.testing.Approver
 import org.http4k.testing.assertApproved
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.lang.reflect.Proxy
 
 @ExtendWith(ApprovalTest::class)
 class DynamoEventsTest {
@@ -54,13 +54,8 @@ class DynamoEventsTest {
             }
         }
 
-        val result = fnLoader(emptyMap())(DynamoDbMoshi.asInputStream(event), proxy())
+        val result = fnLoader(emptyMap())(DynamoDbMoshi.asInputStream(event), mock())
 
         assertThat(result.reader().readText(), equalTo(event.Records?.get(0)?.eventSourceARN?.value))
     }
 }
-
-inline fun <reified T> proxy(): T = Proxy.newProxyInstance(
-    T::class.java.classLoader,
-    arrayOf(T::class.java)
-) { _, _, _ -> TODO("not implemented") } as T

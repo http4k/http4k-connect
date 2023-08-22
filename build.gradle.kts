@@ -88,7 +88,7 @@ allprojects {
         api(platform("org.http4k:http4k-bom:${project.properties["http4k_version"]}")) // manually set because of auto-upgrading
         api(platform(Libs.forkhandles_bom))
         api(Http4k.core)
-        api("dev.forkhandles:result4k:_")
+        api("dev.forkhandles:result4k")
 
         ksp("se.ansman.kotshi:compiler:_")
 
@@ -102,6 +102,7 @@ allprojects {
         testImplementation(Testing.junit.jupiter.params)
         testImplementation("org.testcontainers:junit-jupiter")
         testImplementation("org.testcontainers:testcontainers")
+        testImplementation("dev.forkhandles:mock4k")
 
         if (project.name.endsWith("core-fake")) {
             api(project(":http4k-connect-core"))
