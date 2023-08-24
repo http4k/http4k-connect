@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.1.6.2
+- **http4k-connect-amazon-eventbridge-fake*** - [Fix] Add proper indexing to fake when sending events.
+
 ### v5.1.6.1
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-firehose*** - [Fix] Serialize DeliveryStreamName correctly in Moshi.

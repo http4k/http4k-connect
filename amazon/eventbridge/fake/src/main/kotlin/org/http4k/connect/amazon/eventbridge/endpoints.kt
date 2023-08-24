@@ -25,10 +25,11 @@ fun AmazonJsonFake.putEvents(events: Storage<List<Event>>) = route<PutEvents> {
     }
 
     EventResults(newEvents.flatMap { (bus, new) ->
-        events[bus.value] = (events[bus.value] ?: listOf()) + new
-        new.map {
+        val before = events[bus.value] ?: listOf()
+        events[bus.value] = before + new
+        List(new.size) {
             EventResult(
-                EventId.of(UUID(0, events.keySet().size.toLong()).toString()),
+                EventId.of(UUID(0, (before.size + it).toLong()).toString()),
                 null, null
             )
         }

@@ -39,6 +39,25 @@ abstract class EventBridgeContract(http: HttpHandler) : AwsContract() {
                                 EventDetailType.of("detail type"),
                                 EventSource.of("foobar"),
                                 eventBusName
+                            ),
+                            Event(
+                                EventDetail.of("{}"),
+                                EventDetailType.of("detail type"),
+                                EventSource.of("foobar"),
+                                eventBusName
+                            )
+                        )
+                    ).successValue().Entries.all { it.EventId != null },
+                    equalTo(true)
+                )
+                assertThat(
+                    putEvents(
+                        listOf(
+                            Event(
+                                EventDetail.of("{}"),
+                                EventDetailType.of("detail type"),
+                                EventSource.of("foobar"),
+                                eventBusName
                             )
                         )
                     ).successValue().Entries.all { it.EventId != null },
