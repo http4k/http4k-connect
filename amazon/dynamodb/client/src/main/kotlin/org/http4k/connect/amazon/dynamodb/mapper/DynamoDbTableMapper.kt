@@ -3,9 +3,25 @@ package org.http4k.connect.amazon.dynamodb.mapper
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.onFailure
 import org.http4k.connect.RemoteFailure
-import org.http4k.connect.amazon.dynamodb.*
+import org.http4k.connect.amazon.dynamodb.DynamoDb
+import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.dynamodb.action.TableDescriptionResponse
-import org.http4k.connect.amazon.dynamodb.model.*
+import org.http4k.connect.amazon.dynamodb.batchGetItem
+import org.http4k.connect.amazon.dynamodb.batchWriteItem
+import org.http4k.connect.amazon.dynamodb.createTable
+import org.http4k.connect.amazon.dynamodb.deleteItem
+import org.http4k.connect.amazon.dynamodb.deleteTable
+import org.http4k.connect.amazon.dynamodb.getItem
+import org.http4k.connect.amazon.dynamodb.model.Attribute
+import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
+import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndex
+import org.http4k.connect.amazon.dynamodb.model.ReqGetItem
+import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
+import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.connect.amazon.dynamodb.model.with
+import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.format.AutoMarshalling
 import org.http4k.format.autoDynamoLens
 import org.http4k.lens.BiDiLens
@@ -100,23 +116,20 @@ class DynamoDbTableMapper<Document : Any, HashKey : Any, SortKey : Any>(
 
     private fun batchDeleteKeys(keys: Collection<Key>) {
         for (chunk in keys.chunked(BATCH_PUT_LIMIT)) {
-            val batch = chunk.map { key ->
-                ReqWriteItem.Delete(key)
-            }
+            val batch = chunk.map { ReqWriteItem.Delete(it) }
 
             dynamoDb.batchWriteItem(mapOf(tableName to batch))
                 .onFailure { it.reason.throwIt() }
         }
     }
 
-    fun <NewHashKey : Any, NewSortKey : Any> index(
-        schema: DynamoDbTableMapperSchema<NewHashKey, NewSortKey>
-    ) = DynamoDbIndexMapper(
-        dynamoDb = dynamoDb,
-        tableName = tableName,
-        itemLens = itemLens,
-        schema = schema
-    )
+    fun <NewHashKey : Any, NewSortKey : Any> index(schema: DynamoDbTableMapperSchema<NewHashKey, NewSortKey>) =
+        DynamoDbIndexMapper(
+            dynamoDb = dynamoDb,
+            tableName = tableName,
+            itemLens = itemLens,
+            schema = schema
+        )
 
     fun primaryIndex() = index(primarySchema)
 
@@ -148,25 +161,23 @@ class DynamoDbTableMapper<Document : Any, HashKey : Any, SortKey : Any>(
 }
 
 inline fun <reified Document : Any, HashKey : Any, SortKey : Any> DynamoDb.tableMapper(
-    TableName: TableName,
+    tableName: TableName,
     hashKeyAttribute: Attribute<HashKey>,
     sortKeyAttribute: Attribute<SortKey>? = null,
     autoMarshalling: AutoMarshalling = DynamoDbMoshi
 ) = tableMapper<Document, HashKey, SortKey>(
-    TableName = TableName,
+    tableName = tableName,
     primarySchema = DynamoDbTableMapperSchema.Primary(hashKeyAttribute, sortKeyAttribute),
     autoMarshalling = autoMarshalling
 )
 
 inline fun <reified Document : Any, HashKey : Any, SortKey : Any> DynamoDb.tableMapper(
-    TableName: TableName,
+    tableName: TableName,
     primarySchema: DynamoDbTableMapperSchema.Primary<HashKey, SortKey>,
     autoMarshalling: AutoMarshalling = DynamoDbMoshi
-): DynamoDbTableMapper<Document, HashKey, SortKey> {
-    return DynamoDbTableMapper(
-        dynamoDb = this,
-        tableName = TableName,
-        itemLens = autoMarshalling.autoDynamoLens(),
-        primarySchema = primarySchema
-    )
-}
+): DynamoDbTableMapper<Document, HashKey, SortKey> = DynamoDbTableMapper(
+    dynamoDb = this,
+    tableName = tableName,
+    itemLens = autoMarshalling.autoDynamoLens(),
+    primarySchema = primarySchema
+)
