@@ -1,11 +1,10 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
-import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.grammar.AttributeNameValue
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbConditionalGrammar
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbProjectionGrammar
-import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbUpdateExpressionParser
+import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbUpdateGrammar
 import org.http4k.connect.amazon.dynamodb.grammar.ItemWithSubstitutions
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
@@ -78,14 +77,13 @@ fun Item.update(
     expressionAttributeValues: TokensToValues?
 ) = when (expression) {
     null -> this
-    else -> DynamoDbUpdateExpressionParser.parse(expression)
-        .fold(this) { i, update ->
-            update.eval(
-                item = i,
-                names = expressionAttributeNames ?: emptyMap(),
-                values = expressionAttributeValues ?: emptyMap()
-            )
-        }
+    else -> DynamoDbUpdateGrammar.parse(expression).eval(
+        ItemWithSubstitutions(
+            this,
+            expressionAttributeNames ?: emptyMap(),
+            expressionAttributeValues ?: emptyMap()
+        )
+    ) as Item
 }
 
 fun List<KeySchema>?.comparator(ascending: Boolean): Comparator<Item> {

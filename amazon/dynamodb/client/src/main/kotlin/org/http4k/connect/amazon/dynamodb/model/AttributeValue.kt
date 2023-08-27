@@ -92,6 +92,7 @@ data class AttributeValue internal constructor(
     }
 
     operator fun minus(other: AttributeValue) = when {
+        N != null && other.N != null -> Num(N.toBigDecimal() - other.N.toBigDecimal())
         SS != null && other.SS != null -> StrSet((SS - other.SS))
         NS != null && other.NS != null -> NumSet((NS - other.NS).map { it.toBigDecimal() }.toSet())
         BS != null && other.BS != null -> Base64Set(BS - other.BS)
