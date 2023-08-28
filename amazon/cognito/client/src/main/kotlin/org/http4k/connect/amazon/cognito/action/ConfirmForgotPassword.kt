@@ -5,10 +5,10 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.cognito.CognitoAction
 import org.http4k.connect.amazon.cognito.model.AnalyticsMetadata
-import org.http4k.connect.amazon.cognito.model.ClientId
 import org.http4k.connect.amazon.cognito.model.ConfirmationCode
 import org.http4k.connect.amazon.cognito.model.SecretHash
 import org.http4k.connect.amazon.cognito.model.UserContextData
+import org.http4k.connect.amazon.core.model.ClientId
 import org.http4k.connect.amazon.core.model.Password
 import org.http4k.connect.amazon.core.model.Username
 import org.http4k.connect.asRemoteFailure

@@ -35,5 +35,5 @@ abstract class AwsJsonAction<R : Any>(
         }
     }
 
-    protected fun uri() = Uri.of("/")
+    protected open fun uri() = Uri.of("/")
 }

@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.cognito.oauth
 
 import org.http4k.connect.amazon.cognito.CognitoPool
-import org.http4k.connect.amazon.cognito.model.ClientSecret
+import org.http4k.connect.amazon.core.model.ClientSecret
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Request
 import org.http4k.core.Uri

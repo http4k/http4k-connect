@@ -6,7 +6,12 @@ import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.cognito.model.TokenValidityUnit.hours
 import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.AccessToken
+import org.http4k.connect.amazon.core.model.ClientId
+import org.http4k.connect.amazon.core.model.ClientSecret
+import org.http4k.connect.amazon.core.model.IdToken
 import org.http4k.connect.amazon.core.model.KMSKeyId
+import org.http4k.connect.amazon.core.model.RefreshToken
 import org.http4k.connect.amazon.core.model.ResourceId
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.core.model.Username
@@ -26,40 +31,16 @@ class UserPoolId private constructor(value: String) : ResourceId(value) {
     companion object : NonBlankStringValueFactory<UserPoolId>(::UserPoolId)
 }
 
-class ClientId private constructor(value: String) : ResourceId(value) {
-    companion object : NonBlankStringValueFactory<ClientId>(::ClientId)
-}
-
 class ClientName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ClientName>(::ClientName)
-}
-
-class ClientSecret private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<ClientSecret>(::ClientSecret)
 }
 
 class Session private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Session>(::Session)
 }
 
-class AccessToken private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<AccessToken>(::AccessToken)
-}
-
 class UserCode private constructor(value: String) : StringValue(value) {
     companion object : StringValueFactory<UserCode>(::UserCode, "\\d{6}".regex)
-}
-
-class IdToken private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<IdToken>(::IdToken)
-}
-
-class RefreshToken private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<RefreshToken>(::RefreshToken)
-}
-
-class SecretCode private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<SecretCode>(::SecretCode)
 }
 
 class ConfirmationCode private constructor(value: String) : StringValue(value) {
@@ -68,6 +49,10 @@ class ConfirmationCode private constructor(value: String) : StringValue(value) {
 
 class SecretHash private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<SecretHash>(::SecretHash)
+}
+
+class SecretCode private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<SecretCode>(::SecretCode)
 }
 
 data class NewDeviceMetadata(
