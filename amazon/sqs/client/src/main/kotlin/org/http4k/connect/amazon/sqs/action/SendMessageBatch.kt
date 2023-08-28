@@ -29,13 +29,10 @@ data class SendMessageBatch(
 ) {
     override fun toResult(response: Response): Result4k<List<SentMessageBatchEntry>, RemoteFailure> = with(response) {
         when {
-            status.successful -> {
-                println(response.bodyString())
-                xmlDoc().getElementsByTagName("SendMessageBatchResultEntry")
-                    .sequenceOfNodes()
-                    .map { SentMessageBatchEntry.from(it) }
-                    .let { Success(it.toList()) }
-            }
+            status.successful -> xmlDoc().getElementsByTagName("SendMessageBatchResultEntry")
+                .sequenceOfNodes()
+                .map { SentMessageBatchEntry.from(it) }
+                .let { Success(it.toList()) }
             else -> Failure(asRemoteFailure(this))
         }
     }

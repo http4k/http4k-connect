@@ -5,7 +5,6 @@ package org.http4k.connect.openai.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
-import org.http4k.connect.openai.Content
 import org.http4k.connect.openai.ModelName
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.ObjectType.Companion.Embedding
@@ -21,7 +20,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class CreateEmbeddings(val model: ModelName, val input: List<Content>) :
+data class CreateEmbeddings(val model: ModelName, val input: List<String>) :
     NonNullAutoMarshalledAction<Embeddings>(kClass(), OpenAIMoshi),
     OpenAIAction<Embeddings> {
     override fun toRequest() = Request(POST, "/v1/embeddings")
