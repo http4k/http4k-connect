@@ -2,15 +2,10 @@ package org.http4k.format
 
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
-import org.http4k.connect.amazon.core.model.AccessToken
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.AwsService
-import org.http4k.connect.amazon.core.model.ClientId
-import org.http4k.connect.amazon.core.model.ClientSecret
 import org.http4k.connect.amazon.core.model.Expiration
-import org.http4k.connect.amazon.core.model.IdToken
 import org.http4k.connect.amazon.core.model.KMSKeyId
-import org.http4k.connect.amazon.core.model.RefreshToken
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
@@ -25,11 +20,6 @@ fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     value(ARN)
     value(AwsService)
     value(AwsAccount)
-    value(AccessToken)
-    value(ClientId)
-    value(ClientSecret)
-    value(IdToken)
-    value(RefreshToken)
     value(Base64Blob)
     value(Expiration)
     value(KMSKeyId)

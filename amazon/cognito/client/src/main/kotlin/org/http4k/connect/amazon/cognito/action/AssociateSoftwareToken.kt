@@ -2,9 +2,9 @@ package org.http4k.connect.amazon.cognito.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.cognito.CognitoAction
+import org.http4k.connect.amazon.cognito.model.AccessToken
 import org.http4k.connect.amazon.cognito.model.SecretCode
 import org.http4k.connect.amazon.cognito.model.Session
-import org.http4k.connect.amazon.core.model.AccessToken
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

@@ -3,9 +3,9 @@ package org.http4k.connect.amazon.cognito
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.cognito.action.AuthInitiated
-import org.http4k.connect.amazon.core.model.AccessToken
-import org.http4k.connect.amazon.core.model.IdToken
-import org.http4k.connect.amazon.core.model.RefreshToken
+import org.http4k.connect.amazon.cognito.model.AccessToken
+import org.http4k.connect.amazon.cognito.model.IdToken
+import org.http4k.connect.amazon.cognito.model.RefreshToken
 import org.junit.jupiter.api.Test
 
 class ActualCognitoResponsesTest {

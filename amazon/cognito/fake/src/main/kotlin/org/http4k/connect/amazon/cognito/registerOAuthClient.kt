@@ -1,10 +1,10 @@
 package org.http4k.connect.amazon.cognito
 
 import dev.forkhandles.result4k.valueOrNull
+import org.http4k.connect.amazon.cognito.model.ClientId
 import org.http4k.connect.amazon.cognito.model.ClientName
 import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
 import org.http4k.connect.amazon.cognito.model.PoolName
-import org.http4k.connect.amazon.core.model.ClientId
 import org.http4k.core.Credentials
 import java.util.UUID
 

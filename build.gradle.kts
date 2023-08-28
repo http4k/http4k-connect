@@ -369,7 +369,6 @@ dependencies {
     implementation(libs.sns)
     implementation(libs.sqs)
     implementation(libs.ssm)
-    implementation("software.amazon.awssdk:ssooidc:_")
     implementation(libs.sts)
 }
 
