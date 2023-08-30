@@ -4,6 +4,7 @@ package org.http4k.connect.amazon.dynamodb.grammar
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.dynamodb.attrBool
+import org.http4k.connect.amazon.dynamodb.attrL
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrNS
 import org.http4k.connect.amazon.dynamodb.attrS
@@ -16,18 +17,19 @@ import org.junit.jupiter.api.Test
 class DynamoDbUpdateGrammarTest {
 
     @Test
-    fun `remove - single action`() {
-        val item = Item(attrS of "a", attrN of 1)
-
-        assert("REMOVE $attrN", item, Item(attrS of "a"))
-    }
+    fun `remove - single action`() = assert(
+        expression = "REMOVE $attrN",
+        item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a")
+    )
 
     @Test
-    fun `remove - named`() {
-        val item = Item(attrS of "a", attrN of 1)
-
-        assert("REMOVE #key1", item, Item(attrS of "a"), names = mapOf("#key1" to attrN.name))
-    }
+    fun `remove - named`() = assert(
+        expression = "REMOVE #key1",
+        item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a"),
+        names = mapOf("#key1" to attrN.name)
+    )
 
     @Test
     fun `remove - two actions`() {
@@ -99,6 +101,33 @@ class DynamoDbUpdateGrammarTest {
         item = Item(attrS of "a", attrN of 4),
         expected = Item(attrS of "a", attrN of 2, attrBool of true),
         values = mapOf(":val1" to attrN.asValue(2), ":val2" to attrBool.asValue(true))
+    )
+
+    @Test
+    fun `set - list_append`() = assert(
+        expression = "SET #key1 = list_append(#key1, :val1)",
+        item = Item(attrL of listOf(attrN.asValue(1))),
+        expected = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2))),
+        names = mapOf("#key1" to attrL.name),
+        values = mapOf(":val1" to attrL.asValue(listOf(attrN.asValue(2))))
+    )
+
+    @Test
+    fun `set - if_not_exists - exists`() = assert(
+        expression = "SET #key1 = if_not_exists(#key1, :val1)",
+        item = Item(attrN of 1),
+        expected = Item(attrN of 1),
+        names = mapOf("#key1" to attrN.name),
+        values = mapOf(":val1" to attrN.asValue(2))
+    )
+
+    @Test
+    fun `set - if_not_exists - not exists`() = assert(
+        expression = "SET #key1 = if_not_exists(#key1, :val1)",
+        item = Item(),
+        expected = Item(attrN of 2),
+        names = mapOf("#key1" to attrN.name),
+        values = mapOf(":val1" to attrN.asValue(2))
     )
 
     @Test

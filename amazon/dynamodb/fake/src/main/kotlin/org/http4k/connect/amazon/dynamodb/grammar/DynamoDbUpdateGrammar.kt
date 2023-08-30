@@ -4,6 +4,7 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
 import org.http4k.connect.amazon.dynamodb.model.Item
 import parser4k.OutputCache
+import parser4k.Parser
 import parser4k.commonparsers.Tokens
 import parser4k.commonparsers.token
 import parser4k.inOrder
@@ -16,6 +17,7 @@ import parser4k.reset
 import parser4k.skipFirst
 import parser4k.with
 import parser4k.optional
+import parser4k.ref
 
 object DynamoDbUpdateGrammar {
     private val cache = OutputCache<Expr>()
@@ -38,7 +40,7 @@ object DynamoDbUpdateGrammar {
     }.reset(cache)
 }
 
-// Components
+// Expressions
 
 private val Name = oneOfWithPrecedence(
     inOrder(oneOf('#'), Tokens.identifier).skipFirst().map { ref ->
@@ -49,13 +51,7 @@ private val Name = oneOfWithPrecedence(
     Tokens.identifier.map { name -> Expr { AttributeName.of(name) } }
 )
 
-private val NamedValue = inOrder(oneOf(':'), Tokens.identifier).skipFirst().map { name ->
-    Expr { item ->
-        item.values[":$name"] ?: error("missing value $name")
-    }
-}
-
-private val Value = oneOf(
+private val RawValue = oneOf(
     // item value
     Tokens.identifier.map { name ->
         Expr { item ->
@@ -69,15 +65,21 @@ private val Value = oneOf(
             item.item[name] ?: error("missing item value $name")
         }
     },
-    NamedValue
+    // named value
+    inOrder(oneOf(':'), Tokens.identifier).skipFirst().map { name ->
+        Expr { item ->
+            item.values[":$name"] ?: error("missing value $name")
+        }
+    }
 )
 
 private val Operand = oneOf(
-    Value,
-    // function
+    ref { ListAppend },
+    ref { IfNotExists },
+    RawValue
 )
 
-private val ValueExpression = oneOfWithPrecedence(
+private val Value = oneOfWithPrecedence(
     inOrder(
         Operand,
         token("+"),
@@ -105,8 +107,36 @@ private val NameValuePair = inOrder(
     optional(token(",")),
     Name,
     Tokens.whitespace,
-    Value
+    RawValue
 ).skipFirst()
+
+// Functions
+
+private val ListAppend: Parser<Expr> = inOrder(
+    token("list_append("),
+    Value,
+    token(","),
+    Value,
+    token(")")
+).skipFirst().map { (valExpr1, _, valExpr2) ->
+    Expr { item ->
+        valExpr1.eval(item) as AttributeValue + valExpr2.eval(item) as AttributeValue
+    }
+}
+
+private val IfNotExists: Parser<Expr> = inOrder(
+    token("if_not_exists("),
+    Name,
+    token(","),
+    Value,
+    token(")")
+).skipFirst().map { (nameExp, _, valueExp) ->
+    Expr { item ->
+        val name = nameExp.eval(item) as AttributeName
+        val value = valueExp.eval(item) as AttributeValue
+        item.item[name] ?: value
+    }
+}
 
 // Actions
 
@@ -132,7 +162,7 @@ private val Set = inOrder(
             optional(token(",")),
             Name,
             token("="),
-            ValueExpression
+            Value
         ).skipFirst()
     )
 ).skipFirst().map { equations ->

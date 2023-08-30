@@ -88,6 +88,7 @@ data class AttributeValue internal constructor(
         NS != null && other.NS != null -> NumSet((NS + other.NS).map { it.toBigDecimal() }.toSet())
         SS != null && other.SS != null -> StrSet((SS + other.SS))
         BS != null && other.BS != null -> Base64Set(BS + other.BS)
+        L != null && other.L != null -> List(L + other.L)
         else -> this
     }
 
