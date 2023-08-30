@@ -17,9 +17,16 @@ import org.junit.jupiter.api.Test
 class DynamoDbUpdateGrammarTest {
 
     @Test
-    fun `remove - single action`() = assert(
+    fun `remove - exists`() = assert(
         expression = "REMOVE $attrN",
         item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a")
+    )
+
+    @Test
+    fun `remove - missing`() = assert(
+        expression = "REMOVE $attrN",
+        item = Item(attrS of "a"),
         expected = Item(attrS of "a")
     )
 
@@ -29,6 +36,27 @@ class DynamoDbUpdateGrammarTest {
         item = Item(attrS of "a", attrN of 1),
         expected = Item(attrS of "a"),
         names = mapOf("#key1" to attrN.name)
+    )
+
+    @Test
+    fun `remove - from list, middle`() = assert(
+        expression = "REMOVE $attrL[1]",
+        item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2), attrN.asValue(3))),
+        expected = Item(attrL of listOf(attrN.asValue(1),  attrN.asValue(3))),
+    )
+
+    @Test
+    fun `remove - from list, start`() = assert(
+        expression = "REMOVE $attrL[0]",
+        item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2), attrN.asValue(3))),
+        expected = Item(attrL of listOf(attrN.asValue(2),  attrN.asValue(3))),
+    )
+
+    @Test
+    fun `remove - from list, end`() = assert(
+        expression = "REMOVE $attrL[2]",
+        item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2), attrN.asValue(3))),
+        expected = Item(attrL of listOf(attrN.asValue(1),  attrN.asValue(2))),
     )
 
     @Test

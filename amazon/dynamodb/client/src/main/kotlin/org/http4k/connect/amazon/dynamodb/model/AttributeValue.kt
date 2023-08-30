@@ -100,6 +100,11 @@ data class AttributeValue internal constructor(
         else -> this
     }
 
+    fun delete(index: Int) = when {
+        L != null -> List(L.subList(0, index.coerceAtMost(L.size)) + L.subList((index + 1).coerceAtMost(L.size), L.size))
+        else -> this
+    }
+
     companion object {
         fun Base64(value: Base64Blob?) = value?.let { AttributeValue(B = it) } ?: Null()
         fun Bool(value: Boolean?) = value?.let { AttributeValue(BOOL = it) } ?: Null()

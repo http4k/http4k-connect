@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
+import org.http4k.connect.amazon.dynamodb.attrL
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.attrSS
@@ -109,6 +110,19 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
         ).successValue()
 
         assertThat(getItem(), equalTo(key))
+    }
+
+    @Test
+    fun `remove element from list - out of bounds`() {
+        dynamo.putItem(TableName = table, Item = item).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "REMOVE $attrL[3]",
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item))
     }
 
     @Test

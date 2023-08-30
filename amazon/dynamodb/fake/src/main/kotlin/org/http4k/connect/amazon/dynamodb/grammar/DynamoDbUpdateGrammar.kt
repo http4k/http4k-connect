@@ -18,6 +18,8 @@ import parser4k.skipFirst
 import parser4k.with
 import parser4k.optional
 import parser4k.ref
+import parser4k.skip
+import parser4k.skipLast
 
 object DynamoDbUpdateGrammar {
     private val cache = OutputCache<Expr>()
@@ -110,6 +112,12 @@ private val NameValuePair = inOrder(
     RawValue
 ).skipFirst()
 
+private val index = inOrder(
+    token("["),
+    Tokens.number,
+    token("]")
+).map { it.second }
+
 // Functions
 
 private val ListAppend: Parser<Expr> = inOrder(
@@ -145,13 +153,20 @@ private val Remove = inOrder(
     oneOrMore(
         inOrder(
             optional(Tokens.whitespace),
-            Name
+            Name,
+            optional(index)
         ).skipFirst()
     )
 ).skipFirst().map { names ->
     Expr { item ->
-        val attributeNames = names.map { it.eval(item) }
-        item.item - attributeNames
+        names.fold(item) { curItem, nameAndIndex ->
+            val name = nameAndIndex.first.eval(curItem) as AttributeName
+            val updated = nameAndIndex.second?.toInt()
+                ?.let { index -> curItem.item + (name to curItem.item[name]!!.delete(index)) } // remove element from list
+                ?: (curItem.item - name)  // remove attribute
+
+            curItem.copy(item = updated)
+        }.item
     }
 }
 
