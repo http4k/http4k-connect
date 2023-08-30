@@ -100,6 +100,15 @@ data class AttributeValue internal constructor(
         else -> this
     }
 
+    fun with(index: Int, value: AttributeValue) = when {
+        L != null -> if (index > L.lastIndex) {
+            List(L + value)
+        } else {
+            List(L.toMutableList().apply { set(index.coerceAtMost(L.lastIndex), value) }.toList()) // FIXME do immutably
+        }
+        else -> this
+    }
+
     fun delete(index: Int) = when {
         L != null -> List(L.subList(0, index.coerceAtMost(L.size)) + L.subList((index + 1).coerceAtMost(L.size), L.size))
         else -> this

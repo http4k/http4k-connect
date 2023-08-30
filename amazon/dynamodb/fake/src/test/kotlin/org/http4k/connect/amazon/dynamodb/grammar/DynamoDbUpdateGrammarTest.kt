@@ -159,6 +159,14 @@ class DynamoDbUpdateGrammarTest {
     )
 
     @Test
+    fun `set - element of list`() = assert(
+        expression = "SET $attrL[1] = :val1",
+        item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2))),
+        expected = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(4))),
+        values = mapOf(":val1" to attrN.asValue(4))
+    )
+
+    @Test
     fun `add - multiple`() = assert(
         expression = "SET #key1 = :val1 REMOVE #key2",
         item = Item(attrS of "a", attrN of 1),

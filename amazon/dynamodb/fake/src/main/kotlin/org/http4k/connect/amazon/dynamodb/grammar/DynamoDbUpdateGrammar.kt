@@ -18,8 +18,6 @@ import parser4k.skipFirst
 import parser4k.with
 import parser4k.optional
 import parser4k.ref
-import parser4k.skip
-import parser4k.skipLast
 
 object DynamoDbUpdateGrammar {
     private val cache = OutputCache<Expr>()
@@ -149,7 +147,7 @@ private val IfNotExists: Parser<Expr> = inOrder(
 // Actions
 
 private val Remove = inOrder(
-    token("REMOVE"),
+    oneOf(token("REMOVE"), token("remove")), // fixme possible to be case insensitive?
     oneOrMore(
         inOrder(
             optional(Tokens.whitespace),
@@ -171,27 +169,31 @@ private val Remove = inOrder(
 }
 
 private val Set = inOrder(
-    token("SET"),
+    oneOf(token("SET"), token("set")), // fixme possible to be case insensitive?
     oneOrMore(
         inOrder(
             optional(token(",")),
             Name,
+            optional(index),
             token("="),
             Value
         ).skipFirst()
     )
 ).skipFirst().map { equations ->
     Expr { item ->
-        item.item + equations.associate { (nameExp, _, valueExp) ->
+        item.item + equations.associate { (nameExp, indexStr, _, valueExp) ->
             val name = nameExp.eval(item) as AttributeName
-            val value = valueExp.eval(item) as AttributeValue
-            name to value
+            val value = (valueExp.eval(item) as AttributeValue)
+            val toSet = indexStr?.toInt()
+                ?.let { item.item[name]!!.with(it, value) } // set element of list
+                ?: value // set entire attribute
+            name to toSet
         }
     }
 }
 
 private val Add = inOrder(
-    token("ADD"),
+    oneOf(token("ADD"), token("add")), // fixme possible to be case insensitive?
     oneOrMore(NameValuePair)
 ).skipFirst().map { adds ->
     Expr { item ->
@@ -205,7 +207,7 @@ private val Add = inOrder(
 }
 
 private val Delete = inOrder(
-    token("DELETE"),
+    oneOf(token("DELETE"), token("delete")), // fixme possible to be case insensitive?
     oneOrMore(NameValuePair)
 ).skipFirst().map { adds ->
     Expr { item ->
