@@ -2,9 +2,12 @@ package org.http4k.connect.amazon.dynamodb.endpoints
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
+import org.http4k.connect.amazon.dynamodb.attrL
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.attrSS
@@ -18,6 +21,7 @@ import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.amazon.dynamodb.model.with
+import org.http4k.connect.amazon.dynamodb.model.without
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.amazon.dynamodb.updateItem
@@ -73,6 +77,32 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
     }
 
     @Test
+    fun `set element of missing list`() {
+        dynamo.putItem(TableName = table, Item = item.without(attrL)).successValue()
+
+        assertThat(dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "SET $attrL[0] = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(999))
+        ).failureOrNull(), present())
+    }
+
+    @Test
+    fun `set missing element of list`() {
+        dynamo.putItem(TableName = table, Item = item.with(attrL of listOf(attrN.asValue(1)))).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "SET $attrL[10] = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(11))
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item.with(attrL of listOf(attrN.asValue(1), attrN.asValue(11)))))
+    }
+
+    @Test
     fun `increment value on existing item`() {
         dynamo.putItem(TableName = table, Item = item).successValue()
 
@@ -111,6 +141,19 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
     }
 
     @Test
+    fun `remove element from list - out of bounds`() {
+        dynamo.putItem(TableName = table, Item = item).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "REMOVE $attrL[3]",
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item))
+    }
+
+    @Test
     fun `add element to set`() {
         dynamo.putItem(TableName = table, Item = item).successValue()
 
@@ -119,9 +162,23 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
             Key = key,
             UpdateExpression = "ADD $attrSS :val1",
             ExpressionAttributeValues = mapOf(":val1" to attrSS.asValue(setOf("foo")))
-        ).successValue()
+        ).failureOrNull()
 
         assertThat(getItem(), equalTo(item.with(attrSS of setOf("345", "567", "foo"))))
+    }
+
+    @Test
+    fun `add element to missing set`() {
+        dynamo.putItem(TableName = table, Item = item.without(attrSS)).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "ADD $attrSS :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrSS.asValue(setOf("foo")))
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item.with(attrSS of setOf("foo"))))
     }
 
     @Test
@@ -136,6 +193,20 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
         ).successValue()
 
         assertThat(getItem(), equalTo(item.with(attrSS of setOf("567"))))
+    }
+
+    @Test
+    fun `delete element from missing set`() {
+        dynamo.putItem(TableName = table, Item = item.without(attrSS)).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "DELETE $attrSS :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrSS.asValue(setOf("345")))
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item.without(attrSS)))
     }
 
     private fun getItem(): Item? = dynamo.getItem(

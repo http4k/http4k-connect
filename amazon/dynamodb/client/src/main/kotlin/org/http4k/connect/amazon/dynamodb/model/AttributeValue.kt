@@ -88,13 +88,29 @@ data class AttributeValue internal constructor(
         NS != null && other.NS != null -> NumSet((NS + other.NS).map { it.toBigDecimal() }.toSet())
         SS != null && other.SS != null -> StrSet((SS + other.SS))
         BS != null && other.BS != null -> Base64Set(BS + other.BS)
+        L != null && other.L != null -> List(L + other.L)
         else -> this
     }
 
     operator fun minus(other: AttributeValue) = when {
+        N != null && other.N != null -> Num(N.toBigDecimal() - other.N.toBigDecimal())
         SS != null && other.SS != null -> StrSet((SS - other.SS))
         NS != null && other.NS != null -> NumSet((NS - other.NS).map { it.toBigDecimal() }.toSet())
         BS != null && other.BS != null -> Base64Set(BS - other.BS)
+        else -> this
+    }
+
+    fun with(index: Int, value: AttributeValue) = when {
+        L != null -> if (index > L.lastIndex) {
+            List(L + value)
+        } else {
+            List(L.toMutableList().apply { set(index.coerceAtMost(L.lastIndex), value) }.toList()) // FIXME do immutably
+        }
+        else -> this
+    }
+
+    fun delete(index: Int) = when {
+        L != null -> List(L.subList(0, index.coerceAtMost(L.size)) + L.subList((index + 1).coerceAtMost(L.size), L.size))
         else -> this
     }
 
