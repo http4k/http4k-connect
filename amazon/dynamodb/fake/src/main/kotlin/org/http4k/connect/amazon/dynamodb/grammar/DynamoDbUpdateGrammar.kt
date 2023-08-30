@@ -4,7 +4,6 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
 import org.http4k.connect.amazon.dynamodb.model.Item
 import parser4k.OutputCache
-import parser4k.Parser
 import parser4k.commonparsers.Tokens
 import parser4k.commonparsers.token
 import parser4k.inOrder
@@ -27,8 +26,8 @@ object DynamoDbUpdateGrammar {
         oneOf(
             Set.with(cache),
             Remove.with(cache),
-            // add
-            // delete
+            Add.with(cache),
+            Delete.with(cache)
         )
     ).map { updates ->
         Expr { item ->
@@ -39,7 +38,9 @@ object DynamoDbUpdateGrammar {
     }.reset(cache)
 }
 
-private val UpdateAttributePath = oneOfWithPrecedence(
+// Components
+
+private val Name = oneOfWithPrecedence(
     inOrder(oneOf('#'), Tokens.identifier).skipFirst().map { ref ->
         Expr { item ->
             item.names["#$ref"] ?: error("missing name $ref")
@@ -48,11 +49,17 @@ private val UpdateAttributePath = oneOfWithPrecedence(
     Tokens.identifier.map { name -> Expr { AttributeName.of(name) } }
 )
 
-private val UpdateExpressionPath = oneOf(
+private val NamedValue = inOrder(oneOf(':'), Tokens.identifier).skipFirst().map { name ->
+    Expr { item ->
+        item.values[":$name"] ?: error("missing value $name")
+    }
+}
+
+private val Value = oneOf(
     // item value
     Tokens.identifier.map { name ->
         Expr { item ->
-          item.item[AttributeName.of(name)] ?: error("missing item value $name")
+            item.item[AttributeName.of(name)] ?: error("missing item value $name")
         }
     },
     // named item value
@@ -62,33 +69,28 @@ private val UpdateExpressionPath = oneOf(
             item.item[name] ?: error("missing item value $name")
         }
     },
-    // named value
-    inOrder(oneOf(':'), Tokens.identifier).skipFirst().map { name ->
-        Expr { item ->
-            item.values[":$name"] ?: error("missing value $name")
-        }
-    }
+    NamedValue
 )
 
-private val UpdateExpressionOperand = oneOf(
-    UpdateExpressionPath,
+private val Operand = oneOf(
+    Value,
     // function
 )
 
-private val UpdateExpressionValue = oneOfWithPrecedence(
+private val ValueExpression = oneOfWithPrecedence(
     inOrder(
-        UpdateExpressionOperand,
+        Operand,
         token("+"),
-        UpdateExpressionOperand
+        Operand
     ).map { (op1, _, op2) ->
         Expr { item ->
             (op1.eval(item) as AttributeValue) + (op2.eval(item) as AttributeValue)
         }
     },
     inOrder(
-        UpdateExpressionOperand,
+        Operand,
         token("-"),
-        UpdateExpressionOperand
+        Operand
     ).map { (op1, _, op2) ->
         Expr { item ->
             val val1 = op1.eval(item) as AttributeValue
@@ -96,21 +98,30 @@ private val UpdateExpressionValue = oneOfWithPrecedence(
             val1 - val2
         }
     },
-    UpdateExpressionOperand
+    Operand
 )
+
+private val NameValuePair = inOrder(
+    optional(token(",")),
+    Name,
+    Tokens.whitespace,
+    Value
+).skipFirst()
+
+// Actions
 
 private val Remove = inOrder(
     token("REMOVE"),
     oneOrMore(
         inOrder(
-            Tokens.whitespace.optional(),
-            UpdateAttributePath
+            optional(Tokens.whitespace),
+            Name
         ).skipFirst()
     )
 ).skipFirst().map { names ->
     Expr { item ->
         val attributeNames = names.map { it.eval(item) }
-        item.item.filterKeys { it !in attributeNames }
+        item.item - attributeNames
     }
 }
 
@@ -118,12 +129,10 @@ private val Set = inOrder(
     token("SET"),
     oneOrMore(
         inOrder(
-            token(",").optional(),
-            inOrder(
-                UpdateAttributePath,
-                token("="),
-                UpdateExpressionValue
-            )
+            optional(token(",")),
+            Name,
+            token("="),
+            ValueExpression
         ).skipFirst()
     )
 ).skipFirst().map { equations ->
@@ -136,5 +145,31 @@ private val Set = inOrder(
     }
 }
 
-// TODO contribute this to forkhandles
-fun <T> Parser<T>.optional() = optional(this)
+private val Add = inOrder(
+    token("ADD"),
+    oneOrMore(NameValuePair)
+).skipFirst().map { adds ->
+    Expr { item ->
+        item.item + adds.map { (nameExp, _, valueExp) ->
+            val name = nameExp.eval(item) as AttributeName
+            val value = valueExp.eval(item) as AttributeValue
+            name to (item.item[name]?.plus(value) ?: value)
+
+        }
+    }
+}
+
+private val Delete = inOrder(
+    token("DELETE"),
+    oneOrMore(NameValuePair)
+).skipFirst().map { adds ->
+    Expr { item ->
+        item.item + adds.mapNotNull { (nameExp, _, valueExp) ->
+            val name = nameExp.eval(item) as AttributeName
+            item.item[name]?.let { existing ->
+                val add = valueExp.eval(item) as AttributeValue
+                name to (existing - add)
+            }
+        }
+    }
+}

@@ -18,6 +18,7 @@ import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.amazon.dynamodb.model.with
+import org.http4k.connect.amazon.dynamodb.model.without
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.amazon.dynamodb.updateItem
@@ -125,6 +126,20 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
     }
 
     @Test
+    fun `add element to missing set`() {
+        dynamo.putItem(TableName = table, Item = item.without(attrSS)).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "ADD $attrSS :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrSS.asValue(setOf("foo")))
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item.with(attrSS of setOf("foo"))))
+    }
+
+    @Test
     fun `delete element from set`() {
         dynamo.putItem(TableName = table, Item = item).successValue()
 
@@ -136,6 +151,20 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
         ).successValue()
 
         assertThat(getItem(), equalTo(item.with(attrSS of setOf("567"))))
+    }
+
+    @Test
+    fun `delete element from missing set`() {
+        dynamo.putItem(TableName = table, Item = item.without(attrSS)).successValue()
+
+        dynamo.updateItem(
+            TableName = table,
+            Key = key,
+            UpdateExpression = "DELETE $attrSS :val1",
+            ExpressionAttributeValues = mapOf(":val1" to attrSS.asValue(setOf("345")))
+        ).successValue()
+
+        assertThat(getItem(), equalTo(item.without(attrSS)))
     }
 
     private fun getItem(): Item? = dynamo.getItem(

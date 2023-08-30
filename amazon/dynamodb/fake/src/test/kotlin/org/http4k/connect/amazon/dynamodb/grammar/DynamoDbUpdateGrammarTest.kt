@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.dynamodb.attrBool
 import org.http4k.connect.amazon.dynamodb.attrN
+import org.http4k.connect.amazon.dynamodb.attrNS
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.attrSS
 import org.http4k.connect.amazon.dynamodb.model.Item
@@ -36,114 +37,140 @@ class DynamoDbUpdateGrammarTest {
     }
 
     @Test
-    fun `set - missing attribute`() {
-        val item = Item(attrS of "a")
-
-        assert(
-            expression = "SET $attrN = :val1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 1),
-            values = mapOf(":val1" to attrN.asValue(1))
-        )
-    }
+    fun `set - missing attribute`() = assert(
+        expression = "SET $attrN = :val1",
+        item = Item(attrS of "a"),
+        expected = Item(attrS of "a", attrN of 1),
+        values = mapOf(":val1" to attrN.asValue(1))
+    )
 
     @Test
-    fun `set - existing attribute`() {
-        val item = Item(attrS of "a", attrN of 1)
-
-        assert(
-            expression = "SET $attrN = :val1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 2),
-            values = mapOf(":val1" to attrN.asValue(2))
-        )
-    }
+    fun `set - existing attribute`() = assert(
+        expression = "SET $attrN = :val1",
+        item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a", attrN of 2),
+        values = mapOf(":val1" to attrN.asValue(2))
+    )
 
     @Test
-    fun `set - to self, named`() {
-        val item = Item(attrS of "a", attrN of 1)
-
-        assert(
-            expression = "SET #key1 = #key1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 1),
-            names = mapOf("#key1" to attrN.name),
-            values = mapOf(":val1" to attrN.asValue(1))
-        )
-    }
+    fun `set - to self, named`() = assert(
+        expression = "SET #key1 = #key1",
+        item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a", attrN of 1),
+        names = mapOf("#key1" to attrN.name),
+        values = mapOf(":val1" to attrN.asValue(1))
+    )
 
     @Test
-    fun `set - plus value`() {
-        val item = Item(attrS of "a", attrN of 1)
-
-        assert(
-            expression = "SET $attrN = $attrN + :val1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 2),
-            values = mapOf(":val1" to attrN.asValue(1))
-        )
-    }
+    fun `set - plus value`() = assert(
+        expression = "SET $attrN = $attrN + :val1",
+        item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a", attrN of 2),
+        values = mapOf(":val1" to attrN.asValue(1))
+    )
 
     @Test
-    fun `set - plus item value`() {
-        val item = Item(attrS of "a", attrN of 4)
-
-        assert(
-            expression = "SET $attrN = $attrN + #key1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 8),
-            names = mapOf("#key1" to attrN.name)
-        )
-    }
+    fun `set - plus item value`() = assert(
+        expression = "SET $attrN = $attrN + #key1",
+        item = Item(attrS of "a", attrN of 4),
+        expected = Item(attrS of "a", attrN of 8),
+        names = mapOf("#key1" to attrN.name)
+    )
 
     @Test
-    fun `set - minus value`() {
-        val item = Item(attrS of "a", attrN of 2)
-
-        assert(
-            expression = "SET $attrN = $attrN - :val1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 1),
-            values = mapOf(":val1" to attrN.asValue(1))
-        )
-    }
+    fun `set - minus value`() = assert(
+        expression = "SET $attrN = $attrN - :val1",
+        item = Item(attrS of "a", attrN of 2),
+        expected = Item(attrS of "a", attrN of 1),
+        values = mapOf(":val1" to attrN.asValue(1))
+    )
 
     @Test
-    fun `set - minus item value`() {
-        val item = Item(attrS of "a", attrN of 4)
-
-        assert(
-            expression = "SET $attrN = $attrN - #key1",
-            item = item,
-            expected = Item(attrS of "a", attrN of 0),
-            names = mapOf("#key1" to attrN.name)
-        )
-    }
+    fun `set - minus item value`() = assert(
+        expression = "SET $attrN = $attrN - #key1",
+        item = Item(attrS of "a", attrN of 4),
+        expected = Item(attrS of "a", attrN of 0),
+        names = mapOf("#key1" to attrN.name)
+    )
 
     @Test
-    fun `set - multiple`() {
-        val item = Item(attrS of "a", attrN of 4)
-
-        assert(
-            expression = "SET $attrN = :val1, $attrBool = :val2",
-            item = item,
-            expected = Item(attrS of "a", attrN of 2, attrBool of true),
-            values = mapOf(":val1" to attrN.asValue(2), ":val2" to attrBool.asValue(true))
-        )
-    }
+    fun `set - multiple`() = assert(
+        expression = "SET $attrN = :val1, $attrBool = :val2",
+        item = Item(attrS of "a", attrN of 4),
+        expected = Item(attrS of "a", attrN of 2, attrBool of true),
+        values = mapOf(":val1" to attrN.asValue(2), ":val2" to attrBool.asValue(true))
+    )
 
     @Test
-    fun `multiple operations`() {
-        val item = Item(attrS of "a", attrN of 1)
+    fun `add - multiple`() = assert(
+        expression = "SET #key1 = :val1 REMOVE #key2",
+        item = Item(attrS of "a", attrN of 1),
+        expected = Item(attrS of "a", attrBool of true),
+        names = mapOf("#key1" to attrBool.name, "#key2" to attrN.name),
+        values = mapOf(":val1" to attrBool.asValue(true))
+    )
 
-        assert(
-            expression = "SET #key1 = :val1 REMOVE #key2",
-            item = item,
-            expected = Item(attrS of "a", attrBool of true),
-            names = mapOf("#key1" to attrBool.name, "#key2" to attrN.name),
-            values = mapOf(":val1" to attrBool.asValue(true))
-        )
-    }
+    @Test
+    fun `add - number`() = assert(
+        expression = "ADD $attrN :val1",
+        item = Item(attrN of 1),
+        values = mapOf(":val1" to attrN.asValue(2)),
+        expected = Item(attrN of 3)
+    )
+
+    @Test
+    fun `add - set`() = assert(
+        expression = "ADD #key1 :val1",
+        item = Item(attrSS of setOf("foo")),
+        names = mapOf("#key1" to attrSS.name),
+        values = mapOf(":val1" to attrSS.asValue(setOf("bar", "baz"))),
+        expected = Item(attrSS of setOf("foo", "bar", "baz"))
+    )
+
+    @Test
+    fun `add - missing from item`() = assert(
+        expression = "ADD #key1 :val1",
+        item = Item(),
+        names = mapOf("#key1" to attrSS.name),
+        values = mapOf(":val1" to attrSS.asValue(setOf("bar", "baz"))),
+        expected = Item(attrSS of setOf("bar", "baz"))
+    )
+
+    @Test
+    fun `add - two actions`() = assert(
+        expression = "ADD $attrN :val1, #key1 :val2",
+        item = Item(attrN of 1, attrNS of setOf(1, 2)),
+        expected = Item(attrN of 3, attrNS of setOf(1,2,3)),
+        names = mapOf("#key1" to attrNS.name),
+        values = mapOf(":val1" to attrN.asValue(2), ":val2" to attrNS.asValue(setOf(3)))
+    )
+
+    @Test
+    fun `delete - from set`() = assert(
+        expression = "DELETE #key1 :val1",
+        item = Item(attrSS of setOf("A", "B")),
+        expected = Item(attrSS of setOf("B")),
+        names = mapOf("#key1" to attrSS.name),
+        values = mapOf(":val1" to attrSS.asValue(setOf("A")))
+    )
+
+    @Test
+    fun `delete - multiple`() = assert(
+        expression = "DELETE #key1 :val1, $attrNS :val2",
+        item = Item(attrSS of setOf("A", "B"), attrNS of setOf(1,2)),
+        expected = Item(attrSS of setOf("B"), attrNS of setOf(1)),
+        names = mapOf("#key1" to attrSS.name),
+        values = mapOf(":val1" to attrSS.asValue(setOf("A")), ":val2" to attrNS.asValue(setOf(2)))
+    )
+
+    @Test
+    fun `delete - missing from set`() = assert(
+        expression = "DELETE #key1 :val1",
+        item = Item(attrSS of setOf("A", "B")),
+        expected = Item(attrSS of setOf("A", "B")),
+        names = mapOf("#key1" to attrSS.name),
+        values = mapOf(":val1" to attrSS.asValue(setOf("C")))
+    )
 }
 
 private fun assert(
