@@ -3,8 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v5.1.7.0
-- **http4k-connect-amazon-dynamodb-fake** Add support for the entire update expression syntax.  H/T @oharaandrew314
+### v5.1.7.0 (uncut)
+- **http4k-connect-amazon-dynamodb-fake** - Add support for the entire update expression syntax.  H/T @oharaandrew314
+- **http4k-connect-amazon-evidently** - [New module] Adapter and fake implementation.  H/T @oharaandrew314
 
 ### v5.1.6.2
 - **http4k-connect-amazon-eventbridge-fake*** - [Fix] Add proper indexing to fake when sending events.

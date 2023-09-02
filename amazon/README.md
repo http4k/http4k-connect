@@ -14,6 +14,7 @@ http4k-connect provides a standardised mechanism to connect to the following AWS
 - SQS
 - STS
 - SystemsManager
+- Evidently
 
 #### Auth
 
