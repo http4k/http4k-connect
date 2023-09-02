@@ -88,7 +88,9 @@ dependencies {
     - [CloudFront](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-cloudfront"` / `"org.http4k:http4k-connect-amazon-cloudfront-fake"`
     - [DynamoDb](./amazon/dynamodb) -> `"org.http4k:http4k-connect-amazon-dynamodb"` / `"org.http4k:http4k-connect-amazon-dynamodb-fake"`
     - [EventBridge](./amazon/eventbridge) -> `"org.http4k:http4k-connect-amazon-eventbridge"` / `"org.http4k:http4k-connect-amazon-eventbridge-fake"`
+    - [Evidently](./amazon/evidently) -> `"org.http4k:http4k-connect-amazon-evidently"` / `"org.http4k:http4k-connect-amazon-evidently-fake"`
     - [Firehose](./amazon/firehose) -> `"org.http4k:http4k-connect-amazon-firehose"` / `"org.http4k:http4k-connect-amazon-firehose-fake"`
+    - [InstanceMetadataService](./amazon/instancemetadata) -> `"org.http4k:http4k-connect-amazon-instancemetadata"` / `"org.http4k:http4k-connect-amazon-instancemetadata-fake"`
     - [KMS](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-kms"` / `"org.http4k:http4k-connect-amazon-kms-fake"`
     - [Lambda](./amazon/lambda) -> `"org.http4k:http4k-connect-amazon-lambda"` / `"org.http4k:http4k-connect-amazon-lambda-fake"`
     - [S3](./amazon/s3) -> `"org.http4k:http4k-connect-amazon-s3"` / `"org.http4k:http4k-connect-amazon-s3-fake"`
@@ -98,8 +100,6 @@ dependencies {
     - [SQS](./amazon/sqs) -> `"org.http4k:http4k-connect-amazon-sqs"` / `"org.http4k:http4k-connect-amazon-sqs-fake"`
     - [STS](./amazon/sts) -> `"org.http4k:http4k-connect-amazon-sts"` / `"org.http4k:http4k-connect-amazon-sts-fake"`
     - [SystemsManager](./amazon/systemsmanager) -> `"org.http4k:http4k-connect-amazon-systemsmanager"` / `"org.http4k:http4k-connect-amazon-systemsmanager-fake"`
-    - [InstanceMetadataService](./amazon/instancemetadata) -> `"org.http4k:http4k-connect-amazon-instancemetadata"` / `"org.http4k:http4k-connect-amazon-instancemetadata-fake"`
-    - [Evidently](./amazon/evidently) -> `"org.http4k:http4k-connect-amazon-evidently"` / `"org.http4k:http4k-connect-amazon-evidently-fake"`
 - [GitHub V3, App, Callback](./github) -> `"org.http4k:http4k-connect-github"`
 - Google Analytics
     - [GA4](./google/analytics-ga4) -> `"org.http4k:http4k-connect-google-analytics-ga4"` / `"org.http4k:http4k-connect-google-analytic-ga4-fake"`

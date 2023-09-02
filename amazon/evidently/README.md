@@ -1,4 +1,4 @@
-# Secrets Manager
+# Cloudwatch Evidently
 
 The Evidently connector provides the following Actions:
 
