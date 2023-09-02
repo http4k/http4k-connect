@@ -14,8 +14,8 @@ import org.http4k.routing.routes
 import java.time.Clock
 
 class FakeEvidently(
-    projects: Storage<Project> = Storage.InMemory(),
-    features: Storage<Feature> = Storage.InMemory(),
+    projects: Storage<StoredProject> = Storage.InMemory(),
+    features: Storage<StoredFeature> = Storage.InMemory(),
     clock: Clock = Clock.systemUTC(),
 ) : ChaoticHttpHandler() {
 

@@ -4,12 +4,12 @@ import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.Timestamp
-import org.http4k.connect.amazon.evidently.model.ProjectData
+import org.http4k.connect.amazon.evidently.actions.Project
 import org.http4k.connect.amazon.evidently.model.ProjectName
 import org.http4k.connect.storage.Storage
 import java.time.Instant
 
-data class Project(
+data class StoredProject(
     val accountId: AwsAccount,
     val region: Region,
     val name: ProjectName,
@@ -19,9 +19,9 @@ data class Project(
     val updated: Instant = created
 )
 
-val Project.arn get() = ARN.of(Evidently.awsService, region, accountId, "project", name)
+val StoredProject.arn get() = ARN.of(Evidently.awsService, region, accountId, "project", name)
 
-fun Project.toData(features: Storage<Feature>) = ProjectData(
+fun StoredProject.toProject(features: Storage<StoredFeature>) = Project(
     name = name,
     description = description,
     tags = tags,

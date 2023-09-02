@@ -12,11 +12,11 @@ import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.evidently.actions.BatchEvaluateFeatureRequestWrapper
 import org.http4k.connect.amazon.evidently.actions.BatchEvaluateFeatureResult
 import org.http4k.connect.amazon.evidently.actions.BatchEvaluationResultWrapper
+import org.http4k.connect.amazon.evidently.actions.CreateFeatureData
+import org.http4k.connect.amazon.evidently.actions.CreateFeatureResponse
+import org.http4k.connect.amazon.evidently.actions.CreateProjectData
+import org.http4k.connect.amazon.evidently.actions.CreateProjectResponse
 import org.http4k.connect.amazon.evidently.actions.EvaluateFeatureRequest
-import org.http4k.connect.amazon.evidently.model.CreateFeatureData
-import org.http4k.connect.amazon.evidently.model.CreateFeatureResponse
-import org.http4k.connect.amazon.evidently.model.CreateProjectData
-import org.http4k.connect.amazon.evidently.model.CreateProjectResponse
 import org.http4k.connect.amazon.evidently.model.EntityId
 import org.http4k.connect.amazon.evidently.model.EvaluationStrategy
 import org.http4k.connect.amazon.evidently.model.FeatureName
@@ -41,19 +41,19 @@ private fun AmazonRestfulFake.projectResourceNotFound(resourceType: String, reso
     return RestfulError(Status(404, ""), message, resourceArn, resourceType)
 }
 
-private fun featureNotFound(project: Project, featureName: FeatureName) =
+private fun featureNotFound(project: StoredProject, featureName: FeatureName) =
     RestfulError(NOT_FOUND,"Feature does not exist with arn '${project.arn}/feature/$featureName'", null, null)
 
 private val projectLens = Path.value(ProjectName).of("project")
 private val featureLens = Path.value(FeatureName).of("feature")
 
-private operator fun Storage<Project>.get(projectName: ProjectName) = get(projectName.value)
-private operator fun Storage<Feature>.get(featureName: FeatureName) = get(featureName.value)
+private operator fun Storage<StoredProject>.get(projectName: ProjectName) = get(projectName.value)
+private operator fun Storage<StoredFeature>.get(featureName: FeatureName) = get(featureName.value)
 
 
 fun AmazonRestfulFake.evaluateFeature(
-    projects: Storage<Project>,
-    features: Storage<Feature>
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>
 ) = "/projects/$projectLens/evaluations/$featureLens" bind POST to route<EvaluateFeatureRequest> { data ->
     val projectName = projectLens(this)
     val featureName = featureLens(this)
@@ -65,8 +65,8 @@ fun AmazonRestfulFake.evaluateFeature(
 }
 
 fun AmazonRestfulFake.batchEvaluateFeature(
-    projects: Storage<Project>,
-    features: Storage<Feature>
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>
 ) = "/projects/$projectLens/evaluations" bind POST to route<BatchEvaluateFeatureRequestWrapper> { data ->
     val projectName = projectLens(this)
 
@@ -91,10 +91,10 @@ fun AmazonRestfulFake.batchEvaluateFeature(
 
 fun AmazonRestfulFake.createProject(
     clock: Clock,
-    projects: Storage<Project>,
-    features: Storage<Feature>
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>
 ) = "/projects" bind POST to route<CreateProjectData> { data ->
-    val project = Project(
+    val project = StoredProject(
         accountId = accountId,
         region = region,
         name = data.name,
@@ -105,19 +105,19 @@ fun AmazonRestfulFake.createProject(
 
     projects[project.name.value] = project
 
-    Success(CreateProjectResponse(project.toData(features)))
+    Success(CreateProjectResponse(project.toProject(features)))
 }
 
 fun AmazonRestfulFake.createFeature(
     clock: Clock,
-    projects: Storage<Project>,
-    features: Storage<Feature>,
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>,
 ) = "/projects/$projectLens/features" bind POST to route<CreateFeatureData> { data ->
     val projectName = projectLens(this)
     projects[projectName]
         .asResultOr { projectNotFound(projectName) }
         .map { project ->
-            Feature(
+            StoredFeature(
                 name = data.name,
                 default = data.defaultVariation,
                 variations = data.variations.associateBy { it.name },
@@ -129,12 +129,12 @@ fun AmazonRestfulFake.createFeature(
                 projectArn = project.arn
             )
         }.peek { features["$projectName-${it.name}"] = it }
-        .map { CreateFeatureResponse(it.toData()) }
+        .map { CreateFeatureResponse(it.toFeature()) }
 }
 
 fun AmazonRestfulFake.deleteFeature(
-    projects: Storage<Project>,
-    features: Storage<Feature>
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>
 ) = "/projects/$projectLens/features/$featureLens" bind DELETE to route<Unit> {
     val projectName = projectLens(this)
     val featureName = featureLens(this)
@@ -148,8 +148,8 @@ fun AmazonRestfulFake.deleteFeature(
 }
 
 fun AmazonRestfulFake.deleteProject(
-    projects: Storage<Project>,
-    features: Storage<Feature>
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>
 ) = "/projects/$projectLens" bind DELETE to route<Unit> {
     val projectName = projectLens(this)
 

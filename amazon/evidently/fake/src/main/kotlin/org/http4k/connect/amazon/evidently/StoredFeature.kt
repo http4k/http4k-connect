@@ -3,18 +3,18 @@ package org.http4k.connect.amazon.evidently
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.evidently.actions.EvaluatedFeature
+import org.http4k.connect.amazon.evidently.actions.Feature
+import org.http4k.connect.amazon.evidently.actions.FeatureStatus
+import org.http4k.connect.amazon.evidently.actions.ValueType
 import org.http4k.connect.amazon.evidently.actions.VariableValue
+import org.http4k.connect.amazon.evidently.actions.VariationConfig
 import org.http4k.connect.amazon.evidently.model.EntityId
 import org.http4k.connect.amazon.evidently.model.EvaluationStrategy
-import org.http4k.connect.amazon.evidently.model.FeatureData
 import org.http4k.connect.amazon.evidently.model.FeatureName
-import org.http4k.connect.amazon.evidently.model.FeatureStatus
-import org.http4k.connect.amazon.evidently.model.ValueType
-import org.http4k.connect.amazon.evidently.model.VariationConfig
 import org.http4k.connect.amazon.evidently.model.VariationName
 import java.time.Instant
 
-data class Feature(
+data class StoredFeature(
     val name: FeatureName,
     val projectArn: ARN,
     val default: VariationName,
@@ -35,9 +35,9 @@ val VariableValue.type get() = when {
     else -> error("Illegal state")
 }
 
-val Feature.arn get() = ARN.of("$projectArn/feature/$name")
+val StoredFeature.arn get() = ARN.of("$projectArn/feature/$name")
 
-operator fun Feature.get(entityId: EntityId): EvaluatedFeature {
+operator fun StoredFeature.get(entityId: EntityId): EvaluatedFeature {
     val variation = variations.getValue(overrides[entityId] ?: default)
 
     return EvaluatedFeature(
@@ -52,7 +52,7 @@ operator fun Feature.get(entityId: EntityId): EvaluatedFeature {
     )
 }
 
-fun Feature.toData() = FeatureData(
+fun StoredFeature.toFeature() = Feature(
     name = name,
     defaultVariation = default,
     entityOverrides = overrides.mapKeys { it.key.value },
