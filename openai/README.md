@@ -103,10 +103,6 @@ environments without using up valuable request tokens!
 The Fake server endpoints are secured with a BearerToken header, but the value is not checked for anything other than
 presence.
 
-### Streaming completions
-
-Currently streaming of responses is not supported by the Fake.
-
 ### Image generation
 
 Image generation also can be set to either URL or base-64 data return. In the case of URLs, the Fake also doubles as a

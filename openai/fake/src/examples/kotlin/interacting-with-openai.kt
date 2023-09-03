@@ -1,4 +1,3 @@
-import org.http4k.connect.openai.Content
 import org.http4k.connect.openai.Http
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
 import org.http4k.connect.openai.OpenAI
@@ -18,9 +17,10 @@ fun main() {
         openai.chatCompletion(
             GPT3_5,
             listOf(
-                Message(User, Content.of("Explain pythagoras's theorem to a 5 year old child")),
+                Message(User, "Explain pythagoras's theorem to a 5 year old child"),
             ),
-            1000
+            1000,
+            false
         )
     )
 }

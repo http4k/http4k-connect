@@ -20,7 +20,6 @@ object OpenAIMoshi : ConfigurableMoshi(
         .withStandardMappings()
         .value(Base64Blob)
         .value(CompletionId)
-        .value(Content)
         .value(ModelName)
         .value(OpenAIOrg)
         .value(ObjectType)

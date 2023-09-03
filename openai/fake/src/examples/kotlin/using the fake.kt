@@ -1,7 +1,6 @@
 import dev.forkhandles.result4k.onFailure
 import org.http4k.chaos.start
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.openai.Content
 import org.http4k.connect.openai.FakeOpenAI
 import org.http4k.connect.openai.Http
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
@@ -30,17 +29,19 @@ fun main() {
 
     // get a chat completion
     openai
-        .chatCompletion(GPT3_5, listOf(Message(User, Content.of("good afternoon"))), 1000)
+        .chatCompletion(GPT3_5, listOf(Message(User, "good afternoon")), 1000, true)
         .onFailure { error(it) }
+        .toList()
+        .first()
         .choices
         .forEach {
-            println(it.message.role)
-            println(it.message.content)
+            println(it.message?.role)
+            println(it.message?.content)
         }
 
     // generate an image
     openai
-        .generateImage(Content.of("an amazing view"), Size.`1024x1024`)
+        .generateImage("an amazing view", Size.`1024x1024`)
         .onFailure { error(it) }
         .data
         .forEach {
