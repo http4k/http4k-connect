@@ -43,6 +43,7 @@ includeVendorSystem("amazon", "ses")
 includeVendorSystem("amazon", "sqs")
 includeVendorSystem("amazon", "sts")
 includeVendorSystem("amazon", "systemsmanager")
+includeVendorSystem("amazon", "evidently")
 includeSystem("example")
 
 includeSystem("github")

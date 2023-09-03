@@ -5,6 +5,8 @@ http4k-connect provides a standardised mechanism to connect to the following AWS
 - CloudFront
 - Cognito
 - DynamoDB
+- Evidently
+- Instance Metadata Service
 - KMS
 - Lambda
 - S3
