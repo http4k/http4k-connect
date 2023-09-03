@@ -6,10 +6,10 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v5.2.0.0
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 1.9.10.
 - **http4k-connect-openai** [Breaking change] Added support for Streaming version of ChatCPT completions to both library and fake implementation.
-- **http4k-connect-amazon-evidently-fake** [New module] Add support for this feature flagging service.  H/T @oharaandrew314
+- **http4k-connect-amazon-evidently-fake** [New module] Add support for this feature flagging service. H/T @oharaandrew314
 
 ### v5.1.7.0
-- **http4k-connect-amazon-dynamodb-fake** Add support for the entire update expression syntax.  H/T @oharaandrew314
+- **http4k-connect-amazon-dynamodb-fake** Add support for the entire update expression syntax. H/T @oharaandrew314
 
 ### v5.1.6.2
 - **http4k-connect-amazon-eventbridge-fake*** - [Fix] Add proper indexing to fake when sending events.
