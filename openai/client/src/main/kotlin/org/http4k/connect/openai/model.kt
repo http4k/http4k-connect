@@ -24,6 +24,7 @@ class ObjectType private constructor(value: String) : StringValue(value) {
         val List = ObjectType.of("list")
         val Model = ObjectType.of("model")
         val ChatCompletion = ObjectType.of("chat.completion")
+        val ChatCompletionChunk = ObjectType.of("chat.completion.chunk")
         val Embedding = ObjectType.of("embedding")
         val ModelPermission = ObjectType.of("model_permission")
     }
@@ -62,10 +63,6 @@ class TokenId private constructor(value: String) : StringValue(value) {
 
 class User private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<User>(::User)
-}
-
-class Content private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<Content>(::Content)
 }
 
 class CompletionId private constructor(value: String) : StringValue(value) {

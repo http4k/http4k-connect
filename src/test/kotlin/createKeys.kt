@@ -18,9 +18,7 @@ object KeyTool {
             keyFactory.generatePublic(X509EncodedKeySpec(it.readBytes())) as RSAPublicKey
         }
 
-        val a = publicKey.asJwk()
-
-        println(a)
+        println(publicKey.asJwk())
 
         return publicKey to privateKey
     }

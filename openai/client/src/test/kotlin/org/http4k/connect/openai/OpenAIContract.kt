@@ -1,10 +1,15 @@
 package org.http4k.connect.openai
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
+import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.startsWith
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
 import org.http4k.connect.openai.ModelName.Companion.TEXT_EMBEDDING_ADA_002
+import org.http4k.connect.openai.ObjectType.Companion.ChatCompletion
+import org.http4k.connect.openai.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
@@ -31,18 +36,35 @@ interface OpenAIContract {
     }
 
     @Test
-    fun `get chat response`() {
-        assertThat(
-            openAi.chatCompletion(
-                GPT3_5,
-                listOf(
-                    Message(System, Content.of("You are Leonado Da Vinci")),
-                    Message(User, Content.of("What is your favourite colour?"))
-                ),
-                1000
-            ).successValue().model.value,
-            startsWith("gpt-3.5-turbo")
-        )
+    fun `get chat response non-stream`() {
+        val responses = openAi.chatCompletion(
+            GPT3_5,
+            listOf(
+                Message(System, "You are Leonardo Da Vinci"),
+                Message(User, "What is your favourite colour?")
+            ),
+            1000,
+            stream = false
+        ).successValue().toList()
+        assertThat(responses.size, equalTo(1))
+        assertThat(responses.first().usage, present())
+        assertThat(responses.first().objectType, equalTo(ChatCompletion))
+    }
+
+    @Test
+    fun `get chat response streaming`() {
+        val responses = openAi.chatCompletion(
+            GPT3_5,
+            listOf(
+                Message(System, "You are Leonardo Da Vinci"),
+                Message(User, "What is your favourite colour?")
+            ),
+            1000,
+            stream = true
+        ).successValue().toList()
+        assertThat(responses.size, greaterThan(0))
+        assertThat(responses.first().usage, absent())
+        assertThat(responses.first().objectType, equalTo(ChatCompletionChunk))
     }
 
     @Test
@@ -50,7 +72,7 @@ interface OpenAIContract {
         assertThat(
             openAi.createEmbeddings(
                 TEXT_EMBEDDING_ADA_002,
-                listOf(Content.of("What is your favourite colour?"))
+                listOf("What is your favourite colour?")
             ).successValue().model.value,
             startsWith("text-embedding-ada-002")
         )
@@ -58,6 +80,6 @@ interface OpenAIContract {
 
     @Test
     fun `can generate image`(approver: Approver) {
-        openAi.generateImage(Content.of("An excellent library"), Size.`256x256`).successValue()
+        openAi.generateImage("An excellent library", Size.`256x256`).successValue()
     }
 }

@@ -1,6 +1,5 @@
 package org.http4k.connect.openai
 
-import de.svenjacobs.loremipsum.LoremIpsum
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
@@ -19,51 +18,24 @@ fun interface ChatCompletionGenerator : (ChatCompletion) -> List<Choice> {
  * Simply reverses the input question
  */
 val ChatCompletionGenerator.Companion.ReverseInput
-    get() = ChatCompletionGenerator { request ->
-        listOf(
-            Choice(
-                0,
-                Message(
-                    System,
-                    Content.of(request.messages.first { it.role == User }.content.value.reversed())
-                ), "stop"
-            )
-        )
+    get() = ChatCompletionGenerator { req ->
+        req.choices(req.messages.first { it.role == User }.content.reversed())
     }
-
-val a = LoremIpsum()
 
 /**
  * Generates Lorem Ipsum paragraphs based on the random generator.
  */
-fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = ChatCompletionGenerator { _ ->
-    listOf(
-        Choice(
-            0,
-            Message(
-                System,
-                Content.of(
-                    de.svenjacobs.loremipsum.LoremIpsum().getParagraphs(
-                        random.nextInt(3, 15)
-                    )
-                )
-            ), "stop"
-        )
-    )
+fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = ChatCompletionGenerator { req ->
+    req.choices(de.svenjacobs.loremipsum.LoremIpsum().getParagraphs(random.nextInt(3, 15)))
 }
 
 /**
  * Simply echoes the request
  */
 val ChatCompletionGenerator.Companion.Echo
-    get() = ChatCompletionGenerator { request ->
-        listOf(
-            Choice(
-                0,
-                Message(
-                    System,
-                    request.messages.first { it.role == User }.content
-                ), "stop"
-            )
-        )
+    get() = ChatCompletionGenerator { req ->
+        req.choices(req.messages.first { it.role == User }.content)
     }
+
+private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))
+    .map { Choice(0, null, Message(System, it), "stop") }

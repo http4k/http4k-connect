@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.openai.ModelName.Companion.GPT3_5
 import org.http4k.connect.openai.Role.Companion.System
+import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.Message
@@ -17,7 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class ChatCompletionGeneratorKtTest {
 
     private val input = ChatCompletion(
-        GPT3_5, listOf(Message(Role.User, Content.of("foobar")))
+        GPT3_5, listOf(Message(User, "foobar"))
     )
 
     @Test
@@ -32,7 +33,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.ReverseInput(input),
             equalTo(
-                listOf(Choice(0, Message(System, Content.of("raboof")), "stop"))
+                listOf(Choice(0, null, Message(System, "raboof "), "stop"))
             )
         )
     }
@@ -42,7 +43,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.Echo(input),
             equalTo(
-                listOf(Choice(0, Message(System, Content.of("foobar")), "stop"))
+                listOf(Choice(0, null, Message(System, "foobar "), "stop"))
             )
         )
     }
