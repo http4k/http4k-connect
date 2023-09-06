@@ -6,6 +6,7 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.http4k.connect.TestClock
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AccessKeyId
@@ -85,16 +86,4 @@ class STSCredentialsProviderTest {
     )
 
     private val arn = ARN.of("arn:aws:foobar")
-}
-
-class TestClock(private var time: Instant) : Clock() {
-    override fun getZone(): ZoneId = TODO("Not yet implemented")
-
-    override fun withZone(zone: ZoneId?): Clock = TODO("Not yet implemented")
-
-    override fun instant(): Instant = time
-
-    fun tickBy(duration: Duration) {
-        time = time.plus(duration)
-    }
 }
