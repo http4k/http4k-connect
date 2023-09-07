@@ -42,7 +42,7 @@ abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
                 ).valueOrNull()
 
                 val events = filterLogEvents(logGroupName, false).valueOrNull()!!
-                assertThat(events.events.size, equalTo(2))
+                assertThat(events.items.size, equalTo(2))
             } catch (e: Exception) {
                 deleteLogGroup(logGroupName)
                 deleteLogStream(logGroupName, logStreamName)

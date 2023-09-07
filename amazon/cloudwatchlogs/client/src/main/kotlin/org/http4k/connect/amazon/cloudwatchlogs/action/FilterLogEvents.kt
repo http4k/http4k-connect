@@ -1,6 +1,8 @@
 package org.http4k.connect.amazon.cloudwatchlogs.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.Paged
+import org.http4k.connect.PagedAction
 import org.http4k.connect.amazon.cloudwatchlogs.CloudWatchLogsAction
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
@@ -27,7 +29,8 @@ data class FilterLogEvents internal constructor(
     val unmask: Boolean = false,
     val filterPattern: String? = null,
     val limit: Int? = null,
-) : CloudWatchLogsAction<FilteredLogEvents>(FilteredLogEvents::class) {
+) : CloudWatchLogsAction<FilteredLogEvents>(FilteredLogEvents::class),
+    PagedAction<NextToken, FilteredLogEvent, FilteredLogEvents, FilterLogEvents> {
     constructor(
         logGroupName: LogGroupName,
         unmask: Boolean = false,
@@ -73,6 +76,8 @@ data class FilterLogEvents internal constructor(
         filterPattern,
         limit
     )
+
+    override fun next(token: NextToken): FilterLogEvents = copy(nextToken = token)
 }
 
 @JsonSerializable
@@ -92,7 +97,11 @@ data class SearchedLogStreams(
 
 @JsonSerializable
 data class FilteredLogEvents(
-    val events: List<FilteredLogEvent>,
-    val nextToken: NextToken,
+    internal val events: List<FilteredLogEvent>,
+    val nextToken: NextToken?,
     val searchedLogStreams: List<SearchedLogStreams>
-)
+) : Paged<NextToken, FilteredLogEvent> {
+    override fun token() = nextToken
+
+    override val items = events
+}
