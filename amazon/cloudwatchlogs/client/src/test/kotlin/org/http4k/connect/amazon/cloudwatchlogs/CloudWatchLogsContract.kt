@@ -28,7 +28,7 @@ abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
     @Test
     fun `log events lifecycle`() {
         with(cloudWatchLogs) {
-            createLogGroup(logGroupName, emptyMap()).valueOrNull()!!
+            createLogGroup(logGroupName, mapOf("1" to "2")).valueOrNull()!!
             createLogStream(logGroupName, logStreamName).valueOrNull()!!
             try {
                 putLogEvents(
@@ -42,7 +42,7 @@ abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
                 assertThat(events.events.size, equalTo(2))
             } catch (e: Exception) {
                 deleteLogGroup(logGroupName)
-                deleteLogStream(logStreamName)
+                deleteLogStream(logGroupName, logStreamName)
             }
         }
     }

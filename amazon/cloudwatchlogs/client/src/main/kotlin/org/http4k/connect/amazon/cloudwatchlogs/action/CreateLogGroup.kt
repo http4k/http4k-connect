@@ -10,6 +10,6 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class CreateLogGroup(
     val logGroupName: LogGroupName,
-    val tags: Map<String, String> = emptyMap(),
+    val tags: Map<String, String>,
     val kmsKeyId: KMSKeyId? = null
 ) : CloudWatchLogsAction<Unit>(Unit::class)

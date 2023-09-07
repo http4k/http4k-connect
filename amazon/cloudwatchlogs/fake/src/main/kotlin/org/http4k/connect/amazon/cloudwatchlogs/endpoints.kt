@@ -35,9 +35,10 @@ fun AmazonJsonFake.createLogStream(logGroups: Storage<LogGroup>) = route<CreateL
 }
 
 fun AmazonJsonFake.deletaLogStream(logGroups: Storage<LogGroup>) = route<DeleteLogStream> {
-    val name = it.logStreamName
-    logGroups.keySet("")
-        .forEach { logGroups[it]!!.streams -= name }
+    when (val group = logGroups[it.logGroupName.value]) {
+        null -> JsonError("not found", "${it.logGroupName} not found")
+        else -> group.streams -= it.logStreamName
+    }
 }
 
 fun AmazonJsonFake.deletaLogGroup(logGroups: Storage<LogGroup>) = route<DeleteLogGroup> {
