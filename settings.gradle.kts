@@ -28,6 +28,7 @@ includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
 includeVendorSystem("amazon", "cloudfront")
+includeVendorSystem("amazon", "cloudwatchlogs")
 includeVendorSystem("amazon", "cognito")
 includeVendorSystem("amazon", "containercredentials")
 includeVendorSystem("amazon", "eventbridge")

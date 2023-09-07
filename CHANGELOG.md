@@ -3,10 +3,14 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.2.1.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-amazon-cloudwatchlogs** - [New module] Adapter and fake implementation.
+
 ### v5.2.0.0
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 1.9.10.
 - **http4k-connect-openai** [Breaking change] Added support for Streaming version of ChatCPT completions to both library and fake implementation.
-- **http4k-connect-amazon-evidently-fake** [New module] Add support for this feature flagging service. H/T @oharaandrew314
+- **http4k-connect-amazon-evidently** [New module] Add support for this feature flagging service. H/T @oharaandrew314
 
 ### v5.1.7.0
 - **http4k-connect-amazon-dynamodb-fake** Add support for the entire update expression syntax. H/T @oharaandrew314

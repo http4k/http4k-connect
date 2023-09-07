@@ -1,0 +1,93 @@
+package org.http4k.connect.amazon.cloudwatchlogs.action
+
+import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.cloudwatchlogs.CloudWatchLogsAction
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
+import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
+import org.http4k.connect.amazon.core.model.ARN
+import org.http4k.connect.amazon.core.model.Timestamp
+import se.ansman.kotshi.JsonSerializable
+
+@Http4kConnectAction
+@JsonSerializable
+data class FilterLogEvents internal constructor(
+    val logGroupName: LogGroupName? = null,
+    val logGroupIdentifier: ARN? = null,
+    val logStreamNames: List<LogStreamName>? = null,
+    val logStreamNamePrefix: String? = null,
+    val nextToken: NextToken? = null,
+    val startTime: Timestamp? = null,
+    val endTime: Timestamp? = null,
+    val unmask: Boolean = false,
+    val filterPattern: String? = null,
+    val limit: Int? = null,
+) : CloudWatchLogsAction<FilteredLogEvents>(FilteredLogEvents::class) {
+    constructor(
+        logGroupName: LogGroupName,
+        unmask: Boolean = false,
+        logStreamNames: List<LogStreamName>? = null,
+        logStreamNamePrefix: String? = null,
+        nextToken: NextToken? = null,
+        startTime: Timestamp? = null,
+        endTime: Timestamp? = null,
+        filterPattern: String? = null,
+        limit: Int? = null
+    ) : this(
+        logGroupName,
+        null,
+        logStreamNames,
+        logStreamNamePrefix,
+        nextToken,
+        startTime,
+        endTime,
+        unmask,
+        filterPattern,
+        limit
+    )
+
+    constructor(
+        logGroupIdentifier: ARN,
+        unmask: Boolean = false,
+        logStreamNames: List<LogStreamName>? = null,
+        logStreamNamePrefix: String? = null,
+        nextToken: NextToken? = null,
+        startTime: Timestamp? = null,
+        endTime: Timestamp? = null,
+        filterPattern: String? = null,
+        limit: Int? = null
+    ) : this(
+        null,
+        logGroupIdentifier,
+        logStreamNames,
+        logStreamNamePrefix,
+        nextToken,
+        startTime,
+        endTime,
+        unmask,
+        filterPattern,
+        limit
+    )
+}
+
+@JsonSerializable
+data class FilteredLogEvent(
+    val eventId: String?,
+    val ingestionTime: Timestamp,
+    val logStreamName: LogStreamName,
+    val message: String,
+    val timestamp: Timestamp
+)
+
+@JsonSerializable
+data class SearchedLogStreams(
+    val logStreamName: LogStreamName,
+    val searchedCompletely: Boolean
+)
+
+@JsonSerializable
+data class FilteredLogEvents(
+    val events: List<FilteredLogEvent>,
+    val nextToken: NextToken,
+    val searchedLogStreams: List<SearchedLogStreams>
+)
