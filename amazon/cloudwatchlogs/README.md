@@ -2,7 +2,12 @@
 
 The CloudWatchLogs connector provides the following Actions:
 
-     *  **
+* CreateLogGroup
+* CreateLogStream
+* DeleteLogGroup
+* DeleteLogStream
+* FilterLogEvents
+* PutLogEvents
 
 The client APIs utilise the `http4k-aws` module for request signing, which means no dependencies on the incredibly fat
 Amazon-SDK JARs. This means this integration is perfect for running Serverless Lambdas where binary size is a
@@ -13,17 +18,19 @@ performance factor.
 ```kotlin
 const val USE_REAL_CLIENT = false
 
-fun main() {
-    // we can connect to the real service or the fake (drop in replacement)
-    val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeCloudWatch()
+val http: HttpHandler = if (USE_REAL_CLIENT) JavaHttpClient() else FakeCloudWatchLogs()
 
-    // create a client
-    val client =
-        CloudWatchLogs.Http({ AwsCredentials("accessKeyId", "secretKey") }, http.debug())
+// creatxe a client
+val cloudWatchLogs =
+    CloudWatchLogs.Http(Region.US_EAST_1, { AwsCredentials("accessKeyId", "secretKey") }, http.debug())
 
-    // all operations return a Result monad of the API type
-    val result: Result<Unit, RemoteFailure> = client
-}
+val result: Result<PutLogEventsResponse, RemoteFailure> = cloudWatchLogs.putLogEvents(
+    LogGroupName.of("foobar"),
+    LogStreamName.of("stream"),
+    emptyList()
+)
+
+println(result)
 ```
 
 ### Default Fake port: 56514

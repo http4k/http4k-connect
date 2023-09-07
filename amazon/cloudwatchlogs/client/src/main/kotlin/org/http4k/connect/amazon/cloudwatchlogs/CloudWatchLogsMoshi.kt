@@ -2,11 +2,11 @@ package org.http4k.connect.amazon.cloudwatchlogs
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import org.http4k.connect.amazon.model.EventId
-import org.http4k.connect.amazon.model.LogGroupName
-import org.http4k.connect.amazon.model.LogIndex
-import org.http4k.connect.amazon.model.LogStreamName
-import org.http4k.connect.amazon.model.NextToken
+import org.http4k.connect.amazon.cloudwatchlogs.model.EventId
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogIndex
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
+import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
 import org.http4k.format.AwsCoreJsonAdapterFactory
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter

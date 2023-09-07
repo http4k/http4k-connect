@@ -86,6 +86,7 @@ dependencies {
 
 - AWS
     - [CloudFront](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-cloudfront"` / `"org.http4k:http4k-connect-amazon-cloudfront-fake"`
+    - [CloudWatchLogs](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-cloudwatchlogs"` / `"org.http4k:http4k-connect-amazon-cloudwatchlogs-fake"`
     - [DynamoDb](./amazon/dynamodb) -> `"org.http4k:http4k-connect-amazon-dynamodb"` / `"org.http4k:http4k-connect-amazon-dynamodb-fake"`
     - [EventBridge](./amazon/eventbridge) -> `"org.http4k:http4k-connect-amazon-eventbridge"` / `"org.http4k:http4k-connect-amazon-eventbridge-fake"`
     - [Evidently](./amazon/evidently) -> `"org.http4k:http4k-connect-amazon-evidently"` / `"org.http4k:http4k-connect-amazon-evidently-fake"`
