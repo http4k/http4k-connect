@@ -7,6 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.Environment.Companion.EMPTY
+import org.http4k.connect.TestClock
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.AWS_ROLE_ARN
 import org.http4k.connect.amazon.AWS_WEB_IDENTITY_TOKEN

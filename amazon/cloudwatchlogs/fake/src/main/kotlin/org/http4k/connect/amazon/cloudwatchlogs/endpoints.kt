@@ -11,8 +11,8 @@ import org.http4k.connect.amazon.cloudwatchlogs.action.FilteredLogEvent
 import org.http4k.connect.amazon.cloudwatchlogs.action.FilteredLogEvents
 import org.http4k.connect.amazon.cloudwatchlogs.action.PutLogEvents
 import org.http4k.connect.amazon.cloudwatchlogs.action.SearchedLogStreams
-import org.http4k.connect.amazon.model.LogGroupName
-import org.http4k.connect.amazon.model.NextToken
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
+import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
 import org.http4k.connect.storage.Storage
 import java.util.UUID
 
