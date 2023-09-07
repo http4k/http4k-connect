@@ -6,6 +6,8 @@ import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import org.http4k.connect.amazon.model.LogGroupName
 import org.http4k.connect.amazon.model.LogStreamName
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
