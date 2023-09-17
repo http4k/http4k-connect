@@ -86,90 +86,52 @@ val boolean: Result<Boolean, LensFailure> = attrBool.asResult()(item)
 
 It is also possible to `map()` lenses to provide marshalling into your own types.
 
-### DAO-Style Dynamo Table Mapper
+### DynamoDB Table Repository
 
-Building on top of the existing lens-based object mapper is a DAO-style abstraction to simplify repositories.
-Many of the lower-level operations are abstracted away to provide a simple typesafe interface.
-
-To begin creating a DAO, let's define a model to map:
+A simplified API for mapping documents to and from a single table with `get`, `put`, `scan`, `query`, etc.
 
 ```kotlin
-data class KittyCat(
-    val ownerId: UUID,
+private const val USE_REAL_CLIENT = false
+
+// define our data class
+private data class Person(
     val name: String,
     val id: UUID = UUID.randomUUID()
 )
+
+private val john = Person("John")
+private val jane = Person("Jane")
+
+fun main() {
+    // build client (real or fake)
+    val http = if (USE_REAL_CLIENT) JavaHttpClient() else FakeDynamoDb()
+    val dynamoDb = DynamoDb.Http(Region.CA_CENTRAL_1, { AwsCredentials("id", "secret") }, http.debug())
+
+    // defined table mapper
+    val table = dynamoDb.tableMapper<Person, UUID, Unit>(
+        tableName = TableName.of("people"),
+        hashKeyAttribute = Attribute.uuid().required("id")
+    )
+
+    // create table
+    table.createTable()
+
+    // save
+    table.save(john)
+    table.save(jane)
+
+    // get
+    val johnAgain = table.get(john.id)
+
+    // scan
+    val people = table.primaryIndex().scan().take(10)
+
+    // delete
+    table.delete(john)
+}
 ```
 
-From there, we can imagine two access patterns:
-- get by id
-- list for owner
-
-We'll satisfy them with a primary and secondary index:
-
-```kotlin
-val idAttr = Attribute.uuid().required("id")
-val ownerIdAttr = Attribute.uuid().required("ownerId")
-
-val primaryIndex = DynamoDbTableMapperSchema.Primary(idAttr)
-
-val ownerIndex = DynamoDbTableMapperSchema.GlobalSecondary(
-    indexName = IndexName.of("owners"),
-    hashKeyAttribute = ownerIdAttr,
-    sortKeyAttribute = idAttr
-)
-```
-
-Now we can define a DAO:
-
-```kotlin
-val dynamoDb = DynamoDb.Http(System.getenv())
-
-val table = dynamoDb.tableMapper<KittyCat, UUID, Unit>(
-    TableName = TableName.of("cats"),
-    primarySchema = primaryIndex
-)
-
-// optionally, create the table and its secondary index
-table.createTable(ownerIndex)
-```
-
-and add some documents:
-
-```kotlin
-// individually
-table += KittyCat(owner1, "Tigger")
-
-// or batched
-table += listOf(KittyCat(owner2, "Smokie"), KittyCat(owner2, "Bandit"))
-```
-
-and retrieve them:
-
-```kotlin
-// by key
-val cat = table[UUID.randomUUID()]
-
-// batched by key
-val cats = table[UUID.randomUUID(), UUID.randomUUID()]
-
-// query by index
-val ownerCats = table.index(ownerIndex).query(UUID.randomUUID()).take(100)
-```
-
-and delete them:
-
-```kotlin
-// by model
-table.delete(cat)
-
-// by key
-table.delete(cat.id)
-
-// batched
-table.batchDelete(cat.id, cat2.id)
-```
-
+See another [example](/amazon/dynamodb/client/src/examples/kotlin/using_the_table_mapper.kt) with secondary indices.
 
 ### General example usage of API client
 
