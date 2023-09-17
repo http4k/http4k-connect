@@ -1,12 +1,14 @@
 package org.http4k.connect.amazon.cloudwatchlogs.action
 
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.Paged
+import org.http4k.connect.PagedAction
 import org.http4k.connect.amazon.cloudwatchlogs.CloudWatchLogsAction
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.TimestampMillis
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
@@ -17,20 +19,21 @@ data class FilterLogEvents internal constructor(
     val logStreamNames: List<LogStreamName>? = null,
     val logStreamNamePrefix: String? = null,
     val nextToken: NextToken? = null,
-    val startTime: Timestamp? = null,
-    val endTime: Timestamp? = null,
+    val startTime: TimestampMillis? = null,
+    val endTime: TimestampMillis? = null,
     val unmask: Boolean = false,
     val filterPattern: String? = null,
     val limit: Int? = null,
-) : CloudWatchLogsAction<FilteredLogEvents>(FilteredLogEvents::class) {
+) : CloudWatchLogsAction<FilteredLogEvents>(FilteredLogEvents::class),
+    PagedAction<NextToken, FilteredLogEvent, FilteredLogEvents, FilterLogEvents> {
     constructor(
         logGroupName: LogGroupName,
         unmask: Boolean = false,
         logStreamNames: List<LogStreamName>? = null,
         logStreamNamePrefix: String? = null,
         nextToken: NextToken? = null,
-        startTime: Timestamp? = null,
-        endTime: Timestamp? = null,
+        startTime: TimestampMillis? = null,
+        endTime: TimestampMillis? = null,
         filterPattern: String? = null,
         limit: Int? = null
     ) : this(
@@ -52,8 +55,8 @@ data class FilterLogEvents internal constructor(
         logStreamNames: List<LogStreamName>? = null,
         logStreamNamePrefix: String? = null,
         nextToken: NextToken? = null,
-        startTime: Timestamp? = null,
-        endTime: Timestamp? = null,
+        startTime: TimestampMillis? = null,
+        endTime: TimestampMillis? = null,
         filterPattern: String? = null,
         limit: Int? = null
     ) : this(
@@ -68,15 +71,17 @@ data class FilterLogEvents internal constructor(
         filterPattern,
         limit
     )
+
+    override fun next(token: NextToken): FilterLogEvents = copy(nextToken = token)
 }
 
 @JsonSerializable
 data class FilteredLogEvent(
     val eventId: String?,
-    val ingestionTime: Timestamp,
+    val ingestionTime: TimestampMillis,
     val logStreamName: LogStreamName,
     val message: String,
-    val timestamp: Timestamp
+    val timestamp: TimestampMillis
 )
 
 @JsonSerializable
@@ -87,7 +92,11 @@ data class SearchedLogStreams(
 
 @JsonSerializable
 data class FilteredLogEvents(
-    val events: List<FilteredLogEvent>,
-    val nextToken: NextToken,
+    internal val events: List<FilteredLogEvent>,
+    val nextToken: NextToken?,
     val searchedLogStreams: List<SearchedLogStreams>
-)
+) : Paged<NextToken, FilteredLogEvent> {
+    override fun token() = nextToken
+
+    override val items = events
+}

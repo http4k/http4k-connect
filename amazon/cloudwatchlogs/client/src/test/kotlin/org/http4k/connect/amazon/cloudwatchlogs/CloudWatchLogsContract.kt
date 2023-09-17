@@ -2,21 +2,22 @@ package org.http4k.connect.amazon.cloudwatchlogs
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import dev.forkhandles.result4k.allValues
 import dev.forkhandles.result4k.valueOrNull
-import org.http4k.connect.TestClock
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.cloudwatchlogs.action.LogEvent
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
-import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.TimestampMillis
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
+import java.time.Clock
 import java.util.UUID
 
 abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
 
-    private val clock = TestClock()
+    private val clock = Clock.systemUTC()
 
     private val cloudWatchLogs by lazy {
         CloudWatchLogs.Http(aws.region, { aws.credentials }, http.debug())
@@ -33,13 +34,18 @@ abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
             try {
                 putLogEvents(
                     logGroupName, logStreamName, listOf(
-                        LogEvent("hello", Timestamp.of(clock.instant())),
-                        LogEvent("world", Timestamp.of(clock.instant()))
+                        LogEvent("hello", TimestampMillis.of(clock.instant())),
+                        LogEvent("world", TimestampMillis.of(clock.instant()))
                     )
                 ).valueOrNull()
 
-                val events = filterLogEvents(logGroupName, false).valueOrNull()!!
-                assertThat(events.events.size, equalTo(2))
+                Thread.sleep(2000)
+
+                val eventResults = filterLogEventsPaginated(logGroupName, false,
+                    logStreamNames = listOf(logStreamName),
+                    limit = 1).take(2).toList()
+                val result = eventResults.allValues().valueOrNull()!!.flatten()
+                assertThat(result.size, equalTo(2))
             } catch (e: Exception) {
                 deleteLogGroup(logGroupName)
                 deleteLogStream(logGroupName, logStreamName)

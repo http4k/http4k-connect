@@ -11,9 +11,10 @@ import org.http4k.connect.amazon.cloudwatchlogs.action.FilteredLogEvent
 import org.http4k.connect.amazon.cloudwatchlogs.action.FilteredLogEvents
 import org.http4k.connect.amazon.cloudwatchlogs.action.PutLogEvents
 import org.http4k.connect.amazon.cloudwatchlogs.action.SearchedLogStreams
-import org.http4k.connect.amazon.model.LogGroupName
-import org.http4k.connect.amazon.model.NextToken
+import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
+import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
 import org.http4k.connect.storage.Storage
+import java.lang.Integer.MAX_VALUE
 import java.util.UUID
 
 
@@ -49,25 +50,58 @@ fun AmazonJsonFake.deletaLogGroup(logGroups: Storage<LogGroup>) = route<DeleteLo
 }
 
 fun AmazonJsonFake.putLogEvents(logGroups: Storage<LogGroup>) = route<PutLogEvents> { req ->
+    val totalEventCount = logGroups.keySet().sumOf { logGroups[it]!!.streams.values.flatten().size }
+
     when (val group = logGroups[req.logGroupName.value]) {
         null -> JsonError("not found", "${req.logGroupName} not found")
-        else -> group.streams.getOrPut(req.logStreamName) { mutableListOf() } += req.logEvents.map {
-            FilteredLogEvent(UUID(0, 0).toString(), it.timestamp, req.logStreamName, it.message, it.timestamp)
+        else -> group.streams.getOrPut(req.logStreamName) { mutableListOf() } += req.logEvents.mapIndexed { i, it ->
+            FilteredLogEvent(
+                UUID(req.logStreamName.hashCode().toLong(), (totalEventCount + i).toLong()).toString(),
+                it.timestamp,
+                req.logStreamName,
+                it.message,
+                it.timestamp
+            )
         }
     }
 }
 
-fun AmazonJsonFake.filterLogEvents(logGroups: Storage<LogGroup>) = route<FilterLogEvents> {
-    val group = (it.logGroupName ?: it.logGroupIdentifier?.resourceId(LogGroupName::of))
+fun AmazonJsonFake.filterLogEvents(logGroups: Storage<LogGroup>) = route<FilterLogEvents> { req ->
+    val group = (req.logGroupName ?: req.logGroupIdentifier?.resourceId(LogGroupName::of))
         ?.let { logGroups[it.value] }
 
     when (group) {
-        null -> FilteredLogEvents(emptyList(), NextToken.of("123"), emptyList())
-        else -> FilteredLogEvents(
-            group.streams.flatMap { it.value }.sortedBy { it.timestamp.value },
-            NextToken.of("123"), group.streams.map {
-                SearchedLogStreams(it.key, true)
+        null -> FilteredLogEvents(emptyList(), null, emptyList())
+        else -> {
+            val toDrop = req.nextToken?.value?.toInt() ?: 0
+
+            val eventPredicate = when {
+                req.logStreamNames != null -> {
+                    { event: FilteredLogEvent -> req.logStreamNames!!.contains(event.logStreamName) }
+                }
+
+                req.logStreamNamePrefix != null -> { key: FilteredLogEvent ->
+                    key.logStreamName.value.startsWith(req.logStreamNamePrefix!!)
+                }
+
+                else -> { _: FilteredLogEvent -> false }
             }
-        )
+
+            val filteredEvents = group.streams.values.flatten().sortedBy { it.timestamp.value }
+                .filter(eventPredicate)
+
+            val results = filteredEvents.drop(toDrop).take(req.limit ?: MAX_VALUE)
+
+            FilteredLogEvents(
+                results,
+                results.lastOrNull()?.eventId
+                    ?.let(UUID::fromString)
+                    ?.leastSignificantBits
+                    ?.plus(1)
+                    ?.toString()
+                    ?.let(NextToken::of),
+                filteredEvents.map { it.logStreamName }.toSet().map { SearchedLogStreams(it, true) }
+            )
+        }
     }
 }
