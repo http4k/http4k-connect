@@ -14,6 +14,7 @@ import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.TimestampMillis
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
@@ -24,8 +25,8 @@ data class FilterLogEvents internal constructor(
     val logStreamNames: List<LogStreamName>? = null,
     val logStreamNamePrefix: String? = null,
     val nextToken: NextToken? = null,
-    val startTime: Timestamp? = null,
-    val endTime: Timestamp? = null,
+    val startTime: TimestampMillis? = null,
+    val endTime: TimestampMillis? = null,
     val unmask: Boolean = false,
     val filterPattern: String? = null,
     val limit: Int? = null,
@@ -37,8 +38,8 @@ data class FilterLogEvents internal constructor(
         logStreamNames: List<LogStreamName>? = null,
         logStreamNamePrefix: String? = null,
         nextToken: NextToken? = null,
-        startTime: Timestamp? = null,
-        endTime: Timestamp? = null,
+        startTime: TimestampMillis? = null,
+        endTime: TimestampMillis? = null,
         filterPattern: String? = null,
         limit: Int? = null
     ) : this(
@@ -60,8 +61,8 @@ data class FilterLogEvents internal constructor(
         logStreamNames: List<LogStreamName>? = null,
         logStreamNamePrefix: String? = null,
         nextToken: NextToken? = null,
-        startTime: Timestamp? = null,
-        endTime: Timestamp? = null,
+        startTime: TimestampMillis? = null,
+        endTime: TimestampMillis? = null,
         filterPattern: String? = null,
         limit: Int? = null
     ) : this(
@@ -83,10 +84,10 @@ data class FilterLogEvents internal constructor(
 @JsonSerializable
 data class FilteredLogEvent(
     val eventId: String?,
-    val ingestionTime: Timestamp,
+    val ingestionTime: TimestampMillis,
     val logStreamName: LogStreamName,
     val message: String,
-    val timestamp: Timestamp
+    val timestamp: TimestampMillis
 )
 
 @JsonSerializable

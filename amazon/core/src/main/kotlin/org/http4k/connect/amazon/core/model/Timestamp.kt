@@ -5,6 +5,9 @@ import dev.forkhandles.values.LongValueFactory
 import dev.forkhandles.values.minValue
 import java.time.Instant
 
+/**
+ * Note: This timestamp is measured to the epoch second
+ */
 class Timestamp private constructor(value: Long) : LongValue(value) {
     fun toInstant(): Instant = Instant.ofEpochSecond(value)
 

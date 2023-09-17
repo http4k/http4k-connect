@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.TimestampMillis
 import se.ansman.kotshi.JsonSerializable
 
 
@@ -30,5 +31,5 @@ data class RejectedLogEventsInfo(
 data class PutLogEventsResponse(val rejectedLogEventsInfo: RejectedLogEventsInfo?)
 
 @JsonSerializable
-data class LogEvent(val message: String, val timestamp: Timestamp)
+data class LogEvent(val message: String, val timestamp: TimestampMillis)
 

@@ -11,6 +11,7 @@ import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.TimestampMillis
 import org.http4k.connect.amazon.core.model.WebIdentityToken
 import org.http4k.connect.model.Base64Blob
 import org.http4k.lens.BiDiMapping
@@ -29,4 +30,5 @@ fun <T> AutoMappingConfiguration<T>.withAwsCoreMappings() = apply {
     value(SessionToken)
     value(WebIdentityToken)
     double(BiDiMapping({ Timestamp.of(it.toLong()) }, { it.value.toDouble() }))
+    value(TimestampMillis)
 }

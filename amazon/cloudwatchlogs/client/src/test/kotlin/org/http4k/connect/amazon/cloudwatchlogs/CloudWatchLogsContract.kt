@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.core.model.TimestampMillis
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
@@ -37,8 +38,8 @@ abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
             try {
                 putLogEvents(
                     logGroupName, logStreamName, listOf(
-                        LogEvent("hello", Timestamp.of(clock.instant())),
-                        LogEvent("world", Timestamp.of(clock.instant()))
+                        LogEvent("hello", TimestampMillis.of(clock.instant())),
+                        LogEvent("world", TimestampMillis.of(clock.instant()))
                     )
                 ).valueOrNull()
 
