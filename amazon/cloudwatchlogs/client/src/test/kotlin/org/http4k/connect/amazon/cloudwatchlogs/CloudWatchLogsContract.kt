@@ -8,10 +8,6 @@ import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.cloudwatchlogs.action.LogEvent
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
-import org.http4k.connect.amazon.core.model.Timestamp
-import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
-import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.core.model.TimestampMillis
 import org.http4k.core.HttpHandler
 import org.http4k.filter.debug

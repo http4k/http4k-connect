@@ -4,10 +4,6 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.cloudwatchlogs.CloudWatchLogsAction
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
-import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
-import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
-import org.http4k.connect.amazon.core.model.Timestamp
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.core.model.TimestampMillis
 import se.ansman.kotshi.JsonSerializable
 
