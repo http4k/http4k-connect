@@ -43,6 +43,8 @@ abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
                     )
                 ).valueOrNull()
 
+                Thread.sleep(2000)
+
                 val eventResults = filterLogEventsPaginated(logGroupName, false,
                     logStreamNames = listOf(logStreamName),
                     limit = 1).take(2).toList()
