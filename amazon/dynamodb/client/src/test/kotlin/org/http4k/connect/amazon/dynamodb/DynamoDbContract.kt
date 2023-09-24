@@ -97,7 +97,6 @@ abstract class DynamoDbContract(
                     Get(table, Item(attrS of "hello4"))
                 )
             ).successValue()
-            println(result)
             assertThat(attrS(result.responses[0]!!), equalTo("hello2"))
             assertThat(attrS(result.responses[1]!!), equalTo("hello3"))
             assertThat(result.responses[2], absent())

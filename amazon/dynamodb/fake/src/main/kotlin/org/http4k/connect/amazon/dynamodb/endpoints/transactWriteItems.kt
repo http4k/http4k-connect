@@ -33,13 +33,6 @@ fun AmazonJsonFake.transactWriteItems(tables: Storage<DynamoTable>) = route<Tran
     }
 }
 
-fun Storage<DynamoTable>.dump(s: String) {
-    keySet().forEach {
-        println("*****$s $it")
-        println(this[it]?.items?.joinToString("\n"))
-    }
-}
-
 private fun List<DynamoDbAction<ModifiedItem>>.applyTo(tables: Storage<DynamoTable>) {
     forEach {
         when (it) {
