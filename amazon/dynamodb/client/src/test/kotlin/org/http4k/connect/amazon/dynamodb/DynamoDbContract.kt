@@ -71,6 +71,12 @@ abstract class DynamoDbContract(
         with(dynamo) {
             transactWriteItems(
                 listOf(
+                    Put(table, Item(attrS of "hello5"))
+                )
+            ).successValue()
+
+            transactWriteItems(
+                listOf(
                     Update(
                         table,
                         Item(attrS of "hello"),
@@ -79,7 +85,8 @@ abstract class DynamoDbContract(
                     ),
                     Put(table, createItem("hello2")),
                     Put(table, createItem("hello3")),
-                    Delete(table, Item(attrS of "hello4"))
+                    Delete(table, Item(attrS of "hello4")),
+                    Delete(table, Item(attrS of "hello5"))
                 )
             ).successValue()
 
@@ -90,7 +97,7 @@ abstract class DynamoDbContract(
                     Get(table, Item(attrS of "hello4"))
                 )
             ).successValue()
-
+            println(result)
             assertThat(attrS(result.responses[0]!!), equalTo("hello2"))
             assertThat(attrS(result.responses[1]!!), equalTo("hello3"))
             assertThat(result.responses[2], absent())

@@ -10,11 +10,6 @@ class FakeDynamoDbTest : DynamoDbContract(ZERO) {
     override val aws = fakeAwsEnvironment
 
     @Disabled
-    override fun `transactional items`() {
-        TODO("support")
-    }
-
-    @Disabled
     override fun `partiSQL operations`() {
         TODO("support")
     }

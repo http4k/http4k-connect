@@ -22,7 +22,7 @@ fun AmazonJsonFake.transactWriteItems(tables: Storage<DynamoTable>) = route<Tran
             else -> {
                 val attempts = transactionItems.attemptUsing(tables)
                 when {
-                    attempts.isNotEmpty() -> JsonError("in tx", attempts.map { it.toString() }.joinToString(","))
+                    attempts.isNotEmpty() -> JsonError("in tx", attempts.joinToString(",") { it.toString() })
                     else -> {
                         transactionItems.applyTo(tables)
                         ModifiedItems()
@@ -30,6 +30,13 @@ fun AmazonJsonFake.transactWriteItems(tables: Storage<DynamoTable>) = route<Tran
                 }
             }
         }
+    }
+}
+
+fun Storage<DynamoTable>.dump(s: String) {
+    keySet().forEach {
+        println("*****$s $it")
+        println(this[it]?.items?.joinToString("\n"))
     }
 }
 
