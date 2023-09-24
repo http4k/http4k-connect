@@ -64,7 +64,7 @@ class FakeDynamoDb(
             api.query(tables),
             api.scan(tables),
             api.transactGetItems(tables),
-            api.transactWriteItems(tables),// todo
+            api.transactWriteItems(tables),
             api.updateItem(tables),
             api.updateTable(tables),
             api.importTable(tables, tableImports::add, s3BucketSources, clock),

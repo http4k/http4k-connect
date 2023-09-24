@@ -1,6 +1,10 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
+import org.http4k.connect.amazon.JsonError
 import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
+import org.http4k.connect.amazon.dynamodb.DynamoTable
+import org.http4k.connect.amazon.dynamodb.action.ModifiedItem
+import org.http4k.connect.amazon.dynamodb.endpoints.UpdateResult.NotFound
 import org.http4k.connect.amazon.dynamodb.grammar.AttributeNameValue
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbConditionalGrammar
 import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbProjectionGrammar
@@ -14,9 +18,10 @@ import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
 import org.http4k.connect.amazon.dynamodb.model.KeyType
 import org.http4k.connect.amazon.dynamodb.model.TableDescription
+import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
-import kotlin.Comparator
+import org.http4k.connect.storage.Storage
 
 fun Item.asItemResult(): Map<String, Map<String, Any>> =
     mapKeys { it.key.value }.mapValues { convert(it.value) }
@@ -45,6 +50,7 @@ fun Item.project(
                 values[0].M != null -> AttributeValue.Map(values
                     .map { it.M!! }
                     .fold(Item()) { acc, next -> acc + next })
+
                 else -> values[0]
             }
         }.toMap()
@@ -132,3 +138,33 @@ fun Item.key(schema: List<KeySchema>): Key {
         if (value == null) null else key.AttributeName to value
     }.toMap()
 }
+
+/**
+ * The result of an update operation
+ */
+sealed interface UpdateResult {
+    val result: Any?
+
+    class UpdateOk(item: Item, val updatedTable: DynamoTable) : UpdateResult {
+        override val result = ModifiedItem(item.asItemResult())
+    }
+
+    data object ConditionFailed : UpdateResult {
+        override val result = JsonError(
+            "com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException",
+            "The conditional request failed"
+        )
+    }
+
+    data object NotFound : UpdateResult {
+        override val result = null
+    }
+}
+
+internal fun <Req> Storage<DynamoTable>.runUpdate(table: TableName, t: Req, update: TryModifyItem<Req>): Any? {
+    val updateResult = this[table.value]?.let { update(t, it) } ?: NotFound
+    if (updateResult is UpdateResult.UpdateOk) this[table.value] = updateResult.updatedTable
+    return updateResult.result
+}
+
+fun interface TryModifyItem<T> : (T, DynamoTable) -> UpdateResult

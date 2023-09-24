@@ -3,11 +3,18 @@ package org.http4k.connect.amazon.dynamodb.endpoints
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.action.DeleteItem
+import org.http4k.connect.amazon.dynamodb.endpoints.UpdateResult.UpdateOk
+import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.storage.Storage
 
-fun AmazonJsonFake.deleteItem(tables: Storage<DynamoTable>) = route<DeleteItem> {
-    val tableName = it.TableName
-    tables[tableName.value]?.let { existing ->
-        tables[tableName.value] = existing.withoutItem(it.Key)
+fun AmazonJsonFake.deleteItem(tables: Storage<DynamoTable>) = route<DeleteItem> { req ->
+    tables.runUpdate(req.TableName, req, tryModifyDelete)
+}
+
+internal val tryModifyDelete = TryModifyItem<DeleteItem> { req, table ->
+    val existingItem = table.retrieve(req.Key)
+    when {
+        existingItem != null -> UpdateOk(existingItem, table.withoutItem(req.Key))
+        else -> UpdateOk(Item(), table)
     }
 }
