@@ -99,7 +99,16 @@ private fun generateExtensionFunction(
 
     ctr.parameters.forEach {
         val base = ParameterSpec.builder(it.name!!.asString(), it.type.toTypeName())
-        if (it.type.resolve().isMarkedNullable) base.defaultValue(CodeBlock.of("null"))
+        with(it.type.resolve()) {
+            if (isMarkedNullable) base.defaultValue(CodeBlock.of("null"))
+            else if (it.hasDefault) {
+                if (starProjection().toString() == "Map<*, *>") base.defaultValue(CodeBlock.of("emptyMap()"))
+                else if (starProjection().toString() == "List<*>") base.defaultValue(CodeBlock.of("emptyList()"))
+                else if (starProjection().toString() == "Set<*>") base.defaultValue(CodeBlock.of("emptySet()"))
+                else {
+                }
+            } else { }
+        }
         baseFunction.addParameter(base.build())
     }
     return baseFunction.build()
