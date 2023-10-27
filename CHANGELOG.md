@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.2.6.0 (uncut)
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-*** - [Breaking - dev] http4k-connect is now built with Java 21.
+
 ### v5.2.5.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-*** - Generated extension functions create defaults for collections types when they are defaulted in the core Action.
