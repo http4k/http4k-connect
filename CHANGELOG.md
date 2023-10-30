@@ -6,6 +6,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v5.2.6.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-*** - [Breaking - dev] http4k-connect is now built with Java 21.
+- **http4k-connect-amazon-iamidentitycenter** - [New module] Adapter and fake implementation, plus interactive SSO login via a browser.
 
 ### v5.2.5.0
 - **http4k-connect-*** - Upgrade dependencies.

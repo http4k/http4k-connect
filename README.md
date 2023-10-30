@@ -91,6 +91,7 @@ dependencies {
     - [EventBridge](./amazon/eventbridge) -> `"org.http4k:http4k-connect-amazon-eventbridge"` / `"org.http4k:http4k-connect-amazon-eventbridge-fake"`
     - [Evidently](./amazon/evidently) -> `"org.http4k:http4k-connect-amazon-evidently"` / `"org.http4k:http4k-connect-amazon-evidently-fake"`
     - [Firehose](./amazon/firehose) -> `"org.http4k:http4k-connect-amazon-firehose"` / `"org.http4k:http4k-connect-amazon-firehose-fake"`
+    - [IAM Identity Center](./amazon/iamidentitycenter) -> `"org.http4k:http4k-connect-amazon-iamidentitycenter"` / `"org.http4k:http4k-connect-amazon-iamidentitycenter-fake"`
     - [InstanceMetadataService](./amazon/instancemetadata) -> `"org.http4k:http4k-connect-amazon-instancemetadata"` / `"org.http4k:http4k-connect-amazon-instancemetadata-fake"`
     - [KMS](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-kms"` / `"org.http4k:http4k-connect-amazon-kms-fake"`
     - [Lambda](./amazon/lambda) -> `"org.http4k:http4k-connect-amazon-lambda"` / `"org.http4k:http4k-connect-amazon-lambda-fake"`
