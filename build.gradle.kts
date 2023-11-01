@@ -2,7 +2,6 @@ import com.google.devtools.ksp.gradle.KspTask
 import groovy.namespace.QName
 import groovy.util.Node
 import jdk.internal.vm.vector.VectorSupport.test
-import jdk.tools.jlink.resources.plugins
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
