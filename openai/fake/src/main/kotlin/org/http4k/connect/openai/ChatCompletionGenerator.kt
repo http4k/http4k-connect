@@ -5,7 +5,7 @@ import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.Message
-import kotlin.random.Random
+import java.util.Random
 
 /**
  * Helps to control the generation of responses in a particular format for a model.

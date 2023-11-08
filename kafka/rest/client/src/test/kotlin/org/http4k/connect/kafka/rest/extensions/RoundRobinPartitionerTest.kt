@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.kafka.rest.model.PartitionId
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
+import java.util.Random
 
 class RoundRobinPartitionerTest {
     @Test
