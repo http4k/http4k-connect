@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.core.model
 
 import org.http4k.aws.AwsCredentials
-import org.ini4j.Ini
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.useLines
 
 data class AwsProfile(
     val name: ProfileName,
@@ -27,23 +27,47 @@ data class AwsProfile(
         fun loadProfiles(path: Path): Map<ProfileName, AwsProfile> {
             if (!Files.exists(path)) return emptyMap()
 
-            val sections = path.toFile().inputStream().use { content ->
-                Ini().apply { load(content) }
-            }
+            var name = ProfileName.of("default")
+            val section = mutableMapOf<String, String>()
 
-            return sections.map { (name, section) ->
-                AwsProfile(
-                    name = ProfileName.of(name),
-                    accessKeyId = section["aws_access_key_id"]?.let { AccessKeyId.of(it) },
-                    secretAccessKey = section["aws_secret_access_key"]?.let { SecretAccessKey.of(it) },
-                    sessionToken = section["aws_session_token"]?.let { SessionToken.of(it) },
-                    roleArn = section["role_arn"]?.let { ARN.of(it) },
-                    sourceProfileName = section["source_profile"]?.let { ProfileName.of(it) },
-                    roleSessionName = section["role_session_name"]?.let { RoleSessionName.of(it) },
-                    region = section["region"]?.let { Region.of(it) }
-                )
-            }.associateBy { it.name }
+            return buildMap {
+                fun consumeProfile() {
+                    if (section.isEmpty()) return
+                    val profile = section.toProfile(name)
+                    put(name, profile)
+                    section.clear()
+                }
+
+                path.useLines { lines ->
+                    for (line in lines.map(String::trim)) {
+                        when {
+                            line.startsWith('[') -> {
+                                consumeProfile()
+                                name = ProfileName.parse(line.trim('[', ']'))
+                            }
+
+                            "=" in line -> {
+                                val (key, value) = line.split("=", limit = 2).map(String::trim)
+                                section[key] = value
+                            }
+                        }
+                    }
+                }
+
+                consumeProfile()
+            }
         }
 
     }
 }
+
+private fun Map<String, String>.toProfile(name: ProfileName) = AwsProfile(
+    name = name,
+    accessKeyId = this["aws_access_key_id"]?.let { AccessKeyId.of(it) },
+    secretAccessKey = this["aws_secret_access_key"]?.let { SecretAccessKey.of(it) },
+    sessionToken = this["aws_session_token"]?.let { SessionToken.of(it) },
+    roleArn = this["role_arn"]?.let { ARN.of(it) },
+    sourceProfileName = this["source_profile"]?.let { ProfileName.of(it) },
+    roleSessionName = this["role_session_name"]?.let { RoleSessionName.of(it) },
+    region = this["region"]?.let { Region.of(it) }
+)

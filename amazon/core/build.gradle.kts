@@ -7,5 +7,4 @@ dependencies {
 
     implementation(Libs.api)
     implementation(Libs.http4k_format_core)
-    implementation(libs.ini4j)
 }
