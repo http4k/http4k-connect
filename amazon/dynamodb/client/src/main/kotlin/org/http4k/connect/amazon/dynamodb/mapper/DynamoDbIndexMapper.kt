@@ -16,13 +16,15 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         ExpressionAttributeNames: Map<String, AttributeName>? = null,
         ExpressionAttributeValues: Map<String, AttributeValue>? = null,
         PageSize: Int? = null,
+        ConsistentRead: Boolean? = null,
     ): Sequence<Document> {
         return dynamoDb.scanPaginated(
             TableName = tableName,
             FilterExpression = FilterExpression,
             ExpressionAttributeNames = ExpressionAttributeNames,
             ExpressionAttributeValues = ExpressionAttributeValues,
-            Limit = PageSize
+            Limit = PageSize,
+            ConsistentRead = ConsistentRead
         ).flatMap { result ->
             result.onFailure { it.reason.throwIt() }
         }.map(itemLens)
@@ -34,6 +36,7 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         ExpressionAttributeValues: Map<String, AttributeValue>? = null,
         ExclusiveStartKey: Pair<HashKey, SortKey?>? = null,
         Limit: Int? = null,
+        ConsistentRead: Boolean? = null,
     ): DynamoDbPage<Document, HashKey, SortKey> {
         val page = dynamoDb.scan(
             TableName = tableName,
@@ -42,7 +45,8 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ExpressionAttributeNames = ExpressionAttributeNames,
             ExpressionAttributeValues = ExpressionAttributeValues,
             ExclusiveStartKey = ExclusiveStartKey?.let { schema.key(ExclusiveStartKey.first, ExclusiveStartKey.second) },
-            Limit = Limit
+            Limit = Limit,
+            ConsistentRead = ConsistentRead
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
@@ -59,6 +63,7 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         ExpressionAttributeValues: Map<String, AttributeValue>? = null,
         ScanIndexForward: Boolean = true,
         PageSize: Int? = null,
+        ConsistentRead: Boolean? = null,
     ): Sequence<Document> {
         return dynamoDb.queryPaginated(
             TableName = tableName,
@@ -68,7 +73,8 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ExpressionAttributeNames = ExpressionAttributeNames,
             ExpressionAttributeValues = ExpressionAttributeValues,
             ScanIndexForward = ScanIndexForward,
-            Limit = PageSize
+            Limit = PageSize,
+            ConsistentRead = ConsistentRead
         ).flatMap { result ->
             result.onFailure { it.reason.throwIt() }
         }.map(itemLens)
@@ -78,13 +84,15 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         hashKey: HashKey,
         ScanIndexForward: Boolean = true,
         PageSize: Int? = null,
+        ConsistentRead: Boolean? = null,
     ): Sequence<Document> {
         return query(
             KeyConditionExpression = "#key1 = :val1",
             ExpressionAttributeNames = mapOf("#key1" to schema.hashKeyAttribute.name),
             ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(hashKey)),
             ScanIndexForward = ScanIndexForward,
-            PageSize = PageSize
+            PageSize = PageSize,
+            ConsistentRead = ConsistentRead
         )
     }
 
@@ -93,6 +101,7 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         ScanIndexForward: Boolean = true,
         ExclusiveStartKey: SortKey? = null,
         Limit: Int? = null,
+        ConsistentRead: Boolean? = null,
     ): DynamoDbPage<Document, HashKey, SortKey> {
         val page = dynamoDb.query(
             TableName = tableName,
@@ -102,7 +111,8 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
             ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(HashKey)),
             ScanIndexForward = ScanIndexForward,
             ExclusiveStartKey = ExclusiveStartKey?.let { schema.key(HashKey, ExclusiveStartKey) },
-            Limit = Limit
+            Limit = Limit,
+            ConsistentRead = ConsistentRead
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
