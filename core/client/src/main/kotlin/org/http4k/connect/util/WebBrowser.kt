@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.iamidentitycenter.util
+package org.http4k.connect.util
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success

@@ -12,7 +12,7 @@ import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.iamidentitycenter.model.ClientName
 import org.http4k.connect.amazon.iamidentitycenter.model.SSOProfile
 import org.http4k.connect.amazon.iamidentitycenter.oidc.action.DeviceToken
-import org.http4k.connect.amazon.iamidentitycenter.util.WebBrowser
+import org.http4k.connect.util.WebBrowser
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import java.time.Clock
