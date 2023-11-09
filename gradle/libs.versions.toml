@@ -54,8 +54,6 @@ symbol-processing-api = "com.google.devtools.ksp:symbol-processing-api:_"
 
 se-ansman-kotshi-compiler = "se.ansman.kotshi:compiler:_"
 
-ini4j = "org.ini4j:ini4j:_"
-
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
 parser4k = { module = "dev.forkhandles:parser4k" }
