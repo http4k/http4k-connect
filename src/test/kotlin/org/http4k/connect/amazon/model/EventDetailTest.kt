@@ -10,6 +10,7 @@ class EventDetailTest {
 
     @Test
     fun `enforces pattern`() {
+        assertThat(EventDetail.parseOrNull("""{"last_name": "Moll "}"""), present())
         assertThat(EventDetail.parseOrNull("{}"), present())
         assertThat(EventDetail.parseOrNull("""{"123":"123""}"""), present())
         assertThat(EventDetail.parseOrNull("123"), absent())

@@ -5,6 +5,7 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.core.model.ResourceId
+import kotlin.text.RegexOption.DOT_MATCHES_ALL as DOT_MATCHES_ALL1
 
 class EventBusName private constructor(value: String) : ResourceId(value) {
     companion object : NonEmptyStringValueFactory<EventBusName>(::EventBusName)
@@ -23,7 +24,7 @@ class EventSource private constructor(value: String) : StringValue(value) {
 }
 
 class EventDetail private constructor(value: String) : StringValue(value) {
-    companion object : StringValueFactory<EventDetail>(::EventDetail, "\\{.*\\}".regex)
+    companion object : StringValueFactory<EventDetail>(::EventDetail, "\\{.*\\}".toRegex(DOT_MATCHES_ALL1).let { v -> { v.matches(it) } })
 }
 
 class EventDetailType private constructor(value: String) : StringValue(value) {
