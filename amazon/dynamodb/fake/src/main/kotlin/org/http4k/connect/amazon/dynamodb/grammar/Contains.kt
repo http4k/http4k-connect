@@ -14,10 +14,10 @@ object Contains : ExprFactory {
             .map { (_, attr, _, value) ->
                 Expr {
                     when (val av = attr.eval(it).asString()) {
-                        is String -> setOf(av)
-                        is Set<*> -> av
+                        is String -> av.contains(value.eval(it).asString().toString())
+                        is Set<*> -> av.contains(value.eval(it).asString())
                         else -> error("can't compare $av")
-                    }.contains(value.eval(it).asString().toString())
+                    }
                 }
             }
 }

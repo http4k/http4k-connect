@@ -253,6 +253,7 @@ class DynamoDbConditionalGrammarTest {
     fun `contains function`() {
         val item = Item(attr1 of "123", attr3 of setOf("123", "456"))
         assertTrue("contains(attr1, :foo)", item, mapOf(":foo" to attr1.asValue("123")))
+        assertTrue("contains(attr1, :foo)", item, mapOf(":foo" to attr1.asValue("2")))
         assertTrue("contains(attr3, :foo)", item, mapOf(":foo" to attr1.asValue("123")))
         assertFalse("contains(attr1, :foo)", item, mapOf(":foo" to attr1.asValue("124")))
         assertFalse("contains(attr3, :foo)", item, mapOf(":foo" to attr1.asValue("124")))

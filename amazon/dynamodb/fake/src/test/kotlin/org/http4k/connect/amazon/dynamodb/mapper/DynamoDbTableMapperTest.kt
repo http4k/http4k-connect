@@ -159,6 +159,37 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
+    fun `custom built query`() {
+        val results = tableMapper.index(byOwner).query {
+            keyCondition {
+                ownerIdAttr eq owner1
+            }
+            filterExpression {
+                val idExpr = idAttr eq kratos.id
+                val bornExpr = bornAttr gt toggles.born
+
+                not(idExpr) and bornExpr
+            }
+        }.toList()
+
+        assertThat(results, equalTo(listOf(athena)))
+    }
+
+    @Test
+    fun `custom built query with filter functions`() {
+        val results = tableMapper.index(byOwner).query {
+            keyCondition {
+                ownerIdAttr eq owner1
+            }
+            filterExpression {
+                nameAttr contains "o"
+            }
+        }.toList()
+
+        assertThat(results, equalTo(listOf(kratos, toggles)))
+    }
+
+    @Test
     fun `query page`() {
         // page 1 of 2
         assertThat(tableMapper.index(byOwner).queryPage(owner1, Limit = 2), equalTo(DynamoDbPage(
@@ -173,6 +204,63 @@ class DynamoDbTableMapperTest {
             nextHashKey = null,
             nextSortKey = null
         )))
+    }
+
+    @Test
+    fun `custom query page`() {
+        // page 1 of 2
+        assertThat(tableMapper.index(byDob).queryPage(
+            KeyConditionExpression = "$bornAttr = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born)),
+            Limit = 1
+        ), equalTo(DynamoDbPage(
+            items = listOf(smokie),
+            nextHashKey = smokie.born,
+            nextSortKey = smokie.id
+        )))
+
+        // page 2 of 2
+        assertThat(tableMapper.index(byDob).queryPage(
+            KeyConditionExpression = "$bornAttr = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born)),
+            Limit = 1,
+            ExclusiveStartHashKey = smokie.born,
+            ExclusiveStartSortKey = smokie.id
+        ), equalTo(DynamoDbPage(
+            items = listOf(bandit),
+            nextHashKey = null,
+            nextSortKey = null
+        )))
+    }
+
+    @Test
+    fun `custom built query page`() {
+        // page 1 of 2
+        val page1 = tableMapper.index(byDob).queryPage {
+            keyCondition {
+                bornAttr eq smokie.born
+            }
+            pageSize = 1
+        }
+        assertThat(
+            page1,
+            equalTo(DynamoDbPage(items = listOf(smokie), nextHashKey = smokie.born, nextSortKey = smokie.id))
+        )
+
+        // page 2 of 2
+        val page2 = tableMapper.index(byDob).queryPage(
+            exclusiveStartHashKey = smokie.born,
+            exclusiveStartSortKey = smokie.id
+        ) {
+            keyCondition {
+                bornAttr eq smokie.born
+            }
+            pageSize = 1
+        }
+        assertThat(
+            page2,
+            equalTo(DynamoDbPage(items = listOf(bandit), nextHashKey = null, nextSortKey = null))
+        )
     }
 
     @Test
