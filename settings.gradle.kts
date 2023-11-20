@@ -49,6 +49,7 @@ includeVendorSystem("amazon", "evidently")
 includeSystem("example")
 
 includeSystem("github")
+includeSystem("gitlab")
 includeSystem("mattermost")
 includeSystem("openai", "plugin")
 includeVendorSystem("kafka", "rest")
