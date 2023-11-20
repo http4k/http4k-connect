@@ -236,11 +236,10 @@ class DynamoDbTableMapperTest {
     @Test
     fun `custom built query page`() {
         // page 1 of 2
-        val page1 = tableMapper.index(byDob).queryPage {
+        val page1 = tableMapper.index(byDob).queryPage(Limit = 1) {
             keyCondition {
                 bornAttr eq smokie.born
             }
-            pageSize = 1
         }
         assertThat(
             page1,
@@ -249,13 +248,12 @@ class DynamoDbTableMapperTest {
 
         // page 2 of 2
         val page2 = tableMapper.index(byDob).queryPage(
-            exclusiveStartHashKey = smokie.born,
-            exclusiveStartSortKey = smokie.id
+            Limit = 1,
+            ExclusiveStartKey = smokie.id
         ) {
             keyCondition {
                 bornAttr eq smokie.born
             }
-            pageSize = 1
         }
         assertThat(
             page2,
