@@ -115,7 +115,18 @@ fun List<KeySchema>?.comparator(ascending: Boolean): Comparator<Item> {
 
         sortValue1.compareTo(sortValue2) * modifier
     }
+}
 
+fun List<KeySchema>?.filterNullKeys(): (Item) -> Boolean {
+    val hashKey = this?.find { it.KeyType == KeyType.HASH }
+        ?.AttributeName
+
+    val sortKey = this?.find { it.KeyType == KeyType.RANGE }
+        ?.AttributeName
+
+    return { item: Item ->
+        (hashKey == null || item[hashKey] != null) && (sortKey == null || item[sortKey] != null)
+    }
 }
 
 fun TableDescription.keySchema(indexName: IndexName? = null): List<KeySchema>? {

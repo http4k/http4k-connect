@@ -10,6 +10,7 @@ import com.natpryce.hamkrest.present
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
+import org.http4k.connect.amazon.dynamodb.attrB
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.attrSS
@@ -17,15 +18,20 @@ import org.http4k.connect.amazon.dynamodb.batchWriteItem
 import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
+import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
+import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
+import org.http4k.connect.amazon.dynamodb.model.Projection
 import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
+import org.http4k.connect.amazon.dynamodb.model.without
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.amazon.dynamodb.scan
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,16 +39,24 @@ import org.junit.jupiter.api.Test
 abstract class DynamoDbScanContract: DynamoDbSource {
 
     private val table = TableName.sample()
-    private val item1 = createItem("hash1", 1)
-    private val item2 = createItem("hash2", 1)
-    private val item3 = createItem("hash3", 2)
+    private val item1 = createItem("hash1", 1, Base64Blob.encode("foo"))
+    private val item2 = createItem("hash2", 1, Base64Blob.encode("bar"))
+    private val item3 = createItem("hash3", 2).without(attrB)
+
+    private val binaryStringGSI = IndexName.of("bin-string")
 
     @BeforeEach
     fun createTable() {
         dynamo.createTable(
             table,
             KeySchema = KeySchema.compound(attrS.name),
-            AttributeDefinitions = listOf(attrS.asAttributeDefinition()),
+            AttributeDefinitions = listOf(
+                attrS.asAttributeDefinition(),
+                attrB.asAttributeDefinition()
+            ),
+            GlobalSecondaryIndexes = listOf(
+                GlobalSecondaryIndex(IndexName = binaryStringGSI, KeySchema.compound(attrB.name, attrS.name), Projection.all)
+            ),
             BillingMode = BillingMode.PAY_PER_REQUEST
         ).successValue()
 
@@ -131,6 +145,17 @@ abstract class DynamoDbScanContract: DynamoDbSource {
 
         assertThat(result.Count, present(lessThan(numItems)))
         assertThat(result.LastEvaluatedKey, present())
+    }
+
+    @Test
+    fun `scan index`() {
+        val result = dynamo.scan(TableName = table, IndexName = binaryStringGSI).successValue()
+
+        assertThat(result.Count, equalTo(2))
+        assertThat(result.items, hasSize(equalTo(2)))
+        assertThat(result.items, hasElement(item1))
+        assertThat(result.items, hasElement(item2))
+        assertThat(result.LastEvaluatedKey, absent())
     }
 }
 

@@ -27,6 +27,7 @@ import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
+import org.http4k.connect.amazon.dynamodb.model.without
 import org.http4k.connect.amazon.dynamodb.putItem
 import org.http4k.connect.amazon.dynamodb.query
 import org.http4k.connect.amazon.dynamodb.sample
@@ -44,6 +45,7 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         private val hash1Val1 = createItem("hash1", 1, Base64Blob.encode("spam"))
         private val hash1Val2 = createItem("hash1", 2, Base64Blob.encode("ham"))
         private val hash2Val1 = createItem("hash2", 1, Base64Blob.encode("eggs"))
+        private val hash1Val3WithoutBinary = createItem("hash1", 3).without(attrB)
 
         private val numbersIndex = IndexName.of("numbers")
         private val stringAndBinaryIndex = IndexName.of("string-bin")
@@ -196,6 +198,7 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         dynamo.putItem(table, hash1Val1)
         dynamo.putItem(table, hash1Val2)
         dynamo.putItem(table, hash2Val1)
+        dynamo.putItem(table, hash1Val3WithoutBinary)
 
         val result = dynamo.query(
             TableName = table,

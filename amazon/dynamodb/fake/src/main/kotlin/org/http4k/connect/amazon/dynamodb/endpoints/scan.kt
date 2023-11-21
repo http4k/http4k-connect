@@ -10,10 +10,12 @@ fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
     val table = tables[scan.TableName.value] ?: return@route null
     val schema = table.table.keySchema(scan.IndexName)
 
+    val filter = schema.filterNullKeys()
     val comparator = schema.comparator(true)
 
     val matches = table.items
         .asSequence()
+        .filter(filter)
         .mapNotNull {
             it.condition(
                 expression = scan.FilterExpression,

@@ -10,10 +10,12 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     val table = tables[query.TableName.value] ?: return@route null
     val schema = table.table.keySchema(query.IndexName)
 
+    val filter = schema.filterNullKeys()
     val comparator = schema.comparator(query.ScanIndexForward ?: true)
 
     val matches = table.items
         .asSequence()
+        .filter(filter)
         .mapNotNull {it.condition(
             expression = query.KeyConditionExpression,
             expressionAttributeNames = query.ExpressionAttributeNames,
@@ -38,4 +40,3 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
         } else null
     )
 }
-
