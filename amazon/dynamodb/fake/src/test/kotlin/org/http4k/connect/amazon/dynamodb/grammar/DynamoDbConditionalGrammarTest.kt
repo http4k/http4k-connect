@@ -256,6 +256,8 @@ class DynamoDbConditionalGrammarTest {
         assertTrue("contains(attr3, :foo)", item, mapOf(":foo" to attr1.asValue("123")))
         assertFalse("contains(attr1, :foo)", item, mapOf(":foo" to attr1.asValue("124")))
         assertFalse("contains(attr3, :foo)", item, mapOf(":foo" to attr1.asValue("124")))
+        assertTrue("contains(attr1, :foo)", item, mapOf(":foo" to attr1.asValue("2")))
+        assertFalse("contains(attr3, :foo)", item, mapOf(":foo" to attr1.asValue("2")))
     }
 
     @Test
