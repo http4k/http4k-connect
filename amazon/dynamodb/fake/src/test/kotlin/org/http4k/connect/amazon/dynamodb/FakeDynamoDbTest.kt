@@ -11,6 +11,5 @@ class FakeDynamoDbTest : DynamoDbContract(ZERO) {
 
     @Disabled
     override fun `partiSQL operations`() {
-        TODO("support")
     }
 }
