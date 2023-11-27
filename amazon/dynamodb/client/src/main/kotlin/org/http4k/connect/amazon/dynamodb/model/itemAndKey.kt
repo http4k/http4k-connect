@@ -18,4 +18,4 @@ fun Key(vararg modifiers: (Item) -> Item): Item =
 fun Item.with(vararg modifiers: (Item) -> Item): Item =
     modifiers.fold(this) { memo, next -> next(memo) }
 
-fun Item.without(vararg attributes: Attribute<*>) = minus(attributes.map { it.name })
+fun Item.without(vararg attributes: Attribute<*>): Item = minus(attributes.map { it.name })
