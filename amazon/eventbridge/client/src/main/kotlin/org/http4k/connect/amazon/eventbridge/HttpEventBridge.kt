@@ -23,7 +23,7 @@ fun EventBridge.Companion.Http(
 }
 
 /**
- * Convenience function to create a EvenrBridge from a System environment
+ * Convenience function to create a EventBridge from a System environment
  */
 fun EventBridge.Companion.Http(
     env: Map<String, String> = System.getenv(),
@@ -32,7 +32,7 @@ fun EventBridge.Companion.Http(
 ) = Http(Environment.from(env), http, clock)
 
 /**
- * Convenience function to create a EvenrBridge from an http4k Environment
+ * Convenience function to create a EventBridge from an http4k Environment
  */
 fun EventBridge.Companion.Http(
     env: Environment,
