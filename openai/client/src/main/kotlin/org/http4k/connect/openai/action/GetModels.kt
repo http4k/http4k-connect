@@ -44,8 +44,8 @@ data class Model(
     @JsonProperty(name = "object") val objectType: ObjectType,
     val created: Timestamp,
     val owned_by: OpenAIOrg,
-    val permission: List<Permission>,
-    val root: ObjectId,
+    val permission: List<Permission>?,
+    val root: ObjectId?,
     val parent: Any?
 )
 
