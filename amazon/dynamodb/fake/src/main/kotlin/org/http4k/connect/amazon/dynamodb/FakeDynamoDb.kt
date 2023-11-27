@@ -39,7 +39,7 @@ import java.time.Clock.systemUTC
 import java.util.concurrent.CopyOnWriteArrayList
 
 class FakeDynamoDb(
-    tables: Storage<DynamoTable> = Storage.InMemory(),
+    private val tables: Storage<DynamoTable> = Storage.InMemory(),
     s3BucketSources: () -> List<FakeS3BucketSource> = { emptyList() },
     private val clock: Clock = systemUTC()
 ) : ChaoticHttpHandler() {

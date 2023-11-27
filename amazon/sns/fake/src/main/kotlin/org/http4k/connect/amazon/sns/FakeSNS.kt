@@ -13,7 +13,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 
 class FakeSNS(
-    topics: Storage<List<SNSMessage>> = Storage.InMemory(),
+    private val topics: Storage<List<SNSMessage>> = Storage.InMemory(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890"),
     private val region: Region = Region.of("ldn-north-1"),
 ) : ChaoticHttpHandler() {

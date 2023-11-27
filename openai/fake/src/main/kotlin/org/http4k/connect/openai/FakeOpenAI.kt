@@ -18,8 +18,8 @@ import java.time.Clock
 import java.time.Clock.systemUTC
 
 class FakeOpenAI(
-    models: Storage<Model> = DEFAULT_OPEN_AI_MODELS,
-    completionGenerators: Map<ModelName, ChatCompletionGenerator> = emptyMap(),
+    val models: Storage<Model> = DEFAULT_OPEN_AI_MODELS,
+    val completionGenerators: Map<ModelName, ChatCompletionGenerator> = emptyMap(),
     clock: Clock = systemUTC(),
     baseUri: Uri = FakeOpenAI::class.defaultLocalUri,
     http: HttpHandler = JavaHttpClient(),

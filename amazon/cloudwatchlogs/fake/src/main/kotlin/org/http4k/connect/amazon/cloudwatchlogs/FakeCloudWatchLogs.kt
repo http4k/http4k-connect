@@ -16,7 +16,7 @@ import org.http4k.routing.routes
 
 data class LogGroup(val streams: MutableMap<LogStreamName, MutableList<FilteredLogEvent>>)
 
-class FakeCloudWatchLogs(logGroup: Storage<LogGroup> = Storage.InMemory()) : ChaoticHttpHandler() {
+class FakeCloudWatchLogs(private val logGroup: Storage<LogGroup> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(CloudWatchLogsMoshi, AwsService.of("Logs_20140328"))
 

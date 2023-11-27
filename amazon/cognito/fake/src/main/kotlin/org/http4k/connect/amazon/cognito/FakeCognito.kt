@@ -21,7 +21,7 @@ import java.time.Clock
 import java.time.Duration
 
 class FakeCognito(
-    pools: Storage<CognitoPool> = Storage.InMemory(),
+    private val pools: Storage<CognitoPool> = Storage.InMemory(),
     clock: Clock = Clock.systemUTC(),
     expiry: Duration = Duration.ofHours(1)
 ) : ChaoticHttpHandler() {

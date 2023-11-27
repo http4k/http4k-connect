@@ -13,7 +13,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 
 class FakeSQS(
-    queues: Storage<List<SQSMessage>> = Storage.InMemory(),
+    private val queues: Storage<List<SQSMessage>> = Storage.InMemory(),
     awsAccount: AwsAccount = AwsAccount.of("1234567890"),
     private val region: Region = Region.of("ldn-north-1")
 ) : ChaoticHttpHandler() {

@@ -15,7 +15,7 @@ import org.http4k.routing.routes
 data class StoredParameter(val name: SSMParameterName, val value: String, val type: ParameterType)
 
 class FakeSystemsManager(
-    parameters: Storage<StoredParameter> = Storage.InMemory()
+    private val parameters: Storage<StoredParameter> = Storage.InMemory()
 ) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(SystemsManagerMoshi, AwsService.of("AmazonSSM"))

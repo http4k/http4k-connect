@@ -13,7 +13,7 @@ import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class FakeEventBridge(events: Storage<List<Event>> = Storage.InMemory()) : ChaoticHttpHandler() {
+class FakeEventBridge(private val events: Storage<List<Event>> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(EventBridgeMoshi, AwsService.of("AWSEvents"))
 

@@ -6,7 +6,7 @@ import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.routing.routes
 
-class FakeExample(echoes: Storage<String> = Storage.InMemory()) : ChaoticHttpHandler() {
+class FakeExample(private val echoes: Storage<String> = Storage.InMemory()) : ChaoticHttpHandler() {
     override val app = routes(
         echo(echoes),
         reverse(),

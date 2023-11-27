@@ -20,8 +20,8 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 
 class FakeKafkaRest(
-    consumers: Storage<ConsumerState> = Storage.InMemory(),
-    topics: Storage<List<SendRecord>> = Storage.InMemory(),
+    val consumers: Storage<ConsumerState> = Storage.InMemory(),
+    val topics: Storage<List<SendRecord>> = Storage.InMemory(),
     private val baseUri: Uri = Uri.of("http://localhost:${FakeKafkaRest::class.defaultPort}")
 ) : ChaoticHttpHandler() {
     override val app = routes(

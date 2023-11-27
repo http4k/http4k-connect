@@ -9,7 +9,7 @@ import org.http4k.core.Uri
 import org.http4k.routing.routes
 
 class FakeMattermost(
-    triggerWebhookPayloads: Storage<List<TriggerWebhookPayload>> = Storage.InMemory(),
+    val triggerWebhookPayloads: Storage<List<TriggerWebhookPayload>> = Storage.InMemory(),
 ) : ChaoticHttpHandler() {
     override val app = routes(
         incomingWebhooks(triggerWebhookPayloads),

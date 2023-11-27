@@ -24,7 +24,7 @@ import org.http4k.routing.routes
 
 class FakeSchemaRegistry(
     mode: SchemaRegistrationMode = manual,
-    schemas: Storage<Schema> = Storage.InMemory()
+    val schemas: Storage<Schema> = Storage.InMemory()
 ) : ChaoticHttpHandler() {
     override val app = routes(
         BasicAuth("") { true }

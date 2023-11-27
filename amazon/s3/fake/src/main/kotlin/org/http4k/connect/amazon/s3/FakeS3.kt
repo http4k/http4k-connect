@@ -37,7 +37,7 @@ import java.time.Clock
  */
 class FakeS3(
     private val buckets: Storage<Unit> = Storage.InMemory(),
-    bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
+    private val bucketContent: Storage<BucketKeyContent> = Storage.InMemory(),
     private val clock: Clock = Clock.systemUTC()
 ) : ChaoticHttpHandler() {
 

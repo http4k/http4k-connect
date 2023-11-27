@@ -25,7 +25,7 @@ data class StoredSecretValue(
 )
 
 class FakeSecretsManager(
-    secrets: Storage<StoredSecretValue> = Storage.InMemory(),
+    private val secrets: Storage<StoredSecretValue> = Storage.InMemory(),
     private val clock: Clock = Clock.systemUTC()
 ) : ChaoticHttpHandler() {
 

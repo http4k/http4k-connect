@@ -13,7 +13,7 @@ import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class FakeKMS(keys: Storage<StoredCMK> = Storage.InMemory()) : ChaoticHttpHandler() {
+class FakeKMS(private val keys: Storage<StoredCMK> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(KMSMoshi, AwsService.of("TrentService"))
     private val crypto = BouncyCastleProvider()
