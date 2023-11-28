@@ -192,17 +192,14 @@ subprojects {
     }
 
     sourceSets {
-        named("main") {
-            withConvention(KotlinSourceSet::class) {
-                kotlin.srcDir("build/generated/ksp/main/kotlin")
-            }
+        main {
+            kotlin.srcDir("build/generated/ksp/main/kotlin")
         }
-        named("test") {
-            withConvention(KotlinSourceSet::class) {
-                kotlin.srcDir("src/examples/kotlin")
-                kotlin.srcDir("build/generated/ksp/test/kotlin")
-                kotlin.srcDir("build/generated-test-avro-java")
-            }
+
+        test {
+            kotlin.srcDir("src/examples/kotlin")
+            kotlin.srcDir("build/generated/ksp/test/kotlin")
+            kotlin.srcDir("build/generated-test-avro-java")
         }
     }
 
@@ -284,7 +281,7 @@ tasks.register<JacocoReport>("jacocoRootReport") {
         html.required.set(true)
         xml.required.set(true)
         csv.required.set(false)
-        xml.outputLocation.set(file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml"))
+        xml.outputLocation.set(file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml"))
     }
 }
 
@@ -382,7 +379,7 @@ fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
 
 coveralls {
     sourceDirs = subprojects.map { it.sourceSets.getByName("main").allSource.srcDirs }.flatten().map { it.absolutePath }
-    jacocoReportPath = file("${buildDir}/reports/jacoco/test/jacocoRootReport.xml")
+    jacocoReportPath = file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml")
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
