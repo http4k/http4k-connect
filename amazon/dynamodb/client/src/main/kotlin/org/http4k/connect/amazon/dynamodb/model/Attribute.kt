@@ -36,7 +36,7 @@ class Attribute<FINAL>(
     val dataType: DynamoDataType,
     meta: Meta,
     get: (Item) -> FINAL,
-    private val lensSet: (FINAL, Item) -> Item
+    internal val lensSet: (FINAL, Item) -> Item
 ) : LensInjector<FINAL, Item>, Lens<Item, FINAL>(meta, get) {
 
     val name = AttributeName.of(meta.name)
@@ -164,14 +164,21 @@ class Attribute<FINAL>(
         override fun required(name: String, description: String?): Attribute<OUT> {
             val getLens = get(name)
             val setLens = set(name)
+            val meta = Meta(true, location, paramMeta, name, description)
             return Attribute(
                 dataType,
-                Meta(true, location, paramMeta, name, description),
-                {
-                    getLens(it).firstOrNull()
-                        ?: throw LensFailure(Missing(Meta(true, location, paramMeta, name, description)), target = it)
-                },
+                meta,
+                { getLens(it).firstOrNull() ?: throw LensFailure(Missing(meta), target = it) },
                 { out: OUT, target -> setLens(listOf(out), target) })
         }
     }
+}
+
+fun <OUT> Attribute<OUT?>.toRequired(description: String? = null): Attribute<OUT> {
+    val requiredMeta = meta.copy(required = true, description = description)
+    return Attribute(
+        dataType,
+        requiredMeta,
+        { get(it) ?: throw LensFailure(Missing(requiredMeta), target = it) },
+        { out: OUT, target -> lensSet(out, target) })
 }
