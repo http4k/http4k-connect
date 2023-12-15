@@ -14,7 +14,9 @@ import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Str
+import org.http4k.lens.LensFailure
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.Instant
 import java.util.UUID
 
@@ -50,6 +52,36 @@ class AttributeTest {
             primary(Item(fallback of UUID(0, 0))),
             equalTo(UUID(0,0))
         )
+    }
+
+    @Test
+    fun `convert optional Attribute to required Attribute`() {
+        // given
+        val givenOptionalInt = Attribute.int().optional("intValue")
+        val givenRequiredInt = Attribute.int().required("intValue")
+        val givenEmptyItem = Item()
+        val givenIntItem = Item(givenRequiredInt of 42)
+        val givenFailure = assertThrows<LensFailure> {
+            givenRequiredInt(givenEmptyItem)
+        }
+
+        // when
+        val actualRequiredInt = givenOptionalInt.toRequired()
+
+        // then name and dataType should be taken from the given optional attribute
+        assertThat(actualRequiredInt.name, equalTo(givenOptionalInt.name))
+        assertThat(actualRequiredInt.dataType, equalTo(givenOptionalInt.dataType))
+
+        // and behaviour should be the same as for the required attribute
+        assertThat(actualRequiredInt(givenIntItem), equalTo(givenRequiredInt(givenIntItem)))
+        assertThat(Item(actualRequiredInt of 23), equalTo(Item(givenRequiredInt of 23)))
+
+        assertThrows<LensFailure> {
+            actualRequiredInt(givenEmptyItem)
+        }.apply {
+            assertThat(failures, equalTo(givenFailure.failures))
+            assertThat(target, equalTo(givenFailure.target))
+        }
     }
 }
 
