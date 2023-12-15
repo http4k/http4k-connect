@@ -66,7 +66,7 @@ class AttributeTest {
         }
 
         // when
-        val actualRequiredInt = givenOptionalInt.toRequired()
+        val actualRequiredInt = givenOptionalInt.asRequired()
 
         // then name and dataType should be taken from the given optional attribute
         assertThat(actualRequiredInt.name, equalTo(givenOptionalInt.name))

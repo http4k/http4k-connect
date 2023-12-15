@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 /**
  * Represents a Paged response
  */
-interface Paged<Token, ItemType> : Iterable<ItemType> {
+interface Paged<out Token, out ItemType> : Iterable<ItemType> {
     fun token(): Token?
     val items: List<ItemType>
     override fun iterator() = items.iterator()

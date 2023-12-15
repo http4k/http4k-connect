@@ -174,8 +174,8 @@ class Attribute<FINAL>(
     }
 }
 
-fun <OUT> Attribute<OUT?>.toRequired(description: String? = null): Attribute<OUT> {
-    val requiredMeta = meta.copy(required = true, description = description)
+fun <OUT> Attribute<OUT?>.asRequired(description: String? = null): Attribute<OUT> {
+    val requiredMeta = meta.copy(required = true, description = description ?: this@asRequired.meta.description)
     return Attribute(
         dataType,
         requiredMeta,

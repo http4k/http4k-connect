@@ -2,8 +2,7 @@
 
 [versions]
 
-kotlin = "1.9.20"
-##  ⬆ = "1.9.21"
+kotlin = "1.9.21"
 
 [libraries]
 
