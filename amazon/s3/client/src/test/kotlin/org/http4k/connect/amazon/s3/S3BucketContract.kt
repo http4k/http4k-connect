@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 
-abstract class S3BucketContract(http: HttpHandler) : AwsContract() {
+abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
 
     abstract val bucket: BucketName
 
