@@ -9,6 +9,11 @@ import org.http4k.connect.amazon.s3.TestingHeaders.X_HTTP4K_LAST_MODIFIED
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.successValue
+import org.http4k.core.Method.GET
+import org.http4k.core.Request
+import org.http4k.core.Status.Companion.OK
+import org.http4k.hamkrest.hasBody
+import org.http4k.hamkrest.hasStatus
 import org.http4k.lens.LastModified
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -95,6 +100,22 @@ class FakeS3BucketTest : S3BucketContract(FakeS3()) {
             s3Bucket.deleteObject(source)
             s3Bucket.deleteObject(destination)
             s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `can get object with raw in-memory request`() {
+        val key = BucketKey.of("foo.txt")
+
+        try {
+            s3Bucket.putObject(key, "hello".byteInputStream(), listOf()).successValue()
+
+            val response = Request(GET, "http://${bucket}.s3.amazonaws.com/foo.txt").let(http)
+
+            assertThat(response, hasStatus(OK))
+            assertThat(response, hasBody("hello"))
+        } finally {
+            s3Bucket.deleteObject(key)
         }
     }
 }
