@@ -36,7 +36,8 @@ class Attribute<FINAL>(
     val dataType: DynamoDataType,
     meta: Meta,
     get: (Item) -> FINAL,
-    internal val lensSet: (FINAL, Item) -> Item
+    internal val lensSet: (FINAL, Item) -> Item,
+    private val ignoreNull: Boolean = false
 ) : LensInjector<FINAL, Item>, Lens<Item, FINAL>(meta, get) {
 
     val name = AttributeName.of(meta.name)
@@ -47,7 +48,8 @@ class Attribute<FINAL>(
     fun asValue(value: FINAL): AttributeValue = Item(this of value).getValue(name)
 
     @Suppress("UNCHECKED_CAST")
-    override operator fun <R : Item> invoke(value: FINAL, target: R): R = lensSet(value, target) as R
+    override operator fun <R : Item> invoke(value: FINAL, target: R): R =
+        if (ignoreNull && value == null) target else lensSet(value, target) as R
 
     override fun toString() = name.toString()
 
@@ -128,14 +130,18 @@ class Attribute<FINAL>(
 
         fun <NEXT> map(mapping: BiDiMapping<OUT, NEXT>) = map(mapping::invoke, mapping::invoke)
 
-        override fun optional(name: String, description: String?): Attribute<OUT?> {
+        override fun optional(name: String, description: String?): Attribute<OUT?> =
+            optional(name, description, ignoreNull = false)
+
+        fun optional(name: String, description: String? = null, ignoreNull: Boolean): Attribute<OUT?> {
             val getLens = get(name)
             val setLens = set(name)
             return Attribute(
                 dataType,
                 Meta(false, location, paramMeta, name, description),
                 { getLens(it).run { if (isEmpty()) null else first() } },
-                { out: OUT?, target -> setLens(out?.let { listOf(it) } ?: emptyList(), target) }
+                { out: OUT?, target -> setLens(out?.let { listOf(it) } ?: emptyList(), target) },
+                ignoreNull
             )
         }
 
@@ -175,7 +181,7 @@ class Attribute<FINAL>(
 }
 
 fun <OUT> Attribute<OUT?>.asRequired(description: String? = null): Attribute<OUT> {
-    val requiredMeta = meta.copy(required = true, description = description ?: this@asRequired.meta.description)
+    val requiredMeta = meta.copy(required = true, description = description ?: meta.description)
     return Attribute(
         dataType,
         requiredMeta,
