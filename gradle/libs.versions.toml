@@ -2,7 +2,7 @@
 
 [versions]
 
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 
 [libraries]
 
