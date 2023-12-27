@@ -119,7 +119,7 @@ dependencies {
 - [File-Based](./core/fake) (included with all Fakes)
 - [JDBC](./storage/jdbc) -> `org.http4k:http4k-connect-storage-jdbc`
 - [Redis](./storage/redis) -> `org.http4k:http4k-connect-storage-redis`
-- [S3](./storage/s3) -> `org.http4k:http4k-connect-storage-s3"`
+- [S3](./storage/s3) -> `org.http4k:http4k-connect-storage-s3`
 
 ## Implementing your own adapters
 It is very easy to implement your own adapters to follow the pattern. For the system `MySystem`, you would need to:
