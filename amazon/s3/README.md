@@ -76,9 +76,9 @@ requests.
 FakeS3().start()
 ```
 
-### PreSigned Requests
+### Pre-Signed Requests
 
-Http4k supports pre-signed requests with the generic `AwsPresignRequests` class.
+Http4k supports pre-signed requests with the generic `AwsRequestPreSigner` class.
 However, `http4k-connect` provides a simplified interface for common S3 Bucket operations with the `S3BucketPresigner`.
 
 ```kotlin

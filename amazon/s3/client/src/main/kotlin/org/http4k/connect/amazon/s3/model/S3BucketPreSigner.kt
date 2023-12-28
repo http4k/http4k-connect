@@ -2,8 +2,7 @@ package org.http4k.connect.amazon.s3.model
 
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
-import org.http4k.aws.AwsPreSignRequests
-import org.http4k.aws.AwsPreSignedRequest
+import org.http4k.aws.AwsRequestPreSigner
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.S3
@@ -34,8 +33,8 @@ class S3BucketPreSigner(
         clock = clock
     )
 
-    val preSigner = AwsPreSignRequests(
-        credentials = credentialsProvider(), // FIXME
+    val preSigner = AwsRequestPreSigner(
+        credentialsProvider = credentialsProvider,
         scope = AwsCredentialScope(region.value, S3.awsService.value),
         clock = clock
     )
