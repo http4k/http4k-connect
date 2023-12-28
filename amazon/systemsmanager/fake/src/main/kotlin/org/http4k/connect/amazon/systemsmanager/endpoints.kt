@@ -40,11 +40,18 @@ fun AmazonJsonFake.getParameter(parameters: Storage<StoredParameter>) = route<Ge
 }
 
 fun AmazonJsonFake.putParameter(parameters: Storage<StoredParameter>) = route<PutParameter> { req ->
+    val current = parameters[req.Name.value]
     when {
-        parameters[req.Name.value] == null -> {
-            parameters[req.Name.value] = StoredParameter(req.Name, req.Value, req.Type)
+        current == null -> {
+            parameters[req.Name.value] = StoredParameter(req.Name, req.Value, req.Type, 1)
             PutParameterResult("Standard", 1)
         }
+
+        req.Overwrite == true -> {
+            parameters[req.Name.value] = StoredParameter(req.Name, req.Value, req.Type, current.version + 1)
+            PutParameterResult("Standard", current.version + 1)
+        }
+
         else -> null
     }
 }
