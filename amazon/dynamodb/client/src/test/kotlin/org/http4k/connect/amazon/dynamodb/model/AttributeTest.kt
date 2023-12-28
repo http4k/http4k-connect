@@ -12,6 +12,7 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.UUIDValue
 import dev.forkhandles.values.UUIDValueFactory
+import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Null
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Num
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue.Companion.Str
 import org.http4k.lens.LensFailure
@@ -52,6 +53,27 @@ class AttributeTest {
             primary(Item(fallback of UUID(0, 0))),
             equalTo(UUID(0,0))
         )
+    }
+
+    @Test
+    fun `may ignore null values in optional attributes`() {
+        // given
+        val optionalWithNull = Attribute.string().optional("withNull")
+        val optionalWithoutNull = Attribute.string().optional("withoutNull", ignoreNull = true)
+
+        // when
+        val itemWithNull = Item(optionalWithNull of null)
+        val itemWithoutNull = Item(optionalWithoutNull of null)
+        val itemWithValue = Item(optionalWithoutNull of "something")
+
+        // then
+        assertThat(itemWithNull, equalTo(mapOf(optionalWithNull.name to Null())))
+        assertThat(itemWithoutNull, equalTo(emptyMap()))
+        assertThat(itemWithValue, equalTo(mapOf(optionalWithoutNull.name to Str("something"))))
+
+        assertThat(optionalWithNull(itemWithNull), equalTo(null))
+        assertThat(optionalWithoutNull(itemWithoutNull), equalTo(null))
+        assertThat(optionalWithoutNull(itemWithValue), equalTo("something"))
     }
 
     @Test

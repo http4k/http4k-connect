@@ -12,7 +12,7 @@ import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.routing.routes
 
-data class StoredParameter(val name: SSMParameterName, val value: String, val type: ParameterType)
+data class StoredParameter(val name: SSMParameterName, val value: String, val type: ParameterType, val version: Int)
 
 class FakeSystemsManager(
     private val parameters: Storage<StoredParameter> = Storage.InMemory()
