@@ -12,6 +12,7 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Uri
+import org.http4k.core.appendToPath
 import java.time.Clock
 import java.time.Duration
 
@@ -39,20 +40,24 @@ class S3BucketPreSigner(
         clock = clock
     )
 
-    private val bucketUri = Uri.of("https://$bucketName.${S3.awsService}.$region.amazonaws.com")
+    private val bucketUri = let {
+        val pathPrefix = if (bucketName.requiresPathStyleApi()) "/$bucketName" else ""
+        val subdomain = if (bucketName.requiresPathStyleApi()) "" else "$bucketName."
+        Uri.of("https://$subdomain${S3.awsService}.$region.amazonaws.com").path(pathPrefix)
+    }
 
     fun get(key: BucketKey, duration: Duration, headers: Headers = emptyList()) = preSigner(
-        Request(GET, bucketUri.path("/$key")).headers(headers),
+        Request(GET, bucketUri.appendToPath(key.value)).headers(headers),
         duration
     )
 
     fun put(key: BucketKey, duration: Duration, headers: Headers = emptyList()) = preSigner(
-        Request(PUT, bucketUri.path("/$key")).headers(headers),
+        Request(PUT, bucketUri.appendToPath(key.value)).headers(headers),
         duration
     )
 
     fun delete(key: BucketKey, duration: Duration, headers: Headers = emptyList()) = preSigner(
-        Request(DELETE, bucketUri.path("/$key")).headers(headers),
+        Request(DELETE, bucketUri.appendToPath(key.value)).headers(headers),
         duration
     )
 }
