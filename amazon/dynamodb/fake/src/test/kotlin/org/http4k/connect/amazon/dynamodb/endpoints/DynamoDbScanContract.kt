@@ -11,6 +11,7 @@ import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.attrB
+import org.http4k.connect.amazon.dynamodb.attrBool
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.attrSS
@@ -156,6 +157,37 @@ abstract class DynamoDbScanContract: DynamoDbSource {
         assertThat(result.items, hasElement(item1))
         assertThat(result.items, hasElement(item2))
         assertThat(result.LastEvaluatedKey, absent())
+    }
+
+    @Test // Fixes GH#327
+    fun `filter evaluated after pagination`() {
+        dynamo.batchWriteItem(
+            mapOf(
+                table to listOf(
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrBool of true)),
+                    ReqWriteItem.Put(Item(attrS of "hash2", attrBool of true)),
+                    ReqWriteItem.Put(Item(attrS of "hash3", attrBool of false)),
+                    ReqWriteItem.Put(Item(attrS of "hash4", attrBool of false)),
+                    ReqWriteItem.Put(Item(attrS of "hash5", attrBool of false))
+                )
+            )
+        ).successValue()
+
+        val result = dynamo.scan(
+            TableName = table,
+            FilterExpression = "$attrBool = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrBool.asValue(true)
+            ),
+            Limit = 4,
+        ).successValue()
+
+        assertThat(result.Count, present(equalTo(2)))
+        assertThat(result.items, equalTo(listOf(
+            Item(attrS of "hash1", attrBool of true),
+            Item(attrS of "hash2", attrBool of true)
+        )))
+        assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash4")))
     }
 }
 

@@ -9,6 +9,7 @@ import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.attrB
+import org.http4k.connect.amazon.dynamodb.attrBool
 import org.http4k.connect.amazon.dynamodb.attrN
 import org.http4k.connect.amazon.dynamodb.attrS
 import org.http4k.connect.amazon.dynamodb.attrSS
@@ -339,7 +340,41 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         assertThat(result.Count, present(lessThan(numItems)))
         assertThat(result.LastEvaluatedKey, present())
     }
+
+    @Test // Fixes GH#327
+    fun `filter evaluated after pagination`() {
+        dynamo.batchWriteItem(
+            mapOf(
+                table to listOf(
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrN of 1, attrBool of true)),
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrN of 2, attrBool of true)),
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrN of 3, attrBool of false)),
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrN of 4, attrBool of false)),
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrN of 5, attrBool of false))
+                )
+            )
+        ).successValue()
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            FilterExpression = "$attrBool = :val2",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrS.asValue("hash1"),
+                ":val2" to attrBool.asValue(true)
+            ),
+            Limit = 4,
+        ).successValue()
+
+        assertThat(result.Count, present(equalTo(2)))
+        assertThat(result.items, equalTo(listOf(
+            Item(attrS of "hash1", attrN of 1, attrBool of true),
+            Item(attrS of "hash1", attrN of 2, attrBool of true)
+        )))
+        assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash1", attrN of 4)))
+    }
 }
+
 
 class FakeDynamoDbQueryTest: DynamoDbQueryContract(), DynamoDbSource by FakeDynamoDbSource()
 class LocalDynamoDbQueryTest: DynamoDbQueryContract(), DynamoDbSource by LocalDynamoDbSource()

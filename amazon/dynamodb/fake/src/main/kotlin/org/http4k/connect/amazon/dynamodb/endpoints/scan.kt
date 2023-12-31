@@ -9,29 +9,25 @@ import org.http4k.connect.storage.Storage
 fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
     val table = tables[scan.TableName.value] ?: return@route null
     val schema = table.table.keySchema(scan.IndexName)
-
-    val filter = schema.filterNullKeys()
     val comparator = schema.comparator(true)
 
     val matches = table.items
         .asSequence()
-        .filter(filter)
-        .mapNotNull {
-            it.condition(
-                expression = scan.FilterExpression,
-                expressionAttributeNames = scan.ExpressionAttributeNames,
-                expressionAttributeValues = scan.ExpressionAttributeValues
-            )
-        }
-        .sortedWith(comparator)
-        .dropWhile { scan.ExclusiveStartKey != null && comparator.compare(it, scan.ExclusiveStartKey!!) <= 0 }
+        .filter(schema.filterNullKeys())  // exclude items not held by selected index
+        .sortedWith(comparator)  // sort by selected index
+        .dropWhile { scan.ExclusiveStartKey != null && comparator.compare(it, scan.ExclusiveStartKey!!) <= 0 }   // skip previous pages
         .toList()
 
     val page = matches.take((scan.Limit ?: table.maxPageSize).coerceAtMost(table.maxPageSize))
+    val filteredPage = page.mapNotNull { it.condition(
+        expression = scan.FilterExpression,
+        expressionAttributeNames = scan.ExpressionAttributeNames,
+        expressionAttributeValues = scan.ExpressionAttributeValues
+    ) }
 
     ScanResponse(
-        Count = page.size,
-        Items = page.map { it.asItemResult() },
+        Count = filteredPage.size,
+        Items = filteredPage.map { it.asItemResult() },
         LastEvaluatedKey = if (page.size < matches.size && schema != null) {
             page.lastOrNull()?.key(schema)
         } else null
