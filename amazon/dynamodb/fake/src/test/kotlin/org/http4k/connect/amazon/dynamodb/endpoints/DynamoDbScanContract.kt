@@ -45,6 +45,7 @@ abstract class DynamoDbScanContract: DynamoDbSource {
     private val item3 = createItem("hash3", 2).without(attrB)
 
     private val binaryStringGSI = IndexName.of("bin-string")
+    private val attrNGsi = IndexName.of(attrN.name.value)
 
     @BeforeEach
     fun createTable() {
@@ -53,10 +54,12 @@ abstract class DynamoDbScanContract: DynamoDbSource {
             KeySchema = KeySchema.compound(attrS.name),
             AttributeDefinitions = listOf(
                 attrS.asAttributeDefinition(),
-                attrB.asAttributeDefinition()
+                attrB.asAttributeDefinition(),
+                attrN.asAttributeDefinition()
             ),
             GlobalSecondaryIndexes = listOf(
-                GlobalSecondaryIndex(IndexName = binaryStringGSI, KeySchema.compound(attrB.name, attrS.name), Projection.all)
+                GlobalSecondaryIndex(IndexName = binaryStringGSI, KeySchema.compound(attrB.name, attrS.name), Projection.all),
+                GlobalSecondaryIndex(IndexName = attrNGsi, KeySchema.compound(attrN.name), Projection.all),
             ),
             BillingMode = BillingMode.PAY_PER_REQUEST
         ).successValue()
@@ -164,17 +167,18 @@ abstract class DynamoDbScanContract: DynamoDbSource {
         dynamo.batchWriteItem(
             mapOf(
                 table to listOf(
-                    ReqWriteItem.Put(Item(attrS of "hash1", attrBool of true)),
-                    ReqWriteItem.Put(Item(attrS of "hash2", attrBool of true)),
-                    ReqWriteItem.Put(Item(attrS of "hash3", attrBool of false)),
-                    ReqWriteItem.Put(Item(attrS of "hash4", attrBool of false)),
-                    ReqWriteItem.Put(Item(attrS of "hash5", attrBool of false))
+                    ReqWriteItem.Put(Item(attrS of "hash1", attrN of 1, attrBool of true)),
+                    ReqWriteItem.Put(Item(attrS of "hash2", attrN of 2, attrBool of true)),
+                    ReqWriteItem.Put(Item(attrS of "hash3", attrN of 3, attrBool of false)),
+                    ReqWriteItem.Put(Item(attrS of "hash4", attrN of 4, attrBool of false)),
+                    ReqWriteItem.Put(Item(attrS of "hash5", attrN of 5, attrBool of false))
                 )
             )
         ).successValue()
 
         val result = dynamo.scan(
             TableName = table,
+            IndexName = attrNGsi,
             FilterExpression = "$attrBool = :val1",
             ExpressionAttributeValues = mapOf(
                 ":val1" to attrBool.asValue(true)
@@ -184,10 +188,10 @@ abstract class DynamoDbScanContract: DynamoDbSource {
 
         assertThat(result.Count, present(equalTo(2)))
         assertThat(result.items, equalTo(listOf(
-            Item(attrS of "hash1", attrBool of true),
-            Item(attrS of "hash2", attrBool of true)
+            Item(attrS of "hash1", attrN of 1, attrBool of true),
+            Item(attrS of "hash2", attrN of 2, attrBool of true)
         )))
-        assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash4")))
+        assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash4", attrN of 4)))
     }
 }
 

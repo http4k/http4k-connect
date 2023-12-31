@@ -29,7 +29,10 @@ fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
         Count = filteredPage.size,
         Items = filteredPage.map { it.asItemResult() },
         LastEvaluatedKey = if (page.size < matches.size && schema != null) {
-            page.lastOrNull()?.key(schema)
+            val lastItem = page.lastOrNull()
+            val indexKey = lastItem?.key(schema)
+            val primaryKey = lastItem?.key(table.table.KeySchema!!)
+            (indexKey.orEmpty() + primaryKey.orEmpty()).takeIf { it.isNotEmpty() }
         } else null
     )
 }
