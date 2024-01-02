@@ -1,11 +1,18 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
 import dev.forkhandles.result4k.onFailure
-import org.http4k.connect.amazon.dynamodb.*
-import org.http4k.connect.amazon.dynamodb.model.*
+import org.http4k.connect.amazon.dynamodb.DynamoDb
+import org.http4k.connect.amazon.dynamodb.model.AttributeName
+import org.http4k.connect.amazon.dynamodb.model.AttributeValue
+import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.connect.amazon.dynamodb.query
+import org.http4k.connect.amazon.dynamodb.queryPaginated
+import org.http4k.connect.amazon.dynamodb.scan
+import org.http4k.connect.amazon.dynamodb.scanPaginated
 import org.http4k.lens.BiDiLens
 
-class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
+class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
     private val dynamoDb: DynamoDb,
     private val tableName: TableName,
     private val itemLens: BiDiLens<Item, Document>,
@@ -17,18 +24,16 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         ExpressionAttributeValues: Map<String, AttributeValue>? = null,
         PageSize: Int? = null,
         ConsistentRead: Boolean? = null,
-    ): Sequence<Document> {
-        return dynamoDb.scanPaginated(
-            TableName = tableName,
-            FilterExpression = FilterExpression,
-            ExpressionAttributeNames = ExpressionAttributeNames,
-            ExpressionAttributeValues = ExpressionAttributeValues,
-            Limit = PageSize,
-            ConsistentRead = ConsistentRead
-        ).flatMap { result ->
-            result.onFailure { it.reason.throwIt() }
-        }.map(itemLens)
-    }
+    ) = dynamoDb.scanPaginated(
+        TableName = tableName,
+        FilterExpression = FilterExpression,
+        ExpressionAttributeNames = ExpressionAttributeNames,
+        ExpressionAttributeValues = ExpressionAttributeValues,
+        Limit = PageSize,
+        ConsistentRead = ConsistentRead
+    )
+        .flatMap { result -> result.onFailure { it.reason.throwIt() } }
+        .map(itemLens)
 
     fun scanPage(
         FilterExpression: String? = null,
@@ -44,7 +49,12 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
             FilterExpression = FilterExpression,
             ExpressionAttributeNames = ExpressionAttributeNames,
             ExpressionAttributeValues = ExpressionAttributeValues,
-            ExclusiveStartKey = ExclusiveStartKey?.let { schema.key(ExclusiveStartKey.first, ExclusiveStartKey.second) },
+            ExclusiveStartKey = ExclusiveStartKey?.let {
+                schema.key(
+                    ExclusiveStartKey.first,
+                    ExclusiveStartKey.second
+                )
+            },
             Limit = Limit,
             ConsistentRead = ConsistentRead
         ).onFailure { it.reason.throwIt() }
@@ -64,37 +74,33 @@ class DynamoDbIndexMapper<Document: Any, HashKey: Any, SortKey: Any>(
         ScanIndexForward: Boolean = true,
         PageSize: Int? = null,
         ConsistentRead: Boolean? = null,
-    ): Sequence<Document> {
-        return dynamoDb.queryPaginated(
-            TableName = tableName,
-            IndexName = schema.indexName,
-            KeyConditionExpression = KeyConditionExpression,
-            FilterExpression = FilterExpression,
-            ExpressionAttributeNames = ExpressionAttributeNames,
-            ExpressionAttributeValues = ExpressionAttributeValues,
-            ScanIndexForward = ScanIndexForward,
-            Limit = PageSize,
-            ConsistentRead = ConsistentRead
-        ).flatMap { result ->
-            result.onFailure { it.reason.throwIt() }
-        }.map(itemLens)
-    }
+    ) = dynamoDb.queryPaginated(
+        TableName = tableName,
+        IndexName = schema.indexName,
+        KeyConditionExpression = KeyConditionExpression,
+        FilterExpression = FilterExpression,
+        ExpressionAttributeNames = ExpressionAttributeNames,
+        ExpressionAttributeValues = ExpressionAttributeValues,
+        ScanIndexForward = ScanIndexForward,
+        Limit = PageSize,
+        ConsistentRead = ConsistentRead
+    )
+        .flatMap { result -> result.onFailure { it.reason.throwIt() } }
+        .map(itemLens)
 
     fun query(
         hashKey: HashKey,
         ScanIndexForward: Boolean = true,
         PageSize: Int? = null,
         ConsistentRead: Boolean? = null,
-    ): Sequence<Document> {
-        return query(
-            KeyConditionExpression = "#key1 = :val1",
-            ExpressionAttributeNames = mapOf("#key1" to schema.hashKeyAttribute.name),
-            ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(hashKey)),
-            ScanIndexForward = ScanIndexForward,
-            PageSize = PageSize,
-            ConsistentRead = ConsistentRead
-        )
-    }
+    ) = query(
+        KeyConditionExpression = "#key1 = :val1",
+        ExpressionAttributeNames = mapOf("#key1" to schema.hashKeyAttribute.name),
+        ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(hashKey)),
+        ScanIndexForward = ScanIndexForward,
+        PageSize = PageSize,
+        ConsistentRead = ConsistentRead
+    )
 
     fun queryPage(
         HashKey: HashKey,
