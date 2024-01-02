@@ -24,14 +24,15 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         ExpressionAttributeValues: Map<String, AttributeValue>? = null,
         PageSize: Int? = null,
         ConsistentRead: Boolean? = null,
-    ) = dynamoDb.scanPaginated(
-        TableName = tableName,
-        FilterExpression = FilterExpression,
-        ExpressionAttributeNames = ExpressionAttributeNames,
-        ExpressionAttributeValues = ExpressionAttributeValues,
-        Limit = PageSize,
-        ConsistentRead = ConsistentRead
-    )
+    ) = dynamoDb
+        .scanPaginated(
+            TableName = tableName,
+            FilterExpression = FilterExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues,
+            Limit = PageSize,
+            ConsistentRead = ConsistentRead
+        )
         .flatMap { result -> result.onFailure { it.reason.throwIt() } }
         .map(itemLens)
 
@@ -74,17 +75,18 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         ScanIndexForward: Boolean = true,
         PageSize: Int? = null,
         ConsistentRead: Boolean? = null,
-    ) = dynamoDb.queryPaginated(
-        TableName = tableName,
-        IndexName = schema.indexName,
-        KeyConditionExpression = KeyConditionExpression,
-        FilterExpression = FilterExpression,
-        ExpressionAttributeNames = ExpressionAttributeNames,
-        ExpressionAttributeValues = ExpressionAttributeValues,
-        ScanIndexForward = ScanIndexForward,
-        Limit = PageSize,
-        ConsistentRead = ConsistentRead
-    )
+    ) = dynamoDb
+        .queryPaginated(
+            TableName = tableName,
+            IndexName = schema.indexName,
+            KeyConditionExpression = KeyConditionExpression,
+            FilterExpression = FilterExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues,
+            ScanIndexForward = ScanIndexForward,
+            Limit = PageSize,
+            ConsistentRead = ConsistentRead
+        )
         .flatMap { result -> result.onFailure { it.reason.throwIt() } }
         .map(itemLens)
 
