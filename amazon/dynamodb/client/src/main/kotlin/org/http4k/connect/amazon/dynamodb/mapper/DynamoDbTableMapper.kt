@@ -96,7 +96,7 @@ class DynamoDbTableMapper<Document : Any, HashKey : Any, SortKey : Any>(
         dynamoDb.deleteItem(
             TableName = tableName,
             Key = primarySchema.key(hashKey, sortKey)
-        )
+        ).onFailure { it.reason.throwIt() }
     }
 
     fun delete(document: Document) {
