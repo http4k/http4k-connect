@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.6.6.0 (uncut)
+- **http4k-connect-amazon-dynamodb-client*** - [Fix] #344 Handle failures in `DynamoDbTableMapper.delete()` H/T @obecker
+
 ### v5.6.5.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-*** - Fix `AutomarshalledPagedAction` so that it deals with pages of results which do not get returned inside a list but in an object wrapping a list.
