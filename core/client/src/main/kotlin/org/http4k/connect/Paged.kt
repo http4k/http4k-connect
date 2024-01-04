@@ -65,12 +65,12 @@ abstract class AutomarshalledPagedAction<
     override fun toResult(response: Response): Result<PageType, RemoteFailure> = with(response) {
         when {
             status.successful -> {
-                val itemsAsList = bodyString().let { if(it.startsWith("[")) it else """[$it]""" }
+                val itemsAsListEvenWhenTheyAreNot = bodyString().let { if(it.startsWith("[")) it else """[$it]""" }
                 Success(
                     toResult(
                         autoMarshalling
                             .asA(
-                                """{"items":$itemsAsList}""".trimIndent(),
+                                """{"items":$itemsAsListEvenWhenTheyAreNot}""".trimIndent(),
                                 kClass
                             ).items,
                         this@AutomarshalledPagedAction(this)
