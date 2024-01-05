@@ -85,6 +85,33 @@ val boolean: Result<Boolean, LensFailure> = attrBool.asResult()(item)
 
 It is also possible to `map()` lenses to provide marshalling into your own types.
 
+#### Null handling and sparse indexes
+
+The default mapping for null values of manually mapped optional attributes in DynamoDB will assign them to an explicit 
+null attribute:
+```kotlin
+val attrS = Attribute.string().optional("optS")
+val item = Item(attrS of null)
+
+// item now contains "optS": { "NULL": true }
+```
+
+When utilizing an optional attribute as a key in a secondary index (creating a sparse index), the attribute must be 
+absent rather than null. To achieve this, set `ignoreNull` to true in the attribute definition.
+```kotlin
+val attrS = Attribute.string().optional("optS", ignoreNull = true)
+```
+
+When incorporating this attribute into the secondary index schema, it is necessary to convert it into a mandatory 
+(non-optional) attribute.
+```kotlin
+// attrS is of type Attribute<String?>
+
+attrS.asRequired() // will be of type Attribute<String>
+```
+
+Note: null properties of automapped objects (using `autoDynamoLens()`) will be ignored by default.
+
 ### DynamoDB Table Repository
 
 A simplified API for mapping documents to and from a single table with `get`, `put`, `scan`, `query`, etc.
@@ -166,7 +193,7 @@ client.putItem(
 
 // lookup an item from the database
 val item = client.getItem(table, key = mapOf(attrS to "hello")).valueOrNull()!!.item!!
-val str: String? = attrS[item]
+val str: String? = attrS(item)
 
 // all operations return a Result monad of the API type
 val deleteResult: Result<TableDescriptionResponse, RemoteFailure> = client.deleteTable(table)
