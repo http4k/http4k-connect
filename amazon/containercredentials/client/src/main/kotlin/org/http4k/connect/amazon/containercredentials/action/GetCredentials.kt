@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.containercredentials.action
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import dev.forkhandles.values.parseOrNull
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.containercredentials.ContainerCredentials
 import org.http4k.connect.amazon.containercredentials.ContainerCredentialsAction
@@ -42,13 +43,10 @@ data class GetCredentialsResponse(
     val Expiration: Expiration,
     val RoleArn: String?
 ) {
-    fun asCredentials(): Credentials {
-        val roleArn = when (RoleArn) {
-            "NOT_SUPPLIED", null -> null
-            else -> ARN.of(RoleArn)
-        }
-        return Credentials(Token, AccessKeyId, SecretAccessKey, Expiration, roleArn)
-    }
+    fun asCredentials() = Credentials(
+        Token, AccessKeyId, SecretAccessKey, Expiration, RoleArn?.let { ARN.parseOrNull(it) }
+        // RoleArn in response is not always the right shape https://kotlinlang.slack.com/archives/C5AL3AKUY/p1704811893680939
+    )
 }
 
 fun ContainerCredentials.getCredentials(uri: Uri) = this(GetCredentials(uri))
