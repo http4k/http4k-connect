@@ -3,14 +3,14 @@ package org.http4k.connect.amazon.evidently
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.evidently.actions.EvaluatedFeature
-import org.http4k.connect.amazon.evidently.actions.Feature
-import org.http4k.connect.amazon.evidently.actions.FeatureStatus
-import org.http4k.connect.amazon.evidently.actions.ValueType
-import org.http4k.connect.amazon.evidently.actions.VariableValue
-import org.http4k.connect.amazon.evidently.actions.VariationConfig
 import org.http4k.connect.amazon.evidently.model.EntityId
 import org.http4k.connect.amazon.evidently.model.EvaluationStrategy
+import org.http4k.connect.amazon.evidently.model.Feature
 import org.http4k.connect.amazon.evidently.model.FeatureName
+import org.http4k.connect.amazon.evidently.model.FeatureStatus
+import org.http4k.connect.amazon.evidently.model.ValueType
+import org.http4k.connect.amazon.evidently.model.VariableValue
+import org.http4k.connect.amazon.evidently.model.VariationConfig
 import org.http4k.connect.amazon.evidently.model.VariationName
 import java.time.Instant
 
@@ -68,7 +68,3 @@ fun StoredFeature.toFeature() = Feature(
     valueType = variations.getValue(default).value.type,
     variations = variations.values.toList()
 )
-
-
-
-

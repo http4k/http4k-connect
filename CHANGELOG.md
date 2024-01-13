@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.6.6.0 (uncut)
 - **http4k-connect-amazon-dynamodb-client*** - [Fix] #344 Handle failures in `DynamoDbTableMapper.delete()` H/T @obecker
+- **http4k-connect-amazon-evidently*** Add `updateFeature` to Evidently.  H/T @oharaandrew314
 
 ### v5.6.5.0
 - **http4k-connect-*** - Upgrade dependencies.
