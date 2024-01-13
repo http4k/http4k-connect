@@ -21,18 +21,7 @@ data class EvaluateFeature(
     override fun requestBody() = EvaluateFeatureRequest(entityId, evaluationContext)
 }
 
-@JsonSerializable
-data class VariableValue(
-    val boolValue: Boolean?,
-    val doubleValue: Double?,
-    val longValue: Long?,
-    val stringValue: String?
-) {
-    constructor(boolValue: Boolean): this(boolValue = boolValue, doubleValue = null, longValue = null, stringValue = null)
-    constructor(doubleValue: Double): this(boolValue = null, doubleValue = doubleValue, longValue = null, stringValue = null)
-    constructor(longValue: Long): this(boolValue = null, doubleValue = null, longValue = longValue, stringValue = null)
-    constructor(stringValue: String): this(boolValue = null, doubleValue = null, longValue = null, stringValue = stringValue)
-}
+
 
 @JsonSerializable
 data class EvaluatedFeature(

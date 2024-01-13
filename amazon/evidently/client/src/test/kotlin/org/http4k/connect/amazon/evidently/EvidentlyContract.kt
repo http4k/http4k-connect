@@ -13,12 +13,15 @@ import org.http4k.connect.amazon.evidently.actions.BatchEvaluationResultWrapper
 import org.http4k.connect.amazon.evidently.actions.EvaluatedFeature
 import org.http4k.connect.amazon.evidently.actions.VariableValue
 import org.http4k.connect.amazon.evidently.model.EntityId
+import org.http4k.connect.amazon.evidently.model.EvaluationStrategy
 import org.http4k.connect.amazon.evidently.model.FeatureName
 import org.http4k.connect.amazon.evidently.model.ProjectName
+import org.http4k.connect.amazon.evidently.model.VariationConfig
 import org.http4k.connect.amazon.evidently.model.VariationName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.DELETE
+import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.POST
 import org.http4k.core.Status
 import org.http4k.core.Status.Companion.CONFLICT
@@ -157,6 +160,43 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
             status = NOT_FOUND,
             message = "{\"message\":\"Project does not exist with arn '$missingProjectArn'\",\"resourceId\":null,\"resourceType\":null}"
         )))
+
+        // update missing feature
+        assertThat(evidently.updateFeature(projectName, missingFeatureName).failureOrNull(), equalTo(
+            RemoteFailure(
+                method = PATCH,
+                uri = Uri.of("/projects/$projectName/features/$missingFeatureName"),
+                status = NOT_FOUND,
+                message = "{\"message\":\"Feature with arn '$missingFeatureArn' does not exist.\",\"resourceId\":\"$missingFeatureArn\",\"resourceType\":\"feature\"}"
+            )
+        ))
+
+        // update feature
+        evidently.updateFeature(
+            project = projectName,
+            feature = featureName,
+            evaluationStrategy = EvaluationStrategy.ALL_RULES,
+            defaultVariation = VariationName.of("bar"),
+            addOrUpdateVariations = listOf(
+                VariationConfig(VariationName.of("baz"), VariableValue("789"))
+            ),
+            entityOverrides = mapOf(
+                entity2 to VariationName.of("baz")
+            ),
+            removeVariations = listOf(VariationName.of("foo")),
+            description = "updated"
+        ).successValue().also {
+            assertThat(it.feature.description, equalTo("updated"))
+            assertThat(it.feature.evaluationStrategy, equalTo(EvaluationStrategy.ALL_RULES))
+            assertThat(it.feature.defaultVariation, equalTo(VariationName.of("bar")))
+            assertThat(it.feature.variations, equalTo(listOf(
+                VariationConfig(VariationName.of("bar"), VariableValue("456")),
+                VariationConfig(VariationName.of("baz"), VariableValue("789"))
+            )))
+            assertThat(it.feature.entityOverrides, equalTo(mapOf(
+                entity2.value to VariationName.of("baz")
+            )))
+        }
 
         // cannot delete project with features
         assertThat(evidently.deleteProject(projectName).failureOrNull(), equalTo(

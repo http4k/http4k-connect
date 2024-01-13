@@ -14,17 +14,20 @@ import org.http4k.routing.routes
 import java.time.Clock
 
 class FakeEvidently(
-    private val projects: Storage<StoredProject> = Storage.InMemory(),
-    private val features: Storage<StoredFeature> = Storage.InMemory(),
+    projects: Storage<StoredProject> = Storage.InMemory(),
+    features: Storage<StoredFeature> = Storage.InMemory(),
     clock: Clock = Clock.systemUTC(),
+    region: Region = Region.US_EAST_1,
+    account: AwsAccount = AwsAccount.of("1")
 ) : ChaoticHttpHandler() {
 
     private val api =
-        AmazonRestfulFake(EvidentlyMoshi, AwsService.of("evidently"), Region.US_EAST_1, AwsAccount.of("1"))
+        AmazonRestfulFake(EvidentlyMoshi, AwsService.of("evidently"), region, account)
 
     override val app = routes(
         api.createProject(clock, projects, features),
         api.createFeature(clock, projects, features),
+        api.updateFeature(clock, projects, features),
         api.evaluateFeature(projects, features),
         api.batchEvaluateFeature(projects, features),
         api.deleteFeature(projects, features),

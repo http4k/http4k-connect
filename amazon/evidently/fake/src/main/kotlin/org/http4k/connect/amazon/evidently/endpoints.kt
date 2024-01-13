@@ -13,15 +13,17 @@ import org.http4k.connect.amazon.evidently.actions.BatchEvaluateFeatureRequestWr
 import org.http4k.connect.amazon.evidently.actions.BatchEvaluateFeatureResult
 import org.http4k.connect.amazon.evidently.actions.BatchEvaluationResultWrapper
 import org.http4k.connect.amazon.evidently.actions.CreateFeatureData
-import org.http4k.connect.amazon.evidently.actions.CreateFeatureResponse
 import org.http4k.connect.amazon.evidently.actions.CreateProjectData
 import org.http4k.connect.amazon.evidently.actions.CreateProjectResponse
 import org.http4k.connect.amazon.evidently.actions.EvaluateFeatureRequest
+import org.http4k.connect.amazon.evidently.actions.UpdateFeatureData
 import org.http4k.connect.amazon.evidently.model.EntityId
 import org.http4k.connect.amazon.evidently.model.EvaluationStrategy
 import org.http4k.connect.amazon.evidently.model.FeatureName
+import org.http4k.connect.amazon.evidently.model.FeatureResponse
 import org.http4k.connect.amazon.evidently.model.ProjectName
 import org.http4k.connect.storage.Storage
+import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.POST
 import org.http4k.core.Status
@@ -129,7 +131,35 @@ fun AmazonRestfulFake.createFeature(
                 projectArn = project.arn
             )
         }.peek { features["$projectName-${it.name}"] = it }
-        .map { CreateFeatureResponse(it.toFeature()) }
+        .map { FeatureResponse(it.toFeature()) }
+}
+
+fun AmazonRestfulFake.updateFeature(
+    clock: Clock,
+    projects: Storage<StoredProject>,
+    features: Storage<StoredFeature>
+) = "/projects/$projectLens/features/$featureLens" bind PATCH to route<UpdateFeatureData> { data ->
+    val projectName = projectLens(this)
+    val featureName = featureLens(this)
+    val key = "$projectName-$featureName"
+
+    projects[projectName]
+        .asResultOr { projectResourceNotFound("project", "project:$projectName/feature/$featureName") }
+        .flatMap { features[key].asResultOr { projectResourceNotFound("feature", "project:$projectName/feature/$featureName") } }
+        .map { feature ->
+            feature.copy(
+                updated = clock.instant(),
+                description = data.description ?: feature.description,
+                evaluationStrategy = data.evaluationStrategy ?: feature.evaluationStrategy,
+                overrides = data.entityOverrides ?: feature.overrides,
+                default = data.defaultVariation ?: feature.default,
+                variations = feature.variations
+                    + data.addOrUpdateVariations.orEmpty().associateBy { it.name }
+                    - data.removeVariations.orEmpty().toSet()
+            )
+        }
+        .peek { features[key] = it }
+        .map { FeatureResponse(it.toFeature()) }
 }
 
 fun AmazonRestfulFake.deleteFeature(
