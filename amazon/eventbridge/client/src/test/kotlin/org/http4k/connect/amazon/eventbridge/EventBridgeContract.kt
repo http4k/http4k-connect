@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.model.EventDetailType
 import org.http4k.connect.amazon.model.EventSource
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -25,7 +26,7 @@ abstract class EventBridgeContract(http: HttpHandler) : AwsContract() {
     fun `delivery stream lifecycle`() {
         with(eventBridge) {
             try {
-                createEventBus(eventBusName).successValue()
+                val arn = createEventBus(eventBusName).successValue().EventBusArn
 
                 assertThat(
                     listEventBuses().successValue().EventBuses.map { it.Name }.contains(eventBusName),
@@ -39,6 +40,12 @@ abstract class EventBridgeContract(http: HttpHandler) : AwsContract() {
                                 EventDetailType.of("detail type"),
                                 EventSource.of("foobar"),
                                 eventBusName
+                            ),
+                            Event(
+                                EventDetail.of("{}"),
+                                EventDetailType.of("detail type"),
+                                EventSource.of("foobar"),
+                                arn
                             ),
                             Event(
                                 EventDetail.of("{}"),

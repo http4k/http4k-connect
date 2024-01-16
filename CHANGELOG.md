@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.6.7.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-amazon-eventbridge*** Events can be sent with the ARN and not just with the EventBusName
+
 ### v5.6.6.0
 - **http4k-connect-amazon-dynamodb-client*** - [Fix] #344 Handle failures in `DynamoDbTableMapper.delete()` H/T @obecker
 - **http4k-connect-amazon-evidently*** Add `updateFeature` to Evidently.  H/T @oharaandrew314

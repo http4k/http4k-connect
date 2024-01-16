@@ -19,7 +19,17 @@ data class Event(
     val Resources: List<ARN>? = null,
     val Time: Timestamp? = null,
     val TraceHeader: String? = null
-)
+) {
+    constructor(
+        Detail: EventDetail,
+        DetailType: EventDetailType,
+        Source: EventSource,
+        EventBusARN: ARN? = null,
+        Resources: List<ARN>? = null,
+        Time: Timestamp? = null,
+        TraceHeader: String? = null
+    ) : this(Detail, DetailType, Source, EventBusARN?.let(org.http4k.connect.amazon.model.EventBusName::of), Resources, Time, TraceHeader)
+}
 
 /**
  * Shim method to convert format to that which is received over the wire in lambdas

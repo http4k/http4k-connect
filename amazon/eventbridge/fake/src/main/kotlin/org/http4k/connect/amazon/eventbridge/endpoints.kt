@@ -21,7 +21,9 @@ import java.util.UUID
 
 fun AmazonJsonFake.putEvents(events: Storage<List<Event>>) = route<PutEvents> {
     val newEvents = it.Entries.groupBy {
-        it.EventBusName ?: EventBusName.of("default")
+        it.EventBusName
+            ?.let { if(it.value.startsWith("arn")) ARN.of(it.value).resourceId(EventBusName::of) else it }
+            ?: EventBusName.of("default")
     }
 
     EventResults(newEvents.flatMap { (bus, new) ->
@@ -60,5 +62,5 @@ private fun EventBusName.toArn() = ARN.of(
     EventBridge.awsService,
     Region.of("us-east-1"),
     AwsAccount.of("0"),
-    "eventbus", this
+    "event-bus", this
 )
