@@ -11,7 +11,6 @@ import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.Payload
-import org.http4k.filter.debug
 import java.time.Clock
 
 /**
@@ -23,8 +22,8 @@ fun Evidently.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC()
 ) = object : Evidently {
-    private val controlHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed, ).then(http.debug())
-    private val dataHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed, "dataplane.").then(http.debug())
+    private val controlHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed, ).then(http)
+    private val dataHttp = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed, "dataplane.").then(http)
 
     override fun <R : Any> invoke(action: EvidentlyAction<R>): Result<R, RemoteFailure> {
         val signedHttp = if (action.dataPlane) dataHttp else controlHttp
