@@ -13,7 +13,7 @@ import org.http4k.core.Method.POST
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class FakeFirehose(private val records: Storage<List<Record>> = Storage.InMemory()) : ChaoticHttpHandler() {
+class FakeFirehose(val records: Storage<List<Record>> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     private val api = AmazonJsonFake(FirehoseMoshi, AwsService.of("Firehose_20150804"))
 

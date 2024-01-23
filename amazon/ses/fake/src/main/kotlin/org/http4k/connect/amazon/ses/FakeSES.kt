@@ -13,7 +13,7 @@ import org.http4k.filter.ServerFilters.CatchLensFailure
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class FakeSES(private val messagesBySender: Storage<List<EmailMessage>> = Storage.InMemory(),) : ChaoticHttpHandler() {
+class FakeSES(val messagesBySender: Storage<List<EmailMessage>> = Storage.InMemory(),) : ChaoticHttpHandler() {
 
     override val app = CatchLensFailure()
         .then("/" bind POST to routes(
