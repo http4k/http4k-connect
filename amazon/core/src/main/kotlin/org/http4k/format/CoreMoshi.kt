@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 object AwsCoreMoshi : ConfigurableMoshi(
     Moshi.Builder()
         .add(AwsCoreJsonAdapterFactory())
+        .add(CoreAdapterFactory)
         .add(ListAdapter)
         .add(MapAdapter)
         .asConfigurable()

@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.6.8.2
+- **http4k-connect-amazon-containercredentials*** - Add Kotshi adapter to Moshi instance.
+
 ### v5.6.8.1
 - **http4k-connect-*** - Fix AutoMarshalledPageAction not recognising arrays with whitespace.
 
