@@ -5,6 +5,7 @@ import dev.forkhandles.values.minLength
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.core.model.ResourceId
+import org.http4k.connect.model.Base64Blob
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 import java.util.UUID
@@ -15,7 +16,7 @@ class DeliveryStreamName private constructor(value: String) : ResourceId(value) 
 
 @JsonSerializable
 data class Record(
-    val Data: org.http4k.connect.model.Base64Blob
+    val Data: Base64Blob
 )
 
 @JsonSerializable
