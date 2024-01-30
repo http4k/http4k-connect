@@ -16,13 +16,15 @@ class ARN private constructor(value: String) : StringValue(value) {
     private val resource = parts.drop(5)
 
     val resourceType by lazy {
-        if (resource.size == 2) resource[0]
+        if (resource.size > 1) resource[0]
         else error("No resource type found in $value")
     }
 
     fun <T : ResourceId> resourceId(fn: (String) -> T) =
-        if (resource.size == 2) fn(resource[1])
-        else fn(resource[0])
+        when {
+            resource.size > 1 -> fn(resource.drop(1).joinToString("/"))
+            else -> fn(resource[0])
+        }
 
     companion object : StringValueFactory<ARN>(::ARN, 1.minLength.and { it.startsWith("arn:") }) {
         fun of(

@@ -27,6 +27,7 @@ includeStorage("s3")
 includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
+includeVendorSystem("amazon", "apprunner")
 includeVendorSystem("amazon", "cloudfront")
 includeVendorSystem("amazon", "cloudwatchlogs")
 includeVendorSystem("amazon", "cognito")

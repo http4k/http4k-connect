@@ -85,8 +85,9 @@ dependencies {
 ## Supported APIs and Fakes:
 
 - AWS
+    - [AppRunner](./amazon/apprunner) -> `"org.http4k:http4k-connect-amazon-apprunner"` / `"org.http4k:http4k-connect-amazon-apprunner-fake"`
     - [CloudFront](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-cloudfront"` / `"org.http4k:http4k-connect-amazon-cloudfront-fake"`
-    - [CloudWatchLogs](./amazon/kms) -> `"org.http4k:http4k-connect-amazon-cloudwatchlogs"` / `"org.http4k:http4k-connect-amazon-cloudwatchlogs-fake"`
+    - [CloudWatchLogs](./amazon/cloudwatchlogs) -> `"org.http4k:http4k-connect-amazon-cloudwatchlogs"` / `"org.http4k:http4k-connect-amazon-cloudwatchlogs-fake"`
     - [DynamoDb](./amazon/dynamodb) -> `"org.http4k:http4k-connect-amazon-dynamodb"` / `"org.http4k:http4k-connect-amazon-dynamodb-fake"`
     - [EventBridge](./amazon/eventbridge) -> `"org.http4k:http4k-connect-amazon-eventbridge"` / `"org.http4k:http4k-connect-amazon-eventbridge-fake"`
     - [Evidently](./amazon/evidently) -> `"org.http4k:http4k-connect-amazon-evidently"` / `"org.http4k:http4k-connect-amazon-evidently-fake"`

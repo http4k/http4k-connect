@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.core.model
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 class ARNTest {
 
@@ -50,5 +51,18 @@ class ARNTest {
         assertThat(arn.account, equalTo(account))
         assertThat(arn.resourceType, equalTo(resourceType))
         assertThat(arn.resourceId(KMSKeyId::of), equalTo(resourceId))
+    }
+
+    @Test
+    fun `can get parts back from ARN - resource path with longer path`() {
+        val arn = ARN.parse("arn:partition:kms:ldn-north-1:001234567890:key/name/${UUID(0,0)}")
+
+        assertThat(arn.toString(), equalTo("arn:partition:kms:ldn-north-1:001234567890:key/name/${UUID(0,0)}"))
+        assertThat(arn.partition, equalTo(partition))
+        assertThat(arn.awsService, equalTo(awsService))
+        assertThat(arn.region, equalTo(region))
+        assertThat(arn.account, equalTo(account))
+        assertThat(arn.resourceType, equalTo(resourceType))
+        assertThat(arn.resourceId(KMSKeyId::of).value, equalTo("name/00000000-0000-0000-0000-000000000000"))
     }
 }
