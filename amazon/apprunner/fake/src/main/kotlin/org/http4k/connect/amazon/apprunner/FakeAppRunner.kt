@@ -17,7 +17,7 @@ import java.time.Clock
 
 class FakeAppRunner(val records: Storage<Service> = Storage.InMemory()) : ChaoticHttpHandler() {
 
-    private val api = AmazonJsonFake(AppRunnerMoshi, AwsService.of("apprunner"))
+    private val api = AmazonJsonFake(AppRunnerMoshi, AwsService.of("AppRunner"))
 
     override val app = routes(
         api.createService(records),
