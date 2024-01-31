@@ -8,7 +8,7 @@ The S3 connector consists of 2 interfaces:
     * HeadBucket
     * ListBuckets
 
-- `S3.Bucket` for bucket level operations, providing the following Actions:
+- `S3Bucket` for bucket level operations, providing the following Actions:
 
     * CopyObject
     * CreateObject
@@ -110,4 +110,3 @@ fun main() {
     // share these URIs to your clients so they can perform the operations without credentials
 }
 ```
-
