@@ -22,10 +22,12 @@ fun S3Bucket.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    payloadMode: Payload.Mode = Payload.Mode.Signed
+    payloadMode: Payload.Mode = Payload.Mode.Signed,
+    forcePathStyle: Boolean = false
 ) = object : S3Bucket {
-    private val pathPrefixToUse = if (bucketName.requiresPathStyleApi()) "/$bucketName" else ""
-    private val bucketDomainToUse = if (bucketName.requiresPathStyleApi()) "" else "$bucketName."
+    private val usePathStyleApi = forcePathStyle || bucketName.requiresPathStyleApi()
+    private val pathPrefixToUse = if (usePathStyleApi) "/$bucketName" else ""
+    private val bucketDomainToUse = if (usePathStyleApi) "" else "$bucketName."
 
     private val signedHttp =
         SetBaseUriFrom(Uri.of(pathPrefixToUse))
@@ -45,8 +47,9 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
+    forcePathStyle: Boolean = false,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(bucketName, bucketRegion, Environment.from(env), http, clock, payloadMode, credentialsProvider)
+) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode, forcePathStyle)
 
 /**
  * Convenience function to create a S3Bucket from an http4k Environment
@@ -58,5 +61,6 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
+    forcePathStyle: Boolean = false,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode)
+) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode, forcePathStyle)

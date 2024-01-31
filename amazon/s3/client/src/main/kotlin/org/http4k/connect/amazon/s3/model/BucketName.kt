@@ -9,8 +9,8 @@ class BucketName private constructor(value: String) : ResourceId(value) {
 
     fun requiresPathStyleApi() = value.contains('.')
 
-    fun toUri(region: Region) = when {
-        requiresPathStyleApi() -> AwsService.of("s3").toUri(region).path("/$value")
+    fun toUri(region: Region, forcePathStyle: Boolean = false) = when {
+        forcePathStyle || requiresPathStyleApi() -> AwsService.of("s3").toUri(region).path("/$value")
         else -> AwsService.of("$this.s3").toUri(region)
     }
 
