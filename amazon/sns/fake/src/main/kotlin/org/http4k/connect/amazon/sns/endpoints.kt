@@ -4,6 +4,7 @@ import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Region
+import org.http4k.connect.amazon.sns.action.PublishBatchResultEntry
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.SNSMessageId
 import org.http4k.connect.amazon.sns.model.TopicName
@@ -72,17 +73,47 @@ fun publish(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: R
     }
 }
 
+fun publishBatch(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) = { r: Request -> r.form("Action") == "PublishBatch" }
+    .asRouter() bind fn@{ req: Request ->
+
+    val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
+    if (topics.keySet(topicName.value).isEmpty()) return@fn Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
+
+    val results = (1 until Int.MAX_VALUE)
+        .asSequence()
+        .map { index ->
+            val id = req.form("PublishBatchRequestEntries.member.$index.Id") ?: return@map null
+
+            topics[topicName.value] = topics[topicName.value]!! + SNSMessage(
+                message =  req.form("PublishBatchRequestEntries.member.$index.Message")!!,
+                subject = req.form("PublishBatchRequestEntries.member.$index.Subject"),
+                attributes = attributesFrom(req, prefix = "PublishBatchRequestEntries.member.$index.")
+            )
+
+            PublishBatchResultEntry(
+                Id = id,
+                MessageId = SNSMessageId.of(UUID.randomUUID().toString()),
+                SequenceNumber = null
+            )
+        }
+        .takeWhile { it != null }
+        .filterNotNull()
+        .toList()
+
+    Response(OK).with(viewModelLens of PublishBatchResponse(results))
+}
+
 val viewModelLens by lazy {
     Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 }
 
-private fun attributesFrom(req: Request): List<MessageAttribute> {
+private fun attributesFrom(req: Request, prefix: String = ""): List<MessageAttribute> {
     val names = req.formAsMap()
-        .filter { it.key.startsWith("MessageAttributes") }
+        .filter { it.key.startsWith("${prefix}MessageAttributes") }
         .filter { it.key.endsWith(".Name") }
         .map {
             it.value.first()!!.removePrefix("[").removeSuffix("]") to
-                it.key.removePrefix("MessageAttributes.entry.").removeSuffix(".Name")
+                it.key.removePrefix("${prefix}MessageAttributes.entry.").removeSuffix(".Name")
         }
 
     val cleanedValues = req.formAsMap().mapKeys {
@@ -94,9 +125,9 @@ private fun attributesFrom(req: Request): List<MessageAttribute> {
     return names.map {
         MessageAttribute(
             it.first,
-            cleanedValues["MessageAttributes.entry.${it.second}.Value"]
+            cleanedValues["${prefix}MessageAttributes.entry.${it.second}.Value"]
             !!.toString().removePrefix("[").removeSuffix("]"),
-            DataType.valueOf(cleanedValues["MessageAttributes.entry.${it.second}.Value.DataType"]!![0]!!)
+            DataType.valueOf(cleanedValues["${prefix}MessageAttributes.entry.${it.second}.Value.DataType"]!![0]!!)
         )
     }
 }

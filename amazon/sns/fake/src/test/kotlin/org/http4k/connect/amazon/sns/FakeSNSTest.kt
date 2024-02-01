@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.core.model.DataType.Number
 import org.http4k.connect.amazon.fakeAwsEnvironment
+import org.http4k.connect.amazon.sns.action.PublishBatchRequestEntry
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.storage.InMemory
@@ -48,4 +49,37 @@ class FakeSNSTest : SNSContract(FakeSNS(topics)) {
         }
     }
 
+    @Test
+    fun `batch publish messages are parsed`() {
+        with(sns) {
+            val topicArn = createTopic(topicName, listOf(), mapOf()).successValue().topicArn
+            try {
+                val attributes = listOf(
+                    MessageAttribute("foo", "123", Number),
+                    MessageAttribute("bar", "123", Number),
+                    MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
+                )
+                publishBatch(
+                    TopicArn = topicArn,
+                    PublishBatchRequestEntries = listOf(
+                        PublishBatchRequestEntry(
+                            Id = "message1",
+                            Subject = "subject",
+                            Message = "hello world",
+                            MessageAttributes = attributes
+                        )
+                    )
+                ).successValue()
+
+                val message = topics[topicName.value]!![0]
+                assertThat(message.subject, equalTo("subject"))
+                assertThat(message.message, equalTo("hello world"))
+                assertThat(message.attributes.first().name, equalTo("foo"))
+                assertThat(message.attributes.first().value, equalTo("123"))
+                assertThat(message.attributes.first().dataType, equalTo(Number))
+            } finally {
+                deleteTopic(topicArn).successValue()
+            }
+        }
+    }
 }

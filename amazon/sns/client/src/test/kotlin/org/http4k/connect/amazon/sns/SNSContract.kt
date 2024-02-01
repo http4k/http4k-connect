@@ -2,9 +2,13 @@ package org.http4k.connect.amazon.sns
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.isEmpty
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.DataType.Number
+import org.http4k.connect.amazon.core.model.DataType.String
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.sns.action.PublishBatchRequestEntry
 import org.http4k.connect.amazon.sns.model.MessageAttribute
 import org.http4k.connect.amazon.sns.model.TopicName
 import org.http4k.connect.model.Base64Blob
@@ -39,6 +43,31 @@ abstract class SNSContract(http: HttpHandler) : AwsContract() {
                         MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
                     )
                 ).successValue()
+
+                val batchResult = publishBatch(
+                    TopicArn = topicArn,
+                    PublishBatchRequestEntries = listOf(
+                        PublishBatchRequestEntry(
+                            Id = "message1",
+                            Subject = "serious stuff",
+                            Message = "super serious",
+                            MessageAttributes = listOf(
+                                MessageAttribute("foo", "123", Number),
+                                MessageAttribute("bar", "stuff", String)
+                            )
+                        ),
+                        PublishBatchRequestEntry(
+                            Id = "message2",
+                            Message = "hello",
+                            MessageAttributes = listOf(
+                                MessageAttribute("foo", "123", Number)
+                            )
+                        )
+                    )
+                ).successValue()
+
+                assertThat(batchResult.Failed, isEmpty)
+                assertThat(batchResult.Succesful, hasSize(equalTo(2)))
             } finally {
                 deleteTopic(topicArn).successValue()
             }
