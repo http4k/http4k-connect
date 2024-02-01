@@ -59,7 +59,8 @@ class FakeSNSTest : SNSContract(FakeSNS(topics)) {
                     MessageAttribute("bar", "123", Number),
                     MessageAttribute("binaryfoo", Base64Blob.encode("foobar"))
                 )
-                publishBatch(
+
+                val result = publishBatch(
                     TopicArn = topicArn,
                     PublishBatchRequestEntries = listOf(
                         PublishBatchRequestEntry(
@@ -70,6 +71,8 @@ class FakeSNSTest : SNSContract(FakeSNS(topics)) {
                         )
                     )
                 ).successValue()
+
+                assertThat(result.Succesful.first().Id, equalTo("message1"))
 
                 val message = topics[topicName.value]!![0]
                 assertThat(message.subject, equalTo("subject"))

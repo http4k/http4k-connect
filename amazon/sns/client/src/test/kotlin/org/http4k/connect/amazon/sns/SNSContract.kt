@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.sns
 
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.contains
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.isEmpty
@@ -68,6 +69,7 @@ abstract class SNSContract(http: HttpHandler) : AwsContract() {
 
                 assertThat(batchResult.Failed, isEmpty)
                 assertThat(batchResult.Succesful, hasSize(equalTo(2)))
+                assertThat(batchResult.Succesful.map { it.Id }, equalTo(listOf("message1", "message2")))
             } finally {
                 deleteTopic(topicArn).successValue()
             }
