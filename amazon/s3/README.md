@@ -57,14 +57,14 @@ performance factor.
 
 ### How the Fake works with bucket-level operations
 
-S3 is a bit of a strange beast in that it each bucket gets it's own virtual hostname. This makes running a Fake an
+S3 is a bit of a strange beast in that it each bucket gets its own virtual hostname. This makes running a Fake an
 interesting challenge without messing around with DNS and hostname files.
 
 This implementation supports both global and bucket level operations by inspecting the subdomain of the X-Forwarded-For
 header, which is populated by the S3 client built into this module.
 
 In the case of a missing header (if for instance a non-http4k client attempts to push some data into it without the
-x-forwarded-for header, it creates a global bucket which is then used to store all of the data for these unknown
+x-forwarded-for header), it creates a global bucket which is then used to store all of the data for these unknown
 requests.
 
 ### Default Fake ports:
@@ -74,6 +74,24 @@ requests.
 
 ```
 FakeS3().start()
+```
+
+### Connecting to S3 in LocalStack
+
+[LocalStack](https://docs.localstack.cloud/user-guide/aws/s3/) emulates AWS services locally. 
+For S3 bucket operations you either need to use a specific bucket hostname 
+`http://<bucket-name>.s3.localhost.localstack.cloud:4566`, or you use the 
+generic localstack URI and force the `S3Bucket` to perform path-style requests like this:
+
+```kotlin
+val http = SetBaseUriFrom(Uri.of("http://localhost:4566")).then(JavaHttpClient())
+val s3Bucket = S3Bucket.Http(
+    bucketName = bucketName, 
+    bucketRegion = region,
+    credentialsProvider = { credentials }, 
+    http = http, 
+    forcePathStyle = true // always use path-style requests
+)
 ```
 
 ### Pre-Signed Requests
