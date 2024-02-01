@@ -76,12 +76,13 @@ requests.
 FakeS3().start()
 ```
 
-### Connecting to S3 in LocalStack
+### Connecting to a local S3 emulator
 
-[LocalStack](https://docs.localstack.cloud/user-guide/aws/s3/) emulates AWS services locally. 
-For S3 bucket operations you either need to use a specific bucket hostname 
-`http://<bucket-name>.s3.localhost.localstack.cloud:4566`, or you use the 
-generic localstack URI and force the `S3Bucket` to perform path-style requests like this:
+Services like [LocalStack](https://docs.localstack.cloud/user-guide/aws/s3/) or
+[MinIO](https://min.io/docs/minio/container/index.html) can emulate AWS services locally.
+However, for S3 bucket operations you either need to use a specific pre-configured bucket hostname 
+like `http://<bucket-name>.s3.localhost.localstack.cloud:4566`, or you configure the `S3Bucket` to always 
+perform path-style requests like this:
 
 ```kotlin
 val http = SetBaseUriFrom(Uri.of("http://localhost:4566")).then(JavaHttpClient())
