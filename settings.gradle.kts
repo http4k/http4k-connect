@@ -5,7 +5,7 @@ pluginManagement {
 }
 
 plugins {
-    id("de.fayard.refreshVersions").version("0.60.3")
+    id("de.fayard.refreshVersions").version("0.60.4")
 }
 
 refreshVersions {
@@ -27,6 +27,7 @@ includeStorage("s3")
 includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
+includeVendorSystem("amazon", "apprunner")
 includeVendorSystem("amazon", "cloudfront")
 includeVendorSystem("amazon", "cloudwatchlogs")
 includeVendorSystem("amazon", "cognito")

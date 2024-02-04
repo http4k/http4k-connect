@@ -17,14 +17,12 @@ class FakeFirehose(val records: Storage<List<Record>> = Storage.InMemory()) : Ch
 
     private val api = AmazonJsonFake(FirehoseMoshi, AwsService.of("Firehose_20150804"))
 
-    override val app = routes(
-        "/" bind POST to routes(
-            api.createDeliveryStream(records),
-            api.listDeliveryStreams(records),
-            api.deleteDeliveryStream(records),
-            api.putRecord(records),
-            api.putRecordBatch(records)
-        )
+    override val app = "/" bind POST to routes(
+        api.createDeliveryStream(records),
+        api.listDeliveryStreams(records),
+        api.deleteDeliveryStream(records),
+        api.putRecord(records),
+        api.putRecordBatch(records)
     )
 
     /**

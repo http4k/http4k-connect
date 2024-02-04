@@ -57,7 +57,7 @@ class S3BucketPreSigner(
         forcePathStyle = forcePathStyle
     )
 
-    val preSigner = AwsRequestPreSigner(
+    private val preSigner = AwsRequestPreSigner(
         credentialsProvider = credentialsProvider,
         scope = AwsCredentialScope(region.value, S3.awsService.value),
         clock = clock

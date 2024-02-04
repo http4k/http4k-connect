@@ -15,7 +15,7 @@ fun EventBridge.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone()
+    clock: Clock = Clock.systemUTC()
 ) = object : EventBridge {
     private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
 

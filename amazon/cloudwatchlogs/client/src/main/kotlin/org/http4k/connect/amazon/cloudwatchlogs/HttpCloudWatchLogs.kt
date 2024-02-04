@@ -15,7 +15,7 @@ fun CloudWatchLogs.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone()
+    clock: Clock = Clock.systemUTC()
 ) = object : CloudWatchLogs {
     private val http = signAwsRequests(region, credentialsProvider, clock, Signed).then(rawHttp)
 

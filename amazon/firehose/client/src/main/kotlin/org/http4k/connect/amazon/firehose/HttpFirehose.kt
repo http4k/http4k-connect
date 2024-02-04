@@ -15,7 +15,7 @@ fun Firehose.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemDefaultZone()
+    clock: Clock = Clock.systemUTC()
 ) = object : Firehose {
     private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
 
