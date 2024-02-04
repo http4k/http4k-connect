@@ -22,4 +22,12 @@ class BucketNameTest {
             equalTo(Uri.of("https://s3.eu-west-1.amazonaws.com/foo.bar"))
         )
     }
+
+    @Test
+    fun `can construct uri with forced path style`() {
+        assertThat(
+            BucketName.of("foobar").toUri(Region.of("eu-west-1"), true),
+            equalTo(Uri.of("https://s3.eu-west-1.amazonaws.com/foobar"))
+        )
+    }
 }
