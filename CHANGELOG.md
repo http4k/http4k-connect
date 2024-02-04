@@ -5,7 +5,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.6.10.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-amazon-core*** - Simpler API for retrieving the AWS credentials of a custom profile H/T @obecker
+- **http4k-connect-amazon-core** - Simpler API for retrieving the AWS credentials of a custom profile H/T @obecker
+- **http4k-connect-amazon-s3*** - Add parameter to force path-style requests to S3 buckets H/T @obecker
 
 ### v5.6.9.0
 - **http4k-connect-amazon-apprunner*** - [New module] Client and fake
