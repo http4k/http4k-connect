@@ -22,14 +22,14 @@ class S3BucketPreSigner(
     bucketName: BucketName,
     region: Region,
     credentialsProvider: CredentialsProvider,
-    clock: Clock = Clock.systemDefaultZone(),
+    clock: Clock = Clock.systemUTC(),
     forcePathStyle: Boolean = false
 ) {
     constructor(
         bucketName: BucketName,
         region: Region,
         credentials: AwsCredentials,
-        clock: Clock = Clock.systemDefaultZone(),
+        clock: Clock = Clock.systemUTC(),
         forcePathStyle: Boolean = false
     ) : this(
         bucketName = bucketName,
@@ -46,7 +46,7 @@ class S3BucketPreSigner(
         bucketName: BucketName,
         region: Region,
         env: Environment = Environment.ENV,
-        clock: Clock = Clock.systemDefaultZone(),
+        clock: Clock = Clock.systemUTC(),
         forcePathStyle: Boolean = false,
         credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
     ): this(
