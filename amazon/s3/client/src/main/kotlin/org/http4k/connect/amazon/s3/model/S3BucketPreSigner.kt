@@ -20,13 +20,13 @@ class S3BucketPreSigner(
     bucketName: BucketName,
     region: Region,
     credentialsProvider: CredentialsProvider,
-    clock: Clock = Clock.systemDefaultZone()
+    clock: Clock = Clock.systemUTC()
 ) {
     constructor(
         bucketName: BucketName,
         region: Region,
         credentials: AwsCredentials,
-        clock: Clock = Clock.systemDefaultZone()
+        clock: Clock = Clock.systemUTC()
     ) : this(
         bucketName = bucketName,
         region = region,
