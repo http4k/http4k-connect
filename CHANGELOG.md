@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.6.11.0
+- **http4k-connect-amazon-core** - SSO credentials provider now caches credentials until they expire. Stops re-login
+
 ### v5.6.10.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-core** - Simpler API for retrieving the AWS credentials of a custom profile H/T @obecker
