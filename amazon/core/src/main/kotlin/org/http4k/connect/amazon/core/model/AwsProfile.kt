@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.core.model
 
 import org.http4k.aws.AwsCredentials
 import java.nio.file.Path
-import kotlin.io.path.Path
 
 data class AwsProfile(
     val name: ProfileName,
