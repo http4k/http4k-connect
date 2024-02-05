@@ -5,7 +5,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.useLines
-import kotlin.text.Typography.section
 
 data class AwsProfile(
     val name: ProfileName,
@@ -33,8 +32,8 @@ data class AwsProfile(
 
             return buildMap {
                 fun Map<String, String>.consumeProfile(profileName: ProfileName) {
-                    if (isEmpty()) return
-                    put(profileName, toProfile(profileName))
+                    val value: (ProfileName) -> AwsProfile = ::toProfile
+                    if (isNotEmpty()) put(profileName, value(profileName))
                 }
 
                 val section = mutableMapOf<String, String>()
@@ -61,11 +60,6 @@ data class AwsProfile(
         }
 
     }
-}
-
-
-fun main() {
-    println(AwsProfile.loadProfiles(Path(System.getProperty("user.home")).resolve(".aws/credentials")))
 }
 
 private fun Map<String, String>.toProfile(name: ProfileName) = AwsProfile(
