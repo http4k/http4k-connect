@@ -1,10 +1,8 @@
 package org.http4k.connect.amazon.core.model
 
 import org.http4k.aws.AwsCredentials
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.useLines
 
 data class AwsProfile(
     val name: ProfileName,
@@ -25,50 +23,21 @@ data class AwsProfile(
     }
 
     companion object {
-        fun loadProfiles(path: Path): Map<ProfileName, AwsProfile> {
-            if (!Files.exists(path)) return emptyMap()
-
-            var name = ProfileName.of("default")
-
-            return buildMap {
-                fun Map<String, String>.consumeProfile(profileName: ProfileName) {
-                    val value: (ProfileName) -> AwsProfile = ::toProfile
-                    if (isNotEmpty()) put(profileName, value(profileName))
-                }
-
-                val section = mutableMapOf<String, String>()
-
-                path.useLines { lines ->
-                    for (line in lines.map(String::trim)) {
-                        when {
-                            line.startsWith('[') -> {
-                                section.consumeProfile(name)
-                                section.clear()
-                                name = ProfileName.parse(line.trim('[', ']'))
-                            }
-
-                            "=" in line -> {
-                                val (key, value) = line.split("=", limit = 2).map(String::trim)
-                                section[key] = value
-                            }
-                        }
-                    }
-                }
-
-                section.consumeProfile(name)
-            }
+        fun loadProfiles(path: Path) = loadProfiles(path) { map, name ->
+            AwsProfile(
+                name = name,
+                accessKeyId = map["aws_access_key_id"]?.let { AccessKeyId.of(it) },
+                secretAccessKey = map["aws_secret_access_key"]?.let { SecretAccessKey.of(it) },
+                sessionToken = map["aws_session_token"]?.let { SessionToken.of(it) },
+                roleArn = map["role_arn"]?.let { ARN.of(it) },
+                sourceProfileName = map["source_profile"]?.let { ProfileName.of(it) },
+                roleSessionName = map["role_session_name"]?.let { RoleSessionName.of(it) },
+                region = map["region"]?.let { Region.of(it) }
+            )
         }
-
     }
 }
-
-private fun Map<String, String>.toProfile(name: ProfileName) = AwsProfile(
-    name = name,
-    accessKeyId = this["aws_access_key_id"]?.let { AccessKeyId.of(it) },
-    secretAccessKey = this["aws_secret_access_key"]?.let { SecretAccessKey.of(it) },
-    sessionToken = this["aws_session_token"]?.let { SessionToken.of(it) },
-    roleArn = this["role_arn"]?.let { ARN.of(it) },
-    sourceProfileName = this["source_profile"]?.let { ProfileName.of(it) },
-    roleSessionName = this["role_session_name"]?.let { RoleSessionName.of(it) },
-    region = this["region"]?.let { Region.of(it) }
-)
+//
+//fun main() {
+//    println(AwsProfile.loadProfiles(Path(System.getProperty("user.home")).resolve(".aws/credentials")))
+//}

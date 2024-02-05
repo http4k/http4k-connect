@@ -8,9 +8,9 @@ import org.http4k.connect.amazon.AWS_PROFILE
 import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.core.model.AwsProfile
+import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.core.model.ProfileName
 import org.http4k.connect.amazon.core.model.RoleSessionName
-import org.http4k.connect.amazon.core.model.Credentials
 import org.http4k.connect.amazon.sts.action.AssumeRole
 import java.nio.file.Path
 import java.time.Clock
@@ -69,7 +69,7 @@ fun CredentialsChain.Companion.StsProfile(
     getStsClient: (AwsCredentials) -> STS,
     clock: Clock = Clock.systemUTC(),
     gracePeriod: Duration = Duration.ofSeconds(300),
-) = object: CredentialsChain {
+) = object : CredentialsChain {
     private val credentials = AtomicReference<ExpiringCredentials>(null)
 
     override fun invoke(): AwsCredentials? {
@@ -89,12 +89,13 @@ fun CredentialsChain.Companion.StsProfile(
 
     private fun getCredentials(): ExpiringCredentials? {
         val profiles = AwsProfile.loadProfiles(credentialsPath)
-        val profile = profiles[profileName] ?: return null
+        return profiles[profileName]?.let {
+            it.getCredentials()
+                ?.let { ExpiringCredentials(it, null) }
+                ?: it.assumeRole(profiles, clock, getStsClient)
+                    ?.let { ExpiringCredentials(it.asHttp4k(), it.Expiration.value.toInstant()) }
+        }
 
-        return profile.getCredentials()
-            ?.let { ExpiringCredentials(it, null) }
-            ?: profile.assumeRole(profiles, clock, getStsClient)
-                ?.let { ExpiringCredentials(it.asHttp4k(), it.Expiration.value.toInstant()) }
     }
 }
 
