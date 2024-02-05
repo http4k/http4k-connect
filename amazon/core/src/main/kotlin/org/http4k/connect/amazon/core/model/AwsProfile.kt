@@ -36,7 +36,3 @@ data class AwsProfile(
         }
     }
 }
-//
-//fun main() {
-//    println(AwsProfile.loadProfiles(Path(System.getProperty("user.home")).resolve(".aws/credentials")))
-//}
