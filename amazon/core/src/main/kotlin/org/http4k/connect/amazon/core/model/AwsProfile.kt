@@ -26,18 +26,18 @@ data class AwsProfile(
         fun loadProfiles(path: Path) = loadProfiles(path) { map, name ->
             AwsProfile(
                 name = name,
-                accessKeyId = map["aws_access_key_id"]?.let { AccessKeyId.of(it) },
-                secretAccessKey = map["aws_secret_access_key"]?.let { SecretAccessKey.of(it) },
-                sessionToken = map["aws_session_token"]?.let { SessionToken.of(it) },
-                roleArn = map["role_arn"]?.let { ARN.of(it) },
-                sourceProfileName = map["source_profile"]?.let { ProfileName.of(it) },
-                roleSessionName = map["role_session_name"]?.let { RoleSessionName.of(it) },
-                region = map["region"]?.let { Region.of(it) }
+                accessKeyId = map["aws_access_key_id"]?.let(AccessKeyId::of),
+                secretAccessKey = map["aws_secret_access_key"]?.let(SecretAccessKey::of),
+                sessionToken = map["aws_session_token"]?.let(SessionToken::of),
+                roleArn = map["role_arn"]?.let(ARN::of),
+                sourceProfileName = map["source_profile"]?.let(ProfileName::of),
+                roleSessionName = map["role_session_name"]?.let(RoleSessionName::of),
+                region = map["region"]?.let(Region::of)
             )
         }
     }
 }
-
-fun main() {
-    println(AwsProfile.loadProfiles(Path(System.getProperty("user.home")).resolve(".aws/credentials")))
-}
+//
+//fun main() {
+//    println(AwsProfile.loadProfiles(Path(System.getProperty("user.home")).resolve(".aws/credentials")))
+//}
