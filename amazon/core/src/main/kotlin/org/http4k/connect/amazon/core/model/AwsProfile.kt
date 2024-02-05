@@ -3,7 +3,9 @@ package org.http4k.connect.amazon.core.model
 import org.http4k.aws.AwsCredentials
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.useLines
+import kotlin.text.Typography.section
 
 data class AwsProfile(
     val name: ProfileName,
@@ -28,21 +30,21 @@ data class AwsProfile(
             if (!Files.exists(path)) return emptyMap()
 
             var name = ProfileName.of("default")
-            val section = mutableMapOf<String, String>()
 
             return buildMap {
-                fun consumeProfile() {
-                    if (section.isEmpty()) return
-                    val profile = section.toProfile(name)
-                    put(name, profile)
-                    section.clear()
+                fun Map<String, String>.consumeProfile(profileName: ProfileName) {
+                    if (isEmpty()) return
+                    put(profileName, toProfile(profileName))
                 }
+
+                val section = mutableMapOf<String, String>()
 
                 path.useLines { lines ->
                     for (line in lines.map(String::trim)) {
                         when {
                             line.startsWith('[') -> {
-                                consumeProfile()
+                                section.consumeProfile(name)
+                                section.clear()
                                 name = ProfileName.parse(line.trim('[', ']'))
                             }
 
@@ -54,11 +56,16 @@ data class AwsProfile(
                     }
                 }
 
-                consumeProfile()
+                section.consumeProfile(name)
             }
         }
 
     }
+}
+
+
+fun main() {
+    println(AwsProfile.loadProfiles(Path(System.getProperty("user.home")).resolve(".aws/credentials")))
 }
 
 private fun Map<String, String>.toProfile(name: ProfileName) = AwsProfile(
