@@ -5,7 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.6.12.0
 - **http4k-connect-*** - Upgrade dependencies.
-- 
+
 ### v5.6.11.0
 - **http4k-connect-amazon-core** - SSO credentials provider now caches credentials until they expire. Stops re-login
 
