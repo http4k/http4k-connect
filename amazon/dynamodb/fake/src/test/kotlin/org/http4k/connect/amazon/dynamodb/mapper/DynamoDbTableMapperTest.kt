@@ -24,6 +24,7 @@ import java.util.UUID
 
 private val ownerIdAttr = Attribute.uuid().required("ownerId")
 private val nameAttr = Attribute.string().required("name")
+private val nickNameAttr = Attribute.string().required("nickName")
 private val bornAttr = Attribute.localDate().required("born")
 private val idAttr = Attribute.uuid().required("id")
 
@@ -159,7 +160,7 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
-    fun `custom built query`() {
+    fun `custom query with DSL`() {
         val results = tableMapper.index(byOwner).query {
             keyCondition {
                 ownerIdAttr eq owner1
@@ -176,7 +177,7 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
-    fun `custom built query with filter functions`() {
+    fun `custom query with filter functions in DSL`() {
         val results = tableMapper.index(byOwner).query {
             keyCondition {
                 ownerIdAttr eq owner1
@@ -187,6 +188,17 @@ class DynamoDbTableMapperTest {
         }.toList()
 
         assertThat(results, equalTo(listOf(kratos, toggles)))
+    }
+
+    @Test
+    fun `custom scan with DSL filter expression`() {
+        val results = tableMapper.index(byOwner).scan {
+            filterExpression {
+                (nameAttr ne nickNameAttr) and (ownerIdAttr eq owner1)
+            }
+        }.toList()
+
+        assertThat(results, equalTo(listOf(athena)))
     }
 
     @Test
@@ -234,7 +246,7 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
-    fun `custom built query page`() {
+    fun `custom query page with DSL condition`() {
         // page 1 of 2
         val page1 = tableMapper.index(byDob).queryPage(Limit = 1) {
             keyCondition {
