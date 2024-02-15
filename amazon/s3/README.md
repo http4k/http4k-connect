@@ -85,12 +85,11 @@ like `http://<bucket-name>.s3.localhost.localstack.cloud:4566`, or you configure
 perform path-style requests like this:
 
 ```kotlin
-val http = SetBaseUriFrom(Uri.of("http://localhost:4566")).then(JavaHttpClient())
 val s3Bucket = S3Bucket.Http(
     bucketName = bucketName, 
     bucketRegion = region,
     credentialsProvider = { credentials }, 
-    http = http, 
+    endpoint = Uri.of("http://localhost:4566"),
     forcePathStyle = true // always use path-style requests
 )
 ```

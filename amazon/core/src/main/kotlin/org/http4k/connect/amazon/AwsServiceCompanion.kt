@@ -23,8 +23,9 @@ open class AwsServiceCompanion(awsServiceName: String) {
         credentialsProvider: CredentialsProvider,
         clock: Clock,
         payloadMode: Payload.Mode,
-        servicePrefix: String = ""
-    ) = setHostForAwsService(region, servicePrefix)
+        endpoint: Uri? = null,
+        servicePrefix: String = "",
+    ) = setHostForAwsService(region, endpoint, servicePrefix)
         .then(
             ClientFilters.AwsAuth(
                 AwsCredentialScope(region.value, awsService.value),
@@ -32,7 +33,7 @@ open class AwsServiceCompanion(awsServiceName: String) {
             )
         )
 
-    fun setHostForAwsService(region: Region, servicePrefix: String = "") =
-        SetHostFrom(Uri.of("https://$servicePrefix$awsService.$region.amazonaws.com"))
+    fun setHostForAwsService(region: Region, endpoint: Uri? = null, servicePrefix: String = "") =
+        SetHostFrom(endpoint ?: Uri.of("https://$servicePrefix$awsService.$region.amazonaws.com"))
             .then(SetXForwardedHost())
 }

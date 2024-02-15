@@ -7,17 +7,19 @@ import org.http4k.connect.amazon.AWS_CREDENTIALS
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.http4k.core.then
-import org.http4k.filter.Payload
+import org.http4k.filter.Payload.Mode.Signed
 import java.time.Clock
 
 fun Firehose.Companion.Http(
     region: Region,
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemUTC()
+    clock: Clock = Clock.systemUTC(),
+    endpoint: Uri? = null,
 ) = object : Firehose {
-    private val http = signAwsRequests(region, credentialsProvider, clock, Payload.Mode.Signed).then(rawHttp)
+    private val http = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(rawHttp)
 
     override fun <R : Any> invoke(action: FirehoseAction<R>) = action.toResult(http(action.toRequest()))
 }
@@ -28,8 +30,9 @@ fun Firehose.Companion.Http(
 fun Firehose.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = java.time.Clock.systemUTC()
-) = Http(Environment.from(env), http, clock)
+    clock: Clock = Clock.systemUTC(),
+    endpoint: Uri? = null,
+) = Http(Environment.from(env), http, clock, endpoint)
 
 /**
  * Convenience function to create a Firehose from an http4k Environment
@@ -37,5 +40,6 @@ fun Firehose.Companion.Http(
 fun Firehose.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = java.time.Clock.systemUTC()
-) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock)
+    clock: Clock = Clock.systemUTC(),
+    endpoint: Uri? = null,
+) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock, endpoint)

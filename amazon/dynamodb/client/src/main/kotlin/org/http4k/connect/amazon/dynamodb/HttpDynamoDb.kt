@@ -7,6 +7,7 @@ import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.Payload.Mode.Signed
 import java.time.Clock
@@ -18,9 +19,10 @@ fun DynamoDb.Companion.Http(
     region: Region,
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = Clock.systemUTC()
+    clock: Clock = Clock.systemUTC(),
+    endpoint: Uri? = null,
 ) = object : DynamoDb {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
 
     override fun <R : Any> invoke(action: DynamoDbAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
@@ -32,8 +34,9 @@ fun DynamoDb.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, credentialsProvider)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
+    endpoint: Uri? = null,
+) = Http(Environment.from(env), http, clock, credentialsProvider, endpoint)
 
 /**
  * Convenience function to create a DynamoDb from an http4k Environment
@@ -42,5 +45,6 @@ fun DynamoDb.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(AWS_REGION(env), credentialsProvider, http, clock)
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
+    endpoint: Uri? = null,
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)

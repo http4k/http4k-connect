@@ -1,18 +1,12 @@
-package org.http4k.connect.amazon.lambda
+package org.http4k.connect.amazon.apprunner
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.apprunner.AppRunner
-import org.http4k.connect.amazon.apprunner.Http
 import org.http4k.connect.amazon.apprunner.action.SourceConfiguration
-import org.http4k.connect.amazon.apprunner.createService
-import org.http4k.connect.amazon.apprunner.deleteService
-import org.http4k.connect.amazon.apprunner.listServices
 import org.http4k.connect.amazon.apprunner.model.ServiceName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 
 abstract class AppRunnerContract(private val http: HttpHandler) : AwsContract() {

@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sts.action.AssumeRoleWithWebIdentity
 import org.http4k.core.HttpHandler
+import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.Payload.Mode.Signed
 import java.lang.System.getenv
@@ -21,10 +22,11 @@ fun STS.Companion.Http(
     region: Region,
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
-    clock: Clock = systemUTC()
+    clock: Clock = systemUTC(),
+    endpoint: Uri? = null,
 ) = object : STS {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed).then(http)
-    private val unauthedHttp = setHostForAwsService(region).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
+    private val unauthedHttp = setHostForAwsService(region, endpoint).then(http)
 
     override fun <R> invoke(action: STSAction<R>) =
         action.toResult(
@@ -42,8 +44,9 @@ fun STS.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
+    endpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, credentialsProvider)
+) = Http(Environment.from(env), http, clock, endpoint, credentialsProvider)
 
 
 /**
@@ -53,5 +56,6 @@ fun STS.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
+    endpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(AWS_REGION(env), credentialsProvider, http, clock)
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)
