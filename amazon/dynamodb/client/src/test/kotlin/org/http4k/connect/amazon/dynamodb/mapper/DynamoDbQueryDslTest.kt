@@ -31,7 +31,7 @@ private val intAttr = Attribute.int().optional("aNumber")
 private val anotherIntAttr = Attribute.int().optional("anotherNumber")
 private val stringAttr = Attribute.string().optional("aString")
 
-class DynamoDbQueryBuilderTest {
+class DynamoDbQueryDslTest {
 
     class MockDynamoDb : DynamoDb {
         var action: Action<*>? = null
