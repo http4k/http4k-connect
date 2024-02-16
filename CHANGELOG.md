@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.6.14.0
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-*** - Add optional endpoint parameter to all AWS service HTTP implementations. H/T @obecker
+
 ### v5.6.13.0
 - **http4k-connect-*** - Upgrade dependencies.
 
@@ -14,8 +18,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.6.10.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-amazon-core** - Simpler API for retrieving the AWS credentials of a custom profile H/T @obecker
-- **http4k-connect-amazon-s3*** - Add parameter to force path-style requests to S3 buckets H/T @obecker
+- **http4k-connect-amazon-core** - Simpler API for retrieving the AWS credentials of a custom profile. H/T @obecker
+- **http4k-connect-amazon-s3*** - Add parameter to force path-style requests to S3 buckets. H/T @obecker
 
 ### v5.6.9.0
 - **http4k-connect-amazon-apprunner*** - [New module] Client and fake
