@@ -20,9 +20,9 @@ fun SNS.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : SNS {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(http)
 
     override fun <R> invoke(action: SNSAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
@@ -34,9 +34,9 @@ fun SNS.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, endpoint, credentialsProvider)
+) = Http(Environment.from(env), http, clock, overrideEndpoint, credentialsProvider)
 
 /**
  * Convenience function to create a SNS from an http4k Environment
@@ -45,6 +45,6 @@ fun SNS.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, overrideEndpoint)

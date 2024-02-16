@@ -35,7 +35,7 @@ class HttpSESTest {
             Region.AF_SOUTH_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

@@ -33,7 +33,7 @@ class HttpSTSTest {
             Region.SA_EAST_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

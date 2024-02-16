@@ -22,9 +22,9 @@ fun SystemsManager.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : SystemsManager {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(http)
 
     override fun <R : Any> invoke(action: SystemsManagerAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
@@ -36,9 +36,9 @@ fun SystemsManager.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, endpoint, credentialsProvider)
+) = Http(Environment.from(env), http, clock, overrideEndpoint, credentialsProvider)
 
 
 /**
@@ -48,6 +48,6 @@ fun SystemsManager.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, overrideEndpoint)

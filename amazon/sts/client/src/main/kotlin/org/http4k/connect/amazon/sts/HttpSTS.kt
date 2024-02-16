@@ -23,10 +23,10 @@ fun STS.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : STS {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
-    private val unauthedHttp = setHostForAwsService(region, endpoint).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(http)
+    private val unauthedHttp = setHostForAwsService(region, overrideEndpoint).then(http)
 
     override fun <R> invoke(action: STSAction<R>) =
         action.toResult(
@@ -44,9 +44,9 @@ fun STS.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, endpoint, credentialsProvider)
+) = Http(Environment.from(env), http, clock, overrideEndpoint, credentialsProvider)
 
 
 /**
@@ -56,6 +56,6 @@ fun STS.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, overrideEndpoint)

@@ -31,7 +31,7 @@ class HttpSQSTest {
             Region.ME_SOUTH_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

@@ -23,7 +23,7 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     forcePathStyle: Boolean = false
 ) = object : S3Bucket {
     private val usePathStyleApi = forcePathStyle || bucketName.requiresPathStyleApi()
@@ -32,7 +32,7 @@ fun S3Bucket.Companion.Http(
 
     private val signedHttp =
         SetBaseUriFrom(Uri.of(pathPrefixToUse))
-            .then(signAwsRequests(bucketRegion, credentialsProvider, clock, payloadMode, endpoint, bucketDomainToUse))
+            .then(signAwsRequests(bucketRegion, credentialsProvider, clock, payloadMode, overrideEndpoint, bucketDomainToUse))
             .then(http)
 
     override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(signedHttp(action.toRequest()))
@@ -48,10 +48,10 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     forcePathStyle: Boolean = false,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode, endpoint, forcePathStyle)
+) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode, overrideEndpoint, forcePathStyle)
 
 /**
  * Convenience function to create a S3Bucket from an http4k Environment
@@ -63,7 +63,7 @@ fun S3Bucket.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     forcePathStyle: Boolean = false,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode, endpoint, forcePathStyle)
+) = Http(bucketName, bucketRegion, credentialsProvider, http, clock, payloadMode, overrideEndpoint, forcePathStyle)

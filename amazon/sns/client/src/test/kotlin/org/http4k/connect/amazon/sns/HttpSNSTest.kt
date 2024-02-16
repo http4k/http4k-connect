@@ -31,7 +31,7 @@ class HttpSNSTest {
             Region.EU_SOUTH_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

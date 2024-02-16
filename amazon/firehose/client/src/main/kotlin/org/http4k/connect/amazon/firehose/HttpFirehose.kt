@@ -17,9 +17,9 @@ fun Firehose.Companion.Http(
     credentialsProvider: () -> AwsCredentials,
     rawHttp: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : Firehose {
-    private val http = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(rawHttp)
+    private val http = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(rawHttp)
 
     override fun <R : Any> invoke(action: FirehoseAction<R>) = action.toResult(http(action.toRequest()))
 }
@@ -31,8 +31,8 @@ fun Firehose.Companion.Http(
     env: Map<String, String> = System.getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
-) = Http(Environment.from(env), http, clock, endpoint)
+    overrideEndpoint: Uri? = null,
+) = Http(Environment.from(env), http, clock, overrideEndpoint)
 
 /**
  * Convenience function to create a Firehose from an http4k Environment
@@ -41,5 +41,5 @@ fun Firehose.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
-) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock, endpoint)
+    overrideEndpoint: Uri? = null,
+) = Http(AWS_REGION(env), { AWS_CREDENTIALS(env) }, http, clock, overrideEndpoint)

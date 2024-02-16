@@ -32,7 +32,7 @@ class HttpEventBridgeTest {
             Region.CA_CENTRAL_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

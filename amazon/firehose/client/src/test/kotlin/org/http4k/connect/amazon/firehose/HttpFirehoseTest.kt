@@ -31,7 +31,7 @@ class HttpFirehoseTest {
             Region.EU_CENTRAL_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

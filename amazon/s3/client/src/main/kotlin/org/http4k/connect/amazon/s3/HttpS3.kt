@@ -25,9 +25,9 @@ fun S3.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
     payloadMode: Payload.Mode = Payload.Mode.Signed,
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : S3 {
-    private val signedHttp = SetHostFrom(endpoint ?: Uri.of("https://s3.amazonaws.com"))
+    private val signedHttp = SetHostFrom(overrideEndpoint ?: Uri.of("https://s3.amazonaws.com"))
         .then(SetXForwardedHost())
         .then(
             ClientFilters.AwsAuth(
@@ -47,9 +47,9 @@ fun S3.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, endpoint, credentialsProvider)
+) = Http(Environment.from(env), http, clock, overrideEndpoint, credentialsProvider)
 
 /**
  * Convenience function to create a S3 from an http4k Environment
@@ -58,6 +58,6 @@ fun S3.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(credentialsProvider, http, clock, endpoint = endpoint)
+) = Http(credentialsProvider, http, clock, overrideEndpoint = overrideEndpoint)

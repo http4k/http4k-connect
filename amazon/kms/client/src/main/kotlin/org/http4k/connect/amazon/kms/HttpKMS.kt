@@ -20,9 +20,9 @@ fun KMS.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : KMS {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(http)
 
     override fun <R : Any> invoke(action: KMSAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }
@@ -35,8 +35,8 @@ fun KMS.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
-    endpoint: Uri? = null,
-) = Http(Environment.from(env), http, clock, credentialsProvider, endpoint)
+    overrideEndpoint: Uri? = null,
+) = Http(Environment.from(env), http, clock, credentialsProvider, overrideEndpoint)
 
 /**
  * Convenience function to create a KMS from an http4k Environment
@@ -46,5 +46,5 @@ fun KMS.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
-    endpoint: Uri? = null,
-) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)
+    overrideEndpoint: Uri? = null,
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, overrideEndpoint)

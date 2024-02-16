@@ -30,6 +30,6 @@ class LocalDynamoDbSource : DynamoDbSource {
     override val dynamo = DynamoDb.Http(
         fakeAwsEnvironment.region,
         { fakeAwsEnvironment.credentials },
-        endpoint = Uri.of("http://localhost:${container.getMappedPort(8000)}")
+        overrideEndpoint = Uri.of("http://localhost:${container.getMappedPort(8000)}")
     )
 }

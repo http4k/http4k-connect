@@ -68,7 +68,7 @@ class HttpS3BucketTest {
             bucketRegion = Region.US_EAST_1,
             credentialsProvider = { fakeAwsEnvironment.credentials },
             http = mockHttp,
-            endpoint = endpoint,
+            overrideEndpoint = endpoint,
             forcePathStyle = forcePathStyle
         )
 

@@ -39,7 +39,7 @@ class HttpLambdaTest {
             Region.US_WEST_2,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

@@ -29,7 +29,7 @@ class HttpS3Test {
         val s3 = S3.Http(
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

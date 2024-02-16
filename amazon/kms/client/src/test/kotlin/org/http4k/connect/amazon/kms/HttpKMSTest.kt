@@ -31,7 +31,7 @@ class HttpKMSTest {
             Region.US_WEST_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

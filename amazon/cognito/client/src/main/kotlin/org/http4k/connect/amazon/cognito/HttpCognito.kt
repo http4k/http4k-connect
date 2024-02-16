@@ -21,9 +21,9 @@ fun Cognito.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : Cognito {
-    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
+    private val signedHttp = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(http)
 
     override fun <R : Any> invoke(action: CognitoAction<R>) = action.toResult(signedHttp(action.toRequest()))
 }

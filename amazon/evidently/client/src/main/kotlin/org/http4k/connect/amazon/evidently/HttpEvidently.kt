@@ -22,11 +22,11 @@ fun Evidently.Companion.Http(
     credentialsProvider: CredentialsProvider,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
-    endpoint: Uri? = null,
+    overrideEndpoint: Uri? = null,
 ) = object : Evidently {
-    private val controlHttp = signAwsRequests(region, credentialsProvider, clock, Signed, endpoint).then(http)
+    private val controlHttp = signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint).then(http)
     private val dataHttp =
-        signAwsRequests(region, credentialsProvider, clock, Signed, endpoint, "dataplane.").then(http)
+        signAwsRequests(region, credentialsProvider, clock, Signed, overrideEndpoint, "dataplane.").then(http)
 
     override fun <R : Any> invoke(action: EvidentlyAction<R>): Result<R, RemoteFailure> {
         val signedHttp = if (action.dataPlane) dataHttp else controlHttp
@@ -42,8 +42,8 @@ fun Evidently.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
-    endpoint: Uri? = null,
-) = Http(Environment.from(env), http, clock, credentialsProvider, endpoint)
+    overrideEndpoint: Uri? = null,
+) = Http(Environment.from(env), http, clock, credentialsProvider, overrideEndpoint)
 
 /**
  * Convenience function to create a client from an http4k Environment
@@ -53,5 +53,5 @@ fun Evidently.Companion.Http(
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = Clock.systemUTC(),
     credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
-    endpoint: Uri? = null,
-) = Http(AWS_REGION(env), credentialsProvider, http, clock, endpoint)
+    overrideEndpoint: Uri? = null,
+) = Http(AWS_REGION(env), credentialsProvider, http, clock, overrideEndpoint)

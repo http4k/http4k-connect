@@ -31,7 +31,7 @@ class HttpAppRunnerTest {
             Region.US_EAST_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

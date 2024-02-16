@@ -31,7 +31,7 @@ class HttpSecretsManagerTest {
             Region.EU_NORTH_1,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when

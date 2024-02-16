@@ -32,7 +32,7 @@ class HttpCognitoTest {
             Region.US_EAST_2,
             CredentialsProvider.FakeAwsEnvironment(),
             mockHttp,
-            endpoint = endpoint
+            overrideEndpoint = endpoint
         )
 
         // when
