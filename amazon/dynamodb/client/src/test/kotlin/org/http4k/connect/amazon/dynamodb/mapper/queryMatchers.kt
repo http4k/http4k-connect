@@ -1,31 +1,31 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
-import com.natpryce.hamkrest.Matcher
+import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.has
 import org.http4k.connect.amazon.dynamodb.action.Query
 import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
-private fun Query.hasKeyConditionExpression(expr: String?) = KeyConditionExpression == expr
-fun queryHasKeyConditionExpression(expr: String?) = Matcher(Query::hasKeyConditionExpression, expr)
+fun queryHasKeyConditionExpression(expr: String?) =
+    has("KeyConditionExpression", { query: Query -> query.KeyConditionExpression }, equalTo(expr))
 
-private fun Query.hasFilterExpression(expr: String?) = FilterExpression == expr
-fun queryHasFilterExpression(expr: String?) = Matcher(Query::hasFilterExpression, expr)
+fun queryHasFilterExpression(expr: String?) =
+    has("FilterExpression", { query: Query -> query.FilterExpression }, equalTo(expr))
 
-private fun Query.hasAttributeNames(names: TokensToNames?) = ExpressionAttributeNames == names
-fun queryHasAttributeNames(names: TokensToNames?) = Matcher(Query::hasAttributeNames, names)
+fun queryHasAttributeNames(names: TokensToNames?) =
+    has("ExpressionAttributeNames", { query: Query -> query.ExpressionAttributeNames }, equalTo(names))
 
-private fun Query.hasAttributeValues(values: TokensToValues?) = ExpressionAttributeValues == values
-fun queryHasAttributeValues(values: TokensToValues?) = Matcher(Query::hasAttributeValues, values)
+fun queryHasAttributeValues(values: TokensToValues?) =
+    has("ExpressionAttributeValues", { query: Query -> query.ExpressionAttributeValues }, equalTo(values))
 
-private fun Query.hasLimit(limit: Int?) = Limit == limit
-fun queryHasLimit(limit: Int?) = Matcher(Query::hasLimit, limit)
+fun queryHasLimit(limit: Int?) = has("Limit", { query: Query -> query.Limit }, equalTo(limit))
 
-private fun Query.hasExclusiveStartKey(key: Key?) = ExclusiveStartKey == key
-fun queryHasExclusiveStartKey(key: Key?) = Matcher(Query::hasExclusiveStartKey, key)
+fun queryHasExclusiveStartKey(key: Key?) =
+    has("ExclusiveStartKey", { query: Query -> query.ExclusiveStartKey }, equalTo(key))
 
-private fun Query.hasConsistentRead(value: Boolean?) = ConsistentRead == value
-fun queryHasConsistentRead(value: Boolean?) = Matcher(Query::hasConsistentRead, value)
+fun queryHasConsistentRead(value: Boolean?) =
+    has("ConsistentRead", { query: Query -> query.ConsistentRead }, equalTo(value))
 
-private fun Query.hasScanIndexForward(value: Boolean?) = ScanIndexForward == value
-fun queryHasScanIndexForward(value: Boolean?) = Matcher(Query::hasScanIndexForward, value)
+fun queryHasScanIndexForward(value: Boolean?) =
+    has("ScanIndexForward", { query: Query -> query.ScanIndexForward }, equalTo(value))
