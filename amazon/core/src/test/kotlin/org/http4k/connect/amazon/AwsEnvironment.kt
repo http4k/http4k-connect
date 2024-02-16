@@ -17,6 +17,8 @@ val fakeAwsEnvironment = AwsEnvironment(
     Region.of("ldn-north-1")
 )
 
+fun CredentialsProvider.Companion.FakeAwsEnvironment() = CredentialsProvider { fakeAwsEnvironment.credentials }
+
 fun configAwsEnvironment(): AwsEnvironment {
     try {
         val config = File(System.getProperty("user.home"), ".aws/config").apply { assumeTrue(exists()) }
