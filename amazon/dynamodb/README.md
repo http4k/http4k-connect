@@ -162,7 +162,7 @@ table.primaryIndex().query {
         (hashKeyAttr eq hashValue) and (sortKeyAttr gt sortValue)
     }
     filterExpression {
-        (fooAttr ne "foo") or (barAttr `in` listOf(5, 6, 7)) and (bazAttr lt quzAttr)
+        (fooAttr ne "foo") or (barAttr isIn listOf(5, 6, 7)) and (bazAttr lt quzAttr)
     }
 }
 ```
@@ -171,8 +171,7 @@ Notes:
  - the hash key condition must use the `eq` operator (no other operators allowed),  
  - in the sort key condition the following operators are supported: `eq` `gt`,`ge`,`lt`, `le` (for `=`, `>`, `>=`, `<`, `<=`), 
    `beginsWith`, and the `between(sortKeyAttr, val1, val2)` function
- - the filter expression supports all of the above plus `ne` (`<>`), `in`, `contains`, `attributeExists(attr)`, and `attributeNotExists(attr)`
-   (note that `in` is a keyword in Kotlin, so the function must be written with backticks) 
+ - the filter expression supports all of the above plus `ne` (`<>`), `isIn`, `contains`, `attributeExists(attr)`, and `attributeNotExists(attr)`
  - in a filter expression the first operand in a comparison must be an attribute, the second operand is either a value or another attribute of the same type
    (so `xAttr eq 42` and `xAttr ne yAttr` are supported, but `42 eq xAttr` is not) 
  - the logical operators `and` and `or` in this DSL are always evaluated from left to right (i.e. there is no higher precedence for `and`),

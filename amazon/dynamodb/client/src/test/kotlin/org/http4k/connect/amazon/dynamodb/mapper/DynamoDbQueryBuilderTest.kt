@@ -236,7 +236,7 @@ class DynamoDbQueryBuilderTest {
             // when
             index.scan {
                 filterExpression {
-                    intAttr `in` listOf(3, 5, 8, 13)
+                    intAttr isIn listOf(3, 5, 8, 13)
                 }
             }.toList()
 

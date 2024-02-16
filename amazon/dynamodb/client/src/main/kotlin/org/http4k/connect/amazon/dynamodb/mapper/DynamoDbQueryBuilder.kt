@@ -154,7 +154,7 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
             )
         }
 
-        infix fun <T> Attribute<T>.`in`(values: Iterable<T>): FilterExpression {
+        infix fun <T> Attribute<T>.isIn(values: Iterable<T>): FilterExpression {
             val attributeName = nextAttributeName()
             val attributeValues = mutableMapOf<String, AttributeValue>()
             val expression = StringBuilder("#$attributeName IN (")
