@@ -88,8 +88,8 @@ perform path-style requests like this:
 val s3Bucket = S3Bucket.Http(
     bucketName = bucketName, 
     bucketRegion = region,
-    credentialsProvider = { credentials }, 
-    endpoint = Uri.of("http://localhost:4566"),
+    credentialsProvider = { credentials },
+    overrideEndpoint = Uri.of("http://localhost:4566"),
     forcePathStyle = true // always use path-style requests
 )
 ```
