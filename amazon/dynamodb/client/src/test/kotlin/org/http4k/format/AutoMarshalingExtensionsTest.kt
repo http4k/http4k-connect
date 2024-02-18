@@ -89,4 +89,21 @@ class AutoMarshalingExtensionsTest {
             equalTo(expectedItem)
         )
     }
+
+    data class DynamoSetContainer(val names: Set<String>, val ids: Set<Int>)
+
+    @Test
+    fun `can convert Item with SS and NS into object`() {
+        val item = mapOf(
+            AttributeName.of("names") to AttributeValue.StrSet(setOf("Kratos", "Athena")),
+            AttributeName.of("ids") to AttributeValue.NumSet(setOf(1, 2))
+        )
+
+        val lens = DynamoDbMoshi.autoDynamoLens<DynamoSetContainer>()
+
+        assertThat(
+            lens(item),
+            equalTo(DynamoSetContainer(names = setOf("Kratos", "Athena"), ids = setOf(1, 2)))
+        )
+    }
 }

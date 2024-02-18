@@ -31,6 +31,8 @@ fun fromAttributeValue(value: AttributeValue): Any? = value.N
     ?: value.S
     ?: value.M?.map { it.key.value to fromAttributeValue(it.value) }?.toMap()
     ?: value.L?.map(::fromAttributeValue)?.toTypedArray()
+    ?: value.SS?.toTypedArray()
+    ?: value.NS?.toTypedArray()
 
 @Suppress("UNCHECKED_CAST")
 private fun toAttributeValue(value: Any?): AttributeValue = when (value) {
