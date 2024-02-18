@@ -33,6 +33,8 @@ object Libs {
 
     const val forkhandles_bom: String = "dev.forkhandles:forkhandles-bom:_"
 
+    const val data4k: String = "dev.forkhandles:data4k"
+
     const val parser4k: String = "dev.forkhandles:parser4k"
 
     const val result4k: String = "dev.forkhandles:result4k"
