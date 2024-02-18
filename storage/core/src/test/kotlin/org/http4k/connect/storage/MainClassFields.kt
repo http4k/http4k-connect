@@ -16,6 +16,11 @@ class StorageDataContainerTest {
 
     class Child(storage: Storage<Any>) : StorageDataContainer(storage) {
         var anotherString by required<String>()
+        var grandchild by obj(::GrandChild)
+    }
+
+    class GrandChild(storage: Storage<Any>) : StorageDataContainer(storage) {
+        var yetnotherString by required<String>()
     }
 
     class Parent(storage: Storage<Any>) : StorageDataContainer(storage) {
