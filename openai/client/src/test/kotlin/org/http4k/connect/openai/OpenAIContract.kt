@@ -30,7 +30,7 @@ interface OpenAIContract {
     fun `get models`() {
         assertThat(
             openAi.getModels().successValue().data
-                .first { it.id == ObjectId.of("text-babbage-001") }.owned_by,
+                .first { it.id == ObjectId.of("gpt-4") }.owned_by,
             equalTo(OPENAI)
         )
     }
