@@ -81,33 +81,19 @@ val curieModel = Model(
     null
 )
 
-val babbageModel = Model(
-    ObjectId.of("text-babbage-001"),
+val gpt4Model = Model(
+    ObjectId.of("gpt-4"),
     ObjectType.Model,
-    Timestamp.of(1649358451),
+    Timestamp.of(1687882411),
     OPENAI,
     listOf(
-        Permission(
-            ObjectId.of("modelperm-W1YUe7GnRk6U8gNvkB9sXsA9"),
-            ObjectType.ModelPermission,
-            Timestamp.of(1669085503),
-            allow_create_engine = false,
-            allow_sampling = true,
-            allow_logprobs = true,
-            allow_search_indices = false,
-            allow_view = true,
-            allow_fine_tuning = false,
-            organization = OpenAIOrg.ALL,
-            group = null,
-            is_blocking = false
-        )
     ),
-    ObjectId.of("text-babbage-001"),
+    null,
     null
 )
 
 val DEFAULT_OPEN_AI_MODELS = Storage.InMemory<Model>().apply {
-    setOf(babbageModel, curieModel, davinciModel, embeddingModel).forEach {
+    setOf(gpt4Model, curieModel, davinciModel, embeddingModel).forEach {
         set(it.id.value, it)
     }
 }
