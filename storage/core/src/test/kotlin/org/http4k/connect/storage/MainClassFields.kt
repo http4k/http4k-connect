@@ -20,7 +20,7 @@ class StorageDataContainerTest {
     }
 
     class GrandChild(storage: Storage<Any>) : StorageDataContainer(storage) {
-        var yetnotherString by required<String>()
+        var yetAnotherString by required<String>()
     }
 
     class Parent(storage: Storage<Any>) : StorageDataContainer(storage) {
