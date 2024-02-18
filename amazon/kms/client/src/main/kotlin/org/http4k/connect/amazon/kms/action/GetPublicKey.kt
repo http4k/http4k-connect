@@ -20,7 +20,9 @@ data class GetPublicKey(
 @JsonSerializable
 data class PublicKey(
     val KeyId: KMSKeyId,
+    @Deprecated("Use KeySpec")
     val CustomerMasterKeySpec: CustomerMasterKeySpec,
+    val KeySpec: CustomerMasterKeySpec,
     val KeyUsage: KeyUsage,
     val PublicKey: Base64Blob,
     val EncryptionAlgorithms: List<EncryptionAlgorithm>? = null,

@@ -9,6 +9,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.toARN
+import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.ECC_NIST_P521
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.RSA_2048
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec.RSA_3072
@@ -221,6 +222,19 @@ abstract class KMSContract(http: HttpHandler) : AwsContract() {
         } finally {
             kms.scheduleKeyDeletion(key1, 7)
             kms.scheduleKeyDeletion(key2, 7).successValue()
+        }
+    }
+
+    @Test
+    fun `create key with new KeySpec property`() {
+        val keyId = kms.createKey(KeyUsage = SIGN_VERIFY, KeySpec = RSA_3072).successValue().KeyMetadata.KeyId
+
+        try {
+            val publicKey = kms.getPublicKey(keyId).successValue()
+            assertThat(publicKey.CustomerMasterKeySpec, equalTo(RSA_3072))
+            assertThat(publicKey.KeySpec, equalTo(RSA_3072))
+        } finally {
+            kms.scheduleKeyDeletion(keyId, 7).successValue()
         }
     }
 }
