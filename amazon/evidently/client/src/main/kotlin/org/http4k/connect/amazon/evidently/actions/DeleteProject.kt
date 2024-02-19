@@ -9,7 +9,7 @@ import org.http4k.core.Uri
 @Http4kConnectAction
 data class DeleteProject(
     val name: ProjectName
-): EvidentlyAction<Unit>(Unit::class, method = Method.DELETE) {
+) : EvidentlyAction<Unit>(Unit::class, method = Method.DELETE) {
     override fun uri() = Uri.of("/projects/$name")
     override fun requestBody() = Unit
 }

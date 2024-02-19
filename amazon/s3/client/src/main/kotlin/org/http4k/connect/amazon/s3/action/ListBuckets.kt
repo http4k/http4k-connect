@@ -27,6 +27,7 @@ class ListBuckets : S3Action<BucketList> {
                 val items = (0 until buckets.length).map { BucketName.of(buckets.item(it).text()) }
                 Success(BucketList(items))
             }
+
             else -> Failure(asRemoteFailure(this))
         }
     }

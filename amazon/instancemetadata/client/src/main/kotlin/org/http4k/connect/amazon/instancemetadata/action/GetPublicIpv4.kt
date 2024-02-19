@@ -14,12 +14,12 @@ import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-class GetPublicIpv4: Ec2MetadataAction<IpV4Address> {
+class GetPublicIpv4 : Ec2MetadataAction<IpV4Address> {
     private val uri = Uri.of("/latest/meta-data/public-ipv4")
 
     override fun toRequest() = Request(Method.GET, uri)
 
-    override fun toResult(response: Response) = when(response.status) {
+    override fun toResult(response: Response) = when (response.status) {
         Status.OK -> Success(response.value(IpV4Address))
         else -> Failure(asRemoteFailure(response))
     }

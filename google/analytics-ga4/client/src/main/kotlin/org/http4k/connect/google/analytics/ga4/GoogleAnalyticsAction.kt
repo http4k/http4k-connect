@@ -7,4 +7,5 @@ import org.http4k.connect.RemoteFailure
 import org.http4k.format.AutoMarshalling
 
 @Http4kConnectAction
-abstract class GoogleAnalyticsAction<R>(val autoMarshalling: AutoMarshalling = GoogleAnalyticsMoshi) : Action<Result<R, RemoteFailure>>
+abstract class GoogleAnalyticsAction<R>(val autoMarshalling: AutoMarshalling = GoogleAnalyticsMoshi) :
+    Action<Result<R, RemoteFailure>>

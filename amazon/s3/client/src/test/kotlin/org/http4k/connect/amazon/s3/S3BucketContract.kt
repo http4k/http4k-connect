@@ -90,7 +90,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
         val preSigner = S3BucketPreSigner(
             bucketName = bucket,
             region = aws.region,
-            credentials = aws.credentials ,
+            credentials = aws.credentials,
             clock = clock
         )
         val http = SetXForwardedHost().then(http)

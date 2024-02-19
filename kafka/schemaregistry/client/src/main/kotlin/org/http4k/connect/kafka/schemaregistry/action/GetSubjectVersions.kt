@@ -11,7 +11,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 
 @Http4kConnectAction
-data class GetSubjectVersions(val subject: Subject)
-    : NonNullAutoMarshalledAction<Array<Version>>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<Array<Version>> {
+data class GetSubjectVersions(val subject: Subject) :
+    NonNullAutoMarshalledAction<Array<Version>>(kClass(), SchemaRegistryMoshi), SchemaRegistryAction<Array<Version>> {
     override fun toRequest() = Request(Method.GET, "/subjects/$subject/versions")
 }

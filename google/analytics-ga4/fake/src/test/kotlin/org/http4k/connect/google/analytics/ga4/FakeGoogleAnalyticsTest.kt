@@ -12,12 +12,21 @@ import org.http4k.connect.google.analytics.model.UserAgent
 import org.junit.jupiter.api.Test
 
 class FakeGoogleAnalyticsTest {
-    private val analytics = GoogleAnalytics.Http(MeasurementId.of("SOME_TRACKING_ID"), ApiSecret.of("SECRET"), FakeGoogleAnalytics())
+    private val analytics =
+        GoogleAnalytics.Http(MeasurementId.of("SOME_TRACKING_ID"), ApiSecret.of("SECRET"), FakeGoogleAnalytics())
 
     @Test
     fun `can log page view`() {
         assertThat(
-            analytics.collect(PageView("title", "/doc/path", "www.http4k.org", ClientId.of("SOME_CLIENT_ID"), UserAgent.of("some-user-agent"))),
+            analytics.collect(
+                PageView(
+                    "title",
+                    "/doc/path",
+                    "www.http4k.org",
+                    ClientId.of("SOME_CLIENT_ID"),
+                    UserAgent.of("some-user-agent")
+                )
+            ),
             equalTo(Success(Unit))
         )
     }
@@ -25,7 +34,16 @@ class FakeGoogleAnalyticsTest {
     @Test
     fun `can log event`() {
         assertThat(
-            analytics.collect(Event("event", "action", "label", 1, ClientId.of("SOME_CLIENT_ID"), UserAgent.of("some-user-agent"))),
+            analytics.collect(
+                Event(
+                    "event",
+                    "action",
+                    "label",
+                    1,
+                    ClientId.of("SOME_CLIENT_ID"),
+                    UserAgent.of("some-user-agent")
+                )
+            ),
             equalTo(Success(Unit))
         )
     }

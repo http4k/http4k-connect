@@ -29,7 +29,7 @@ import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DynamoDbUpdateItemContract: DynamoDbSource {
+abstract class DynamoDbUpdateItemContract : DynamoDbSource {
 
     companion object {
         private val table = TableName.sample()
@@ -80,12 +80,14 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
     fun `set element of missing list`() {
         dynamo.putItem(TableName = table, Item = item.without(attrL)).successValue()
 
-        assertThat(dynamo.updateItem(
-            TableName = table,
-            Key = key,
-            UpdateExpression = "SET $attrL[0] = :val1",
-            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(999))
-        ).failureOrNull(), present())
+        assertThat(
+            dynamo.updateItem(
+                TableName = table,
+                Key = key,
+                UpdateExpression = "SET $attrL[0] = :val1",
+                ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(999))
+            ).failureOrNull(), present()
+        )
     }
 
     @Test
@@ -215,5 +217,5 @@ abstract class DynamoDbUpdateItemContract: DynamoDbSource {
     ).successValue().item
 }
 
-class FakeDynamoDbUpdateItemTest: DynamoDbUpdateItemContract(), DynamoDbSource by FakeDynamoDbSource()
-class LocalDynamoDbUpdateItemTest: DynamoDbUpdateItemContract(), DynamoDbSource by LocalDynamoDbSource()
+class FakeDynamoDbUpdateItemTest : DynamoDbUpdateItemContract(), DynamoDbSource by FakeDynamoDbSource()
+class LocalDynamoDbUpdateItemTest : DynamoDbUpdateItemContract(), DynamoDbSource by LocalDynamoDbSource()

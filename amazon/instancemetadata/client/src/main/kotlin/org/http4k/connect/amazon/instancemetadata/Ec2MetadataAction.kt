@@ -9,7 +9,7 @@ import org.http4k.core.Response
 
 interface Ec2MetadataAction<R> : Action<Result<R, RemoteFailure>>
 
-fun <DOMAIN: Value<String>> Response.value(factory: ValueFactory<DOMAIN, String>) = bodyString()
+fun <DOMAIN : Value<String>> Response.value(factory: ValueFactory<DOMAIN, String>) = bodyString()
     .lines()
     .first()
     .trim()

@@ -12,12 +12,12 @@ import parser4k.map
 import parser4k.oneOf
 import parser4k.oneOfWithPrecedence
 import parser4k.oneOrMore
+import parser4k.optional
 import parser4k.parseWith
+import parser4k.ref
 import parser4k.reset
 import parser4k.skipFirst
 import parser4k.with
-import parser4k.optional
-import parser4k.ref
 
 object DynamoDbUpdateGrammar {
     private val cache = OutputCache<Expr>()

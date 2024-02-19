@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.apprunner
 
 import org.http4k.connect.FakeSystemContract
-import org.http4k.connect.amazon.apprunner.FakeAppRunner
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 

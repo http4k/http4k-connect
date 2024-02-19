@@ -19,7 +19,10 @@ class CodeGenerationTest {
 
     @Test
     fun `correct code is generated for adapter with paged action`() {
-        assertThat(TestAdapter.Impl().testFooPagedActionPaginated("hello", one).toList(), equalTo(listOf(Success(listOf()))))
+        assertThat(
+            TestAdapter.Impl().testFooPagedActionPaginated("hello", one).toList(),
+            equalTo(listOf(Success(listOf())))
+        )
     }
 
     @Test

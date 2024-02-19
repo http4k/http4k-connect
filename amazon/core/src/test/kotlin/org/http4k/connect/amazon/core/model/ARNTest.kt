@@ -55,9 +55,9 @@ class ARNTest {
 
     @Test
     fun `can get parts back from ARN - resource path with longer path`() {
-        val arn = ARN.parse("arn:partition:kms:ldn-north-1:001234567890:key/name/${UUID(0,0)}")
+        val arn = ARN.parse("arn:partition:kms:ldn-north-1:001234567890:key/name/${UUID(0, 0)}")
 
-        assertThat(arn.toString(), equalTo("arn:partition:kms:ldn-north-1:001234567890:key/name/${UUID(0,0)}"))
+        assertThat(arn.toString(), equalTo("arn:partition:kms:ldn-north-1:001234567890:key/name/${UUID(0, 0)}"))
         assertThat(arn.partition, equalTo(partition))
         assertThat(arn.awsService, equalTo(awsService))
         assertThat(arn.region, equalTo(region))

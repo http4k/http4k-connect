@@ -30,7 +30,7 @@ import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
+abstract class EvidentlyContract(private val http: HttpHandler) : AwsContract() {
 
     private val evidently by lazy {
         Evidently.Http(aws.region, { aws.credentials }, http)
@@ -75,12 +75,16 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
             feature = featureName,
             entityId = entity1
         ).successValue()
-        assertThat(evaluation1, equalTo(EvaluatedFeature(
-            details = "{}",
-            reason = "ENTITY_OVERRIDES_MATCH",
-            value = VariableValue("456"),
-            variation = VariationName.of("bar")
-        )))
+        assertThat(
+            evaluation1, equalTo(
+                EvaluatedFeature(
+                    details = "{}",
+                    reason = "ENTITY_OVERRIDES_MATCH",
+                    value = VariableValue("456"),
+                    variation = VariationName.of("bar")
+                )
+            )
+        )
 
         // evaluate by default variation
         val evaluation2 = evidently.evaluateFeature(
@@ -88,12 +92,16 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
             feature = featureName,
             entityId = entity2
         ).successValue()
-        assertThat(evaluation2, equalTo(EvaluatedFeature(
-            details = "{}",
-            reason = "DEFAULT",
-            value = VariableValue("123"),
-            variation = VariationName.of("foo")
-        )))
+        assertThat(
+            evaluation2, equalTo(
+                EvaluatedFeature(
+                    details = "{}",
+                    reason = "DEFAULT",
+                    value = VariableValue("123"),
+                    variation = VariationName.of("foo")
+                )
+            )
+        )
 
         // evaluate missing feature
         val evaluation3 = evidently.evaluateFeature(
@@ -101,12 +109,16 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
             feature = missingFeatureName,
             entityId = entity1
         ).failureOrNull()
-        assertThat(evaluation3, equalTo(RemoteFailure(
-            method = POST,
-            uri = Uri.of("/projects/$projectName/evaluations/$missingFeatureName"),
-            status = NOT_FOUND,
-            message = "{\"message\":\"Feature does not exist with arn '$missingFeatureArn'\",\"resourceId\":null,\"resourceType\":null}"
-        )))
+        assertThat(
+            evaluation3, equalTo(
+                RemoteFailure(
+                    method = POST,
+                    uri = Uri.of("/projects/$projectName/evaluations/$missingFeatureName"),
+                    status = NOT_FOUND,
+                    message = "{\"message\":\"Feature does not exist with arn '$missingFeatureArn'\",\"resourceId\":null,\"resourceType\":null}"
+                )
+            )
+        )
 
         // evaluate feature for missing project
         val evaluation4 = evidently.evaluateFeature(
@@ -114,12 +126,16 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
             feature = missingFeatureName,
             entityId = entity1
         ).failureOrNull()
-        assertThat(evaluation4, equalTo(RemoteFailure(
-            method = POST,
-            uri = Uri.of("/projects/$missingProjectName/evaluations/$missingFeatureName"),
-            status = NOT_FOUND,
-            message = "{\"message\":\"Project does not exist with arn '$missingProjectArn'\",\"resourceId\":null,\"resourceType\":null}"
-        )))
+        assertThat(
+            evaluation4, equalTo(
+                RemoteFailure(
+                    method = POST,
+                    uri = Uri.of("/projects/$missingProjectName/evaluations/$missingFeatureName"),
+                    status = NOT_FOUND,
+                    message = "{\"message\":\"Project does not exist with arn '$missingProjectArn'\",\"resourceId\":null,\"resourceType\":null}"
+                )
+            )
+        )
 
         // batch evaluate
         val batchEvaluation = evidently.batchEvaluateFeature(
@@ -129,23 +145,29 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
                 BatchEvaluationRequest(entity2, missingFeatureName)
             )
         ).successValue()
-        assertThat(batchEvaluation, equalTo(BatchEvaluationResultWrapper(listOf(
-            BatchEvaluateFeatureResult(
-                entity1,
-                feature.arn,
-                feature.project,
-                VariationName.of("bar"),
-                VariableValue("456"),
-                details = "{}",
-                reason = "ENTITY_OVERRIDES_MATCH"
-            ),
-            BatchEvaluateFeatureResult(
-                entity2,
-                missingFeatureArn,
-                feature.project,
-                reason = "Feature does not exist with arn '$missingFeatureArn'"
+        assertThat(
+            batchEvaluation, equalTo(
+                BatchEvaluationResultWrapper(
+                    listOf(
+                        BatchEvaluateFeatureResult(
+                            entity1,
+                            feature.arn,
+                            feature.project,
+                            VariationName.of("bar"),
+                            VariableValue("456"),
+                            details = "{}",
+                            reason = "ENTITY_OVERRIDES_MATCH"
+                        ),
+                        BatchEvaluateFeatureResult(
+                            entity2,
+                            missingFeatureArn,
+                            feature.project,
+                            reason = "Feature does not exist with arn '$missingFeatureArn'"
+                        )
+                    )
+                )
             )
-        ))))
+        )
 
         // batch evaluate missing project
         val batchResult = evidently.batchEvaluateFeature(
@@ -154,22 +176,28 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
                 BatchEvaluationRequest(entity1, featureName)
             )
         ).failureOrNull()
-        assertThat(batchResult, equalTo(RemoteFailure(
-            method = POST,
-            uri = Uri.of("/projects/$missingProjectName/evaluations"),
-            status = NOT_FOUND,
-            message = "{\"message\":\"Project does not exist with arn '$missingProjectArn'\",\"resourceId\":null,\"resourceType\":null}"
-        )))
+        assertThat(
+            batchResult, equalTo(
+                RemoteFailure(
+                    method = POST,
+                    uri = Uri.of("/projects/$missingProjectName/evaluations"),
+                    status = NOT_FOUND,
+                    message = "{\"message\":\"Project does not exist with arn '$missingProjectArn'\",\"resourceId\":null,\"resourceType\":null}"
+                )
+            )
+        )
 
         // update missing feature
-        assertThat(evidently.updateFeature(projectName, missingFeatureName).failureOrNull(), equalTo(
-            RemoteFailure(
-                method = PATCH,
-                uri = Uri.of("/projects/$projectName/features/$missingFeatureName"),
-                status = NOT_FOUND,
-                message = "{\"message\":\"Feature with arn '$missingFeatureArn' does not exist.\",\"resourceId\":\"$missingFeatureArn\",\"resourceType\":\"feature\"}"
+        assertThat(
+            evidently.updateFeature(projectName, missingFeatureName).failureOrNull(), equalTo(
+                RemoteFailure(
+                    method = PATCH,
+                    uri = Uri.of("/projects/$projectName/features/$missingFeatureName"),
+                    status = NOT_FOUND,
+                    message = "{\"message\":\"Feature with arn '$missingFeatureArn' does not exist.\",\"resourceId\":\"$missingFeatureArn\",\"resourceType\":\"feature\"}"
+                )
             )
-        ))
+        )
 
         // update feature
         evidently.updateFeature(
@@ -189,34 +217,48 @@ abstract class EvidentlyContract(private val http: HttpHandler): AwsContract() {
             assertThat(it.feature.description, equalTo("updated"))
             assertThat(it.feature.evaluationStrategy, equalTo(EvaluationStrategy.ALL_RULES))
             assertThat(it.feature.defaultVariation, equalTo(VariationName.of("bar")))
-            assertThat(it.feature.variations, equalTo(listOf(
-                VariationConfig(VariationName.of("bar"), VariableValue("456")),
-                VariationConfig(VariationName.of("baz"), VariableValue("789"))
-            )))
-            assertThat(it.feature.entityOverrides, equalTo(mapOf(
-                entity2.value to VariationName.of("baz")
-            )))
+            assertThat(
+                it.feature.variations, equalTo(
+                    listOf(
+                        VariationConfig(VariationName.of("bar"), VariableValue("456")),
+                        VariationConfig(VariationName.of("baz"), VariableValue("789"))
+                    )
+                )
+            )
+            assertThat(
+                it.feature.entityOverrides, equalTo(
+                    mapOf(
+                        entity2.value to VariationName.of("baz")
+                    )
+                )
+            )
         }
 
         // cannot delete project with features
-        assertThat(evidently.deleteProject(projectName).failureOrNull(), equalTo(
-            RemoteFailure(
-                status = CONFLICT,
-                uri = Uri.of("/projects/$projectName"),
-                method = DELETE,
-                message = "{\"message\":\"Project has sub-resources\",\"resourceId\":\"${feature.project}\",\"resourceType\":\"project\"}",
+        assertThat(
+            evidently.deleteProject(projectName).failureOrNull(), equalTo(
+                RemoteFailure(
+                    status = CONFLICT,
+                    uri = Uri.of("/projects/$projectName"),
+                    method = DELETE,
+                    message = "{\"message\":\"Project has sub-resources\",\"resourceId\":\"${feature.project}\",\"resourceType\":\"project\"}",
+                )
             )
-        ))
+        )
 
         // delete feature from missing project
-        assertThat(evidently.deleteFeature(missingProjectName, featureName), equalTo(Failure(
-            RemoteFailure(
-                status = Status(404, ""),
-                uri = Uri.of("/projects/$missingProjectName/features/$featureName"),
-                method = DELETE,
-                message = "{\"message\":\"Project with arn '$missingProjectArn/feature/$featureName' does not exist.\",\"resourceId\":\"$missingProjectArn/feature/$featureName\",\"resourceType\":\"project\"}"
+        assertThat(
+            evidently.deleteFeature(missingProjectName, featureName), equalTo(
+                Failure(
+                    RemoteFailure(
+                        status = Status(404, ""),
+                        uri = Uri.of("/projects/$missingProjectName/features/$featureName"),
+                        method = DELETE,
+                        message = "{\"message\":\"Project with arn '$missingProjectArn/feature/$featureName' does not exist.\",\"resourceId\":\"$missingProjectArn/feature/$featureName\",\"resourceType\":\"project\"}"
+                    )
+                )
             )
-        )))
+        )
 
         evidently.deleteFeature(projectName, featureName).successValue()
 

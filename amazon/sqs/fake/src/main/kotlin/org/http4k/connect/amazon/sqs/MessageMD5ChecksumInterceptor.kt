@@ -51,6 +51,7 @@ object MessageMD5ChecksumInterceptor {
                             updateLengthAndBytes(md5Digest, strListMember);
                         }
                     }
+
                     else -> {
                         md5Digest.update(STRING_TYPE_FIELD_INDEX);
                         updateLengthAndBytes(md5Digest, attrValue.value);
@@ -64,6 +65,7 @@ object MessageMD5ChecksumInterceptor {
                             updateLengthAndBytes(md5Digest, strListMember.asByteBuffer());
                         }
                     }
+
                     else -> {
                         md5Digest.update(BINARY_TYPE_FIELD_INDEX);
                         updateLengthAndBytes(md5Digest, attrValue.value.asByteBuffer());

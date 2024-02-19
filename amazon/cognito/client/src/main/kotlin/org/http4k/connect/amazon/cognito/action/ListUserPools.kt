@@ -11,7 +11,8 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class ListUserPools(val MaxResults: Int, val NextToken: String? = null) : CognitoAction<UserPools>(UserPools::class)
+data class ListUserPools(val MaxResults: Int, val NextToken: String? = null) :
+    CognitoAction<UserPools>(UserPools::class)
 
 @JsonSerializable
 data class CustomEmailSender(

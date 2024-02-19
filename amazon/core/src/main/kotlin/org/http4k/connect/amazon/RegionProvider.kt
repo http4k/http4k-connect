@@ -3,7 +3,7 @@ package org.http4k.connect.amazon
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.core.model.Region
 
-fun interface RegionProvider: () -> Region? {
+fun interface RegionProvider : () -> Region? {
 
     fun orElseThrow() = requireNotNull(invoke()) { "AWS Region not found in provider chain" }
     infix fun orElse(other: RegionProvider) = RegionProvider { invoke() ?: other() }

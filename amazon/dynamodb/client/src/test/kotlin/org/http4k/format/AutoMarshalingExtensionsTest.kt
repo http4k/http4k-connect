@@ -60,8 +60,8 @@ class AutoMarshalingExtensionsTest {
         assertThat(lens(item), equalTo(input))
     }
 
-    class CustomValue(value: String): StringValue(value) {
-        companion object: NonEmptyStringValueFactory<CustomValue>(::CustomValue)
+    class CustomValue(value: String) : StringValue(value) {
+        companion object : NonEmptyStringValueFactory<CustomValue>(::CustomValue)
     }
 
     data class CustomContainer(

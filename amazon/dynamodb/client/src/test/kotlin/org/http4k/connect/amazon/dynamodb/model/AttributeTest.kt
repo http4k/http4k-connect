@@ -51,7 +51,7 @@ class AttributeTest {
 
         assertThat(
             primary(Item(fallback of UUID(0, 0))),
-            equalTo(UUID(0,0))
+            equalTo(UUID(0, 0))
         )
     }
 

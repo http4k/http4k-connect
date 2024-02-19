@@ -23,7 +23,6 @@ import org.http4k.routing.asRouter
 import org.http4k.routing.bind
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
-import java.util.*
 import org.http4k.connect.amazon.ses.model.Body as SESBody
 
 private val source = FormField.value(EmailAddress).required("Source")

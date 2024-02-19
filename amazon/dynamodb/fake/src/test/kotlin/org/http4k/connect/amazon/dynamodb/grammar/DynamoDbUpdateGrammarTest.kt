@@ -42,21 +42,21 @@ class DynamoDbUpdateGrammarTest {
     fun `remove - from list, middle`() = assert(
         expression = "REMOVE $attrL[1]",
         item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2), attrN.asValue(3))),
-        expected = Item(attrL of listOf(attrN.asValue(1),  attrN.asValue(3))),
+        expected = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(3))),
     )
 
     @Test
     fun `remove - from list, start`() = assert(
         expression = "REMOVE $attrL[0]",
         item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2), attrN.asValue(3))),
-        expected = Item(attrL of listOf(attrN.asValue(2),  attrN.asValue(3))),
+        expected = Item(attrL of listOf(attrN.asValue(2), attrN.asValue(3))),
     )
 
     @Test
     fun `remove - from list, end`() = assert(
         expression = "REMOVE $attrL[2]",
         item = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2), attrN.asValue(3))),
-        expected = Item(attrL of listOf(attrN.asValue(1),  attrN.asValue(2))),
+        expected = Item(attrL of listOf(attrN.asValue(1), attrN.asValue(2))),
     )
 
     @Test
@@ -205,7 +205,7 @@ class DynamoDbUpdateGrammarTest {
     fun `add - two actions`() = assert(
         expression = "ADD $attrN :val1, #key1 :val2",
         item = Item(attrN of 1, attrNS of setOf(1, 2)),
-        expected = Item(attrN of 3, attrNS of setOf(1,2,3)),
+        expected = Item(attrN of 3, attrNS of setOf(1, 2, 3)),
         names = mapOf("#key1" to attrNS.name),
         values = mapOf(":val1" to attrN.asValue(2), ":val2" to attrNS.asValue(setOf(3)))
     )
@@ -222,7 +222,7 @@ class DynamoDbUpdateGrammarTest {
     @Test
     fun `delete - multiple`() = assert(
         expression = "DELETE #key1 :val1, $attrNS :val2",
-        item = Item(attrSS of setOf("A", "B"), attrNS of setOf(1,2)),
+        item = Item(attrSS of setOf("A", "B"), attrNS of setOf(1, 2)),
         expected = Item(attrSS of setOf("B"), attrNS of setOf(1)),
         names = mapOf("#key1" to attrSS.name),
         values = mapOf(":val1" to attrSS.asValue(setOf("A")), ":val2" to attrNS.asValue(setOf(2)))

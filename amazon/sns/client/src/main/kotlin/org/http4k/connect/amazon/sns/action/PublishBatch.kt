@@ -24,7 +24,7 @@ data class PublishBatch(
     val PublishBatchRequestEntries: List<PublishBatchRequestEntry>
 ) : SNSAction<PublishBatchResult>(
     "PublishBatch",
-     *PublishBatchRequestEntries.flatMapIndexed { index, entry -> entry.toParams(index + 1) }.toTypedArray(),
+    *PublishBatchRequestEntries.flatMapIndexed { index, entry -> entry.toParams(index + 1) }.toTypedArray(),
     "TopicArn" to TopicArn.value
 ) {
     override fun toResult(response: Response) = with(response) {

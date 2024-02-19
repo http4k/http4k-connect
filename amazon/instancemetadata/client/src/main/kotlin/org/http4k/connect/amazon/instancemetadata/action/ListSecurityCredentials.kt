@@ -15,18 +15,19 @@ import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-class ListSecurityCredentials: Ec2MetadataAction<List<Ec2ProfileName>> {
+class ListSecurityCredentials : Ec2MetadataAction<List<Ec2ProfileName>> {
     private val uri = Uri.of("/latest/meta-data/iam/security-credentials")
 
     override fun toRequest() = Request(Method.GET, uri)
 
     override fun toResult(response: Response): Result<List<Ec2ProfileName>, RemoteFailure> {
-        return when(response.status) {
+        return when (response.status) {
             Status.OK -> response.bodyString()
                 .lines()
                 .filter { it.trim().isNotEmpty() }
                 .map { Ec2ProfileName.of(it) }
                 .let { Success(it) }
+
             Status.CONNECTION_REFUSED -> Success(emptyList())  // not in EC2 environment
             else -> Failure(asRemoteFailure(response))
         }

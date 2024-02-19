@@ -107,7 +107,8 @@ private fun generateExtensionFunction(
                 else if (starProjection().toString() == "Set<*>") base.defaultValue(CodeBlock.of("emptySet()"))
                 else {
                 }
-            } else { }
+            } else {
+            }
         }
         baseFunction.addParameter(base.build())
     }

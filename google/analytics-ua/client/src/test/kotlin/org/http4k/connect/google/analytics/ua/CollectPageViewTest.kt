@@ -34,13 +34,13 @@ class CollectPageViewTest {
     val clientId = ClientId.of("TEST-CLIENT-ID")
     val client = GoogleAnalytics.Http(TrackingId.of(trackingId), testHttpClient)
     val analytics = CollectPageView(client::collect) { clientId }.then {
-            when {
-                it.uri.path.contains("fail") -> Response(BAD_REQUEST)
-                it.uri.path.contains("informational") -> Response(CONTINUE)
-                it.uri.path.contains("redirect") -> Response(SEE_OTHER)
-                else -> Response(OK)
-            }
+        when {
+            it.uri.path.contains("fail") -> Response(BAD_REQUEST)
+            it.uri.path.contains("informational") -> Response(CONTINUE)
+            it.uri.path.contains("redirect") -> Response(SEE_OTHER)
+            else -> Response(OK)
         }
+    }
 
     @Test
     fun `logs request as page view`() {

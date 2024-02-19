@@ -16,7 +16,8 @@ import kotlin.io.path.Path
 class ProfileCredentialsProviderTest {
 
     private val profileFile = Files.createTempFile("credentials", "ini").also {
-        it.toFile().writeText("""
+        it.toFile().writeText(
+            """
             [default]
             aws_access_key_id = key123
             aws_secret_access_key = secret123
@@ -24,7 +25,8 @@ class ProfileCredentialsProviderTest {
             [dev]
             aws_access_key_id = key456
             aws_secret_access_key = secret456
-        """)
+        """
+        )
     }
 
     private val env = Environment.EMPTY.with(AWS_CREDENTIAL_PROFILES_FILE of profileFile)
@@ -81,11 +83,13 @@ class ProfileCredentialsProviderTest {
 
         assertThat(chain.invoke(), equalTo(expected))
 
-        profileFile.toFile().writeText("""
+        profileFile.toFile().writeText(
+            """
             [default]
             aws_access_key_id = key1456
             aws_secret_access_key = secret456
-        """)
+        """
+        )
 
         assertThat(chain.invoke(), equalTo(expected))
     }
@@ -111,7 +115,8 @@ class ProfileCredentialsProviderTest {
         assertThat(
             CredentialsProvider.Profile(
                 profileName = ProfileName.of("dev"),
-                credentialsPath = profileFile).invoke(),
+                credentialsPath = profileFile
+            ).invoke(),
             equalTo(AwsCredentials("key456", "secret456"))
         )
     }

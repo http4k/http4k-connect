@@ -28,7 +28,15 @@ data class Event(
         Resources: List<ARN>? = null,
         Time: Timestamp? = null,
         TraceHeader: String? = null
-    ) : this(Detail, DetailType, Source, EventBusARN?.let(org.http4k.connect.amazon.model.EventBusName::of), Resources, Time, TraceHeader)
+    ) : this(
+        Detail,
+        DetailType,
+        Source,
+        EventBusARN?.let(org.http4k.connect.amazon.model.EventBusName::of),
+        Resources,
+        Time,
+        TraceHeader
+    )
 }
 
 /**

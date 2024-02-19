@@ -49,9 +49,7 @@ abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
                     listOf(Record(Base64Blob.encode(UUID.randomUUID().toString())))
                 ).successValue()
 
-            }
-
-            finally {
+            } finally {
                 deleteDeliveryStream(deliveryStreamName).successValue()
             }
         }

@@ -45,8 +45,25 @@ data class VariableValue(
     val longValue: Long?,
     val stringValue: String?
 ) {
-    constructor(boolValue: Boolean): this(boolValue = boolValue, doubleValue = null, longValue = null, stringValue = null)
-    constructor(doubleValue: Double): this(boolValue = null, doubleValue = doubleValue, longValue = null, stringValue = null)
-    constructor(longValue: Long): this(boolValue = null, doubleValue = null, longValue = longValue, stringValue = null)
-    constructor(stringValue: String): this(boolValue = null, doubleValue = null, longValue = null, stringValue = stringValue)
+    constructor(boolValue: Boolean) : this(
+        boolValue = boolValue,
+        doubleValue = null,
+        longValue = null,
+        stringValue = null
+    )
+
+    constructor(doubleValue: Double) : this(
+        boolValue = null,
+        doubleValue = doubleValue,
+        longValue = null,
+        stringValue = null
+    )
+
+    constructor(longValue: Long) : this(boolValue = null, doubleValue = null, longValue = longValue, stringValue = null)
+    constructor(stringValue: String) : this(
+        boolValue = null,
+        doubleValue = null,
+        longValue = null,
+        stringValue = stringValue
+    )
 }

@@ -7,4 +7,5 @@ import org.http4k.connect.kafka.rest.model.PartitionId
  */
 fun <K, V> StickyKeyRecordPartitioner(partitions: List<PartitionId>) =
     Partitioner<K, V> { p1, _ ->
-        partitions[(p1).hashCode() % partitions.size] }
+        partitions[(p1).hashCode() % partitions.size]
+    }

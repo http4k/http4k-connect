@@ -65,7 +65,8 @@ class PagedTest {
             }
         }
 
-        assertThat(paginated(bar::invoke, ABarPageAction()).toList(),
+        assertThat(
+            paginated(bar::invoke, ABarPageAction()).toList(),
             equalTo(listOf(Success(listOf("foo")), Success(listOf("foo"))))
         )
     }
@@ -81,7 +82,8 @@ class PagedTest {
             }
         }
 
-        assertThat(paginated(bar::invoke, ABarPageAction()).toList(),
+        assertThat(
+            paginated(bar::invoke, ABarPageAction()).toList(),
             equalTo(listOf(Success(listOf("foo")), Failure(RemoteFailure(GET, Uri.of(""), INTERNAL_SERVER_ERROR))))
         )
     }

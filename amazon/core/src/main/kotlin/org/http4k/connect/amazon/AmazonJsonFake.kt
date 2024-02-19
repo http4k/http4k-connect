@@ -27,7 +27,7 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
                         else -> responseFn(it)
                     }
                 }
-                ?: JsonError("ResourceNotFoundException","$awsService can't find the specified item.").let(errorFn)
+                ?: JsonError("ResourceNotFoundException", "$awsService can't find the specified item.").let(errorFn)
         }
 }
 

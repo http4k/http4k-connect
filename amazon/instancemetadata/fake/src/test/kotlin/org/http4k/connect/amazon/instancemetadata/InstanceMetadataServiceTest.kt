@@ -17,7 +17,7 @@ import java.time.ZonedDateTime
 class InstanceMetadataServiceTest {
 
     private var now = Instant.parse("2022-03-04T12:00:00Z")
-    private val clock = object: Clock() {
+    private val clock = object : Clock() {
         override fun instant() = now
         override fun withZone(zone: ZoneId?) = throw UnsupportedOperationException()
         override fun getZone() = ZoneOffset.UTC

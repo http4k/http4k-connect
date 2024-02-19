@@ -37,7 +37,7 @@ import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DynamoDbScanContract: DynamoDbSource {
+abstract class DynamoDbScanContract : DynamoDbSource {
 
     private val table = TableName.sample()
     private val item1 = createItem("hash1", 1, Base64Blob.encode("foo"))
@@ -58,7 +58,11 @@ abstract class DynamoDbScanContract: DynamoDbSource {
                 attrN.asAttributeDefinition()
             ),
             GlobalSecondaryIndexes = listOf(
-                GlobalSecondaryIndex(IndexName = binaryStringGSI, KeySchema.compound(attrB.name, attrS.name), Projection.all),
+                GlobalSecondaryIndex(
+                    IndexName = binaryStringGSI,
+                    KeySchema.compound(attrB.name, attrS.name),
+                    Projection.all
+                ),
                 GlobalSecondaryIndex(IndexName = attrNGsi, KeySchema.compound(attrN.name), Projection.all),
             ),
             BillingMode = BillingMode.PAY_PER_REQUEST
@@ -131,7 +135,7 @@ abstract class DynamoDbScanContract: DynamoDbSource {
     @Test
     fun `scan with max results for page`() {
         val numItems = 2_000
-        val payload = (1 .. 1_000).map { "a".repeat(1_000) }.toSet()
+        val payload = (1..1_000).map { "a".repeat(1_000) }.toSet()
 
         (1..numItems).chunked(25).forEach { chunk ->
             dynamo.batchWriteItem(
@@ -187,13 +191,17 @@ abstract class DynamoDbScanContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, present(equalTo(2)))
-        assertThat(result.items, equalTo(listOf(
-            Item(attrS of "hash1", attrN of 1, attrBool of true),
-            Item(attrS of "hash2", attrN of 2, attrBool of true)
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    Item(attrS of "hash1", attrN of 1, attrBool of true),
+                    Item(attrS of "hash2", attrN of 2, attrBool of true)
+                )
+            )
+        )
         assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash4", attrN of 4)))
     }
 }
 
-class LocalDynamoDbScanTest: DynamoDbScanContract(), DynamoDbSource by LocalDynamoDbSource()
-class FakeDynamoDbScanTest: DynamoDbScanContract(), DynamoDbSource by FakeDynamoDbSource()
+class LocalDynamoDbScanTest : DynamoDbScanContract(), DynamoDbSource by LocalDynamoDbSource()
+class FakeDynamoDbScanTest : DynamoDbScanContract(), DynamoDbSource by FakeDynamoDbSource()

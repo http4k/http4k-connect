@@ -11,7 +11,11 @@ import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.http4k.lens.Query
 import org.http4k.lens.value
 
-fun GoogleAnalytics.Companion.Http(measurementId: MeasurementId, apiSecret: ApiSecret, rawHttp: HttpHandler = JavaHttpClient()) =
+fun GoogleAnalytics.Companion.Http(
+    measurementId: MeasurementId,
+    apiSecret: ApiSecret,
+    rawHttp: HttpHandler = JavaHttpClient()
+) =
     object : GoogleAnalytics {
         private val http = SetBaseUriFrom(GOOGLE_ANALYTICS_URL).then(rawHttp)
 

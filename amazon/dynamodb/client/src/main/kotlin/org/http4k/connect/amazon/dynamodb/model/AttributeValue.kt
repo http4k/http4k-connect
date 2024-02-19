@@ -21,7 +21,7 @@ data class AttributeValue internal constructor(
     val NULL: Boolean? = null,
     val S: String? = null,
     val SS: Set<String>? = null
-): Comparable<AttributeValue> {
+) : Comparable<AttributeValue> {
 
     override fun toString() = "AttributeValue(" +
         when {
@@ -57,7 +57,7 @@ data class AttributeValue internal constructor(
         return when {
             other !is AttributeValue -> false
             B != null && other.B != null -> B == other.B
-            BOOL != null-> BOOL == other.BOOL
+            BOOL != null -> BOOL == other.BOOL
             BS != null -> BS == other.BS
             L != null -> L == other.L
             M != null -> M == other.M
@@ -69,6 +69,7 @@ data class AttributeValue internal constructor(
                 val otherNumbers = other.NS.map { it.toBigDecimal() }.sorted()
                 thisNumbers.zip(otherNumbers).all { it.first.compareTo(it.second) == 0 }
             }
+
             NULL != null -> NULL == other.NULL
             S != null -> S == other.S
             SS != null -> SS == other.SS
@@ -76,7 +77,7 @@ data class AttributeValue internal constructor(
         }
     }
 
-    override fun compareTo(other: AttributeValue) =  when {
+    override fun compareTo(other: AttributeValue) = when {
         S != null && other.S != null -> S.compareTo(other.S)
         N != null && other.N != null -> N.toBigDecimal().compareTo(other.N.toBigDecimal())
         B != null && other.B != null -> B.decoded().compareTo(other.B.decoded())
@@ -106,11 +107,18 @@ data class AttributeValue internal constructor(
         } else {
             List(L.toMutableList().apply { set(index.coerceAtMost(L.lastIndex), value) }.toList()) // FIXME do immutably
         }
+
         else -> this
     }
 
     fun delete(index: Int) = when {
-        L != null -> List(L.subList(0, index.coerceAtMost(L.size)) + L.subList((index + 1).coerceAtMost(L.size), L.size))
+        L != null -> List(
+            L.subList(0, index.coerceAtMost(L.size)) + L.subList(
+                (index + 1).coerceAtMost(L.size),
+                L.size
+            )
+        )
+
         else -> this
     }
 
@@ -136,6 +144,7 @@ data class AttributeValue internal constructor(
                 (value as Map<String, Map<String, Any>>)
                     .map { AttributeName.of(it.key) to it.value.toAttributeValue() }.toMap()
             )
+
             DynamoDataType.N -> Num(BigDecimal(value as String))
             DynamoDataType.NS -> NumSet((value as List<String>).map(::BigDecimal).toSet())
             DynamoDataType.NULL -> Null()

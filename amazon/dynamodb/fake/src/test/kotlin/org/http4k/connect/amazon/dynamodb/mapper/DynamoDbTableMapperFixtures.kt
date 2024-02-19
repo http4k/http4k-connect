@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 internal data class Cat(
     val ownerId: UUID,

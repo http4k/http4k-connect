@@ -14,14 +14,16 @@ class ActualCognitoResponsesTest {
 
     @Test
     fun `deserialising a user password response with no challenges requested`() {
-        val response = factory.asA<AuthInitiated>("""{"AuthenticationResult":
+        val response = factory.asA<AuthInitiated>(
+            """{"AuthenticationResult":
             {"AccessToken":"access-token",
             "ExpiresIn":3600,
             "IdToken":"id-token",
             "RefreshToken":"refresh-token",
             "TokenType":"Bearer"},
             "ChallengeParameters":{}}
-        """.trimIndent())
+        """.trimIndent()
+        )
         assertThat(response.AuthenticationResult.AccessToken, equalTo(AccessToken.of("access-token")))
         assertThat(response.AuthenticationResult.ExpiresIn, equalTo(3600))
         assertThat(response.AuthenticationResult.IdToken, equalTo(IdToken.of("id-token")))

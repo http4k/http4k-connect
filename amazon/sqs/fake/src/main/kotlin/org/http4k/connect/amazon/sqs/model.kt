@@ -24,7 +24,7 @@ data class SendMessageResponse(
 
 data class SendMessageBatchResponse(
     val entries: List<SentMessageBatchEntry>
-): ViewModel
+) : ViewModel
 
 data class ListQueuesResponse(val queues: List<String>) : ViewModel
 
@@ -35,7 +35,7 @@ object DeleteQueueResponse : ViewModel
 object DeleteMessageResponse : ViewModel
 
 data class DeleteMessageBatchResultEntry(val id: SQSMessageId)
-data class DeleteMessageBatchResponse(val entries: List<DeleteMessageBatchResultEntry>): ViewModel
+data class DeleteMessageBatchResponse(val entries: List<DeleteMessageBatchResultEntry>) : ViewModel
 
 fun SQSMessage.md5OfBody() = body.md5()
 

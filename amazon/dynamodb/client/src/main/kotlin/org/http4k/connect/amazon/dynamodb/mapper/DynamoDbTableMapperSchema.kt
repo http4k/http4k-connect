@@ -1,6 +1,15 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
-import org.http4k.connect.amazon.dynamodb.model.*
+import org.http4k.connect.amazon.dynamodb.model.Attribute
+import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
+import org.http4k.connect.amazon.dynamodb.model.IndexName
+import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.KeySchema
+import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndex
+import org.http4k.connect.amazon.dynamodb.model.Projection
+import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
+import org.http4k.connect.amazon.dynamodb.model.compound
 
 sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
     val hashKeyAttribute: Attribute<HashKey>
@@ -16,7 +25,7 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
     data class Primary<HashKey, SortKey>(
         override val hashKeyAttribute: Attribute<HashKey>,
         override val sortKeyAttribute: Attribute<SortKey>?
-    ): DynamoDbTableMapperSchema<HashKey, SortKey> {
+    ) : DynamoDbTableMapperSchema<HashKey, SortKey> {
         companion object {
             operator fun <HashKey> invoke(hashKeyAttribute: Attribute<HashKey>) =
                 Primary<HashKey, Unit>(hashKeyAttribute, null)
@@ -25,14 +34,14 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
         override val indexName = null
     }
 
-    sealed interface Secondary<HashKey, SortKey>: DynamoDbTableMapperSchema<HashKey, SortKey>
+    sealed interface Secondary<HashKey, SortKey> : DynamoDbTableMapperSchema<HashKey, SortKey>
 
     data class GlobalSecondary<HashKey, SortKey>(
         override val indexName: IndexName,
         override val hashKeyAttribute: Attribute<HashKey>,
         override val sortKeyAttribute: Attribute<SortKey>?,
         val projection: Projection = Projection.all
-    ): Secondary<HashKey, SortKey> {
+    ) : Secondary<HashKey, SortKey> {
         fun toIndex() = GlobalSecondaryIndex(
             IndexName = indexName,
             KeySchema = keySchema(),
@@ -45,7 +54,7 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
         override val hashKeyAttribute: Attribute<HashKey>,
         override val sortKeyAttribute: Attribute<SortKey>?,
         val projection: Projection = Projection.all
-    ): Secondary<HashKey, SortKey> {
+    ) : Secondary<HashKey, SortKey> {
         fun toIndex() = LocalSecondaryIndex(
             IndexName = indexName,
             KeySchema = keySchema(),

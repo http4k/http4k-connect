@@ -14,12 +14,12 @@ import org.http4k.core.Uri
 import org.http4k.format.AutoMarshalling
 import kotlin.reflect.KClass
 
-abstract class EvidentlyAction<ResponseBody: Any>(
+abstract class EvidentlyAction<ResponseBody : Any>(
     private val clazz: KClass<ResponseBody>,
     private val autoMarshalling: AutoMarshalling = EvidentlyMoshi,
     private val method: Method = Method.POST,
     val dataPlane: Boolean = false
-): Action<Result<ResponseBody, RemoteFailure>> {
+) : Action<Result<ResponseBody, RemoteFailure>> {
     abstract fun uri(): Uri
 
     abstract fun requestBody(): Any
@@ -33,6 +33,7 @@ abstract class EvidentlyAction<ResponseBody: Any>(
             status.successful -> autoMarshalling
                 .asA(bodyString().takeIf { it.isNotEmpty() } ?: "{}", clazz)
                 .let(::Success)
+
             else -> Failure(asRemoteFailure(this))
         }
     }

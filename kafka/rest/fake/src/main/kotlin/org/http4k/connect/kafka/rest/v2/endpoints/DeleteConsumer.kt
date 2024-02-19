@@ -26,6 +26,7 @@ fun deleteConsumer(consumers: Storage<ConsumerState>) =
                     consumers[group] = consumers[group]!!.remove(instance)
                     Response(NO_CONTENT)
                 }
+
                 else -> Response(NOT_FOUND)
             }
         }

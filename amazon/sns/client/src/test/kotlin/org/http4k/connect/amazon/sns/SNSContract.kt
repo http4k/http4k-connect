@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.sns
 
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.contains
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.isEmpty

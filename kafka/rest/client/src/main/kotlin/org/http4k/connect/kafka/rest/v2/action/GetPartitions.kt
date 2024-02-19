@@ -2,13 +2,11 @@ package org.http4k.connect.kafka.rest.v2.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.kClass
-import org.http4k.connect.kafka.rest.action.NonNullKafkaRestAction
 import org.http4k.connect.kafka.rest.action.NullableKafkaRestAction
 import org.http4k.connect.kafka.rest.model.BrokerId
 import org.http4k.connect.kafka.rest.model.PartitionId
 import org.http4k.connect.kafka.rest.model.Topic
 import org.http4k.connect.kafka.rest.v2.KafkaRestV2Action
-import org.http4k.connect.kafka.rest.v2.model.CommitOffsetsSet
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import se.ansman.kotshi.JsonSerializable

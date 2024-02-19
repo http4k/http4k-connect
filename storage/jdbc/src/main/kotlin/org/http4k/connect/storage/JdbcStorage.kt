@@ -42,6 +42,7 @@ inline fun <reified T : Any> Storage.Companion.Jdbc(
                     it[table.id] = key
                     it[contents] = autoMarshalling.asFormatString(data)
                 }
+
                 else -> table.update({ table.id eq key }) {
                     it[contents] = autoMarshalling.asFormatString(data)
                 } > 0

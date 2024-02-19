@@ -41,7 +41,7 @@ class Ec2CredentialsProviderTest {
         assertThat(credentials, present())
 
         assertThat(chain.invoke(), present())
-        assertThat(metadata.credentials().entries , hasSize(equalTo(1)))
+        assertThat(metadata.credentials().entries, hasSize(equalTo(1)))
     }
 
     @Test

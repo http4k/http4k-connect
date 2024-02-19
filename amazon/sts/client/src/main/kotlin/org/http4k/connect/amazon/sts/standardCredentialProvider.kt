@@ -32,7 +32,8 @@ fun CredentialsProvider.Companion.STS(
 ) = object : CredentialsProvider {
     private val credentials = AtomicReference<Credentials>(null)
 
-    override fun invoke() = (credentials.get()?.takeIf { !it.expiresWithin(clock, gracePeriod) } ?: refresh()).asHttp4k()
+    override fun invoke() =
+        (credentials.get()?.takeIf { !it.expiresWithin(clock, gracePeriod) } ?: refresh()).asHttp4k()
 
     private fun refresh() =
         synchronized(credentials) {
@@ -45,6 +46,7 @@ fun CredentialsProvider.Companion.STS(
                         credentials.set(newCreds)
                         newCreds
                     }
+
                     is Failure<RemoteFailure> -> refresh.reason.throwIt()
                 }
             }

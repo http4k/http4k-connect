@@ -35,8 +35,10 @@ fun main() {
             .build()
     )
 
-    sqs.receiveMessage(ReceiveMessageRequest.builder()
-        .queueUrl("https://foobar/123/myqueue").build())
+    sqs.receiveMessage(
+        ReceiveMessageRequest.builder()
+            .queueUrl("https://foobar/123/myqueue").build()
+    )
 
     sqs.sendMessage(
         SendMessageRequest.builder().messageBody("helloworld")
@@ -53,7 +55,9 @@ fun main() {
             .build()
     )
 
-    sqs.receiveMessage(ReceiveMessageRequest.builder()
-        .queueUrl("https://foobar/123/myqueue")
-        .messageAttributeNames("attr").build())
+    sqs.receiveMessage(
+        ReceiveMessageRequest.builder()
+            .queueUrl("https://foobar/123/myqueue")
+            .messageAttributeNames("attr").build()
+    )
 }

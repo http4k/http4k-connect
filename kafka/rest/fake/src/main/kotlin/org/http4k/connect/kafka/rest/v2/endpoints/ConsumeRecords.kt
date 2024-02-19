@@ -27,7 +27,6 @@ fun consumeRecords(consumers: Storage<ConsumerState>, topics: Storage<List<SendR
 
         val currentState = consumers[group]
         if (currentState == null) Response(NOT_FOUND)
-
         else {
             val (newState, records) =
                 currentState.offsets.entries

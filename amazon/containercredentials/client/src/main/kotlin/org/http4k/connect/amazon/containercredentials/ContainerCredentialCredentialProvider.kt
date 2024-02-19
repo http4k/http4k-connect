@@ -31,7 +31,7 @@ private fun credentialsProvider(
         cache.get()
             ?.takeIf { !it.expiresWithin(clock, gracePeriod) }
             ?.let { Success(it) }
-            ?: containerCredentials.getCredentials(uri).peek( cache::set)
+            ?: containerCredentials.getCredentials(uri).peek(cache::set)
     }
 
     return {
@@ -75,7 +75,7 @@ fun CredentialsChain.Companion.ContainerCredentials(
     uri: Uri,
     clock: Clock,
     gracePeriod: Duration
-) = object: CredentialsChain {
+) = object : CredentialsChain {
     private val provider = credentialsProvider(containerCredentials, uri, clock, gracePeriod)
 
     override fun invoke() = provider.invoke().valueOrNull()?.asHttp4k()
@@ -89,7 +89,7 @@ fun CredentialsChain.Companion.ContainerCredentials(
 ): CredentialsChain {
     val (token, uri) = try {
         AWS_CONTAINER_AUTHORIZATION_TOKEN(env) to AWS_CONTAINER_CREDENTIALS_FULL_URI(env)
-    } catch(e: LensFailure) {
+    } catch (e: LensFailure) {
         return CredentialsChain { null }
     }
 

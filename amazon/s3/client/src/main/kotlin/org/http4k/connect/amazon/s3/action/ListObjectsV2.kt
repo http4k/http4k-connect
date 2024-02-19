@@ -72,6 +72,7 @@ data class ListObjectsV2(
                     )
                 )
             }
+
             else -> Failure(asRemoteFailure(this))
         }
     }

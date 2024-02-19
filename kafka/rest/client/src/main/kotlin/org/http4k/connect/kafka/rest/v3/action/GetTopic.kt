@@ -5,8 +5,8 @@ import org.http4k.connect.kClass
 import org.http4k.connect.kafka.rest.action.NullableKafkaRestAction
 import org.http4k.connect.kafka.rest.model.Topic
 import org.http4k.connect.kafka.rest.v3.KafkaRestV3Action
-import org.http4k.connect.kafka.rest.v3.model.Metadata
 import org.http4k.connect.kafka.rest.v3.model.ClusterId
+import org.http4k.connect.kafka.rest.v3.model.Metadata
 import org.http4k.connect.kafka.rest.v3.model.Relation
 import org.http4k.core.Method.GET
 import org.http4k.core.Request

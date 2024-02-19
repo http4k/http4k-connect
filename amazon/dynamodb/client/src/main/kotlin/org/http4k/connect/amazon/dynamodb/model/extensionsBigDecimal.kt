@@ -13,4 +13,5 @@ fun <VALUE : Value<BigDecimal>> Attribute.Companion.list(vf: ValueFactory<VALUE,
     vf.asList({ it.N?.toBigDecimal() }) { AttributeValue.Num(it) }
 
 @JvmName("valueSetBigDecimal")
-fun <VALUE : Value<BigDecimal>> Attribute.Companion.bigDecimals(vf: ValueFactory<VALUE, BigDecimal>) = bigDecimals().asSet(vf)
+fun <VALUE : Value<BigDecimal>> Attribute.Companion.bigDecimals(vf: ValueFactory<VALUE, BigDecimal>) =
+    bigDecimals().asSet(vf)

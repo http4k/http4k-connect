@@ -21,7 +21,7 @@ import java.time.Duration
 class RealImportTableFromS3Test : ImportTableFromS3Contract() {
     override val aws = configAwsEnvironment()
     override val http = JavaHttpClient()
-    
+
     override fun initBucket(bucketName: BucketName, csv: String) {
         bucketName.create()
         bucketName.uploadCsv(csv)
@@ -30,7 +30,7 @@ class RealImportTableFromS3Test : ImportTableFromS3Contract() {
     override fun cleanupBucket(bucketName: BucketName) {
         bucketName.delete()
     }
-    
+
     private fun BucketName.create() {
         val s3 = S3.Http({ aws.credentials }, http)
         s3.createBucket(this, aws.region).successValue()

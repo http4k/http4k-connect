@@ -14,12 +14,12 @@ import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-class GetHostName: Ec2MetadataAction<HostName> {
+class GetHostName : Ec2MetadataAction<HostName> {
     private val uri = Uri.of("/latest/meta-data/hostname")
 
     override fun toRequest() = Request(Method.GET, uri)
 
-    override fun toResult(response: Response) = when(response.status) {
+    override fun toResult(response: Response) = when (response.status) {
         Status.OK -> Success(response.value(HostName))
         else -> Failure(asRemoteFailure(response))
     }

@@ -69,7 +69,8 @@ class STSWebIdentityCredentialsProviderTest {
 
         val firstCreds = credentialsExpiringAt(now.plusSeconds(61), 1)
         every { http(any()) } returns Response(OK)
-            .body("""<AssumeRoleWithWebIdentityResponse xmlns="https://sts.amazonaws.comdoc/2011-06-15/">
+            .body(
+                """<AssumeRoleWithWebIdentityResponse xmlns="https://sts.amazonaws.comdoc/2011-06-15/">
     <AssumeRoleWithWebIdentityResult>
         <AssumedRoleUser>
             <Arn>arn:aws:iam::account:role/role-name-with-path</Arn>
@@ -92,7 +93,8 @@ class STSWebIdentityCredentialsProviderTest {
         <RequestId>11111111-1111-1111-1111-111111111111</RequestId>
     </ResponseMetadata>
 </AssumeRoleWithWebIdentityResponse>
-""")
+"""
+            )
 
         assertThat(provider(), equalTo(firstCreds.asHttp4k()))
 

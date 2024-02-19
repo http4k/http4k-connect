@@ -8,6 +8,6 @@ import org.http4k.core.Method.DELETE
 import org.http4k.core.Request
 
 @Http4kConnectAction
-object Delete : NullableKafkaRestAction<Unit>(kClass()), KafkaRestConsumerAction<Unit?>  {
+object Delete : NullableKafkaRestAction<Unit>(kClass()), KafkaRestConsumerAction<Unit?> {
     override fun toRequest() = Request(DELETE, "")
 }

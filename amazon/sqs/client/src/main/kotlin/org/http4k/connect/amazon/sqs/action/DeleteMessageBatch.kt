@@ -34,6 +34,7 @@ data class DeleteMessageBatch(
                     .map { SQSMessageId.of(it.firstChildText("Id")!!) }
                     .let { Success(it.toList()) }
             }
+
             else -> Failure(asRemoteFailure(this))
         }
     }

@@ -16,11 +16,10 @@ data class EvaluateFeature(
     val feature: FeatureName,
     val entityId: EntityId,
     val evaluationContext: EvaluationContext?
-): EvidentlyAction<EvaluatedFeature>(EvaluatedFeature::class, dataPlane = true) {
+) : EvidentlyAction<EvaluatedFeature>(EvaluatedFeature::class, dataPlane = true) {
     override fun uri() = Uri.of("/projects/$project/evaluations/$feature")
     override fun requestBody() = EvaluateFeatureRequest(entityId, evaluationContext)
 }
-
 
 
 @JsonSerializable

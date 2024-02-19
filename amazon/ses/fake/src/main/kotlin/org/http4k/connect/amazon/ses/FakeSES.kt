@@ -8,18 +8,18 @@ import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST
 import org.http4k.core.then
-import org.http4k.filter.ServerFilters
 import org.http4k.filter.ServerFilters.CatchLensFailure
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-class FakeSES(val messagesBySender: Storage<List<EmailMessage>> = Storage.InMemory(),) : ChaoticHttpHandler() {
+class FakeSES(val messagesBySender: Storage<List<EmailMessage>> = Storage.InMemory()) : ChaoticHttpHandler() {
 
     override val app = CatchLensFailure()
-        .then("/" bind POST to routes(
-            SendEmail(messagesBySender)
+        .then(
+            "/" bind POST to routes(
+                SendEmail(messagesBySender)
+            )
         )
-    )
 
     fun client() = SES.Http(Region.of("ldn-north-1"), { AwsCredentials("accessKey", "secret") }, this)
 }

@@ -3,9 +3,12 @@ package org.http4k.connect.amazon
 import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
 
-fun interface CredentialsChain: () -> AwsCredentials? {
+fun interface CredentialsChain : () -> AwsCredentials? {
     infix fun orElse(next: CredentialsChain) = CredentialsChain { this() ?: next() }
-    fun provider() = CredentialsProvider { this() ?: throw IllegalArgumentException("Could not find any valid credentials in the chain") }
+    fun provider() = CredentialsProvider {
+        this() ?: throw IllegalArgumentException("Could not find any valid credentials in the chain")
+    }
+
     companion object
 }
 

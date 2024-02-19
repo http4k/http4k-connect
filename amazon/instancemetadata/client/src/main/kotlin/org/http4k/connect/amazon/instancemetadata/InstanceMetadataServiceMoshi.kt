@@ -34,4 +34,5 @@ fun <T> AutoMappingConfiguration<T>.withInstanceMetadataServiceMappings() = appl
 }
 
 @KotshiJsonAdapterFactory
-object InstanceMetadataServiceJsonAdapterFactory : JsonAdapter.Factory by KotshiInstanceMetadataServiceJsonAdapterFactory
+object InstanceMetadataServiceJsonAdapterFactory :
+    JsonAdapter.Factory by KotshiInstanceMetadataServiceJsonAdapterFactory

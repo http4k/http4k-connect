@@ -44,7 +44,7 @@ data class FakeS3BucketSource(
 
 private val ImportTable.tableName get() = TableCreationParameters.TableName.value
 
-private val ImportTable.s3Bucket get() =S3BucketSource.S3Bucket
+private val ImportTable.s3Bucket get() = S3BucketSource.S3Bucket
 
 private fun itemFromCsv(csv: String): Item {
     val lines = csv.lines()

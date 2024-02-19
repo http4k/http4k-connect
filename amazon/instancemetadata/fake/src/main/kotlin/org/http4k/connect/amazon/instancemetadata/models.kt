@@ -9,9 +9,9 @@ import org.http4k.connect.amazon.core.model.SecretAccessKey
 import org.http4k.connect.amazon.core.model.SessionToken
 import org.http4k.connect.amazon.instancemetadata.model.Ec2Credentials
 import org.http4k.connect.amazon.instancemetadata.model.HostName
+import org.http4k.connect.amazon.instancemetadata.model.IdentityDocument
 import org.http4k.connect.amazon.instancemetadata.model.ImageId
 import org.http4k.connect.amazon.instancemetadata.model.InstanceId
-import org.http4k.connect.amazon.instancemetadata.model.IdentityDocument
 import org.http4k.connect.amazon.instancemetadata.model.InstanceType
 import org.http4k.connect.amazon.instancemetadata.model.IpV4Address
 import java.time.Duration
@@ -29,7 +29,7 @@ data class InstanceMetadata(
     val instanceType: InstanceType = InstanceType.of("t4g.small"),
     val instanceId: InstanceId = InstanceId.of("i-0123456789abcdef0"),
     val publicHostName: HostName = HostName.of("ip-${publicIp.value.replace(".", "-")}.ec2.internal"),
-    val privateHostName: HostName = HostName.of( "ip-${privateIp.value.replace(".", "-")}.ec2.internal"),
+    val privateHostName: HostName = HostName.of("ip-${privateIp.value.replace(".", "-")}.ec2.internal"),
     val region: Region = Region.US_EAST_1,
     val availabilityZone: String = "${region.value.lowercase()}a",
     val profiles: Set<Ec2ProfileName> = setOf(Ec2ProfileName.of("default")),
@@ -56,16 +56,17 @@ data class InstanceMetadata(
         ).also { credentials[profile] = it }
     }
 
-    val identity get() = IdentityDocument(
-        accountId = accountId,
-        pendingTime = pendingTime,
-        architecture = architecture,
-        imageId = imageId,
-        instanceId = instanceId,
-        instanceType = instanceType,
-        privateIp = privateIp,
-        region = region,
-        availabilityZone = availabilityZone,
-        version = "2017-09-30"
-    )
+    val identity
+        get() = IdentityDocument(
+            accountId = accountId,
+            pendingTime = pendingTime,
+            architecture = architecture,
+            imageId = imageId,
+            instanceId = instanceId,
+            instanceType = instanceType,
+            privateIp = privateIp,
+            region = region,
+            availabilityZone = availabilityZone,
+            version = "2017-09-30"
+        )
 }

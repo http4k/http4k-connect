@@ -36,23 +36,24 @@ fun assumeRole(defaultSessionValidity: Duration, clock: Clock) = { r: Request ->
     )
 }
 
-fun assumeRoleWithWebIdentity(defaultSessionValidity: Duration, clock: Clock) = { r: Request -> r.form("Action") == "AssumeRoleWithWebIdentity" }
-    .asRouter() bind { req: Request ->
-    val duration = req.form("DurationSeconds")
-        ?.toLong()
-        ?.let(Duration::ofSeconds)
-        ?: defaultSessionValidity
-    Response(Status.OK).with(
-        viewModelLens of AssumeRoleWithWebIdentityResponse(
-            req.form("RoleArn")!!,
-            req.form("RoleSessionName")!!,
-            "accessKeyId",
-            "secretAccessKey",
-            UUID.randomUUID().toString().base64Encode(),
-            ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
+fun assumeRoleWithWebIdentity(defaultSessionValidity: Duration, clock: Clock) =
+    { r: Request -> r.form("Action") == "AssumeRoleWithWebIdentity" }
+        .asRouter() bind { req: Request ->
+        val duration = req.form("DurationSeconds")
+            ?.toLong()
+            ?.let(Duration::ofSeconds)
+            ?: defaultSessionValidity
+        Response(Status.OK).with(
+            viewModelLens of AssumeRoleWithWebIdentityResponse(
+                req.form("RoleArn")!!,
+                req.form("RoleSessionName")!!,
+                "accessKeyId",
+                "secretAccessKey",
+                UUID.randomUUID().toString().base64Encode(),
+                ISO_ZONED_DATE_TIME.format(ZonedDateTime.now(clock) + duration)
+            )
         )
-    )
-}
+    }
 
 private val viewModelLens by lazy {
     Body.viewModel(HandlebarsTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()

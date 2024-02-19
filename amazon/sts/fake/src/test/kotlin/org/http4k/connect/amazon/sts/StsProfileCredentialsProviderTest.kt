@@ -19,7 +19,8 @@ class StsProfileCredentialsProviderTest {
     private val clock = Clock.fixed(Instant.EPOCH, ZoneOffset.UTC)
 
     private val profileFile = Files.createTempFile("credentials", "ini").also {
-        it.toFile().writeText("""
+        it.toFile().writeText(
+            """
             [default]
             aws_access_key_id = key123
             aws_secret_access_key = secret123
@@ -38,7 +39,8 @@ class StsProfileCredentialsProviderTest {
             [invalidSource]
             role_arn = arn:aws:iam::123456789:role/special-role
             source_profile = invalid
-        """)
+        """
+        )
     }
 
     private fun getCredentials(name: ProfileName): AwsCredentials? {

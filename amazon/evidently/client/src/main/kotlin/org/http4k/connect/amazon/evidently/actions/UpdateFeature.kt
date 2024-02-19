@@ -23,7 +23,7 @@ data class UpdateFeature(
     val entityOverrides: Map<EntityId, VariationName>? = null,
     val evaluationStrategy: EvaluationStrategy? = null,
     val removeVariations: List<VariationName>? = null
-): EvidentlyAction<FeatureResponse>(FeatureResponse::class, method = PATCH) {
+) : EvidentlyAction<FeatureResponse>(FeatureResponse::class, method = PATCH) {
 
     override fun uri() = Uri.of("/projects/$project/features/$feature")
 

@@ -3,7 +3,6 @@ package org.http4k.connect.amazon
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.aws.AwsCredentials
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.core.model.ProfileName
 import org.http4k.connect.amazon.core.model.Region
@@ -16,7 +15,8 @@ import kotlin.io.path.Path
 class ProfileRegionProviderTest {
 
     private val profileFile = Files.createTempFile("credentials", "ini").also {
-        it.toFile().writeText("""
+        it.toFile().writeText(
+            """
             [default]
             aws_access_key_id = key123
             aws_secret_access_key = secret123
@@ -30,7 +30,8 @@ class ProfileRegionProviderTest {
             [prod]
             aws_access_key_id = key789
             aws_secret_access_key = secret789
-        """)
+        """
+        )
     }
 
     @AfterEach

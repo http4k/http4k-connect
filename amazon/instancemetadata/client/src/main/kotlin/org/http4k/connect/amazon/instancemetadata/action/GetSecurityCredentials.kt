@@ -15,14 +15,14 @@ import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-data class GetSecurityCredentials(private val ec2ProfileName: Ec2ProfileName): Ec2MetadataAction<Ec2Credentials> {
+data class GetSecurityCredentials(private val ec2ProfileName: Ec2ProfileName) : Ec2MetadataAction<Ec2Credentials> {
 
     private val uri = Uri.of("/latest/meta-data/iam/security-credentials/$ec2ProfileName")
     private val lens = InstanceMetadataServiceMoshi.autoBody<Ec2Credentials>().toLens()
 
     override fun toRequest() = Request(Method.GET, uri)
 
-    override fun toResult(response: Response) = when(response.status) {
+    override fun toResult(response: Response) = when (response.status) {
         Status.OK -> Success(lens(response))
         else -> Failure(asRemoteFailure(response))
     }

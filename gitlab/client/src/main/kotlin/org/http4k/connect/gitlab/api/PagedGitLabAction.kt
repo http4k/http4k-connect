@@ -16,6 +16,7 @@ abstract class PagedGitLabAction<
     toResult: (List<ItemType>, Uri?) -> PageType,
     autoMarshalling: AutoMarshalling,
     kClass: KClass<PageType>
-) : AutomarshalledPagedAction<Uri, ItemType, PageType, Self>(toResult, autoMarshalling, kClass), GitLabAction<PageType> {
+) : AutomarshalledPagedAction<Uri, ItemType, PageType, Self>(toResult, autoMarshalling, kClass),
+    GitLabAction<PageType> {
     override fun invoke(target: Response) = Header.LINK(target)["next"]
 }

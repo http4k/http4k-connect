@@ -22,7 +22,7 @@ import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DynamoDbBatchWriteItemTest: DynamoDbSource {
+abstract class DynamoDbBatchWriteItemTest : DynamoDbSource {
 
     private val table = TableName.sample()
 
@@ -44,13 +44,15 @@ abstract class DynamoDbBatchWriteItemTest: DynamoDbSource {
         val item2 = Item(attrS of "item2")
         val item3 = Item(attrS of "item3")
 
-        dynamo.batchWriteItem(mapOf(
-            table to listOf(
-                ReqWriteItem.Put(item1),
-                ReqWriteItem.Put(item2),
-                ReqWriteItem.Put(item3)
+        dynamo.batchWriteItem(
+            mapOf(
+                table to listOf(
+                    ReqWriteItem.Put(item1),
+                    ReqWriteItem.Put(item2),
+                    ReqWriteItem.Put(item3)
+                )
             )
-        )).successValue()
+        ).successValue()
 
         val items = dynamo.scan(table).successValue().items
 
@@ -59,5 +61,5 @@ abstract class DynamoDbBatchWriteItemTest: DynamoDbSource {
     }
 }
 
-class FakeDynamoDbBatchWriteItemTest: DynamoDbBatchWriteItemTest(), DynamoDbSource by FakeDynamoDbSource()
-class LocalDynamoDbBatchWriteItemTest: DynamoDbBatchWriteItemTest(), DynamoDbSource by LocalDynamoDbSource()
+class FakeDynamoDbBatchWriteItemTest : DynamoDbBatchWriteItemTest(), DynamoDbSource by FakeDynamoDbSource()
+class LocalDynamoDbBatchWriteItemTest : DynamoDbBatchWriteItemTest(), DynamoDbSource by LocalDynamoDbSource()

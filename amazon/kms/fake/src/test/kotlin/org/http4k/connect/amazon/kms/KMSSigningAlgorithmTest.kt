@@ -32,12 +32,13 @@ class KMSSigningAlgorithmTest {
     }
 }
 
-private fun SigningAlgorithm.genKeyPair() = when(this) {
+private fun SigningAlgorithm.genKeyPair() = when (this) {
     SigningAlgorithm.RSASSA_PSS_SHA_256, SigningAlgorithm.RSASSA_PSS_SHA_384, SigningAlgorithm.RSASSA_PSS_SHA_512,
     SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256, SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384,
     SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_512 -> {
         KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }.generateKeyPair()
     }
+
     SigningAlgorithm.ECDSA_SHA_256, SigningAlgorithm.ECDSA_SHA_384, SigningAlgorithm.ECDSA_SHA_512 -> {
         KeyPairGenerator.getInstance("ECDSA", BouncyCastleProvider()).apply { initialize(521) }.generateKeyPair()
     }

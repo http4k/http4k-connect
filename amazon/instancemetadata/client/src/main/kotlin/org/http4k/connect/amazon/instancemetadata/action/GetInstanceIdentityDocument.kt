@@ -14,13 +14,13 @@ import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-class GetInstanceIdentityDocument: Ec2MetadataAction<IdentityDocument> {
+class GetInstanceIdentityDocument : Ec2MetadataAction<IdentityDocument> {
     private val uri = Uri.of("/latest/dynamic/instance-identity/document")
     private val lens = InstanceMetadataServiceMoshi.autoBody<IdentityDocument>().toLens()
 
     override fun toRequest() = Request(Method.GET, uri)
 
-    override fun toResult(response: Response) = when(response.status) {
+    override fun toResult(response: Response) = when (response.status) {
         Status.OK -> Success(lens(response))
         else -> Failure(asRemoteFailure(response))
     }

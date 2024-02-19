@@ -37,18 +37,21 @@ fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, regio
         )
     }
 
-fun deleteTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) = { r: Request -> r.form("Action") == "DeleteTopic" }
-    .asRouter() bind { req: Request ->
-    val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
+fun deleteTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
+    { r: Request -> r.form("Action") == "DeleteTopic" }
+        .asRouter() bind { req: Request ->
+        val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
 
-    when {
-        topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
-        else -> {
-            topics.remove(topicName.value)
-            Response(OK).with(viewModelLens of DeleteTopicResponse)
+        when {
+            topics.keySet(topicName.value)
+                .isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
+
+            else -> {
+                topics.remove(topicName.value)
+                Response(OK).with(viewModelLens of DeleteTopicResponse)
+            }
         }
     }
-}
 
 fun listTopics(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
     { r: Request -> r.form("Action") == "ListTopics" }
@@ -59,49 +62,59 @@ fun listTopics(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region
         )
     }
 
-fun publish(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) = { r: Request -> r.form("Action") == "Publish" }
-    .asRouter() bind { req: Request ->
+fun publish(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
+    { r: Request -> r.form("Action") == "Publish" }
+        .asRouter() bind { req: Request ->
 
-    val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
+        val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
 
-    when {
-        topics.keySet(topicName.value).isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
-        else -> {
-            topics[topicName.value] = topics[topicName.value]!! + SNSMessage(req.form("Message")!!, req.form("Subject"), attributesFrom(req))
-            Response(OK).with(viewModelLens of PublishResponse(SNSMessageId.of(UUID.randomUUID().toString())))
+        when {
+            topics.keySet(topicName.value)
+                .isEmpty() -> Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
+
+            else -> {
+                topics[topicName.value] = topics[topicName.value]!! + SNSMessage(
+                    req.form("Message")!!,
+                    req.form("Subject"),
+                    attributesFrom(req)
+                )
+                Response(OK).with(viewModelLens of PublishResponse(SNSMessageId.of(UUID.randomUUID().toString())))
+            }
         }
     }
-}
 
-fun publishBatch(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) = { r: Request -> r.form("Action") == "PublishBatch" }
-    .asRouter() bind fn@{ req: Request ->
+fun publishBatch(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
+    { r: Request -> r.form("Action") == "PublishBatch" }
+        .asRouter() bind fn@{ req: Request ->
 
-    val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
-    if (topics.keySet(topicName.value).isEmpty()) return@fn Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
+        val topicName = ARN.parse(req.form("TopicArn")!!).resourceId(TopicName::of)
+        if (topics.keySet(topicName.value)
+                .isEmpty()
+        ) return@fn Response(BAD_REQUEST).body("cannot find topic $topicName in $region/$awsAccount. Existing: ${topics.keySet()}")
 
-    val results = (1 until Int.MAX_VALUE)
-        .asSequence()
-        .map { index ->
-            val id = req.form("PublishBatchRequestEntries.member.$index.Id") ?: return@map null
+        val results = (1 until Int.MAX_VALUE)
+            .asSequence()
+            .map { index ->
+                val id = req.form("PublishBatchRequestEntries.member.$index.Id") ?: return@map null
 
-            topics[topicName.value] = topics[topicName.value]!! + SNSMessage(
-                message =  req.form("PublishBatchRequestEntries.member.$index.Message")!!,
-                subject = req.form("PublishBatchRequestEntries.member.$index.Subject"),
-                attributes = attributesFrom(req, prefix = "PublishBatchRequestEntries.member.$index.")
-            )
+                topics[topicName.value] = topics[topicName.value]!! + SNSMessage(
+                    message = req.form("PublishBatchRequestEntries.member.$index.Message")!!,
+                    subject = req.form("PublishBatchRequestEntries.member.$index.Subject"),
+                    attributes = attributesFrom(req, prefix = "PublishBatchRequestEntries.member.$index.")
+                )
 
-            PublishBatchResultEntry(
-                Id = id,
-                MessageId = SNSMessageId.of(UUID.randomUUID().toString()),
-                SequenceNumber = null
-            )
-        }
-        .takeWhile { it != null }
-        .filterNotNull()
-        .toList()
+                PublishBatchResultEntry(
+                    Id = id,
+                    MessageId = SNSMessageId.of(UUID.randomUUID().toString()),
+                    SequenceNumber = null
+                )
+            }
+            .takeWhile { it != null }
+            .filterNotNull()
+            .toList()
 
-    Response(OK).with(viewModelLens of PublishBatchResponse(results))
-}
+        Response(OK).with(viewModelLens of PublishBatchResponse(results))
+    }
 
 val viewModelLens by lazy {
     Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()

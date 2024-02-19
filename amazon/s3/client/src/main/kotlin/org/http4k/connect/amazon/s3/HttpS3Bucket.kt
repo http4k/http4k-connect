@@ -32,7 +32,16 @@ fun S3Bucket.Companion.Http(
 
     private val signedHttp =
         SetBaseUriFrom(Uri.of(pathPrefixToUse))
-            .then(signAwsRequests(bucketRegion, credentialsProvider, clock, payloadMode, overrideEndpoint, bucketDomainToUse))
+            .then(
+                signAwsRequests(
+                    bucketRegion,
+                    credentialsProvider,
+                    clock,
+                    payloadMode,
+                    overrideEndpoint,
+                    bucketDomainToUse
+                )
+            )
             .then(http)
 
     override fun <R> invoke(action: S3BucketAction<R>) = action.toResult(signedHttp(action.toRequest()))

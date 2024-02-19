@@ -10,6 +10,7 @@ interface Storage<T : Any> {
     operator fun minusAssign(key: String) {
         remove(key)
     }
+
     fun remove(key: String): Boolean
     fun keySet(keyPrefix: String = ""): Set<String>
     fun removeAll(keyPrefix: String = ""): Boolean

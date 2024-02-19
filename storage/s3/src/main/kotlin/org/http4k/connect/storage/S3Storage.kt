@@ -35,6 +35,7 @@ inline fun <reified T : Any> Storage.Companion.S3(s3: S3Bucket, autoMarshalling:
                     .filter { it.Key.value.startsWith(keyPrefix) }
                     .map { it.Key.value }
                     .toSet()
+
                 is Failure -> result.reason.throwIt()
             }
 

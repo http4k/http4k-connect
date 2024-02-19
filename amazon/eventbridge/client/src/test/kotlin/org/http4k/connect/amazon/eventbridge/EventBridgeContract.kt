@@ -10,7 +10,6 @@ import org.http4k.connect.amazon.model.EventDetailType
 import org.http4k.connect.amazon.model.EventSource
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.util.UUID
 

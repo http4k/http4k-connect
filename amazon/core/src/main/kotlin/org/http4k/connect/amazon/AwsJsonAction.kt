@@ -31,6 +31,7 @@ abstract class AwsJsonAction<R : Any>(
             status.successful -> Success(autoMarshalling.asA(
                 bodyString().takeIf { it.isNotEmpty() } ?: "{}",
                 clazz))
+
             else -> Failure(asRemoteFailure(this))
         }
     }

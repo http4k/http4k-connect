@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.amazon.core.model.Region
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 
 class RegionProviderTest {
 

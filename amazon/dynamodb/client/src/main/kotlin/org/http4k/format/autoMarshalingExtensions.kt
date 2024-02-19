@@ -40,6 +40,7 @@ private fun toAttributeValue(value: Any?): AttributeValue = when (value) {
     is Map<*, *> -> (value as Map<String, Any?>).let {
         AttributeValue.Map(Item(*it.map(::toAttributeMapping).toTypedArray()))
     }
+
     is Iterable<*> -> AttributeValue.List(value.map(::toAttributeValue))
     else -> AttributeValue.Str(value.toString())
 }

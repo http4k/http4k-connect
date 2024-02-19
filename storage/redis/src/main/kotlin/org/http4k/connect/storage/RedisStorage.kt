@@ -28,28 +28,29 @@ fun <T : Any> Storage.Companion.Redis(uri: Uri, codec: RedisCodec<String, T>) =
 /**
  * Redis-backed storage implementation. You probably want to use one of the builder functions instead of this
  */
-fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>, ttl: Duration = ofHours(1)) = object : Storage<T> {
+fun <T : Any> Storage.Companion.Redis(redis: RedisCommands<String, T>, ttl: Duration = ofHours(1)) =
+    object : Storage<T> {
 
-    override fun get(key: String): T? = redis.get(key)
+        override fun get(key: String): T? = redis.get(key)
 
-    override fun set(key: String, data: T) {
-        val result = redis.set(key, data, Builder.ex(ttl.toSeconds()))
-        if (result != "OK") throw RuntimeException(result)
-    }
-
-    override fun remove(key: String): Boolean = redis.del(key) >= 1L
-
-    override fun removeAll(keyPrefix: String): Boolean {
-        val keys = redis.keys("$keyPrefix*")
-        return if (keys.isEmpty()) false
-        else {
-            redis.del(*keys.toTypedArray())
-            true
+        override fun set(key: String, data: T) {
+            val result = redis.set(key, data, Builder.ex(ttl.toSeconds()))
+            if (result != "OK") throw RuntimeException(result)
         }
-    }
 
-    override fun keySet(keyPrefix: String) =
-        redis.keys("$keyPrefix*").toSet()
-}
+        override fun remove(key: String): Boolean = redis.del(key) >= 1L
+
+        override fun removeAll(keyPrefix: String): Boolean {
+            val keys = redis.keys("$keyPrefix*")
+            return if (keys.isEmpty()) false
+            else {
+                redis.del(*keys.toTypedArray())
+                true
+            }
+        }
+
+        override fun keySet(keyPrefix: String) =
+            redis.keys("$keyPrefix*").toSet()
+    }
 
 fun Uri.asRedis() = RedisURI.create(URI(toString()))

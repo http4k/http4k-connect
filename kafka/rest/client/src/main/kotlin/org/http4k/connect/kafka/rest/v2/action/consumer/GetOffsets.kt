@@ -16,8 +16,12 @@ import org.http4k.core.Request
 import org.http4k.core.with
 
 @Http4kConnectAction
-data class GetOffsets(val partitions: List<PartitionOffsetRequest>)
-    : NonNullKafkaRestAction<CommitOffsetsSet>(kClass()), KafkaRestConsumerAction<CommitOffsetsSet> {
+data class GetOffsets(val partitions: List<PartitionOffsetRequest>) :
+    NonNullKafkaRestAction<CommitOffsetsSet>(kClass()), KafkaRestConsumerAction<CommitOffsetsSet> {
     override fun toRequest() = Request(GET, "/offsets")
-        .with(Body.auto<GetOffsetsRequest>(contentType = ContentType.KAFKA_JSON_V2).toLens() of GetOffsetsRequest(partitions))
+        .with(
+            Body.auto<GetOffsetsRequest>(contentType = ContentType.KAFKA_JSON_V2).toLens() of GetOffsetsRequest(
+                partitions
+            )
+        )
 }

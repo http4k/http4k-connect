@@ -15,7 +15,7 @@ import se.ansman.kotshi.JsonSerializable
 data class BatchEvaluateFeature(
     val project: ProjectName,
     val requests: List<BatchEvaluationRequest>
-): EvidentlyAction<BatchEvaluationResultWrapper>(BatchEvaluationResultWrapper::class, dataPlane = true) {
+) : EvidentlyAction<BatchEvaluationResultWrapper>(BatchEvaluationResultWrapper::class, dataPlane = true) {
     override fun uri() = Uri.of("/projects/$project/evaluations")
 
     override fun requestBody() = BatchEvaluateFeatureRequestWrapper(requests)

@@ -27,13 +27,14 @@ data class StoredFeature(
     val tags: Map<String, String>?
 )
 
-val VariableValue.type get() = when {
-    stringValue != null -> ValueType.STRING
-    boolValue != null -> ValueType.BOOLEAN
-    longValue != null -> ValueType.LONG
-    doubleValue != null -> ValueType.DOUBLE
-    else -> error("Illegal state")
-}
+val VariableValue.type
+    get() = when {
+        stringValue != null -> ValueType.STRING
+        boolValue != null -> ValueType.BOOLEAN
+        longValue != null -> ValueType.LONG
+        doubleValue != null -> ValueType.DOUBLE
+        else -> error("Illegal state")
+    }
 
 val StoredFeature.arn get() = ARN.of("$projectArn/feature/$name")
 

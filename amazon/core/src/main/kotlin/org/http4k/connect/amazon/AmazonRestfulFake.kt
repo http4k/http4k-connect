@@ -20,19 +20,21 @@ class AmazonRestfulFake(
     val region: Region,
     val accountId: AwsAccount
 ) {
-    inline fun <reified RequestBody: Any> route(
+    inline fun <reified RequestBody : Any> route(
         crossinline fn: Request.(RequestBody) -> Result<Any, RestfulError>
     ): HttpHandler = { req ->
         val body = autoMarshalling.asA<RequestBody>(req.bodyString())
         fn(req, body)
             .map { Response(Status.OK).body(autoMarshalling.asFormatString(it)) }
             .recover { err ->
-                val message = """{"message":"${err.message}","resourceId":${err.resourceId?.let { "\"$it\""} ?: "null"},"resourceType":${err.resourceType?.let { "\"$it\"" } ?: "null"}}"""
+                val message =
+                    """{"message":"${err.message}","resourceId":${err.resourceId?.let { "\"$it\"" } ?: "null"},"resourceType":${err.resourceType?.let { "\"$it\"" } ?: "null"}}"""
                 Response(err.status).body(message)
             }
     }
 
-    fun arn(resourceType: String, resourceId: ResourceId) = ARN.of(awsService, region, accountId, resourceType, resourceId)
+    fun arn(resourceType: String, resourceId: ResourceId) =
+        ARN.of(awsService, region, accountId, resourceType, resourceId)
 }
 
 data class RestfulError(val status: Status, val message: String, val resourceId: ARN?, val resourceType: String?)

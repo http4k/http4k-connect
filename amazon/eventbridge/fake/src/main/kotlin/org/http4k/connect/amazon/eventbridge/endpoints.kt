@@ -22,7 +22,7 @@ import java.util.UUID
 fun AmazonJsonFake.putEvents(events: Storage<List<Event>>) = route<PutEvents> {
     val newEvents = it.Entries.groupBy {
         it.EventBusName
-            ?.let { if(it.value.startsWith("arn")) ARN.of(it.value).resourceId(EventBusName::of) else it }
+            ?.let { if (it.value.startsWith("arn")) ARN.of(it.value).resourceId(EventBusName::of) else it }
             ?: EventBusName.of("default")
     }
 

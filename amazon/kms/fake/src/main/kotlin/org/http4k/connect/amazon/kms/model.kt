@@ -27,33 +27,45 @@ data class EncryptionKeyContent(
     val encoded: Base64Blob
 )
 
-val EncryptionKeyContent.keySpec get() = when(format) {
-    "PKCS#8" -> PKCS8EncodedKeySpec(encoded.decodedBytes())
-    "X.509" -> X509EncodedKeySpec(encoded.decodedBytes())
-    else -> error("Unsupported format: $format")
-}
+val EncryptionKeyContent.keySpec
+    get() = when (format) {
+        "PKCS#8" -> PKCS8EncodedKeySpec(encoded.decodedBytes())
+        "X.509" -> X509EncodedKeySpec(encoded.decodedBytes())
+        else -> error("Unsupported format: $format")
+    }
 
-val StoredCMK.signingAlgorithms get() = when(customerMasterKeySpec) {
-    CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> listOf(
-        SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256,
-        SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384,
-        SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_512,
-        SigningAlgorithm.RSASSA_PSS_SHA_256,
-        SigningAlgorithm.RSASSA_PSS_SHA_384,
-        SigningAlgorithm.RSASSA_PSS_SHA_512
-    )
-    CustomerMasterKeySpec.ECC_NIST_P256, CustomerMasterKeySpec.ECC_NIST_P384, CustomerMasterKeySpec.ECC_NIST_P521 -> listOf(
-        SigningAlgorithm.ECDSA_SHA_256,
-        SigningAlgorithm.ECDSA_SHA_384,
-        SigningAlgorithm.ECDSA_SHA_512
-    )
-    CustomerMasterKeySpec.ECC_SECG_P256K1 -> emptyList()
-    CustomerMasterKeySpec.SYMMETRIC_DEFAULT -> emptyList()
-}
+val StoredCMK.signingAlgorithms
+    get() = when (customerMasterKeySpec) {
+        CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> listOf(
+            SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_256,
+            SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_384,
+            SigningAlgorithm.RSASSA_PKCS1_V1_5_SHA_512,
+            SigningAlgorithm.RSASSA_PSS_SHA_256,
+            SigningAlgorithm.RSASSA_PSS_SHA_384,
+            SigningAlgorithm.RSASSA_PSS_SHA_512
+        )
 
-private fun StoredCMK.keyFactory(crypto: Provider) = when(customerMasterKeySpec) {
-    CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> KeyFactory.getInstance("RSA", crypto)
-    CustomerMasterKeySpec.ECC_NIST_P256, CustomerMasterKeySpec.ECC_NIST_P384, CustomerMasterKeySpec.ECC_NIST_P521 -> KeyFactory.getInstance("ECDSA", crypto)
+        CustomerMasterKeySpec.ECC_NIST_P256, CustomerMasterKeySpec.ECC_NIST_P384, CustomerMasterKeySpec.ECC_NIST_P521 -> listOf(
+            SigningAlgorithm.ECDSA_SHA_256,
+            SigningAlgorithm.ECDSA_SHA_384,
+            SigningAlgorithm.ECDSA_SHA_512
+        )
+
+        CustomerMasterKeySpec.ECC_SECG_P256K1 -> emptyList()
+        CustomerMasterKeySpec.SYMMETRIC_DEFAULT -> emptyList()
+    }
+
+private fun StoredCMK.keyFactory(crypto: Provider) = when (customerMasterKeySpec) {
+    CustomerMasterKeySpec.RSA_2048, CustomerMasterKeySpec.RSA_3072, CustomerMasterKeySpec.RSA_4096 -> KeyFactory.getInstance(
+        "RSA",
+        crypto
+    )
+
+    CustomerMasterKeySpec.ECC_NIST_P256, CustomerMasterKeySpec.ECC_NIST_P384, CustomerMasterKeySpec.ECC_NIST_P521 -> KeyFactory.getInstance(
+        "ECDSA",
+        crypto
+    )
+
     CustomerMasterKeySpec.ECC_SECG_P256K1 -> null
     CustomerMasterKeySpec.SYMMETRIC_DEFAULT -> null
 }

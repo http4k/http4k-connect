@@ -5,7 +5,6 @@ import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.StringValueFactory
 import dev.forkhandles.values.regex
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.ResourceId
 import kotlin.text.RegexOption.DOT_MATCHES_ALL as DOT_MATCHES_ALL1
 

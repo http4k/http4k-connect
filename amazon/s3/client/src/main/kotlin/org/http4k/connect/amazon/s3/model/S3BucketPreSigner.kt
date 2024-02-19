@@ -49,7 +49,7 @@ class S3BucketPreSigner(
         clock: Clock = Clock.systemUTC(),
         forcePathStyle: Boolean = false,
         credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-    ): this(
+    ) : this(
         bucketName = bucketName,
         region = region,
         credentialsProvider = credentialsProvider,

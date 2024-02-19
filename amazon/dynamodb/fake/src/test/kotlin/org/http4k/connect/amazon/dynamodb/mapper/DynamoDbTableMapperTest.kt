@@ -62,12 +62,14 @@ class DynamoDbTableMapperTest {
         assertThat(tableData.KeySchema, equalTo(KeySchema.compound(AttributeName.of("id"))))
         assertThat(
             tableData.AttributeDefinitions?.toSet(),
-            equalTo(setOf(
-                AttributeDefinition(AttributeName.of("id"), DynamoDataType.S),
-                AttributeDefinition(AttributeName.of("ownerId"), DynamoDataType.S),
-                AttributeDefinition(AttributeName.of("name"), DynamoDataType.S),
-                AttributeDefinition(AttributeName.of("born"), DynamoDataType.S)
-            ))
+            equalTo(
+                setOf(
+                    AttributeDefinition(AttributeName.of("id"), DynamoDataType.S),
+                    AttributeDefinition(AttributeName.of("ownerId"), DynamoDataType.S),
+                    AttributeDefinition(AttributeName.of("name"), DynamoDataType.S),
+                    AttributeDefinition(AttributeName.of("born"), DynamoDataType.S)
+                )
+            )
         )
         assertThat(tableData.GlobalSecondaryIndexes.orEmpty(), hasSize(equalTo(2)))
         assertThat(tableData.LocalSecondaryIndexes, absent())
@@ -161,52 +163,76 @@ class DynamoDbTableMapperTest {
     @Test
     fun `query page`() {
         // page 1 of 2
-        assertThat(tableMapper.index(byOwner).queryPage(owner1, Limit = 2), equalTo(DynamoDbPage(
-            items = listOf(athena, kratos),
-            nextHashKey = owner1,
-            nextSortKey = kratos.name
-        )))
+        assertThat(
+            tableMapper.index(byOwner).queryPage(owner1, Limit = 2), equalTo(
+                DynamoDbPage(
+                    items = listOf(athena, kratos),
+                    nextHashKey = owner1,
+                    nextSortKey = kratos.name
+                )
+            )
+        )
 
         // page 2 of 2
-        assertThat(tableMapper.index(byOwner).queryPage(owner1, Limit = 2, ExclusiveStartKey = kratos.name), equalTo(DynamoDbPage(
-            items = listOf(toggles),
-            nextHashKey = null,
-            nextSortKey = null
-        )))
+        assertThat(
+            tableMapper.index(byOwner).queryPage(owner1, Limit = 2, ExclusiveStartKey = kratos.name), equalTo(
+                DynamoDbPage(
+                    items = listOf(toggles),
+                    nextHashKey = null,
+                    nextSortKey = null
+                )
+            )
+        )
     }
 
     @Test
     fun `scan page - secondary index`() {
         // page 1 of 1
-        assertThat(tableMapper.index(byOwner).scanPage(Limit = 3), equalTo(DynamoDbPage(
-            items = listOf(bandit, smokie, athena),
-            nextHashKey = owner1,
-            nextSortKey = athena.name
-        )))
+        assertThat(
+            tableMapper.index(byOwner).scanPage(Limit = 3), equalTo(
+                DynamoDbPage(
+                    items = listOf(bandit, smokie, athena),
+                    nextHashKey = owner1,
+                    nextSortKey = athena.name
+                )
+            )
+        )
 
         // page 2 of 2
-        assertThat(tableMapper.index(byOwner).scanPage(Limit = 3, ExclusiveStartKey = owner1 to athena.name), equalTo(DynamoDbPage(
-            items = listOf(kratos, toggles),
-            nextHashKey = null,
-            nextSortKey = null
-        )))
+        assertThat(
+            tableMapper.index(byOwner).scanPage(Limit = 3, ExclusiveStartKey = owner1 to athena.name), equalTo(
+                DynamoDbPage(
+                    items = listOf(kratos, toggles),
+                    nextHashKey = null,
+                    nextSortKey = null
+                )
+            )
+        )
     }
 
     @Test
     fun `scan page - primary index with no sort key`() {
         // page 1 of 1
-        assertThat(tableMapper.primaryIndex().scanPage(Limit = 3), equalTo(DynamoDbPage(
-            items = listOf(smokie, kratos, bandit),
-            nextHashKey = bandit.id,
-            nextSortKey = null
-        )))
+        assertThat(
+            tableMapper.primaryIndex().scanPage(Limit = 3), equalTo(
+                DynamoDbPage(
+                    items = listOf(smokie, kratos, bandit),
+                    nextHashKey = bandit.id,
+                    nextSortKey = null
+                )
+            )
+        )
 
         // page 2 of 2
-        assertThat(tableMapper.primaryIndex().scanPage(Limit = 3, ExclusiveStartKey = bandit.id to null), equalTo(DynamoDbPage(
-            items = listOf(toggles, athena),
-            nextHashKey = null,
-            nextSortKey = null
-        )))
+        assertThat(
+            tableMapper.primaryIndex().scanPage(Limit = 3, ExclusiveStartKey = bandit.id to null), equalTo(
+                DynamoDbPage(
+                    items = listOf(toggles, athena),
+                    nextHashKey = null,
+                    nextSortKey = null
+                )
+            )
+        )
     }
 
     @Test

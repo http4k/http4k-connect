@@ -45,7 +45,7 @@ import java.util.UUID
 fun AmazonJsonFake.createKey(keys: Storage<StoredCMK>, crypto: Provider) = route<CreateKey> {
     val keyId = KMSKeyId.of(UUID.randomUUID().toString())
 
-    val keyPair = when(it.CustomerMasterKeySpec) {
+    val keyPair = when (it.CustomerMasterKeySpec) {
         CustomerMasterKeySpec.RSA_2048 -> KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }
         CustomerMasterKeySpec.RSA_3072 -> KeyPairGenerator.getInstance("RSA").apply { initialize(3072) }
         CustomerMasterKeySpec.RSA_4096 -> KeyPairGenerator.getInstance("RSA").apply { initialize(4096) }
@@ -99,7 +99,9 @@ fun AmazonJsonFake.decrypt(keys: Storage<StoredCMK>) = route<Decrypt> { req ->
 fun AmazonJsonFake.encrypt(keys: Storage<StoredCMK>) = route<Encrypt> { req ->
     keys[req.KeyId.toArn().value]?.let {
         Encrypted(
-            KMSKeyId.of(it.arn), Base64Blob.encode(req.Plaintext.decodedBytes().reversed().toByteArray()), req.EncryptionAlgorithm
+            KMSKeyId.of(it.arn),
+            Base64Blob.encode(req.Plaintext.decodedBytes().reversed().toByteArray()),
+            req.EncryptionAlgorithm
                 ?: EncryptionAlgorithm.SYMMETRIC_DEFAULT
         )
     }

@@ -9,7 +9,6 @@ import org.http4k.connect.amazon.secretsmanager.model.SecretId
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import java.util.UUID
 

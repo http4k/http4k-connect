@@ -6,8 +6,8 @@ import org.http4k.connect.amazon.instancemetadata.InstanceMetadataServiceMoshi
 import org.http4k.connect.amazon.instancemetadata.model.Ec2Credentials
 import org.http4k.core.Method.GET
 import org.http4k.core.Response
-import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
 import org.http4k.lens.Path
 import org.http4k.lens.value
@@ -22,8 +22,9 @@ fun listSecurityCredentials(metadata: InstanceMetadata) = "/latest/meta-data/iam
     Response(OK).body(metadata.profiles.joinToString("\n"))
 }
 
-fun getSecurityCredentials(metadata: InstanceMetadata, clock: Clock) = "/latest/meta-data/iam/security-credentials/$profileNameLens" bind GET to { request ->
-    metadata.getCredentials(profileNameLens(request), ZonedDateTime.now(clock))
-        ?.let { Response(OK).with(credentialsLens of it) }
-        ?: Response(NOT_FOUND)
-}
+fun getSecurityCredentials(metadata: InstanceMetadata, clock: Clock) =
+    "/latest/meta-data/iam/security-credentials/$profileNameLens" bind GET to { request ->
+        metadata.getCredentials(profileNameLens(request), ZonedDateTime.now(clock))
+            ?.let { Response(OK).with(credentialsLens of it) }
+            ?: Response(NOT_FOUND)
+    }

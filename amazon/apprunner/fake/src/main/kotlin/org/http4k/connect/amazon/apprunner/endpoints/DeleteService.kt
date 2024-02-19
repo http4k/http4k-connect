@@ -5,8 +5,6 @@ import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.apprunner.action.DeleteService
 import org.http4k.connect.amazon.apprunner.action.Service
 import org.http4k.connect.amazon.apprunner.model.AppRunnerService
-import org.http4k.connect.amazon.apprunner.model.ServiceId
-import org.http4k.connect.amazon.core.model.toARN
 import org.http4k.connect.storage.Storage
 import java.util.UUID
 

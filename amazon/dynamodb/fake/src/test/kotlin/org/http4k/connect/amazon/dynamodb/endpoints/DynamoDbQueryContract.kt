@@ -38,7 +38,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DynamoDbQueryContract: DynamoDbSource {
+abstract class DynamoDbQueryContract : DynamoDbSource {
 
     private val table = TableName.sample()
 
@@ -63,10 +63,18 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
                 attrB.asAttributeDefinition()
             ),
             GlobalSecondaryIndexes = listOf(
-                GlobalSecondaryIndex(IndexName = numbersIndex, KeySchema.compound(attrN.name, attrS.name), Projection.all)
+                GlobalSecondaryIndex(
+                    IndexName = numbersIndex,
+                    KeySchema.compound(attrN.name, attrS.name),
+                    Projection.all
+                )
             ),
             LocalSecondaryIndexes = listOf(
-                LocalSecondaryIndex(IndexName = stringAndBinaryIndex, KeySchema.compound(attrS.name, attrB.name), Projection.all)
+                LocalSecondaryIndex(
+                    IndexName = stringAndBinaryIndex,
+                    KeySchema.compound(attrS.name, attrB.name),
+                    Projection.all
+                )
             ),
             BillingMode = BillingMode.PAY_PER_REQUEST
         ).successValue()
@@ -104,10 +112,14 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(2))
-        assertThat(result.items, equalTo(listOf(
-            hash1Val1,
-            hash1Val2
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash1Val1,
+                    hash1Val2
+                )
+            )
+        )
     }
 
     @Test
@@ -124,10 +136,14 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(2))
-        assertThat(result.items, equalTo(listOf(
-            hash1Val2,
-            hash1Val1
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash1Val2,
+                    hash1Val1
+                )
+            )
+        )
     }
 
     @Test
@@ -146,9 +162,13 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(1))
-        assertThat(result.items, equalTo(listOf(
-            hash1Val2
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash1Val2
+                )
+            )
+        )
     }
 
     @Test
@@ -167,10 +187,14 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(2))
-        assertThat(result.items, equalTo(listOf(
-            hash1Val1,
-            hash2Val1
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash1Val1,
+                    hash2Val1
+                )
+            )
+        )
     }
 
     @Test
@@ -188,10 +212,14 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(2))
-        assertThat(result.items, equalTo(listOf(
-            hash2Val1,
-            hash1Val1
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash2Val1,
+                    hash1Val1
+                )
+            )
+        )
     }
 
     @Test
@@ -209,10 +237,14 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(2))
-        assertThat(result.items, equalTo(listOf(
-            hash1Val2,
-            hash1Val1,
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash1Val2,
+                    hash1Val1,
+                )
+            )
+        )
     }
 
     @Test
@@ -230,10 +262,14 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(2))
-        assertThat(result.items, equalTo(listOf(
-            hash1Val1,
-            hash1Val2,
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash1Val1,
+                    hash1Val2,
+                )
+            )
+        )
     }
 
     @Test
@@ -306,20 +342,28 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, equalTo(1))
-        assertThat(result.items, equalTo(listOf(
-            hash2Val1,
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    hash2Val1,
+                )
+            )
+        )
         // ensure next key matches current index
-        assertThat(result.LastEvaluatedKey, equalTo(mapOf(
-            attrN.name to hash2Val1[attrN.name]!!,
-            attrS.name to hash2Val1[attrS.name]!!
-        )))
+        assertThat(
+            result.LastEvaluatedKey, equalTo(
+                mapOf(
+                    attrN.name to hash2Val1[attrN.name]!!,
+                    attrS.name to hash2Val1[attrS.name]!!
+                )
+            )
+        )
     }
 
     @Test
     fun `query with max results for page`() {
         val numItems = 2_000
-        val payload = (1 .. 1_000).map { "a".repeat(1_000) }.toSet()
+        val payload = (1..1_000).map { "a".repeat(1_000) }.toSet()
 
         (1..numItems).chunked(25).forEach { chunk ->
             dynamo.batchWriteItem(
@@ -367,14 +411,18 @@ abstract class DynamoDbQueryContract: DynamoDbSource {
         ).successValue()
 
         assertThat(result.Count, present(equalTo(2)))
-        assertThat(result.items, equalTo(listOf(
-            Item(attrS of "hash1", attrN of 1, attrBool of true),
-            Item(attrS of "hash1", attrN of 2, attrBool of true)
-        )))
+        assertThat(
+            result.items, equalTo(
+                listOf(
+                    Item(attrS of "hash1", attrN of 1, attrBool of true),
+                    Item(attrS of "hash1", attrN of 2, attrBool of true)
+                )
+            )
+        )
         assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash1", attrN of 4)))
     }
 }
 
 
-class FakeDynamoDbQueryTest: DynamoDbQueryContract(), DynamoDbSource by FakeDynamoDbSource()
-class LocalDynamoDbQueryTest: DynamoDbQueryContract(), DynamoDbSource by LocalDynamoDbSource()
+class FakeDynamoDbQueryTest : DynamoDbQueryContract(), DynamoDbSource by FakeDynamoDbSource()
+class LocalDynamoDbQueryTest : DynamoDbQueryContract(), DynamoDbSource by LocalDynamoDbSource()

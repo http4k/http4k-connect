@@ -20,7 +20,6 @@ import org.http4k.connect.amazon.sts.action.AssumedRole
 import org.http4k.connect.amazon.sts.action.SimpleAssumedRole
 import org.http4k.connect.amazon.sts.model.RoleId
 import org.junit.jupiter.api.Test
-import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId

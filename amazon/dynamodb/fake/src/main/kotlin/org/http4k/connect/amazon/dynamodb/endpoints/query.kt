@@ -14,21 +14,30 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     val matches = table.items
         .asSequence()
         .filter(schema.filterNullKeys()) // exclude items not held by selected index
-        .mapNotNull {it.condition(
-            expression = query.KeyConditionExpression,
-            expressionAttributeNames = query.ExpressionAttributeNames,
-            expressionAttributeValues = query.ExpressionAttributeValues
-        ) }
+        .mapNotNull {
+            it.condition(
+                expression = query.KeyConditionExpression,
+                expressionAttributeNames = query.ExpressionAttributeNames,
+                expressionAttributeValues = query.ExpressionAttributeValues
+            )
+        }
         .sortedWith(comparator)  // sort by selected index
-        .dropWhile { query.ExclusiveStartKey != null && comparator.compare(it, query.ExclusiveStartKey!!) <= 0 }  // skip previous pages
+        .dropWhile {
+            query.ExclusiveStartKey != null && comparator.compare(
+                it,
+                query.ExclusiveStartKey!!
+            ) <= 0
+        }  // skip previous pages
         .toList()
 
     val page = matches.take((query.Limit ?: table.maxPageSize).coerceAtMost(table.maxPageSize))
-    val filteredPage = page.mapNotNull { it.condition(
-        expression = query.FilterExpression,
-        expressionAttributeNames = query.ExpressionAttributeNames,
-        expressionAttributeValues = query.ExpressionAttributeValues
-    ) }
+    val filteredPage = page.mapNotNull {
+        it.condition(
+            expression = query.FilterExpression,
+            expressionAttributeNames = query.ExpressionAttributeNames,
+            expressionAttributeValues = query.ExpressionAttributeValues
+        )
+    }
 
     QueryResponse(
         Count = filteredPage.size,

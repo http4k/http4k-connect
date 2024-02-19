@@ -33,6 +33,7 @@ data class SendMessageBatch(
                 .sequenceOfNodes()
                 .map { SentMessageBatchEntry.from(it) }
                 .let { Success(it.toList()) }
+
             else -> Failure(asRemoteFailure(this))
         }
     }

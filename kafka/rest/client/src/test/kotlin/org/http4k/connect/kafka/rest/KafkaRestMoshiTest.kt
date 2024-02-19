@@ -89,6 +89,13 @@ class KafkaRestMoshiTest {
 
     @Test
     fun `can serialise v3 records`(approver: Approver) {
-        approver.assertApproved(asFormatString(RecordV3(RecordData.Json(mapOf("foo" to "bar")), RecordData.Binary(Base64Blob.encode("12345")))))
+        approver.assertApproved(
+            asFormatString(
+                RecordV3(
+                    RecordData.Json(mapOf("foo" to "bar")),
+                    RecordData.Binary(Base64Blob.encode("12345"))
+                )
+            )
+        )
     }
 }

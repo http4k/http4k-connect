@@ -11,7 +11,7 @@ import org.http4k.core.Uri
 data class DeleteFeature(
     val project: ProjectName,
     val name: FeatureName
-): EvidentlyAction<Unit>(Unit::class, method = Method.DELETE) {
+) : EvidentlyAction<Unit>(Unit::class, method = Method.DELETE) {
     override fun uri() = Uri.of("/projects/$project/features/$name")
     override fun requestBody() = Unit
 }

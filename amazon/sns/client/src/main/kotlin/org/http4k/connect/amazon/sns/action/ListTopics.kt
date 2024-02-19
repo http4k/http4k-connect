@@ -32,6 +32,7 @@ data class ListTopics(val NextToken: String? = null) : SNSAction<TopicList>("Lis
                     TopicList(list, getElementsByTagName("NextToken").item(0)?.text())
                 }
             )
+
             else -> Failure(asRemoteFailure(this))
         }
     }

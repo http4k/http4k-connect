@@ -20,8 +20,8 @@ import org.http4k.core.with
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
-data class CheckSchemaRegistered(val subject: Subject, val schema: Schema)
-    : NullableAutoMarshalledAction<RegisteredSchemaVersion>(kClass(), SchemaRegistryMoshi),
+data class CheckSchemaRegistered(val subject: Subject, val schema: Schema) :
+    NullableAutoMarshalledAction<RegisteredSchemaVersion>(kClass(), SchemaRegistryMoshi),
     SchemaRegistryAction<RegisteredSchemaVersion?> {
     override fun toRequest() = Request(POST, "/subjects/$subject")
         .with(Body.auto<PostedSchema>(contentType = ContentType.SCHEMA_REGISTRY).toLens() of PostedSchema(schema))

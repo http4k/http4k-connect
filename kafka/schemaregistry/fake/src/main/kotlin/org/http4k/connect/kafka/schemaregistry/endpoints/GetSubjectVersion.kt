@@ -26,8 +26,15 @@ fun getSubjectVersion(schemas: Storage<Schema>) = "/subjects/{subject}/versions/
         schemas["$subject:$version"]
             ?.let {
                 Response(Status.OK)
-                    .with(Body.auto<RegisteredSchemaVersion>(contentType = ContentType.SCHEMA_REGISTRY).toLens() of
-                        RegisteredSchemaVersion(Subject.of(subject), SchemaId.of(version.toInt()), Version.of(version.toInt()), it))
+                    .with(
+                        Body.auto<RegisteredSchemaVersion>(contentType = ContentType.SCHEMA_REGISTRY).toLens() of
+                            RegisteredSchemaVersion(
+                                Subject.of(subject),
+                                SchemaId.of(version.toInt()),
+                                Version.of(version.toInt()),
+                                it
+                            )
+                    )
             }
             ?: Response(Status.NOT_FOUND)
     }

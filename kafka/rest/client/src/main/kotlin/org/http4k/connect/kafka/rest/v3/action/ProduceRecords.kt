@@ -23,7 +23,7 @@ import java.time.Instant
 
 @Http4kConnectAction
 data class ProduceRecords(val id: ClusterId, val topic: Topic, val records: List<Record>) :
-    NullableKafkaRestAction<Array<ProducedRecord>> (kClass()), KafkaRestV3Action<Array<ProducedRecord>?> {
+    NullableKafkaRestAction<Array<ProducedRecord>>(kClass()), KafkaRestV3Action<Array<ProducedRecord>?> {
     override fun toRequest() = Request(POST, "/kafka/v3/clusters/$id/topics/$topic/records")
         .with(Header.CONTENT_TYPE of ContentType.APPLICATION_JSON.withNoDirectives())
         .body(records.joinToString("\n", transform = ::asFormatString))

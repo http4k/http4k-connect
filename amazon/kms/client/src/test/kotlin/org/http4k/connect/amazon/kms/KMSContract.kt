@@ -196,7 +196,9 @@ abstract class KMSContract(http: HttpHandler) : AwsContract() {
             val message1 = Base64Blob.encode("General Kenobi!")
             val signed = kms.sign(keyId, message1, RSASSA_PKCS1_V1_5_SHA_256).successValue()
 
-            val verificationFailure = kms.verify(KMSKeyId.of("missingKey"), message1, signed.Signature, RSASSA_PKCS1_V1_5_SHA_256).failureOrNull()
+            val verificationFailure =
+                kms.verify(KMSKeyId.of("missingKey"), message1, signed.Signature, RSASSA_PKCS1_V1_5_SHA_256)
+                    .failureOrNull()
             assertThat(verificationFailure!!.status, equalTo(BAD_REQUEST))
         } finally {
             kms.scheduleKeyDeletion(keyId, 7).successValue()
@@ -213,7 +215,8 @@ abstract class KMSContract(http: HttpHandler) : AwsContract() {
 
             val signed = kms.sign(key1, message1, RSASSA_PKCS1_V1_5_SHA_256).successValue()
 
-            val verificationFailure = kms.verify(key2, message1, signed.Signature, RSASSA_PKCS1_V1_5_SHA_256).failureOrNull()
+            val verificationFailure =
+                kms.verify(key2, message1, signed.Signature, RSASSA_PKCS1_V1_5_SHA_256).failureOrNull()
             assertThat(verificationFailure!!.status, equalTo(BAD_REQUEST))
         } finally {
             kms.scheduleKeyDeletion(key1, 7)

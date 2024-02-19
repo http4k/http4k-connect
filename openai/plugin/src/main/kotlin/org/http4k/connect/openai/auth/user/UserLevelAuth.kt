@@ -9,7 +9,7 @@ import org.http4k.routing.RoutingHttpHandler
  * This means that the user principal is known to the plugin and responses can be personalised.
  */
 class UserLevelAuth(pluginToken: PluginAuthToken) : PluginAuth {
-    override val manifestDescription =  mapOf(
+    override val manifestDescription = mapOf(
         "type" to "user_http",
         "authorization_type" to pluginToken.type
     )

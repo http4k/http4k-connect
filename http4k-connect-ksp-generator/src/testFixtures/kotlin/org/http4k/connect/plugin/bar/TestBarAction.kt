@@ -9,11 +9,12 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 
 @Http4kConnectAction
-data class TestBarAction(val input: String,
-                         val input2: String? = "default",
-                         val input3: Map<String, String> = emptyMap(),
-                         val input4: List<String> = emptyList(),
-                         val input5: Set<String> = emptySet()
+data class TestBarAction(
+    val input: String,
+    val input2: String? = "default",
+    val input3: Map<String, String> = emptyMap(),
+    val input4: List<String> = emptyList(),
+    val input5: Set<String> = emptySet()
 ) : BarAction<String> {
     constructor(input: String) : this(input, input)
 

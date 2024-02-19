@@ -83,7 +83,7 @@ data class AssumeRoleWithWebIdentity(
 }
 
 data class AssumedRoleWithWebIdentityResponse(
-    override  val AssumedRoleId: RoleId,
+    override val AssumedRoleId: RoleId,
     override val Credentials: Credentials,
     val SubjectFromWebIdentityToken: String,
     val Audience: String,

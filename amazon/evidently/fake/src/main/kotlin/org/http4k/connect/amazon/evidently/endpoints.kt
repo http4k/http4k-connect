@@ -23,8 +23,8 @@ import org.http4k.connect.amazon.evidently.model.FeatureName
 import org.http4k.connect.amazon.evidently.model.FeatureResponse
 import org.http4k.connect.amazon.evidently.model.ProjectName
 import org.http4k.connect.storage.Storage
-import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.DELETE
+import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.POST
 import org.http4k.core.Status
 import org.http4k.core.Status.Companion.CONFLICT
@@ -35,7 +35,7 @@ import org.http4k.routing.bind
 import java.time.Clock
 
 private fun AmazonRestfulFake.projectNotFound(name: ProjectName) =
-    RestfulError(NOT_FOUND,"Project does not exist with arn '${arn( "project", name)}'", null, null)
+    RestfulError(NOT_FOUND, "Project does not exist with arn '${arn("project", name)}'", null, null)
 
 private fun AmazonRestfulFake.projectResourceNotFound(resourceType: String, resourcePath: String): RestfulError {
     val resourceArn = ARN.of(awsService, region, accountId, resourcePath)
@@ -44,7 +44,7 @@ private fun AmazonRestfulFake.projectResourceNotFound(resourceType: String, reso
 }
 
 private fun featureNotFound(project: StoredProject, featureName: FeatureName) =
-    RestfulError(NOT_FOUND,"Feature does not exist with arn '${project.arn}/feature/$featureName'", null, null)
+    RestfulError(NOT_FOUND, "Feature does not exist with arn '${project.arn}/feature/$featureName'", null, null)
 
 private val projectLens = Path.value(ProjectName).of("project")
 private val featureLens = Path.value(FeatureName).of("feature")
@@ -145,7 +145,14 @@ fun AmazonRestfulFake.updateFeature(
 
     projects[projectName]
         .asResultOr { projectResourceNotFound("project", "project:$projectName/feature/$featureName") }
-        .flatMap { features[key].asResultOr { projectResourceNotFound("feature", "project:$projectName/feature/$featureName") } }
+        .flatMap {
+            features[key].asResultOr {
+                projectResourceNotFound(
+                    "feature",
+                    "project:$projectName/feature/$featureName"
+                )
+            }
+        }
         .map { feature ->
             feature.copy(
                 updated = clock.instant(),
@@ -172,7 +179,14 @@ fun AmazonRestfulFake.deleteFeature(
 
     projects[projectName]
         .asResultOr { projectResourceNotFound("project", "project:$projectName/feature/$featureName") }
-        .flatMap { features[key].asResultOr { projectResourceNotFound("feature", "project:$projectName/feature/$featureName") } }
+        .flatMap {
+            features[key].asResultOr {
+                projectResourceNotFound(
+                    "feature",
+                    "project:$projectName/feature/$featureName"
+                )
+            }
+        }
         .peek { features.remove(key) }
         .map { }
 }
@@ -186,8 +200,17 @@ fun AmazonRestfulFake.deleteProject(
     projects[projectName]
         .asResultOr { projectNotFound(projectName) }
         .flatMap { project ->
-            if (features.keySet(project.name.value).isEmpty()) { Success(project) } else {
-                Failure(RestfulError(CONFLICT, "Project has sub-resources", arn( "project", projectName), resourceType="project"))
+            if (features.keySet(project.name.value).isEmpty()) {
+                Success(project)
+            } else {
+                Failure(
+                    RestfulError(
+                        CONFLICT,
+                        "Project has sub-resources",
+                        arn("project", projectName),
+                        resourceType = "project"
+                    )
+                )
             }
         }
         .peek { project -> projects.remove(project.name.value) }

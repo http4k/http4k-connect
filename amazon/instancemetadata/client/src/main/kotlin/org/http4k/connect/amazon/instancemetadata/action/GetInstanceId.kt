@@ -14,12 +14,12 @@ import org.http4k.core.Status
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-class GetInstanceId: Ec2MetadataAction<InstanceId> {
+class GetInstanceId : Ec2MetadataAction<InstanceId> {
     private val uri = Uri.of("/latest/meta-data/instance-id")
 
     override fun toRequest() = Request(Method.GET, uri)
 
-    override fun toResult(response: Response) = when(response.status) {
+    override fun toResult(response: Response) = when (response.status) {
         Status.OK -> Success(response.value(InstanceId))
         else -> Failure(asRemoteFailure(response))
     }

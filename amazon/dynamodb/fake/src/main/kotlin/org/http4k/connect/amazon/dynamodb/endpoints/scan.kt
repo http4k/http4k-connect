@@ -15,15 +15,22 @@ fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
         .asSequence()
         .filter(schema.filterNullKeys())  // exclude items not held by selected index
         .sortedWith(comparator)  // sort by selected index
-        .dropWhile { scan.ExclusiveStartKey != null && comparator.compare(it, scan.ExclusiveStartKey!!) <= 0 }   // skip previous pages
+        .dropWhile {
+            scan.ExclusiveStartKey != null && comparator.compare(
+                it,
+                scan.ExclusiveStartKey!!
+            ) <= 0
+        }   // skip previous pages
         .toList()
 
     val page = matches.take((scan.Limit ?: table.maxPageSize).coerceAtMost(table.maxPageSize))
-    val filteredPage = page.mapNotNull { it.condition(
-        expression = scan.FilterExpression,
-        expressionAttributeNames = scan.ExpressionAttributeNames,
-        expressionAttributeValues = scan.ExpressionAttributeValues
-    ) }
+    val filteredPage = page.mapNotNull {
+        it.condition(
+            expression = scan.FilterExpression,
+            expressionAttributeNames = scan.ExpressionAttributeNames,
+            expressionAttributeValues = scan.ExpressionAttributeValues
+        )
+    }
 
     ScanResponse(
         Count = filteredPage.size,

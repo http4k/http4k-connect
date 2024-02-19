@@ -36,7 +36,8 @@ val AWS_WEB_IDENTITY_TOKEN_FILE =
  * For directly injecting the WebIdentityToken into the environment.
  */
 val AWS_WEB_IDENTITY_TOKEN =
-    EnvironmentKey.value(WebIdentityToken).defaulted("AWS_WEB_IDENTITY_TOKEN",
+    EnvironmentKey.value(WebIdentityToken).defaulted(
+        "AWS_WEB_IDENTITY_TOKEN",
         EnvironmentKey.map(::File, File::getAbsolutePath)
             .map(File::readText)
             .map(WebIdentityToken::of)

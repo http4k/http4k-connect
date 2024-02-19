@@ -114,9 +114,11 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
                 queueUrl = created.QueueUrl,
                 entries = listOf(
                     SendMessageBatchEntry("msg1", "foo"),
-                    SendMessageBatchEntry("msg2", "bar", attributes = listOf(
-                        MessageAttribute("attr1", "123", DataType.Number)
-                    )),
+                    SendMessageBatchEntry(
+                        "msg2", "bar", attributes = listOf(
+                            MessageAttribute("attr1", "123", DataType.Number)
+                        )
+                    ),
                     SendMessageBatchEntry("msg3", "baz")
                 )
             ).successValue()

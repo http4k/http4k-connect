@@ -27,7 +27,7 @@ import org.http4k.core.Uri
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DynamoDbPutItemContract: DynamoDbSource {
+abstract class DynamoDbPutItemContract : DynamoDbSource {
 
     private val table = TableName.sample()
 
@@ -75,17 +75,21 @@ abstract class DynamoDbPutItemContract: DynamoDbSource {
 
         dynamo.putItem(table, item).successValue()
 
-        assertThat(dynamo.putItem(
-            TableName = table,
-            Item = item,
-            ConditionExpression = "attribute_not_exists(#key1)",
-            ExpressionAttributeNames = mapOf("#key1" to attrS.name)
-        ).failureOrNull(), equalTo(RemoteFailure(
-            method = Method.POST,
-            uri = Uri.of("/"),
-            status = Status.BAD_REQUEST,
-            message = """{"__type":"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException","Message":"The conditional request failed"}"""
-        )))
+        assertThat(
+            dynamo.putItem(
+                TableName = table,
+                Item = item,
+                ConditionExpression = "attribute_not_exists(#key1)",
+                ExpressionAttributeNames = mapOf("#key1" to attrS.name)
+            ).failureOrNull(), equalTo(
+                RemoteFailure(
+                    method = Method.POST,
+                    uri = Uri.of("/"),
+                    status = Status.BAD_REQUEST,
+                    message = """{"__type":"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException","Message":"The conditional request failed"}"""
+                )
+            )
+        )
     }
 
     @Test
@@ -94,18 +98,22 @@ abstract class DynamoDbPutItemContract: DynamoDbSource {
 
         dynamo.putItem(table, item).successValue()
 
-        assertThat(dynamo.putItem(
-            TableName = table,
-            Item = item,
-            ConditionExpression = "#key1 > :val1",
-            ExpressionAttributeNames = mapOf("#key1" to attrN.name),
-            ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(1))
-        ).failureOrNull(), equalTo(RemoteFailure(
-            method = Method.POST,
-            uri = Uri.of("/"),
-            status = Status.BAD_REQUEST,
-            message = """{"__type":"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException","Message":"The conditional request failed"}"""
-        )))
+        assertThat(
+            dynamo.putItem(
+                TableName = table,
+                Item = item,
+                ConditionExpression = "#key1 > :val1",
+                ExpressionAttributeNames = mapOf("#key1" to attrN.name),
+                ExpressionAttributeValues = mapOf(":val1" to attrN.asValue(1))
+            ).failureOrNull(), equalTo(
+                RemoteFailure(
+                    method = Method.POST,
+                    uri = Uri.of("/"),
+                    status = Status.BAD_REQUEST,
+                    message = """{"__type":"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException","Message":"The conditional request failed"}"""
+                )
+            )
+        )
 
         dynamo.putItem(
             TableName = table,
@@ -117,5 +125,5 @@ abstract class DynamoDbPutItemContract: DynamoDbSource {
     }
 }
 
-class FakeDynamoDbPutItemContract: DynamoDbPutItemContract(), DynamoDbSource by FakeDynamoDbSource()
-class LocalDynamoDbPutItemContract: DynamoDbPutItemContract(), DynamoDbSource by LocalDynamoDbSource()
+class FakeDynamoDbPutItemContract : DynamoDbPutItemContract(), DynamoDbSource by FakeDynamoDbSource()
+class LocalDynamoDbPutItemContract : DynamoDbPutItemContract(), DynamoDbSource by LocalDynamoDbSource()

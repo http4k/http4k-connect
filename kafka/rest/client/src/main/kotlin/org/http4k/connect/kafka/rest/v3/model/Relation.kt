@@ -1,4 +1,3 @@
-
 package org.http4k.connect.kafka.rest.v3.model
 
 import org.http4k.core.Uri

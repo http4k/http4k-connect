@@ -34,8 +34,7 @@ import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.time.Duration
-import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 abstract class ImportTableFromS3Contract : AwsContract() {
     abstract val http: HttpHandler
@@ -43,7 +42,7 @@ abstract class ImportTableFromS3Contract : AwsContract() {
     private val dynamo by lazy {
         DynamoDb.Http(aws.region, { aws.credentials }, http)
     }
-    
+
     @Test
     fun `import table is successful`() {
         val table = TableName.sample()
@@ -102,7 +101,8 @@ abstract class ImportTableFromS3Contract : AwsContract() {
 
     @Test
     fun `import table fails where the S3 bucket does not exist`() {
-        val importArn = dynamo.importTable(sourceBucket = BucketName.sample()).successValue().ImportTableDescription.ImportArn!!
+        val importArn =
+            dynamo.importTable(sourceBucket = BucketName.sample()).successValue().ImportTableDescription.ImportArn!!
         dynamo.waitForImportFinished(importArn)
 
         with(dynamo.describeImport(importArn).successValue().ImportTableDescription) {

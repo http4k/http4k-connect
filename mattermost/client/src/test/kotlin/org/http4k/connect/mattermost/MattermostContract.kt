@@ -7,7 +7,7 @@ import org.http4k.connect.mattermost.action.TriggerWebhookPayload
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 abstract class MattermostContract {
     abstract val http: HttpHandler
