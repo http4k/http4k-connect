@@ -132,10 +132,65 @@ fun main() {
 
 See another [example](/amazon/dynamodb/client/src/examples/kotlin/using_the_table_mapper.kt) with secondary indices.
 
+Complex scan or query expressions may be constructed using functions from the `KeyConditionBuilder` and `FilterExpressionBuilder` classes
+(which therefore provide a scan/query DSL). This DSL is not complete, however it should cover most of the common use cases. 
+
+Examples:
+```kotlin
+val idAttr = Attribute.uuid().required("id")
+val nameAttr = Attribute.string().required("name")
+
+// scan with filter
+val people = table.primaryIndex().scan {
+    filterExpression {
+        (nameAttr beginsWith "J") and not(nameAttr eq "Jimmy")
+    }
+}
+
+// query with key condition (doesn't actually make much sense is this example)
+val anotherJohn = table.primaryIndex().query {
+    keyCondition {
+        idAttr eq john.id
+    }
+}
+```
+
+General query pattern with combined key condition and filter expression
+```kotlin
+table.primaryIndex().query {
+    keyCondition {
+        (hashKeyAttr eq hashValue) and (sortKeyAttr gt sortValue)
+    }
+    filterExpression {
+        (fooAttr ne "foo") or (barAttr isIn listOf(5, 6, 7)) and (bazAttr lt quzAttr)
+    }
+}
+```
+
+Notes:
+ - the hash key condition must use the `eq` operator (no other operators allowed),  
+ - in the sort key condition the following operators are supported: `eq` `gt`,`ge`,`lt`, `le` (for `=`, `>`, `>=`, `<`, `<=`), 
+   `beginsWith`, and the `between(sortKeyAttr, val1, val2)` function
+ - the filter expression supports all of the above plus `ne` (`<>`), `isIn`, `contains`, `attributeExists(attr)`, and `attributeNotExists(attr)`
+ - in a filter expression the first operand in a comparison must be an attribute, the second operand is either a value or another attribute of the same type
+   (so `xAttr eq 42` and `xAttr ne yAttr` are supported, but `42 eq xAttr` is not) 
+ - the logical operators `and` and `or` in this DSL are always evaluated from left to right (i.e. there is no higher precedence for `and`),
+   you should use parenthesis to change the order of evaluation 
+ - if an operand of a logical operator is `null` it will simply be omitted. This allows building queries with optional conditions:
+```kotlin
+filterExpression {
+   val nameFilter = name?.let { nameAttr eq it }
+   val sizeFilter = size?.let { sizeAttr eq it }
+   
+   // results in either a filter for name, a filter for size, a filter for both, or in no filter at all 
+   nameFilter and sizeFilter 
+}
+``` 
+
 ### General example usage of API client
 
 ```kotlin
-    // we can connect to the real service
+// we can connect to the real service
 val http: HttpHandler = JavaHttpClient()
 
 // create a client
