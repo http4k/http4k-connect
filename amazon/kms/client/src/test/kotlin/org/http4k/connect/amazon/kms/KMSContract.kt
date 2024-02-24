@@ -231,6 +231,7 @@ abstract class KMSContract(http: HttpHandler) : AwsContract() {
 
         try {
             val publicKey = kms.getPublicKey(keyId).successValue()
+            @Suppress("DEPRECATION")
             assertThat(publicKey.CustomerMasterKeySpec, equalTo(RSA_3072))
             assertThat(publicKey.KeySpec, equalTo(RSA_3072))
         } finally {
