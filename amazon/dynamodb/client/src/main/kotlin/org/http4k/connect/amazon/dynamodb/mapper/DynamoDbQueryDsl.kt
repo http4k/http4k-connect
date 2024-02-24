@@ -379,3 +379,17 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
         ConsistentRead = ConsistentRead
     )
 }
+
+fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.count(
+    ConsistentRead: Boolean? = null,
+    block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
+): Int {
+    val query = DynamoDbQueryBuilder<HashKey, SortKey>().apply(block).build()
+    return count(
+        KeyConditionExpression = query.keyConditionExpression,
+        FilterExpression = query.filterExpression,
+        ExpressionAttributeNames = query.expressionAttributeNames,
+        ExpressionAttributeValues = query.expressionAttributeValues,
+        ConsistentRead = ConsistentRead
+    )
+}
