@@ -6,6 +6,8 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.connect.amazon.dynamodb.model.TokensToNames
+import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 import org.http4k.connect.amazon.dynamodb.query
 import org.http4k.connect.amazon.dynamodb.queryPaginated
 import org.http4k.connect.amazon.dynamodb.scan
