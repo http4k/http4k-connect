@@ -7,6 +7,7 @@ internal data class Cat(
     val ownerId: UUID,
     val id: UUID,
     val name: String,
+    val nickName: String = name,
     val born: LocalDate,
 )
 
@@ -31,6 +32,7 @@ internal val bandit = Cat(
     ownerId = owner2,
     id = UUID.fromString("c27d8f9d-ffac-45ce-889f-9024d9d0bf2d"),
     name = "Bandit",
+    nickName = "Fatty",
     born = LocalDate.of(2018, 7, 1)
 )
 
@@ -45,5 +47,6 @@ internal val athena = Cat(
     ownerId = owner1,
     id = UUID.fromString("fb153ca2-e241-41df-9fe2-8858c6f6d1b0"),
     name = "Athena",
+    nickName = "Goddess",
     born = LocalDate.of(2022, 9, 4)
 )

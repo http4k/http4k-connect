@@ -24,6 +24,7 @@ import java.util.UUID
 
 private val ownerIdAttr = Attribute.uuid().required("ownerId")
 private val nameAttr = Attribute.string().required("name")
+private val nickNameAttr = Attribute.string().required("nickName")
 private val bornAttr = Attribute.localDate().required("born")
 private val idAttr = Attribute.uuid().required("id")
 
@@ -161,6 +162,48 @@ class DynamoDbTableMapperTest {
     }
 
     @Test
+    fun `custom query with DSL`() {
+        val results = tableMapper.index(byOwner).query {
+            keyCondition {
+                ownerIdAttr eq owner1
+            }
+            filterExpression {
+                val idExpr = idAttr eq kratos.id
+                val bornExpr = bornAttr gt toggles.born
+
+                not(idExpr) and bornExpr
+            }
+        }.toList()
+
+        assertThat(results, equalTo(listOf(athena)))
+    }
+
+    @Test
+    fun `custom query with filter functions in DSL`() {
+        val results = tableMapper.index(byOwner).query {
+            keyCondition {
+                ownerIdAttr eq owner1
+            }
+            filterExpression {
+                nameAttr contains "o"
+            }
+        }.toList()
+
+        assertThat(results, equalTo(listOf(kratos, toggles)))
+    }
+
+    @Test
+    fun `custom scan with DSL filter expression`() {
+        val results = tableMapper.index(byOwner).scan {
+            filterExpression {
+                (nameAttr ne nickNameAttr) and (ownerIdAttr eq owner1)
+            }
+        }.toList()
+
+        assertThat(results, equalTo(listOf(athena)))
+    }
+
+    @Test
     fun `query page`() {
         // page 1 of 2
         assertThat(
@@ -182,6 +225,61 @@ class DynamoDbTableMapperTest {
                     nextSortKey = null
                 )
             )
+        )
+    }
+
+    @Test
+    fun `custom query page`() {
+        // page 1 of 2
+        assertThat(tableMapper.index(byDob).queryPage(
+            KeyConditionExpression = "$bornAttr = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born)),
+            Limit = 1
+        ), equalTo(DynamoDbPage(
+            items = listOf(smokie),
+            nextHashKey = smokie.born,
+            nextSortKey = smokie.id
+        )))
+
+        // page 2 of 2
+        assertThat(tableMapper.index(byDob).queryPage(
+            KeyConditionExpression = "$bornAttr = :val1",
+            ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born)),
+            Limit = 1,
+            ExclusiveStartHashKey = smokie.born,
+            ExclusiveStartSortKey = smokie.id
+        ), equalTo(DynamoDbPage(
+            items = listOf(bandit),
+            nextHashKey = null,
+            nextSortKey = null
+        )))
+    }
+
+    @Test
+    fun `custom query page with DSL condition`() {
+        // page 1 of 2
+        val page1 = tableMapper.index(byDob).queryPage(Limit = 1) {
+            keyCondition {
+                bornAttr eq smokie.born
+            }
+        }
+        assertThat(
+            page1,
+            equalTo(DynamoDbPage(items = listOf(smokie), nextHashKey = smokie.born, nextSortKey = smokie.id))
+        )
+
+        // page 2 of 2
+        val page2 = tableMapper.index(byDob).queryPage(
+            Limit = 1,
+            ExclusiveStartKey = smokie.id
+        ) {
+            keyCondition {
+                bornAttr eq smokie.born
+            }
+        }
+        assertThat(
+            page2,
+            equalTo(DynamoDbPage(items = listOf(bandit), nextHashKey = null, nextSortKey = null))
         )
     }
 
