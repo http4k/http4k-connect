@@ -6,6 +6,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v5.6.16.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-dynamodb** - Query builder for DynamoDB. H/T @obecker
+- **http4k-connect-amazon-kms** - Support for KeySpec property. H/T @oharaandrew314
 
 ### v5.6.15.0
 - **http4k-connect-storage-*** StoragePropertyBag allows storage-backed dynamic backing Read/WriteProperties. Extend `StoragePropertyBag` and declare typed properties with `item<TYPE>()`. Properties are stored into the backing storage using standard automarshalling. 
