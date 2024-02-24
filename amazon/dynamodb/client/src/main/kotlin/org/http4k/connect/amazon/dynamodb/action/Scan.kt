@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.ItemResult
 import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.ReturnConsumedCapacity
+import org.http4k.connect.amazon.dynamodb.model.Select
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
@@ -28,7 +29,7 @@ data class Scan(
     override val Limit: Int? = null,
     val ConsistentRead: Boolean? = null,
     val Segment: Int? = null,
-    val Select: String? = null,
+    val Select: Select? = null,
     val TotalSegments: Int? = null,
     val ReturnConsumedCapacity: ReturnConsumedCapacity? = null,
 ) : DynamoDbPagedAction<ScanResponse, Scan>(kClass()) {
@@ -38,9 +39,9 @@ data class Scan(
 @JsonSerializable
 data class ScanResponse(
     val ConsumedCapacity: ConsumedCapacity? = null,
-    val Count: Int? = null,
+    val Count: Int = 0,
     val LastEvaluatedKey: Key? = null,
-    val ScannedCount: Int? = null,
+    val ScannedCount: Int = 0,
     internal val Items: List<ItemResult>? = null
 ) : Paged<Key, Item> {
     override val items = Items?.map(ItemResult::toItem) ?: emptyList()

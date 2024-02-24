@@ -2,9 +2,9 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import dev.forkhandles.result4k.onFailure
 import org.http4k.connect.amazon.dynamodb.DynamoDb
-import org.http4k.connect.amazon.dynamodb.model.AttributeName
-import org.http4k.connect.amazon.dynamodb.model.AttributeValue
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.Select
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
@@ -157,4 +157,48 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         Limit = Limit,
         ConsistentRead = ConsistentRead
     )
+
+    fun count(
+        KeyConditionExpression: String? = null,
+        FilterExpression: String? = null,
+        ExpressionAttributeNames: TokensToNames? = null,
+        ExpressionAttributeValues: TokensToValues? = null,
+        ConsistentRead: Boolean? = null,
+    ): Int {
+        var count = 0
+        var startKey: Key? = null
+        if (KeyConditionExpression == null) {
+            do {
+                val response = dynamoDb.scan(
+                    TableName = tableName,
+                    IndexName = schema.indexName,
+                    FilterExpression = FilterExpression,
+                    ExpressionAttributeNames = ExpressionAttributeNames,
+                    ExpressionAttributeValues = ExpressionAttributeValues,
+                    ExclusiveStartKey = startKey,
+                    ConsistentRead = ConsistentRead,
+                    Select = Select.COUNT,
+                ).onFailure { it.reason.throwIt() }
+                startKey = response.LastEvaluatedKey
+                count += response.Count
+            } while (startKey != null)
+        } else {
+            do {
+                val response = dynamoDb.query(
+                    TableName = tableName,
+                    IndexName = schema.indexName,
+                    KeyConditionExpression = KeyConditionExpression,
+                    FilterExpression = FilterExpression,
+                    ExpressionAttributeNames = ExpressionAttributeNames,
+                    ExpressionAttributeValues = ExpressionAttributeValues,
+                    ExclusiveStartKey = startKey,
+                    ConsistentRead = ConsistentRead,
+                    Select = Select.COUNT,
+                ).onFailure { it.reason.throwIt() }
+                startKey = response.LastEvaluatedKey
+                count += response.Count
+            } while (startKey != null)
+        }
+        return count
+    }
 }

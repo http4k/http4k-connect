@@ -355,4 +355,30 @@ class DynamoDbTableMapperTest {
         val batchGetResult = tableMapper[cats.map { it.id }].toList()
         assertThat(batchGetResult, equalTo(cats))
     }
+
+    @Test
+    fun `count (via scan)`() {
+        val totalCount = tableMapper.primaryIndex().count()
+        assertThat(totalCount, equalTo(5))
+    }
+
+    @Test
+    fun `count (via scan with filter)`() {
+        val totalCount = tableMapper.primaryIndex().count {
+            filterExpression {
+                bornAttr gt LocalDate.of(2010, 1, 1)
+            }
+        }
+        assertThat(totalCount, equalTo(4))
+    }
+
+    @Test
+    fun `count (via query)`() {
+        val totalCount = tableMapper.primaryIndex().count {
+            keyCondition {
+                ownerIdAttr eq owner1
+            }
+        }
+        assertThat(totalCount, equalTo(3))
+    }
 }
