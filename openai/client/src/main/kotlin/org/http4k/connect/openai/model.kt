@@ -51,6 +51,12 @@ class ModelName private constructor(value: String) : StringValue(value) {
     }
 }
 
+class ResponseFormatType private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ResponseFormatType>(::ResponseFormatType) {
+        val JsonObject = ResponseFormatType.of("json_object")
+    }
+}
+
 class Role private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Role>(::Role) {
         val System = Role.of("system")

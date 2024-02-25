@@ -28,6 +28,7 @@ object OpenAIMoshi : ConfigurableMoshi(
         .value(Timestamp)
         .value(TokenId)
         .value(User)
+        .value(ResponseFormatType)
         .done()
 )
 
