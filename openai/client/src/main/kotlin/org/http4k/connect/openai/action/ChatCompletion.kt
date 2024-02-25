@@ -45,7 +45,7 @@ data class ChatCompletion(
     val logit_bias: Map<TokenId, Double>? = null,
     val user: User? = null,
     val stream: Boolean = false,
-    val responseFormat: ResponseFormat? = null
+    val response_format: ResponseFormat? = null
 ) : OpenAIAction<Sequence<CompletionResponse>> {
     constructor(model: ModelName, messages: List<Message>, max_tokens: Int = 16, stream: Boolean = true) : this(
         model,
