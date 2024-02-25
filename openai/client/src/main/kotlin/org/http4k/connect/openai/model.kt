@@ -45,8 +45,15 @@ class Timestamp private constructor(value: Long) : LongValue(value) {
 class ModelName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ModelName>(::ModelName) {
         val GPT4 = ModelName.of("gpt-4")
+        val GPT4_TURBO_PREVIEW = ModelName.of("gpt-4-turbo-preview")
         val GPT3_5 = ModelName.of("gpt-3.5-turbo")
         val TEXT_EMBEDDING_ADA_002 = ModelName.of("text-embedding-ada-002")
+    }
+}
+
+class ResponseFormatType private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ResponseFormatType>(::ResponseFormatType) {
+        val JsonObject = ResponseFormatType.of("json_object")
     }
 }
 
@@ -54,6 +61,7 @@ class Role private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Role>(::Role) {
         val System = Role.of("system")
         val User = Role.of("user")
+        val Assistant = Role.of("assistant")
     }
 }
 

@@ -12,6 +12,7 @@ import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.OpenAIMoshi.autoBody
+import org.http4k.connect.openai.ResponseFormatType
 import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.TokenId
@@ -43,7 +44,8 @@ data class ChatCompletion(
     val frequency_penalty: Double = 0.0,
     val logit_bias: Map<TokenId, Double>? = null,
     val user: User? = null,
-    val stream: Boolean = false
+    val stream: Boolean = false,
+    val response_format: ResponseFormat? = null
 ) : OpenAIAction<Sequence<CompletionResponse>> {
     constructor(model: ModelName, messages: List<Message>, max_tokens: Int = 16, stream: Boolean = true) : this(
         model,
@@ -91,6 +93,11 @@ data class ChatCompletion(
         }
     }
 }
+
+@JsonSerializable
+data class ResponseFormat(
+    val type: ResponseFormatType
+)
 
 @JsonSerializable
 data class Message(
