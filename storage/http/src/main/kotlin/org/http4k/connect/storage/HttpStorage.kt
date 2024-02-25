@@ -10,8 +10,7 @@ import org.http4k.format.Jackson.auto
 import org.http4k.lens.BiDiBodyLens
 
 inline fun <reified T : Any> Storage.Companion.Http(
-    crossinline http: HttpHandler
-    ,
+    crossinline http: HttpHandler,
     bodyLens: BiDiBodyLens<T> = Body.auto<T>().toLens()
 ): Storage<T> = object : Storage<T> {
 
