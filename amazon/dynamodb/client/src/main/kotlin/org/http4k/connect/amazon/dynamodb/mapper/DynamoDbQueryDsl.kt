@@ -23,7 +23,7 @@ interface KeyCondition<HashKey : Any, SortKey : Any> {
     val expression: String
     val attributeNames: TokensToNames
     val attributeValues: TokensToValues
-    val exclusiveStartHashKey: HashKey?
+    val exclusiveStartHashKey: Any?
 }
 
 interface SortKeyCondition<HashKey : Any, SortKey : Any> : KeyCondition<HashKey, SortKey>
@@ -44,7 +44,7 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
      */
     inner class KeyConditionBuilder {
 
-        infix fun Attribute<HashKey>.eq(value: HashKey) = nextAttributeName().let { attributeName ->
+        infix fun <T : Any> Attribute<T>.eq(value: T) = nextAttributeName().let { attributeName ->
             object : PartitionKeyCondition<HashKey, SortKey> {
                 override val expression = "#$attributeName = :$attributeName"
                 override val attributeNames = mapOf("#$attributeName" to name)
@@ -127,10 +127,10 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
             val attributeName1 = nextAttributeName()
             val attributeName2 = nextAttributeName()
             return FilterExpression(
-                    "#$attributeName1 $op #$attributeName2",
-                    mapOf("#$attributeName1" to name, "#$attributeName2" to other.name),
-                    emptyMap()
-                )
+                "#$attributeName1 $op #$attributeName2",
+                mapOf("#$attributeName1" to name, "#$attributeName2" to other.name),
+                emptyMap()
+            )
         }
 
         infix fun <T> Attribute<T>.eq(value: T) = filterOperator("=", value)
@@ -294,6 +294,7 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any> {
         else -> map1 + map2
     }
 
+    @Suppress("UNCHECKED_CAST")
     internal fun build() = DynamoDbQuery(
         keyConditionExpression = delegate.keyCondition?.expression,
         filterExpression = delegate.filterExpression?.expression,
@@ -305,7 +306,7 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any> {
             delegate.keyCondition?.attributeValues,
             delegate.filterExpression?.attributeValues
         ),
-        exclusiveStartHashKey = delegate.keyCondition?.exclusiveStartHashKey
+        exclusiveStartHashKey = delegate.keyCondition?.exclusiveStartHashKey as HashKey?
     )
 }
 

@@ -483,6 +483,29 @@ class DynamoDbQueryDslTest {
         }
 
         @Test
+        fun `query with key condition doesn't throw an exception when used with wrong attributes`() {
+            // when
+            index.query {
+                keyCondition {
+                    // it would actually be great if the compiler could already complain about this
+                    (sortKey eq "A") and (hashKey eq uuid)
+                }
+            }.toList()
+
+            // then
+            assertThat(
+                mockDynamoDb.action as? Query, present(
+                    allOf(
+                        queryHasKeyConditionExpression("#a = :a AND #b = :b"),
+                        queryHasFilterExpression(null),
+                        queryHasAttributeNames(mapOf("#a" to sortKey.name, "#b" to hashKey.name)),
+                        queryHasAttributeValues(mapOf(":a" to sortKey.asValue("A"), ":b" to hashKey.asValue(uuid)))
+                    )
+                )
+            )
+        }
+
+        @Test
         fun `query with hash key and sort key between condition`() {
             // when
             index.query {
