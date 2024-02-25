@@ -1,5 +1,6 @@
 package org.http4k.connect.kafka.rest
 
+import org.http4k.client.JavaHttpClient
 import org.http4k.connect.kafka.rest.v2.KafkaRestV2Action
 import org.http4k.connect.kafka.rest.v3.KafkaRestV3Action
 import org.http4k.core.Credentials
@@ -15,7 +16,7 @@ import org.http4k.filter.ClientFilters.SetHostFrom
 fun KafkaRest.Companion.Http(
     credentials: Credentials,
     baseUri: Uri,
-    http: HttpHandler
+    http: HttpHandler  = JavaHttpClient()
 ) = object : KafkaRest {
     private val http = BasicAuth(credentials)
         .then(SetHostFrom(baseUri))

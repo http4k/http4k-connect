@@ -1,5 +1,6 @@
 package org.http4k.connect.kafka.schemaregistry
 
+import org.http4k.client.JavaHttpClient
 import org.http4k.core.Credentials
 import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
@@ -13,7 +14,7 @@ import org.http4k.filter.ClientFilters.SetHostFrom
 fun SchemaRegistry.Companion.Http(
     credentials: Credentials,
     baseUri: Uri,
-    http: HttpHandler
+    http: HttpHandler = JavaHttpClient()
 ) = object : SchemaRegistry {
     private val http = BasicAuth(credentials)
         .then(SetHostFrom(baseUri))
