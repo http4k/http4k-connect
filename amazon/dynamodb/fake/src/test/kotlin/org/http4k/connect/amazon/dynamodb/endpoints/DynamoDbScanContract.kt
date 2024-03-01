@@ -18,10 +18,12 @@ import org.http4k.connect.amazon.dynamodb.attrSS
 import org.http4k.connect.amazon.dynamodb.batchWriteItem
 import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
+import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
 import org.http4k.connect.amazon.dynamodb.model.Projection
 import org.http4k.connect.amazon.dynamodb.model.ReqWriteItem
@@ -36,6 +38,8 @@ import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.util.*
 
 abstract class DynamoDbScanContract : DynamoDbSource {
 
@@ -200,6 +204,71 @@ abstract class DynamoDbScanContract : DynamoDbSource {
             )
         )
         assertThat(result.LastEvaluatedKey, equalTo(Item(attrS of "hash4", attrN of 4)))
+    }
+
+    @Test
+    fun `paginate on GSI - different keys than primary index`() {
+        val idAttr = Attribute.uuid().required("id")
+        val nameAttr = Attribute.string().required("name")
+        val dobAttr = Attribute.localDate().required("dob")
+
+        val searchIndex = IndexName.of("search")
+        val table = TableName.of("people")
+
+        dynamo.createTable(
+            table,
+            KeySchema = KeySchema.compound(idAttr.name),
+            AttributeDefinitions = listOf(
+                idAttr.asAttributeDefinition(),
+                nameAttr.asAttributeDefinition(),
+                dobAttr.asAttributeDefinition()
+            ),
+            GlobalSecondaryIndexes = listOf(
+                GlobalSecondaryIndex(
+                    IndexName = searchIndex,
+                    KeySchema.compound(dobAttr.name, nameAttr.name),
+                    Projection.all
+                )
+            ),
+            BillingMode = BillingMode.PAY_PER_REQUEST
+        ).successValue()
+
+        dynamo.waitForExist(table)
+
+        val dob1 = LocalDate.of(2024, 2, 29)
+
+        val id1 = UUID.randomUUID()
+        val id2 = UUID.randomUUID()
+        val id3 = UUID.randomUUID()
+
+        val item1 = Item(idAttr of id1, dobAttr of dob1, nameAttr of "name1").also { dynamo.putItem(table,it) }
+        val item2 = Item(idAttr of id2, dobAttr of dob1, nameAttr of "name2").also { dynamo.putItem(table,it) }
+        val item3 = Item(idAttr of id3, dobAttr of dob1, nameAttr of "name3").also { dynamo.putItem(table,it) }
+
+        val page1 = dynamo.scan(
+            TableName = table,
+            IndexName = searchIndex,
+            Limit = 2
+        ).successValue()
+
+        assertThat(page1.items, equalTo(listOf(item1, item2)))
+        assertThat(page1.LastEvaluatedKey, equalTo(
+            Key(
+                idAttr of id2,
+                nameAttr of "name2",
+                dobAttr of dob1
+            )
+        ))
+
+        val page2 = dynamo.scan(
+            TableName = table,
+            IndexName = searchIndex,
+            Limit = 2,
+            ExclusiveStartKey = page1.LastEvaluatedKey
+        ).successValue()
+
+        assertThat(page2.items, equalTo(listOf(item3)))
+        assertThat(page2.LastEvaluatedKey, absent())
     }
 }
 

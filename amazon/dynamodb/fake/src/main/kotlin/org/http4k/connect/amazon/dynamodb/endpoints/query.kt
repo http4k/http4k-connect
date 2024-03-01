@@ -42,8 +42,15 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     QueryResponse(
         Count = filteredPage.size,
         Items = filteredPage.map { it.asItemResult() },
-        LastEvaluatedKey = if (page.size < matches.size && schema != null) {
-            page.lastOrNull()?.key(schema)
-        } else null
+        LastEvaluatedKey = page.lastOrNull()
+            ?.takeIf { page.size < matches.size }
+            ?.let { last ->
+                buildMap {
+                    this += last.key(table.table.KeySchema!!)
+                    if (schema != null) {
+                        this += last.key(schema)
+                    }
+                }
+            }
     )
 }
