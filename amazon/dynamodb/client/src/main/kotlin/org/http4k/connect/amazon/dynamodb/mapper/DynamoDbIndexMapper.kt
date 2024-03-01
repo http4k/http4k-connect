@@ -18,7 +18,7 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
     private val dynamoDb: DynamoDb,
     private val tableName: TableName,
     private val itemLens: BiDiLens<Item, Document>,
-    internal val schema: DynamoDbTableMapperSchema<HashKey, SortKey>
+    private val schema: DynamoDbTableMapperSchema<HashKey, SortKey>
 ) {
     fun scan(
         FilterExpression: String? = null,
