@@ -5,6 +5,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.lessThan
 import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.Failure
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
@@ -37,6 +39,9 @@ import org.http4k.connect.amazon.dynamodb.query
 import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
+import org.http4k.core.Method
+import org.http4k.core.Status
+import org.http4k.core.Uri
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -284,12 +289,13 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
         dynamo.putItem(table, hash1Val2)
         dynamo.putItem(table, hash2Val1)
 
-        val result = dynamo.query(
+        val r = dynamo.query(
             TableName = table,
             KeyConditionExpression = "$attrS = :val1",
             ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1")),
             Limit = 1
-        ).successValue()
+        )
+            val result = r.successValue()
 
         assertThat(result.Count, equalTo(1))
         assertThat(result.items, equalTo(listOf(hash1Val1)))
@@ -429,6 +435,7 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
     }
 
     @Test
+<<<<<<< Updated upstream
     fun `paginate on GSI - different keys than primary index`() {
         val idAttr = Attribute.uuid().required("id")
         val nameAttr = Attribute.string().required("name")
@@ -495,6 +502,23 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
 
         assertThat(page2.items, equalTo(listOf(item3)))
         assertThat(page2.LastEvaluatedKey, absent())
+=======
+    fun `query on missing index`() {
+        val result = dynamo.query(
+            TableName = table,
+            IndexName = IndexName.of("missing"),
+            KeyConditionExpression = "$attrN = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrN.asValue(1)
+            )
+        )
+        assertThat(result, equalTo(Failure(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"The table does not have the specified index: missing"}"""
+        ))))
+>>>>>>> Stashed changes
     }
 }
 
