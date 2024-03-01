@@ -287,13 +287,12 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
         dynamo.putItem(table, hash1Val2)
         dynamo.putItem(table, hash2Val1)
 
-        val r = dynamo.query(
+        val result = dynamo.query(
             TableName = table,
             KeyConditionExpression = "$attrS = :val1",
             ExpressionAttributeValues = mapOf(":val1" to attrS.asValue("hash1")),
             Limit = 1
-        )
-            val result = r.successValue()
+        ).successValue()
 
         assertThat(result.Count, equalTo(1))
         assertThat(result.items, equalTo(listOf(hash1Val1)))
@@ -468,10 +467,10 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
         val id2 = UUID.randomUUID()
         val id3 = UUID.randomUUID()
 
-        val item1 = Item(idAttr of id1, dobAttr of dob1, nameAttr of "name1").also { dynamo.putItem(table, it) }
-        val item2 = Item(idAttr of id2, dobAttr of dob1, nameAttr of "name2").also { dynamo.putItem(table, it) }
-        val item3 = Item(idAttr of id3, dobAttr of dob1, nameAttr of "name3").also { dynamo.putItem(table, it) }
-        Item(idAttr of UUID.randomUUID(), dobAttr of dob2, nameAttr of "name4").also { dynamo.putItem(table, it) }
+        val item1 = Item(idAttr of id1, dobAttr of dob1, nameAttr of "name1").also { dynamo.putItem(table,it) }
+        val item2 = Item(idAttr of id2, dobAttr of dob1, nameAttr of "name2").also { dynamo.putItem(table,it) }
+        val item3 = Item(idAttr of id3, dobAttr of dob1, nameAttr of "name3").also { dynamo.putItem(table,it) }
+        Item(idAttr of UUID.randomUUID(), dobAttr of dob2, nameAttr of "name4").also { dynamo.putItem(table,it) }
 
         val page1 = dynamo.query(
             TableName = table,
@@ -482,15 +481,11 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
         ).successValue()
 
         assertThat(page1.items, equalTo(listOf(item1, item2)))
-        assertThat(
-            page1.LastEvaluatedKey, equalTo(
-                Key(
-                    idAttr of id2,
-                    nameAttr of "name2",
-                    dobAttr of dob1
-                )
-            )
-        )
+        assertThat(page1.LastEvaluatedKey, equalTo(Key(
+            idAttr of id2,
+            nameAttr of "name2",
+            dobAttr of dob1
+        )))
 
         val page2 = dynamo.query(
             TableName = table,
