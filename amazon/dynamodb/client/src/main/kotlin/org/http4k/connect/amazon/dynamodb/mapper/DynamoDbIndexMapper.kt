@@ -18,7 +18,7 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
     private val dynamoDb: DynamoDb,
     private val tableName: TableName,
     private val itemLens: BiDiLens<Item, Document>,
-    private val schema: DynamoDbTableMapperSchema<HashKey, SortKey>
+    internal val schema: DynamoDbTableMapperSchema<HashKey, SortKey>
 ) {
     fun scan(
         FilterExpression: String? = null,
@@ -42,30 +42,24 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         FilterExpression: String? = null,
         ExpressionAttributeNames: TokensToNames? = null,
         ExpressionAttributeValues: TokensToValues? = null,
-        ExclusiveStartKey: Pair<HashKey, SortKey?>? = null,
+        ExclusiveStartKey: Key? = null,
         Limit: Int? = null,
         ConsistentRead: Boolean? = null,
-    ): DynamoDbPage<Document, HashKey, SortKey> {
+    ): DynamoDbPage<Document> {
         val page = dynamoDb.scan(
             TableName = tableName,
             IndexName = schema.indexName,
             FilterExpression = FilterExpression,
             ExpressionAttributeNames = ExpressionAttributeNames,
             ExpressionAttributeValues = ExpressionAttributeValues,
-            ExclusiveStartKey = ExclusiveStartKey?.let {
-                schema.key(
-                    ExclusiveStartKey.first,
-                    ExclusiveStartKey.second
-                )
-            },
+            ExclusiveStartKey = ExclusiveStartKey,
             Limit = Limit,
             ConsistentRead = ConsistentRead
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
             items = page.items.map(itemLens),
-            nextHashKey = page.LastEvaluatedKey?.let { schema.hashKeyAttribute[it] },
-            nextSortKey = page.LastEvaluatedKey?.let { key -> schema.sortKeyAttribute?.let { attr -> attr[key] } }
+            lastEvaluatedKey = page.LastEvaluatedKey
         )
     }
 
@@ -111,12 +105,11 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         FilterExpression: String? = null,
         ExpressionAttributeNames: TokensToNames? = null,
         ExpressionAttributeValues: TokensToValues? = null,
-        ExclusiveStartHashKey: HashKey? = null,
-        ExclusiveStartSortKey: SortKey? = null,
+        ExclusiveStartKey: Key? = null,
         ScanIndexForward: Boolean = true,
         Limit: Int? = null,
         ConsistentRead: Boolean? = null,
-    ): DynamoDbPage<Document, HashKey, SortKey> {
+    ): DynamoDbPage<Document> {
         val page = dynamoDb.query(
             TableName = tableName,
             IndexName = schema.indexName,
@@ -125,35 +118,29 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
             ExpressionAttributeValues = ExpressionAttributeValues,
             FilterExpression = FilterExpression,
             ScanIndexForward = ScanIndexForward,
-            ExclusiveStartKey = ExclusiveStartHashKey?.let {
-                ExclusiveStartSortKey?.let {
-                    schema.key(ExclusiveStartHashKey, ExclusiveStartSortKey)
-                }
-            },
+            ExclusiveStartKey = ExclusiveStartKey,
             Limit = Limit,
             ConsistentRead = ConsistentRead
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
             items = page.items.map(itemLens),
-            nextHashKey = page.LastEvaluatedKey?.let { schema.hashKeyAttribute[it] },
-            nextSortKey = page.LastEvaluatedKey?.let { key -> schema.sortKeyAttribute?.let { attr -> attr[key] } }
+            lastEvaluatedKey = page.LastEvaluatedKey
         )
     }
 
     fun queryPage(
         HashKey: HashKey,
         ScanIndexForward: Boolean = true,
-        ExclusiveStartKey: SortKey? = null,
+        ExclusiveStartKey: Key? = null,
         Limit: Int? = null,
         ConsistentRead: Boolean? = null,
-    ): DynamoDbPage<Document, HashKey, SortKey> = queryPage(
+    ): DynamoDbPage<Document> = queryPage(
         KeyConditionExpression = "#key1 = :val1",
         ExpressionAttributeNames = mapOf("#key1" to schema.hashKeyAttribute.name),
         ExpressionAttributeValues = mapOf(":val1" to schema.hashKeyAttribute.asValue(HashKey)),
         ScanIndexForward = ScanIndexForward,
-        ExclusiveStartHashKey = HashKey,
-        ExclusiveStartSortKey = ExclusiveStartKey,
+        ExclusiveStartKey = ExclusiveStartKey,
         Limit = Limit,
         ConsistentRead = ConsistentRead
     )

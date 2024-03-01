@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.dynamodb.action.Query
 import org.http4k.connect.amazon.dynamodb.action.Scan
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.Item
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
@@ -385,7 +386,7 @@ class DynamoDbQueryDslTest {
         @Test
         fun `scanPage with complex filter`() {
             // when
-            index.scanPage(ExclusiveStartKey = Pair(uuid, "B"), Limit = 20, ConsistentRead = true) {
+            index.scanPage(ExclusiveStartKey = Key(hashKey of uuid, sortKey of "B"), Limit = 20, ConsistentRead = true) {
                 filterExpression {
                     hashKey eq uuid and (sortKey beginsWith "foo" or attributeExists(intAttr))
                 }

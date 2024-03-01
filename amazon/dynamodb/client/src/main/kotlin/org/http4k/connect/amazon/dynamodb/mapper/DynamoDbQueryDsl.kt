@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
@@ -325,11 +326,11 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
 }
 
 fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.scanPage(
-    ExclusiveStartKey: Pair<HashKey, SortKey?>? = null,
+    ExclusiveStartKey: Key? = null,
     Limit: Int? = null,
     ConsistentRead: Boolean? = null,
     block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
-): DynamoDbPage<Document, HashKey, SortKey> {
+): DynamoDbPage<Document> {
     val filter = DynamoDbScanBuilder<HashKey, SortKey>().apply(block).build()
     return scanPage(
         FilterExpression = filter.filterExpression,
@@ -365,15 +366,23 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     ExclusiveStartKey: SortKey? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
-): DynamoDbPage<Document, HashKey, SortKey> {
+): DynamoDbPage<Document> {
     val query = DynamoDbQueryBuilder<HashKey, SortKey>().apply(block).build()
     return queryPage(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
         ExpressionAttributeNames = query.expressionAttributeNames,
         ExpressionAttributeValues = query.expressionAttributeValues,
-        ExclusiveStartHashKey = query.exclusiveStartHashKey,
-        ExclusiveStartSortKey = ExclusiveStartKey,
+        ExclusiveStartKey = buildMap {
+            if (query.exclusiveStartHashKey != null) {
+                put(schema.hashKeyAttribute.name, schema.hashKeyAttribute.asValue(query.exclusiveStartHashKey))
+            }
+            schema.sortKeyAttribute?.let { sortKey ->
+                if (ExclusiveStartKey != null) {
+                    put(sortKey.name, sortKey.asValue(ExclusiveStartKey))
+                }
+            }
+        },
         ScanIndexForward = ScanIndexForward,
         Limit = Limit,
         ConsistentRead = ConsistentRead
