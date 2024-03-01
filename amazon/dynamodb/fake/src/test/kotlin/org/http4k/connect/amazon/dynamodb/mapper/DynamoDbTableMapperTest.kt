@@ -281,14 +281,17 @@ class DynamoDbTableMapperTest {
             items = listOf(smokie),
             lastEvaluatedKey = Key(
                 idAttr of smokie.id,
-                ownerIdAttr of smokie.ownerId
+                bornAttr of smokie.born
             )
         )))
 
         // page 2 of 2
         val page2 = tableMapper.index(byDob).queryPage(
             Limit = 1,
-            ExclusiveStartKey = smokie.id
+            ExclusiveStartKey = Key(
+                idAttr of smokie.id,
+                bornAttr of smokie.born
+            )
         ) {
             keyCondition {
                 bornAttr eq smokie.born

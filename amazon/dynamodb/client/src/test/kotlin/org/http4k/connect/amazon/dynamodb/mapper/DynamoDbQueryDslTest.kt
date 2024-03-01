@@ -574,7 +574,12 @@ class DynamoDbQueryDslTest {
         @Test
         fun `queryPage with key condition and filter expression`() {
             // when
-            index.queryPage(ScanIndexForward = false, Limit = 50, ConsistentRead = true, ExclusiveStartKey = "start") {
+            index.queryPage(
+                ScanIndexForward = false,
+                Limit = 50,
+                ConsistentRead = true,
+                ExclusiveStartKey = Key(hashKey of uuid, sortKey of "start")
+            ) {
                 keyCondition {
                     (hashKey eq uuid) and (sortKey ge "A")
                 }
