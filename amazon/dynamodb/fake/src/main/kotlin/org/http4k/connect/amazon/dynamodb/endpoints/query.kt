@@ -14,7 +14,7 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
             "com.amazon.coral.validate#ValidationException",
             "The table does not have the specified index: ${query.IndexName}"
         )
-    } else null
+    } else table.table.KeySchema
 
     val comparator = schema.comparator(query.ScanIndexForward ?: true)
 
