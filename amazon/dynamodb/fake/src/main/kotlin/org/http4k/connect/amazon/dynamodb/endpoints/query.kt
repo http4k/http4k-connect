@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.dynamodb.endpoints
 
 import org.http4k.connect.amazon.AmazonJsonFake
+import org.http4k.connect.amazon.JsonError
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.action.Query
 import org.http4k.connect.amazon.dynamodb.action.QueryResponse
@@ -8,7 +9,13 @@ import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     val table = tables[query.TableName.value] ?: return@route null
-    val schema = table.table.keySchema(query.IndexName)
+    val schema = if (query.IndexName != null) {
+        table.table.keySchema(query.IndexName) ?: return@route JsonError(
+            "com.amazon.coral.validate#ValidationException",
+            "The table does not have the specified index: ${query.IndexName}"
+        )
+    } else table.table.KeySchema
+
     val comparator = schema.comparator(query.ScanIndexForward ?: true)
 
     val matches = table.items

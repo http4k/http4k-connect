@@ -7,6 +7,8 @@ import com.natpryce.hamkrest.hasElement
 import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.lessThan
 import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.Failure
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.dynamodb.DynamoDbSource
 import org.http4k.connect.amazon.dynamodb.FakeDynamoDbSource
 import org.http4k.connect.amazon.dynamodb.LocalDynamoDbSource
@@ -36,6 +38,9 @@ import org.http4k.connect.amazon.dynamodb.sample
 import org.http4k.connect.amazon.dynamodb.scan
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
+import org.http4k.core.Method
+import org.http4k.core.Status
+import org.http4k.core.Uri
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -269,6 +274,22 @@ abstract class DynamoDbScanContract : DynamoDbSource {
 
         assertThat(page2.items, equalTo(listOf(item3)))
         assertThat(page2.LastEvaluatedKey, absent())
+    }
+
+    @Test
+    fun `scan on missing index`() {
+        val result = dynamo.scan(
+            TableName = table,
+            IndexName = IndexName.of("missing")
+        )
+        assertThat(result, equalTo(
+            Failure(RemoteFailure(
+                method = Method.POST,
+                uri = Uri.of("/"),
+                status = Status.BAD_REQUEST,
+                message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"The table does not have the specified index: missing"}"""
+            ))
+        ))
     }
 }
 
