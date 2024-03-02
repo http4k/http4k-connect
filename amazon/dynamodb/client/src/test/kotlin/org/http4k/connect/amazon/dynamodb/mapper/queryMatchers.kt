@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.has
 import org.http4k.connect.amazon.dynamodb.action.Query
 import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.Select
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
@@ -29,3 +30,5 @@ fun queryHasConsistentRead(value: Boolean?) =
 
 fun queryHasScanIndexForward(value: Boolean?) =
     has("ScanIndexForward", { query: Query -> query.ScanIndexForward }, equalTo(value))
+
+fun queryHasSelect(select: Select) = has("Select", { query: Query -> query.Select }, equalTo(select))

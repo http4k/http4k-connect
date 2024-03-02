@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Action
@@ -11,23 +12,27 @@ import org.http4k.connect.amazon.dynamodb.DynamoDbAction
 import org.http4k.connect.amazon.dynamodb.action.Query
 import org.http4k.connect.amazon.dynamodb.action.Scan
 import org.http4k.connect.amazon.dynamodb.model.Attribute
+import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.Key
+import org.http4k.connect.amazon.dynamodb.model.Select
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
+import org.http4k.connect.amazon.dynamodb.model.asRequired
 import org.http4k.connect.amazon.dynamodb.model.with
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 
-private val hashKey = Attribute.uuid().required("hash")
-private val sortKey = Attribute.string().required("sort")
+private val hashKeyAttr = Attribute.uuid().required("hash")
+private val sortKeyAttr = Attribute.string().required("sort")
 private val intAttr = Attribute.int().optional("aNumber")
 private val anotherIntAttr = Attribute.int().optional("anotherNumber")
 private val stringAttr = Attribute.string().optional("aString")
@@ -47,8 +52,13 @@ class DynamoDbQueryDslTest {
 
     private val mockDynamoDb = MockDynamoDb()
     private val table =
-        mockDynamoDb.tableMapper<MockDocument, UUID, String>(TableName.of("Table"), hashKey, sortKey)
+        mockDynamoDb.tableMapper<MockDocument, UUID, String>(TableName.of("Table"), hashKeyAttr, sortKeyAttr)
     private val index = table.primaryIndex()
+    private val secondaryIndex = DynamoDbTableMapperSchema.GlobalSecondary<Int, Unit>(
+        indexName = IndexName.of("Secondary"),
+        hashKeyAttribute = intAttr.asRequired(),
+        sortKeyAttribute = null
+    )
 
     private val uuid = UUID(0, 0)
 
@@ -60,7 +70,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan(PageSize = 20, ConsistentRead = true) {
                 filterExpression {
-                    sortKey eq "bar"
+                    sortKeyAttr eq "bar"
                 }
             }.toList()
 
@@ -69,8 +79,8 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("#a = :a"),
-                        scanHasAttributeNames(mapOf("#a" to sortKey.name)),
-                        scanHasAttributeValues(mapOf(":a" to sortKey.asValue("bar"))),
+                        scanHasAttributeNames(mapOf("#a" to sortKeyAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to sortKeyAttr.asValue("bar"))),
                         scanHasLimit(20),
                         scanHasConsistentRead(true)
                     )
@@ -83,7 +93,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    hashKey ne uuid
+                    hashKeyAttr ne uuid
                 }
             }.toList()
 
@@ -92,8 +102,8 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("#a <> :a"),
-                        scanHasAttributeNames(mapOf("#a" to hashKey.name)),
-                        scanHasAttributeValues(mapOf(":a" to hashKey.asValue(uuid))),
+                        scanHasAttributeNames(mapOf("#a" to hashKeyAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to hashKeyAttr.asValue(uuid))),
                         scanHasLimit(null),
                         scanHasConsistentRead(null)
                     )
@@ -106,7 +116,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    sortKey gt "baz"
+                    sortKeyAttr gt "baz"
                 }
             }.toList()
 
@@ -115,8 +125,8 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("#a > :a"),
-                        scanHasAttributeNames(mapOf("#a" to sortKey.name)),
-                        scanHasAttributeValues(mapOf(":a" to sortKey.asValue("baz")))
+                        scanHasAttributeNames(mapOf("#a" to sortKeyAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to sortKeyAttr.asValue("baz")))
                     )
                 )
             )
@@ -127,7 +137,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    sortKey ge "baz"
+                    sortKeyAttr ge "baz"
                 }
             }.toList()
 
@@ -136,8 +146,8 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("#a >= :a"),
-                        scanHasAttributeNames(mapOf("#a" to sortKey.name)),
-                        scanHasAttributeValues(mapOf(":a" to sortKey.asValue("baz")))
+                        scanHasAttributeNames(mapOf("#a" to sortKeyAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to sortKeyAttr.asValue("baz")))
                     )
                 )
             )
@@ -211,7 +221,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    between(intAttr, 17, 23)
+                    intAttr.between(17, 23)
                 }
             }.toList()
 
@@ -307,7 +317,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    sortKey beginsWith "A"
+                    sortKeyAttr beginsWith "A"
                 }
             }.toList()
 
@@ -316,8 +326,8 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("begins_with(#a,:a)"),
-                        scanHasAttributeNames(mapOf("#a" to sortKey.name)),
-                        scanHasAttributeValues(mapOf(":a" to sortKey.asValue("A"))),
+                        scanHasAttributeNames(mapOf("#a" to sortKeyAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to sortKeyAttr.asValue("A"))),
                     )
                 )
             )
@@ -328,7 +338,7 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    sortKey contains "X"
+                    sortKeyAttr contains "X"
                 }
             }.toList()
 
@@ -337,8 +347,8 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("contains(#a,:a)"),
-                        scanHasAttributeNames(mapOf("#a" to sortKey.name)),
-                        scanHasAttributeValues(mapOf(":a" to sortKey.asValue("X")))
+                        scanHasAttributeNames(mapOf("#a" to sortKeyAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to sortKeyAttr.asValue("X")))
                     )
                 )
             )
@@ -349,11 +359,8 @@ class DynamoDbQueryDslTest {
             // when
             index.scan {
                 filterExpression {
-                    ((hashKey ne uuid) and not(sortKey beginsWith "A")) or (attributeExists(intAttr) and between(
-                        intAttr,
-                        100,
-                        200
-                    ))
+                    ((hashKeyAttr ne uuid) and not(sortKeyAttr beginsWith "A")) or
+                        (attributeExists(intAttr) and intAttr.between(100, 200))
                 }
             }.toList()
 
@@ -364,16 +371,16 @@ class DynamoDbQueryDslTest {
                         scanHasFilterExpression("((#a <> :a AND (NOT begins_with(#b,:b))) OR (attribute_exists(#c) AND #d BETWEEN :d1 AND :d2))"),
                         scanHasAttributeNames(
                             mapOf(
-                                "#a" to hashKey.name,
-                                "#b" to sortKey.name,
+                                "#a" to hashKeyAttr.name,
+                                "#b" to sortKeyAttr.name,
                                 "#c" to intAttr.name,
                                 "#d" to intAttr.name
                             )
                         ),
                         scanHasAttributeValues(
                             mapOf(
-                                ":a" to hashKey.asValue(uuid),
-                                ":b" to sortKey.asValue("A"),
+                                ":a" to hashKeyAttr.asValue(uuid),
+                                ":b" to sortKeyAttr.asValue("A"),
                                 ":d1" to intAttr.asValue(100),
                                 ":d2" to intAttr.asValue(200)
                             )
@@ -386,9 +393,13 @@ class DynamoDbQueryDslTest {
         @Test
         fun `scanPage with complex filter`() {
             // when
-            index.scanPage(ExclusiveStartKey = Key(hashKey of uuid, sortKey of "B"), Limit = 20, ConsistentRead = true) {
+            index.scanPage(
+                ExclusiveStartKey = Key(hashKeyAttr of uuid, sortKeyAttr of "B"),
+                Limit = 20,
+                ConsistentRead = true
+            ) {
                 filterExpression {
-                    hashKey eq uuid and (sortKey beginsWith "foo" or attributeExists(intAttr))
+                    hashKeyAttr eq uuid and (sortKeyAttr beginsWith "foo" or attributeExists(intAttr))
                 }
             }
 
@@ -397,9 +408,9 @@ class DynamoDbQueryDslTest {
                 mockDynamoDb.action as? Scan, present(
                     allOf(
                         scanHasFilterExpression("(#a = :a AND (begins_with(#b,:b) OR attribute_exists(#c)))"),
-                        scanHasAttributeNames(mapOf("#a" to hashKey.name, "#b" to sortKey.name, "#c" to intAttr.name)),
-                        scanHasAttributeValues(mapOf(":a" to hashKey.asValue(uuid), ":b" to sortKey.asValue("foo"))),
-                        scanHasExclusiveStartKey(Item().with(hashKey of uuid, sortKey of "B")),
+                        scanHasAttributeNames(mapOf("#a" to hashKeyAttr.name, "#b" to sortKeyAttr.name, "#c" to intAttr.name)),
+                        scanHasAttributeValues(mapOf(":a" to hashKeyAttr.asValue(uuid), ":b" to sortKeyAttr.asValue("foo"))),
+                        scanHasExclusiveStartKey(Item().with(hashKeyAttr of uuid, sortKeyAttr of "B")),
                         scanHasLimit(20),
                         scanHasConsistentRead(true)
                     )
@@ -426,14 +437,48 @@ class DynamoDbQueryDslTest {
                     allOf(
                         queryHasKeyConditionExpression("#a = :a"),
                         queryHasFilterExpression(null),
-                        queryHasAttributeNames(mapOf("#a" to hashKey.name)),
-                        queryHasAttributeValues(mapOf(":a" to hashKey.asValue(uuid))),
+                        queryHasAttributeNames(mapOf("#a" to hashKeyAttr.name)),
+                        queryHasAttributeValues(mapOf(":a" to hashKeyAttr.asValue(uuid))),
                         queryHasScanIndexForward(false),
                         queryHasLimit(10),
                         queryHasConsistentRead(true)
                     )
                 )
             )
+        }
+
+        @Test
+        fun `query on index with hash key condition`() {
+            // when
+            table.index(secondaryIndex).query {
+                keyCondition {
+                    hashKey eq 7
+                }
+            }.toList()
+
+            // then
+            assertThat(
+                mockDynamoDb.action as? Query, present(
+                    allOf(
+                        queryHasKeyConditionExpression("#a = :a"),
+                        queryHasFilterExpression(null),
+                        queryHasAttributeNames(mapOf("#a" to intAttr.name)),
+                        queryHasAttributeValues(mapOf(":a" to intAttr.asValue(7)))
+                    )
+                )
+            )
+        }
+
+        @Test
+        fun `should throw exception when using a sort key condition without defined sort key`() {
+            val ex = assertThrows<IllegalArgumentException> {
+                table.index(secondaryIndex).query {
+                    keyCondition {
+                        (hashKey eq 7) and (sortKey gt Unit)
+                    }
+                }
+            }
+            assertThat(ex.message, equalTo("No sort key specified in the index"))
         }
 
         @Test
@@ -451,8 +496,8 @@ class DynamoDbQueryDslTest {
                     allOf(
                         queryHasKeyConditionExpression("#a = :a"),
                         queryHasFilterExpression(null),
-                        queryHasAttributeNames(mapOf("#a" to hashKey.name)),
-                        queryHasAttributeValues(mapOf(":a" to hashKey.asValue(uuid))),
+                        queryHasAttributeNames(mapOf("#a" to hashKeyAttr.name)),
+                        queryHasAttributeValues(mapOf(":a" to hashKeyAttr.asValue(uuid))),
                         queryHasScanIndexForward(true), // default
                         queryHasLimit(null),
                         queryHasConsistentRead(null)
@@ -476,8 +521,8 @@ class DynamoDbQueryDslTest {
                     allOf(
                         queryHasKeyConditionExpression("#a = :a AND #b < :b"),
                         queryHasFilterExpression(null),
-                        queryHasAttributeNames(mapOf("#a" to hashKey.name, "#b" to sortKey.name)),
-                        queryHasAttributeValues(mapOf(":a" to hashKey.asValue(uuid), ":b" to sortKey.asValue("B")))
+                        queryHasAttributeNames(mapOf("#a" to hashKeyAttr.name, "#b" to sortKeyAttr.name)),
+                        queryHasAttributeValues(mapOf(":a" to hashKeyAttr.asValue(uuid), ":b" to sortKeyAttr.asValue("B")))
                     )
                 )
             )
@@ -488,7 +533,7 @@ class DynamoDbQueryDslTest {
             // when
             index.query {
                 keyCondition {
-                    (hashKey eq uuid) and between(sortKey, "a", "h")
+                    (hashKey eq uuid) and sortKey.between("a", "h")
                 }
             }.toList()
 
@@ -498,12 +543,12 @@ class DynamoDbQueryDslTest {
                     allOf(
                         queryHasKeyConditionExpression("#a = :a AND #b BETWEEN :b1 AND :b2"),
                         queryHasFilterExpression(null),
-                        queryHasAttributeNames(mapOf("#a" to hashKey.name, "#b" to sortKey.name)),
+                        queryHasAttributeNames(mapOf("#a" to hashKeyAttr.name, "#b" to sortKeyAttr.name)),
                         queryHasAttributeValues(
                             mapOf(
-                                ":a" to hashKey.asValue(uuid),
-                                ":b1" to sortKey.asValue("a"),
-                                ":b2" to sortKey.asValue("h")
+                                ":a" to hashKeyAttr.asValue(uuid),
+                                ":b1" to sortKeyAttr.asValue("a"),
+                                ":b2" to sortKeyAttr.asValue("h")
                             )
                         )
                     )
@@ -526,8 +571,8 @@ class DynamoDbQueryDslTest {
                     allOf(
                         queryHasKeyConditionExpression("#a = :a AND begins_with(#b,:b)"),
                         queryHasFilterExpression(null),
-                        queryHasAttributeNames(mapOf("#a" to hashKey.name, "#b" to sortKey.name)),
-                        queryHasAttributeValues(mapOf(":a" to hashKey.asValue(uuid), ":b" to sortKey.asValue("S")))
+                        queryHasAttributeNames(mapOf("#a" to hashKeyAttr.name, "#b" to sortKeyAttr.name)),
+                        queryHasAttributeValues(mapOf(":a" to hashKeyAttr.asValue(uuid), ":b" to sortKeyAttr.asValue("S")))
                     )
                 )
             )
@@ -553,16 +598,16 @@ class DynamoDbQueryDslTest {
                         queryHasFilterExpression("(attribute_not_exists(#c) OR #d = :d)"),
                         queryHasAttributeNames(
                             mapOf(
-                                "#a" to hashKey.name,
-                                "#b" to sortKey.name,
+                                "#a" to hashKeyAttr.name,
+                                "#b" to sortKeyAttr.name,
                                 "#c" to intAttr.name,
                                 "#d" to intAttr.name,
                             )
                         ),
                         queryHasAttributeValues(
                             mapOf(
-                                ":a" to hashKey.asValue(uuid),
-                                ":b" to sortKey.asValue("A"),
+                                ":a" to hashKeyAttr.asValue(uuid),
+                                ":b" to sortKeyAttr.asValue("A"),
                                 ":d" to intAttr.asValue(0)
                             )
                         )
@@ -578,7 +623,7 @@ class DynamoDbQueryDslTest {
                 ScanIndexForward = false,
                 Limit = 50,
                 ConsistentRead = true,
-                ExclusiveStartKey = Key(hashKey of uuid, sortKey of "start")
+                ExclusiveStartKey = Key(hashKeyAttr of uuid, sortKeyAttr of "start")
             ) {
                 keyCondition {
                     (hashKey eq uuid) and (sortKey ge "A")
@@ -596,8 +641,8 @@ class DynamoDbQueryDslTest {
                         queryHasFilterExpression("((attribute_not_exists(#c) OR #d = :d) OR #e <> #f)"),
                         queryHasAttributeNames(
                             mapOf(
-                                "#a" to hashKey.name,
-                                "#b" to sortKey.name,
+                                "#a" to hashKeyAttr.name,
+                                "#b" to sortKeyAttr.name,
                                 "#c" to intAttr.name,
                                 "#d" to intAttr.name,
                                 "#e" to intAttr.name,
@@ -606,15 +651,53 @@ class DynamoDbQueryDslTest {
                         ),
                         queryHasAttributeValues(
                             mapOf(
-                                ":a" to hashKey.asValue(uuid),
-                                ":b" to sortKey.asValue("A"),
+                                ":a" to hashKeyAttr.asValue(uuid),
+                                ":b" to sortKeyAttr.asValue("A"),
                                 ":d" to intAttr.asValue(0)
                             )
                         ),
                         queryHasScanIndexForward(false),
                         queryHasLimit(50),
                         queryHasConsistentRead(true),
-                        queryHasExclusiveStartKey(Item().with(hashKey of uuid, sortKey of "start"))
+                        queryHasExclusiveStartKey(Item().with(hashKeyAttr of uuid, sortKeyAttr of "start"))
+                    )
+                )
+            )
+        }
+
+        @Test
+        fun `count with key condition and filter expression`() {
+            // when
+            index.count {
+                keyCondition {
+                    (hashKey eq uuid) and (sortKey eq "A")
+                }
+                filterExpression {
+                    intAttr gt anotherIntAttr
+                }
+            }
+
+            // then
+            assertThat(
+                mockDynamoDb.action as? Query, present(
+                    allOf(
+                        queryHasKeyConditionExpression("#a = :a AND #b = :b"),
+                        queryHasFilterExpression("#c > #d"),
+                        queryHasAttributeNames(
+                            mapOf(
+                                "#a" to hashKeyAttr.name,
+                                "#b" to sortKeyAttr.name,
+                                "#c" to intAttr.name,
+                                "#d" to anotherIntAttr.name
+                            )
+                        ),
+                        queryHasAttributeValues(
+                            mapOf(
+                                ":a" to hashKeyAttr.asValue(uuid),
+                                ":b" to sortKeyAttr.asValue("A")
+                            )
+                        ),
+                        queryHasSelect(Select.COUNT)
                     )
                 )
             )

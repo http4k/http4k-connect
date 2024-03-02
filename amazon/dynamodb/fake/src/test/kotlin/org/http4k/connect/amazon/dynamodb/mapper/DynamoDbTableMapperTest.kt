@@ -166,7 +166,7 @@ class DynamoDbTableMapperTest {
     fun `custom query with DSL`() {
         val results = tableMapper.index(byOwner).query {
             keyCondition {
-                ownerIdAttr eq owner1
+                hashKey eq owner1
             }
             filterExpression {
                 val idExpr = idAttr eq kratos.id
@@ -183,7 +183,7 @@ class DynamoDbTableMapperTest {
     fun `custom query with filter functions in DSL`() {
         val results = tableMapper.index(byOwner).query {
             keyCondition {
-                ownerIdAttr eq owner1
+                hashKey eq owner1
             }
             filterExpression {
                 nameAttr contains "o"
@@ -274,7 +274,7 @@ class DynamoDbTableMapperTest {
         // page 1 of 2
         val page1 = tableMapper.index(byDob).queryPage(Limit = 1) {
             keyCondition {
-                bornAttr eq smokie.born
+                hashKey eq smokie.born
             }
         }
         assertThat(page1, equalTo(DynamoDbPage(
@@ -294,7 +294,7 @@ class DynamoDbTableMapperTest {
             )
         ) {
             keyCondition {
-                bornAttr eq smokie.born
+                hashKey eq smokie.born
             }
         }
         assertThat(
@@ -408,9 +408,9 @@ class DynamoDbTableMapperTest {
 
     @Test
     fun `count (via query)`() {
-        val totalCount = tableMapper.primaryIndex().count {
+        val totalCount = tableMapper.index(byOwner).count {
             keyCondition {
-                ownerIdAttr eq owner1
+                hashKey eq owner1
             }
         }
         assertThat(totalCount, equalTo(3))

@@ -36,14 +36,43 @@ class FilterExpression(
     val attributeValues: TokensToValues,
 )
 
-class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
+class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
+    private val hashKeyAttribute: Attribute<HashKey>,
+    private val sortKeyAttribute: Attribute<SortKey>?
+) {
+
+    object HashKeyDelegate
+
+    internal val HashKeyDelegate.name get() = hashKeyAttribute.name
+    internal fun HashKeyDelegate.asValue(value: HashKey) = hashKeyAttribute.asValue(value)
+
+    object SortKeyDelegate
+
+    private val requiredSortKeyAttribute get() = requireNotNull(sortKeyAttribute) { "No sort key specified in the index" }
+    internal val SortKeyDelegate.name get() = requiredSortKeyAttribute.name
+    internal fun SortKeyDelegate.asValue(value: SortKey) = requiredSortKeyAttribute.asValue(value)
 
     /**
      * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
      */
     inner class KeyConditionBuilder {
 
+        val hashKey = HashKeyDelegate
+        val sortKey = SortKeyDelegate
+
+        @Deprecated(
+            "Use the special value 'hashKey' in place of the hash key attribute",
+            replaceWith = ReplaceWith("hashKey eq value")
+        )
         infix fun Attribute<HashKey>.eq(value: HashKey) = nextAttributeName().let { attributeName ->
+            object : PartitionKeyCondition<HashKey, SortKey> {
+                override val expression = "#$attributeName = :$attributeName"
+                override val attributeNames = mapOf("#$attributeName" to name)
+                override val attributeValues = mapOf(":$attributeName" to asValue(value))
+            }
+        }
+
+        infix fun HashKeyDelegate.eq(value: HashKey) = nextAttributeName().let { attributeName ->
             object : PartitionKeyCondition<HashKey, SortKey> {
                 override val expression = "#$attributeName = :$attributeName"
                 override val attributeNames = mapOf("#$attributeName" to name)
@@ -70,11 +99,48 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
                 )
             }
 
-        infix fun Attribute<SortKey>.lt(value: SortKey) = sortKeyOperator("<", value)
-        infix fun Attribute<SortKey>.le(value: SortKey) = sortKeyOperator("<=", value)
-        infix fun Attribute<SortKey>.gt(value: SortKey) = sortKeyOperator(">", value)
-        infix fun Attribute<SortKey>.ge(value: SortKey) = sortKeyOperator(">=", value)
+        private fun SortKeyDelegate.sortKeyOperator(op: String, value: SortKey) =
+            nextAttributeName().let { attributeName ->
+                sortKeyCondition(
+                    "#$attributeName $op :$attributeName",
+                    mapOf("#$attributeName" to name),
+                    mapOf(":$attributeName" to asValue(value))
+                )
+            }
 
+        @Deprecated(
+            "Use the special value 'sortKey' in place of the sort key attribute",
+            replaceWith = ReplaceWith("sortKey lt value")
+        )
+        infix fun Attribute<SortKey>.lt(value: SortKey) = sortKeyOperator("<", value)
+
+        @Deprecated(
+            "Use the special value 'sortKey' in place of the sort key attribute",
+            replaceWith = ReplaceWith("sortKey le value")
+        )
+        infix fun Attribute<SortKey>.le(value: SortKey) = sortKeyOperator("<=", value)
+
+        @Deprecated(
+            "Use the special value 'sortKey' in place of the sort key attribute",
+            replaceWith = ReplaceWith("sortKey gt value")
+        )
+        infix fun Attribute<SortKey>.gt(value: SortKey) = sortKeyOperator(">", value)
+
+        @Deprecated(
+            "Use the special value 'sortKey' in place of the sort key attribute",
+            replaceWith = ReplaceWith("sortKey ge value")
+        )
+        infix fun Attribute<SortKey>.ge(value: SortKey) = sortKeyOperator(">=", value)
+        infix fun SortKeyDelegate.eq(value: SortKey) = sortKeyOperator("=", value)
+        infix fun SortKeyDelegate.lt(value: SortKey) = sortKeyOperator("<", value)
+        infix fun SortKeyDelegate.le(value: SortKey) = sortKeyOperator("<=", value)
+        infix fun SortKeyDelegate.gt(value: SortKey) = sortKeyOperator(">", value)
+        infix fun SortKeyDelegate.ge(value: SortKey) = sortKeyOperator(">=", value)
+
+        @Deprecated(
+            "Use the special value 'sortKey' in place of the sort key attribute",
+            replaceWith = ReplaceWith("sortKey.between(value1, value2)")
+        )
         fun between(attr: Attribute<SortKey>, value1: SortKey, value2: SortKey) =
             nextAttributeName().let { attributeName ->
                 sortKeyCondition(
@@ -84,6 +150,22 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
                 )
             }
 
+        fun SortKeyDelegate.between(value1: SortKey, value2: SortKey) =
+            nextAttributeName().let { attributeName ->
+                sortKeyCondition(
+                    "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
+                    mapOf("#$attributeName" to name),
+                    mapOf(
+                        ":${attributeName}1" to asValue(value1),
+                        ":${attributeName}2" to asValue(value2)
+                    )
+                )
+            }
+
+        @Deprecated(
+            "Use the special value 'sortKey' in place of the sort key attribute",
+            replaceWith = ReplaceWith("sortKey beginsWith value")
+        )
         infix fun Attribute<SortKey>.beginsWith(value: SortKey) = nextAttributeName().let { attributeName ->
             sortKeyCondition(
                 "begins_with(#$attributeName,:$attributeName)",
@@ -91,6 +173,15 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
                 mapOf(":$attributeName" to asValue(value))
             )
         }
+
+        infix fun SortKeyDelegate.beginsWith(value: SortKey) =
+            nextAttributeName().let { attributeName ->
+                sortKeyCondition(
+                    "begins_with(#$attributeName,:$attributeName)",
+                    mapOf("#$attributeName" to name),
+                    mapOf(":$attributeName" to asValue(value))
+                )
+            }
 
         infix fun PartitionKeyCondition<HashKey, SortKey>.and(secondary: SortKeyCondition<HashKey, SortKey>?): CombinedKeyCondition<HashKey, SortKey> =
             let {
@@ -123,10 +214,10 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
             val attributeName1 = nextAttributeName()
             val attributeName2 = nextAttributeName()
             return FilterExpression(
-                    "#$attributeName1 $op #$attributeName2",
-                    mapOf("#$attributeName1" to name, "#$attributeName2" to other.name),
-                    emptyMap()
-                )
+                "#$attributeName1 $op #$attributeName2",
+                mapOf("#$attributeName1" to name, "#$attributeName2" to other.name),
+                emptyMap()
+            )
         }
 
         infix fun <T> Attribute<T>.eq(value: T) = filterOperator("=", value)
@@ -142,11 +233,15 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
         infix fun <T> Attribute<T>.ge(value: T) = filterOperator(">=", value)
         infix fun <T> Attribute<T>.ge(other: Attribute<T>) = filterOperator(">=", other)
 
-        fun <T> between(attr: Attribute<T>, value1: T, value2: T) = nextAttributeName().let { attributeName ->
+        @Deprecated("Use attribute.between(value1, value2)", replaceWith = ReplaceWith("attr.between(value1, value2)"))
+        @JvmName("deprecatedBetween")
+        fun <T> between(attr: Attribute<T>, value1: T, value2: T) = attr.between(value1, value2)
+
+        fun <T> Attribute<T>.between(value1: T, value2: T) = nextAttributeName().let { attributeName ->
             FilterExpression(
                 "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
-                mapOf("#$attributeName" to attr.name),
-                mapOf(":${attributeName}1" to attr.asValue(value1), ":${attributeName}2" to attr.asValue(value2))
+                mapOf("#$attributeName" to name),
+                mapOf(":${attributeName}1" to asValue(value1), ":${attributeName}2" to asValue(value2))
             )
         }
 
@@ -261,8 +356,11 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
     internal val filterExpression: FilterExpression? get() = _filterExpression
 }
 
-class DynamoDbScanBuilder<HashKey : Any, SortKey : Any> {
-    private val delegate = DynamoDbScanAndQueryBuilder<HashKey, SortKey>()
+class DynamoDbScanBuilder<HashKey : Any, SortKey : Any>(
+    hashKeyAttribute: Attribute<HashKey>,
+    sortKeyAttribute: Attribute<SortKey>?
+) {
+    private val delegate = DynamoDbScanAndQueryBuilder(hashKeyAttribute, sortKeyAttribute)
 
     fun filterExpression(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.FilterExpressionBuilder.() -> FilterExpression?) =
         delegate.filterExpression(block)
@@ -274,9 +372,12 @@ class DynamoDbScanBuilder<HashKey : Any, SortKey : Any> {
     )
 }
 
-class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any> {
+class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(
+    hashKeyAttribute: Attribute<HashKey>,
+    sortKeyAttribute: Attribute<SortKey>?
+) {
 
-    private val delegate = DynamoDbScanAndQueryBuilder<HashKey, SortKey>()
+    private val delegate = DynamoDbScanAndQueryBuilder(hashKeyAttribute, sortKeyAttribute)
 
     fun keyCondition(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.KeyConditionBuilder.() -> CombinedKeyCondition<HashKey, SortKey>) =
         delegate.keyCondition(block)
@@ -309,7 +410,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
 ): Sequence<Document> {
-    val filter = DynamoDbScanBuilder<HashKey, SortKey>().apply(block).build()
+    val filter = DynamoDbScanBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
     return scan(
         FilterExpression = filter.filterExpression,
         ExpressionAttributeNames = filter.expressionAttributeNames,
@@ -325,7 +426,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
 ): DynamoDbPage<Document> {
-    val filter = DynamoDbScanBuilder<HashKey, SortKey>().apply(block).build()
+    val filter = DynamoDbScanBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
     return scanPage(
         FilterExpression = filter.filterExpression,
         ExpressionAttributeNames = filter.expressionAttributeNames,
@@ -342,7 +443,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
 ): Sequence<Document> {
-    val query = DynamoDbQueryBuilder<HashKey, SortKey>().apply(block).build()
+    val query = DynamoDbQueryBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
     return query(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
@@ -361,7 +462,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ExclusiveStartKey: Key? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
 ): DynamoDbPage<Document> {
-    val query = DynamoDbQueryBuilder<HashKey, SortKey>().apply(block).build()
+    val query = DynamoDbQueryBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
     return queryPage(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
@@ -378,7 +479,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
 ): Int {
-    val query = DynamoDbQueryBuilder<HashKey, SortKey>().apply(block).build()
+    val query = DynamoDbQueryBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
     return count(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
