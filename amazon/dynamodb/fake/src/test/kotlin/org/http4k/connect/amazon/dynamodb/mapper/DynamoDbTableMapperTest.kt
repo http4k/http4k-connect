@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.dynamodb.model.AttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.DynamoDataType
 import org.http4k.connect.amazon.dynamodb.model.IndexName
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.compound
@@ -210,19 +211,29 @@ class DynamoDbTableMapperTest {
             tableMapper.index(byOwner).queryPage(owner1, Limit = 2), equalTo(
                 DynamoDbPage(
                     items = listOf(athena, kratos),
-                    nextHashKey = owner1,
-                    nextSortKey = kratos.name
+                    lastEvaluatedKey = Key(
+                        idAttr of kratos.id,
+                        ownerIdAttr of kratos.ownerId,
+                        nameAttr of kratos.name
+                    )
                 )
             )
         )
 
         // page 2 of 2
         assertThat(
-            tableMapper.index(byOwner).queryPage(owner1, Limit = 2, ExclusiveStartKey = kratos.name), equalTo(
+            tableMapper.index(byOwner).queryPage(
+                HashKey = owner1,
+                Limit = 2,
+                ExclusiveStartKey = Key(
+                    idAttr of kratos.id,
+                    ownerIdAttr of kratos.ownerId,
+                    nameAttr of kratos.name
+                )
+            ), equalTo(
                 DynamoDbPage(
                     items = listOf(toggles),
-                    nextHashKey = null,
-                    nextSortKey = null
+                    lastEvaluatedKey = null
                 )
             )
         )
@@ -237,8 +248,10 @@ class DynamoDbTableMapperTest {
             Limit = 1
         ), equalTo(DynamoDbPage(
             items = listOf(smokie),
-            nextHashKey = smokie.born,
-            nextSortKey = smokie.id
+            lastEvaluatedKey = Key(
+                idAttr of smokie.id,
+                bornAttr of smokie.born
+            )
         )))
 
         // page 2 of 2
@@ -246,12 +259,13 @@ class DynamoDbTableMapperTest {
             KeyConditionExpression = "$bornAttr = :val1",
             ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born)),
             Limit = 1,
-            ExclusiveStartHashKey = smokie.born,
-            ExclusiveStartSortKey = smokie.id
+            ExclusiveStartKey = Key(
+                idAttr of smokie.id,
+                bornAttr of smokie.born
+            )
         ), equalTo(DynamoDbPage(
             items = listOf(bandit),
-            nextHashKey = null,
-            nextSortKey = null
+            lastEvaluatedKey = null
         )))
     }
 
@@ -263,15 +277,21 @@ class DynamoDbTableMapperTest {
                 bornAttr eq smokie.born
             }
         }
-        assertThat(
-            page1,
-            equalTo(DynamoDbPage(items = listOf(smokie), nextHashKey = smokie.born, nextSortKey = smokie.id))
-        )
+        assertThat(page1, equalTo(DynamoDbPage(
+            items = listOf(smokie),
+            lastEvaluatedKey = Key(
+                idAttr of smokie.id,
+                bornAttr of smokie.born
+            )
+        )))
 
         // page 2 of 2
         val page2 = tableMapper.index(byDob).queryPage(
             Limit = 1,
-            ExclusiveStartKey = smokie.id
+            ExclusiveStartKey = Key(
+                idAttr of smokie.id,
+                bornAttr of smokie.born
+            )
         ) {
             keyCondition {
                 bornAttr eq smokie.born
@@ -279,7 +299,7 @@ class DynamoDbTableMapperTest {
         }
         assertThat(
             page2,
-            equalTo(DynamoDbPage(items = listOf(bandit), nextHashKey = null, nextSortKey = null))
+            equalTo(DynamoDbPage(items = listOf(bandit), lastEvaluatedKey = null))
         )
     }
 
@@ -290,19 +310,28 @@ class DynamoDbTableMapperTest {
             tableMapper.index(byOwner).scanPage(Limit = 3), equalTo(
                 DynamoDbPage(
                     items = listOf(bandit, smokie, athena),
-                    nextHashKey = owner1,
-                    nextSortKey = athena.name
+                    lastEvaluatedKey = Key(
+                        idAttr of athena.id,
+                        ownerIdAttr of athena.ownerId,
+                        nameAttr of athena.name
+                    )
                 )
             )
         )
 
         // page 2 of 2
         assertThat(
-            tableMapper.index(byOwner).scanPage(Limit = 3, ExclusiveStartKey = owner1 to athena.name), equalTo(
+            tableMapper.index(byOwner).scanPage(
+                Limit = 3,
+                ExclusiveStartKey = Key(
+                    idAttr of athena.id,
+                    ownerIdAttr of athena.ownerId,
+                    nameAttr of athena.name
+                )
+            ), equalTo(
                 DynamoDbPage(
                     items = listOf(kratos, toggles),
-                    nextHashKey = null,
-                    nextSortKey = null
+                    lastEvaluatedKey = null
                 )
             )
         )
@@ -315,19 +344,24 @@ class DynamoDbTableMapperTest {
             tableMapper.primaryIndex().scanPage(Limit = 3), equalTo(
                 DynamoDbPage(
                     items = listOf(smokie, kratos, bandit),
-                    nextHashKey = bandit.id,
-                    nextSortKey = null
+                    lastEvaluatedKey = Key(
+                        idAttr of bandit.id
+                    )
                 )
             )
         )
 
         // page 2 of 2
         assertThat(
-            tableMapper.primaryIndex().scanPage(Limit = 3, ExclusiveStartKey = bandit.id to null), equalTo(
+            tableMapper.primaryIndex().scanPage(
+                Limit = 3,
+                ExclusiveStartKey = Key(
+                    idAttr of bandit.id
+                )
+            ), equalTo(
                 DynamoDbPage(
                     items = listOf(toggles, athena),
-                    nextHashKey = null,
-                    nextSortKey = null
+                    lastEvaluatedKey = null
                 )
             )
         )

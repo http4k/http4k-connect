@@ -2,15 +2,15 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
-internal class DynamoDbQuery<HashKey : Any>(
+internal class DynamoDbQuery(
     val keyConditionExpression: String?,
     val filterExpression: String?,
     val expressionAttributeNames: TokensToNames?,
-    val expressionAttributeValues: TokensToValues?,
-    val exclusiveStartHashKey: HashKey?
+    val expressionAttributeValues: TokensToValues?
 )
 
 internal class DynamoDbFilter(
@@ -23,7 +23,6 @@ interface KeyCondition<HashKey : Any, SortKey : Any> {
     val expression: String
     val attributeNames: TokensToNames
     val attributeValues: TokensToValues
-    val exclusiveStartHashKey: HashKey?
 }
 
 interface SortKeyCondition<HashKey : Any, SortKey : Any> : KeyCondition<HashKey, SortKey>
@@ -49,7 +48,6 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
                 override val expression = "#$attributeName = :$attributeName"
                 override val attributeNames = mapOf("#$attributeName" to name)
                 override val attributeValues = mapOf(":$attributeName" to asValue(value))
-                override val exclusiveStartHashKey = value
             }
         }
 
@@ -61,7 +59,6 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
             override val expression = expr
             override val attributeNames = attrNames
             override val attributeValues = attrValues
-            override val exclusiveStartHashKey = null
         }
 
         private fun Attribute<SortKey>.sortKeyOperator(op: String, value: SortKey) =
@@ -104,7 +101,6 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any> {
                         override val expression = "${it.expression} AND ${secondary.expression}"
                         override val attributeNames = it.attributeNames + secondary.attributeNames
                         override val attributeValues = it.attributeValues + secondary.attributeValues
-                        override val exclusiveStartHashKey = it.exclusiveStartHashKey
                     }
                 }
             }
@@ -304,8 +300,7 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any> {
         expressionAttributeValues = union(
             delegate.keyCondition?.attributeValues,
             delegate.filterExpression?.attributeValues
-        ),
-        exclusiveStartHashKey = delegate.keyCondition?.exclusiveStartHashKey
+        )
     )
 }
 
@@ -325,11 +320,11 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
 }
 
 fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.scanPage(
-    ExclusiveStartKey: Pair<HashKey, SortKey?>? = null,
+    ExclusiveStartKey: Key? = null,
     Limit: Int? = null,
     ConsistentRead: Boolean? = null,
     block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
-): DynamoDbPage<Document, HashKey, SortKey> {
+): DynamoDbPage<Document> {
     val filter = DynamoDbScanBuilder<HashKey, SortKey>().apply(block).build()
     return scanPage(
         FilterExpression = filter.filterExpression,
@@ -363,17 +358,16 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ScanIndexForward: Boolean = true,
     Limit: Int? = null,
     ConsistentRead: Boolean? = null,
-    ExclusiveStartKey: SortKey? = null,
+    ExclusiveStartKey: Key? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
-): DynamoDbPage<Document, HashKey, SortKey> {
+): DynamoDbPage<Document> {
     val query = DynamoDbQueryBuilder<HashKey, SortKey>().apply(block).build()
     return queryPage(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
         ExpressionAttributeNames = query.expressionAttributeNames,
         ExpressionAttributeValues = query.expressionAttributeValues,
-        ExclusiveStartHashKey = query.exclusiveStartHashKey,
-        ExclusiveStartSortKey = ExclusiveStartKey,
+        ExclusiveStartKey = ExclusiveStartKey,
         ScanIndexForward = ScanIndexForward,
         Limit = Limit,
         ConsistentRead = ConsistentRead

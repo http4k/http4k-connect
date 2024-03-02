@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
-data class DynamoDbPage<Document : Any, HashKey : Any, SortKey : Any>(
+import org.http4k.connect.amazon.dynamodb.model.Key
+
+data class DynamoDbPage<Document : Any>(
     val items: List<Document>,
-    val nextHashKey: HashKey?,
-    val nextSortKey: SortKey?
+    val lastEvaluatedKey: Key?
 )
