@@ -40,17 +40,8 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
     private val hashKeyAttribute: Attribute<HashKey>,
     private val sortKeyAttribute: Attribute<SortKey>?
 ) {
-
     object HashKeyDelegate
-
-    internal val HashKeyDelegate.name get() = hashKeyAttribute.name
-    internal fun HashKeyDelegate.asValue(value: HashKey) = hashKeyAttribute.asValue(value)
-
     object SortKeyDelegate
-
-    private val requiredSortKeyAttribute get() = requireNotNull(sortKeyAttribute) { "No sort key specified in the index" }
-    internal val SortKeyDelegate.name get() = requiredSortKeyAttribute.name
-    internal fun SortKeyDelegate.asValue(value: SortKey) = requiredSortKeyAttribute.asValue(value)
 
     /**
      * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
@@ -75,8 +66,8 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
         infix fun HashKeyDelegate.eq(value: HashKey) = nextAttributeName().let { attributeName ->
             object : PartitionKeyCondition<HashKey, SortKey> {
                 override val expression = "#$attributeName = :$attributeName"
-                override val attributeNames = mapOf("#$attributeName" to name)
-                override val attributeValues = mapOf(":$attributeName" to asValue(value))
+                override val attributeNames = mapOf("#$attributeName" to hashKeyAttribute.name)
+                override val attributeValues = mapOf(":$attributeName" to hashKeyAttribute.asValue(value))
             }
         }
 
@@ -99,13 +90,15 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
                 )
             }
 
-        private fun SortKeyDelegate.sortKeyOperator(op: String, value: SortKey) =
-            nextAttributeName().let { attributeName ->
-                sortKeyCondition(
-                    "#$attributeName $op :$attributeName",
-                    mapOf("#$attributeName" to name),
-                    mapOf(":$attributeName" to asValue(value))
-                )
+        private fun SortKeyDelegate.sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+            sortKeyAttribute?.let {
+                nextAttributeName().let { attributeName ->
+                    sortKeyCondition(
+                        "#$attributeName $op :$attributeName",
+                        mapOf("#$attributeName" to sortKeyAttribute.name),
+                        mapOf(":$attributeName" to sortKeyAttribute.asValue(value))
+                    )
+                }
             }
 
         @Deprecated(
@@ -150,16 +143,18 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
                 )
             }
 
-        fun SortKeyDelegate.between(value1: SortKey, value2: SortKey) =
-            nextAttributeName().let { attributeName ->
-                sortKeyCondition(
-                    "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
-                    mapOf("#$attributeName" to name),
-                    mapOf(
-                        ":${attributeName}1" to asValue(value1),
-                        ":${attributeName}2" to asValue(value2)
+        fun SortKeyDelegate.between(value1: SortKey, value2: SortKey): SortKeyCondition<HashKey, SortKey>? =
+            sortKeyAttribute?.let {
+                nextAttributeName().let { attributeName ->
+                    sortKeyCondition(
+                        "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
+                        mapOf("#$attributeName" to sortKeyAttribute.name),
+                        mapOf(
+                            ":${attributeName}1" to sortKeyAttribute.asValue(value1),
+                            ":${attributeName}2" to sortKeyAttribute.asValue(value2)
+                        )
                     )
-                )
+                }
             }
 
         @Deprecated(
@@ -174,13 +169,15 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
             )
         }
 
-        infix fun SortKeyDelegate.beginsWith(value: SortKey) =
-            nextAttributeName().let { attributeName ->
-                sortKeyCondition(
-                    "begins_with(#$attributeName,:$attributeName)",
-                    mapOf("#$attributeName" to name),
-                    mapOf(":$attributeName" to asValue(value))
-                )
+        infix fun SortKeyDelegate.beginsWith(value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+            sortKeyAttribute?.let {
+                nextAttributeName().let { attributeName ->
+                    sortKeyCondition(
+                        "begins_with(#$attributeName,:$attributeName)",
+                        mapOf("#$attributeName" to sortKeyAttribute.name),
+                        mapOf(":$attributeName" to sortKeyAttribute.asValue(value))
+                    )
+                }
             }
 
         infix fun PartitionKeyCondition<HashKey, SortKey>.and(secondary: SortKeyCondition<HashKey, SortKey>?): CombinedKeyCondition<HashKey, SortKey> =

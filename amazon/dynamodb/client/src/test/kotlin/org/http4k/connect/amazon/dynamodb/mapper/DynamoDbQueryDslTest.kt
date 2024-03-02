@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Result
 import org.http4k.connect.Action
@@ -25,7 +24,6 @@ import org.http4k.core.Response
 import org.http4k.core.Status
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -470,18 +468,6 @@ class DynamoDbQueryDslTest {
         }
 
         @Test
-        fun `should throw exception when using a sort key condition without defined sort key`() {
-            val ex = assertThrows<IllegalArgumentException> {
-                table.index(secondaryIndex).query {
-                    keyCondition {
-                        (hashKey eq 7) and (sortKey gt Unit)
-                    }
-                }
-            }
-            assertThat(ex.message, equalTo("No sort key specified in the index"))
-        }
-
-        @Test
         fun `query with hash key and missing sort key condition`() {
             // when
             index.query {
@@ -501,6 +487,28 @@ class DynamoDbQueryDslTest {
                         queryHasScanIndexForward(true), // default
                         queryHasLimit(null),
                         queryHasConsistentRead(null)
+                    )
+                )
+            )
+        }
+
+        @Test
+        fun `query in index with hash key and ignored sort key condition (because of missing sort key)`() {
+            // when
+            table.index(secondaryIndex).query {
+                keyCondition {
+                    (hashKey eq 7) and (sortKey gt Unit)
+                }
+            }.toList()
+
+            // then
+            assertThat(
+                mockDynamoDb.action as? Query, present(
+                    allOf(
+                        queryHasKeyConditionExpression("#a = :a"),
+                        queryHasFilterExpression(null),
+                        queryHasAttributeNames(mapOf("#a" to intAttr.name)),
+                        queryHasAttributeValues(mapOf(":a" to intAttr.asValue(7)))
                     )
                 )
             )
