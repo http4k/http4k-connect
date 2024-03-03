@@ -40,16 +40,16 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
     private val hashKeyAttribute: Attribute<HashKey>,
     private val sortKeyAttribute: Attribute<SortKey>?
 ) {
-    object HashKeyDelegate
-    object SortKeyDelegate
+    object HashKeySubstitute
+    object SortKeySubstitute
 
     /**
      * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
      */
     inner class KeyConditionBuilder {
 
-        val hashKey = HashKeyDelegate
-        val sortKey = SortKeyDelegate
+        val hashKey = HashKeySubstitute
+        val sortKey = SortKeySubstitute
 
         @Deprecated(
             "Use the special value 'hashKey' in place of the hash key attribute",
@@ -63,7 +63,7 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
             }
         }
 
-        infix fun HashKeyDelegate.eq(value: HashKey) = nextAttributeName().let { attributeName ->
+        infix fun HashKeySubstitute.eq(value: HashKey) = nextAttributeName().let { attributeName ->
             object : PartitionKeyCondition<HashKey, SortKey> {
                 override val expression = "#$attributeName = :$attributeName"
                 override val attributeNames = mapOf("#$attributeName" to hashKeyAttribute.name)
@@ -90,7 +90,7 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
                 )
             }
 
-        private fun SortKeyDelegate.sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        private fun SortKeySubstitute.sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
             sortKeyAttribute?.let {
                 nextAttributeName().let { attributeName ->
                     sortKeyCondition(
@@ -124,11 +124,11 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
             replaceWith = ReplaceWith("sortKey ge value")
         )
         infix fun Attribute<SortKey>.ge(value: SortKey) = sortKeyOperator(">=", value)
-        infix fun SortKeyDelegate.eq(value: SortKey) = sortKeyOperator("=", value)
-        infix fun SortKeyDelegate.lt(value: SortKey) = sortKeyOperator("<", value)
-        infix fun SortKeyDelegate.le(value: SortKey) = sortKeyOperator("<=", value)
-        infix fun SortKeyDelegate.gt(value: SortKey) = sortKeyOperator(">", value)
-        infix fun SortKeyDelegate.ge(value: SortKey) = sortKeyOperator(">=", value)
+        infix fun SortKeySubstitute.eq(value: SortKey) = sortKeyOperator("=", value)
+        infix fun SortKeySubstitute.lt(value: SortKey) = sortKeyOperator("<", value)
+        infix fun SortKeySubstitute.le(value: SortKey) = sortKeyOperator("<=", value)
+        infix fun SortKeySubstitute.gt(value: SortKey) = sortKeyOperator(">", value)
+        infix fun SortKeySubstitute.ge(value: SortKey) = sortKeyOperator(">=", value)
 
         @Deprecated(
             "Use the special value 'sortKey' in place of the sort key attribute",
@@ -143,7 +143,7 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
                 )
             }
 
-        fun SortKeyDelegate.between(value1: SortKey, value2: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        fun SortKeySubstitute.between(value1: SortKey, value2: SortKey): SortKeyCondition<HashKey, SortKey>? =
             sortKeyAttribute?.let {
                 nextAttributeName().let { attributeName ->
                     sortKeyCondition(
@@ -169,7 +169,7 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
             )
         }
 
-        infix fun SortKeyDelegate.beginsWith(value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        infix fun SortKeySubstitute.beginsWith(value: SortKey): SortKeyCondition<HashKey, SortKey>? =
             sortKeyAttribute?.let {
                 nextAttributeName().let { attributeName ->
                     sortKeyCondition(
