@@ -353,11 +353,8 @@ class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
     internal val filterExpression: FilterExpression? get() = _filterExpression
 }
 
-class DynamoDbScanBuilder<HashKey : Any, SortKey : Any>(
-    hashKeyAttribute: Attribute<HashKey>,
-    sortKeyAttribute: Attribute<SortKey>?
-) {
-    private val delegate = DynamoDbScanAndQueryBuilder(hashKeyAttribute, sortKeyAttribute)
+class DynamoDbScanBuilder<HashKey : Any, SortKey : Any>(schema: DynamoDbTableMapperSchema<HashKey, SortKey>) {
+    private val delegate = DynamoDbScanAndQueryBuilder(schema.hashKeyAttribute, schema.sortKeyAttribute)
 
     fun filterExpression(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.FilterExpressionBuilder.() -> FilterExpression?) =
         delegate.filterExpression(block)
@@ -369,12 +366,9 @@ class DynamoDbScanBuilder<HashKey : Any, SortKey : Any>(
     )
 }
 
-class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(
-    hashKeyAttribute: Attribute<HashKey>,
-    sortKeyAttribute: Attribute<SortKey>?
-) {
+class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(schema: DynamoDbTableMapperSchema<HashKey, SortKey>) {
 
-    private val delegate = DynamoDbScanAndQueryBuilder(hashKeyAttribute, sortKeyAttribute)
+    private val delegate = DynamoDbScanAndQueryBuilder(schema.hashKeyAttribute, schema.sortKeyAttribute)
 
     fun keyCondition(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.KeyConditionBuilder.() -> CombinedKeyCondition<HashKey, SortKey>) =
         delegate.keyCondition(block)
@@ -407,7 +401,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
 ): Sequence<Document> {
-    val filter = DynamoDbScanBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
+    val filter = DynamoDbScanBuilder(schema).apply(block).build()
     return scan(
         FilterExpression = filter.filterExpression,
         ExpressionAttributeNames = filter.expressionAttributeNames,
@@ -423,7 +417,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
 ): DynamoDbPage<Document> {
-    val filter = DynamoDbScanBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
+    val filter = DynamoDbScanBuilder(schema).apply(block).build()
     return scanPage(
         FilterExpression = filter.filterExpression,
         ExpressionAttributeNames = filter.expressionAttributeNames,
@@ -440,7 +434,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
 ): Sequence<Document> {
-    val query = DynamoDbQueryBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
+    val query = DynamoDbQueryBuilder(schema).apply(block).build()
     return query(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
@@ -459,7 +453,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ExclusiveStartKey: Key? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
 ): DynamoDbPage<Document> {
-    val query = DynamoDbQueryBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
+    val query = DynamoDbQueryBuilder(schema).apply(block).build()
     return queryPage(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
@@ -476,7 +470,7 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ConsistentRead: Boolean? = null,
     block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
 ): Int {
-    val query = DynamoDbQueryBuilder(hashKeyAttribute, sortKeyAttribute).apply(block).build()
+    val query = DynamoDbQueryBuilder(schema).apply(block).build()
     return count(
         KeyConditionExpression = query.keyConditionExpression,
         FilterExpression = query.filterExpression,
