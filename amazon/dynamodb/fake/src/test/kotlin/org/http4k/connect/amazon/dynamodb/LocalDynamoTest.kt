@@ -9,7 +9,6 @@ import org.http4k.filter.ClientFilters.SetBaseUriFrom
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.utility.DockerImageName.parse
 import java.time.Duration
 
 @Testcontainers
@@ -24,8 +23,7 @@ class LocalDynamoTest : DynamoDbContract(Duration.ofSeconds(1)) {
     }
 
     @Container
-    val dynamo =
-        GenericContainer(parse("amazon/dynamodb-local:1.15.0")).withExposedPorts(8000)
+    val dynamo = GenericContainer(dynamoDbLocalDockerImageName).withExposedPorts(8000)
 
     override val aws = fakeAwsEnvironment
 }
