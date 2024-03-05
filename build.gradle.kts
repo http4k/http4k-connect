@@ -104,43 +104,56 @@ allprojects {
         testImplementation("org.testcontainers:testcontainers")
         testImplementation("dev.forkhandles:mock4k")
 
-        if (project.name.endsWith("core-fake")) {
-            api(project(":http4k-connect-core"))
-        } else if (project.name.endsWith("fake")) {
-            api(project(":http4k-connect-core-fake"))
-            api(project(":${project.name.substring(0, project.name.length - 5)}"))
-            testImplementation(
-                project(
-                    path = ":${project.name.substring(0, project.name.length - 5)}",
-                    configuration = "testArtifacts"
-                )
-            )
-            testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
-        } else if (project.name.startsWith("http4k-connect-storage-core")) {
-            // bom - no code
-        } else if (project.name.startsWith("http4k-connect-storage")) {
-            api(project(":http4k-connect-storage-core"))
-            testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
-            testImplementation(project(path = ":http4k-connect-storage-core", configuration = "testArtifacts"))
-        } else if (project.name == "http4k-connect") {
-            rootProject.subprojects.forEach {
-                testImplementation(project(it.name))
+        when {
+            project.name.endsWith("core-fake") -> {
+                api(project(":http4k-connect-core"))
             }
-        } else if (project.name == "http4k-connect-bom") {
-            // bom - no code
-        } else if (project.name == "http4k-connect-kapt-generator") {
-            api(project(":http4k-connect-core"))
-        } else if (project.name == "http4k-connect-ksp-generator") {
-            api(project(":http4k-connect-core"))
-            kspTest(project(":http4k-connect-ksp-generator"))
-        } else if (project.name != "http4k-connect-core") {
-            api(Http4k.cloudnative)
-            api(project(":http4k-connect-core"))
-            ksp(project(":http4k-connect-ksp-generator"))
-            ksp(Libs.se_ansman_kotshi_compiler)
+            project.name.endsWith("fake") -> {
+                api(project(":http4k-connect-core-fake"))
+                api(project(":${project.name.substring(0, project.name.length - 5)}"))
+                testImplementation(
+                    project(
+                        path = ":${project.name.substring(0, project.name.length - 5)}",
+                        configuration = "testArtifacts"
+                    )
+                )
+                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+            }
+            project.name.startsWith("http4k-connect-storage-core") -> {
+                // bom - no code
+            }
+            project.name.startsWith("http4k-connect-langchain") -> {
+                api("dev.langchain4j:langchain4j-core:_")
+            }
+            project.name.startsWith("http4k-connect-storage") -> {
+                api(project(":http4k-connect-storage-core"))
+                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+                testImplementation(project(path = ":http4k-connect-storage-core", configuration = "testArtifacts"))
+            }
+            project.name == "http4k-connect" -> {
+                rootProject.subprojects.forEach {
+                    testImplementation(project(it.name))
+                }
+            }
+            project.name == "http4k-connect-bom" -> {
+                // bom - no code
+            }
+            project.name == "http4k-connect-kapt-generator" -> {
+                api(project(":http4k-connect-core"))
+            }
+            project.name == "http4k-connect-ksp-generator" -> {
+                api(project(":http4k-connect-core"))
+                kspTest(project(":http4k-connect-ksp-generator"))
+            }
+            project.name != "http4k-connect-core" -> {
+                api(Http4k.cloudnative)
+                api(project(":http4k-connect-core"))
+                ksp(project(":http4k-connect-ksp-generator"))
+                ksp(Libs.se_ansman_kotshi_compiler)
 
-            testImplementation(Libs.se_ansman_kotshi_compiler)
-            testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+                testImplementation(Libs.se_ansman_kotshi_compiler)
+                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+            }
         }
     }
 }
