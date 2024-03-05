@@ -1,8 +1,8 @@
-import dev.forkhandles.result4k.onFailure
-import dev.langchain4j.data.document.DocumentLoader
+import dev.forkhandles.result4k.allValues
+import dev.forkhandles.result4k.flatMap
+import dev.forkhandles.result4k.map
+import dev.forkhandles.result4k.peek
 import dev.langchain4j.data.document.DocumentParser
-import dev.langchain4j.data.document.DocumentSource
-import dev.langchain4j.data.document.Metadata
 import org.http4k.client.JavaHttpClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.connect.amazon.AWS_REGION
@@ -26,20 +26,29 @@ class S3DocumentLoader(
     private val overrideEndpoint: Uri? = null,
     private val forcePathStyle: Boolean = false
 ) {
-    fun loadDocument(bucket: BucketName, key: BucketKey, parser: DocumentParser) =
-        DocumentLoader.load(S3DocumentSource(bucket, key), parser)
+    operator fun invoke(bucket: BucketName, key: BucketKey, parser: DocumentParser) =
+        s3Client(bucket)[key]
+            .map(parser::parse)
+            .peek { it.metadata().add("source", "s3://$bucket/$key") }
 
-    fun loadDocuments(bucket: BucketName, parser: DocumentParser) = loadDocuments(bucket, null, parser)
+    operator fun invoke(bucket: BucketName, parser: DocumentParser) = this(bucket, null, parser)
 
-    fun loadDocuments(bucket: BucketName, prefix: String?, parser: DocumentParser) =
-        s3Client(bucket)
-            .listObjectsV2Paginated(prefix = prefix)
-            .map {
-                it.onFailure { it.reason.throwIt() }
-                    .filter { !it.Key.value.endsWith("/") && (it.Size ?: 0) > 0 }
-                    .map { loadDocument(bucket, it.Key, parser) }
-            }
-            .flatten()
+    operator fun invoke(
+        bucket: BucketName,
+        prefix: String?,
+        parser: DocumentParser
+    ) = s3Client(bucket)
+        .listObjectsV2Paginated(prefix = prefix)
+        .map {
+            it.map { key ->
+                key
+                    .map { this(bucket, it.Key, parser) }
+                    .map { it.peek { it.metadata().add("source", "s3://$bucket/$key") } }
+                    .allValues()
+            }.flatMap { it }
+        }
+        .allValues()
+        .map { it.flatten() }
 
     private fun s3Client(bucket: BucketName) = S3Bucket.Http(
         bucket,
@@ -51,10 +60,4 @@ class S3DocumentLoader(
         overrideEndpoint,
         forcePathStyle
     )
-
-    private fun S3DocumentSource(bucket: BucketName, key: BucketKey) = object : DocumentSource {
-        private val inputStream = s3Client(bucket)[key].onFailure { it.reason.throwIt() }
-        override fun inputStream() = inputStream
-        override fun metadata() = Metadata.from("source", "s3://$bucket/$key")
-    }
 }
