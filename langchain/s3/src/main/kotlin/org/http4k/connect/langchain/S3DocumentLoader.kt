@@ -1,3 +1,5 @@
+package org.http4k.connect.langchain.org.http4k.connect.langchain
+
 import dev.forkhandles.result4k.allValues
 import dev.forkhandles.result4k.flatMap
 import dev.forkhandles.result4k.map
@@ -40,10 +42,11 @@ class S3DocumentLoader(
     ) = s3Client(bucket)
         .listObjectsV2Paginated(prefix = prefix)
         .map {
-            it.map { key ->
-                key
-                    .map { this(bucket, it.Key, parser) }
-                    .map { it.peek { it.metadata().add("source", "s3://$bucket/$key") } }
+            it.map {
+                it.map { item ->
+                    this(bucket, item.Key, parser)
+                        .peek { it.metadata().add("source", "s3://$bucket/${item.Key}") }
+                }
                     .allValues()
             }.flatMap { it }
         }
