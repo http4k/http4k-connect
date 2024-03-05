@@ -6,19 +6,6 @@ import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
-internal class DynamoDbQuery(
-    val keyConditionExpression: String?,
-    val filterExpression: String?,
-    val expressionAttributeNames: TokensToNames?,
-    val expressionAttributeValues: TokensToValues?
-)
-
-internal class DynamoDbFilter(
-    val filterExpression: String?,
-    val expressionAttributeNames: TokensToNames?,
-    val expressionAttributeValues: TokensToValues?,
-)
-
 interface KeyCondition<HashKey : Any, SortKey : Any> {
     val expression: String
     val attributeNames: TokensToNames
@@ -30,351 +17,344 @@ interface CombinedKeyCondition<HashKey : Any, SortKey : Any> : KeyCondition<Hash
 interface PartitionKeyCondition<HashKey : Any, SortKey : Any> : SortKeyCondition<HashKey, SortKey>,
     CombinedKeyCondition<HashKey, SortKey>
 
-class FilterExpression(
-    val expression: String,
-    val attributeNames: TokensToNames,
-    val attributeValues: TokensToValues,
-)
-
-class DynamoDbScanAndQueryBuilder<HashKey : Any, SortKey : Any>(
+/**
+ * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
+ */
+class KeyConditionBuilder<HashKey : Any, SortKey : Any> internal constructor(
     private val hashKeyAttribute: Attribute<HashKey>,
     private val sortKeyAttribute: Attribute<SortKey>?
 ) {
     object HashKeySubstitute
     object SortKeySubstitute
 
-    /**
-     * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
-     */
-    inner class KeyConditionBuilder {
+    val hashKey = HashKeySubstitute
+    val sortKey = SortKeySubstitute
 
-        val hashKey = HashKeySubstitute
-        val sortKey = SortKeySubstitute
+    // expression attribute names for the hash key and sort key attributes
+    private val hashKeyAttributeName = "hk"
+    private val sortKeyAttributeName = "sk"
 
-        @Deprecated(
-            "Use the special value 'hashKey' in place of the hash key attribute",
-            replaceWith = ReplaceWith("hashKey eq value")
+    @Deprecated(
+        "Use the special value 'hashKey' in place of the hash key attribute",
+        replaceWith = ReplaceWith("hashKey eq value")
+    )
+    infix fun Attribute<HashKey>.eq(value: HashKey) = object : PartitionKeyCondition<HashKey, SortKey> {
+        override val expression = "#$hashKeyAttributeName = :$hashKeyAttributeName"
+        override val attributeNames = mapOf("#$hashKeyAttributeName" to name)
+        override val attributeValues = mapOf(":$hashKeyAttributeName" to asValue(value))
+    }
+
+    infix fun HashKeySubstitute.eq(value: HashKey) = object : PartitionKeyCondition<HashKey, SortKey> {
+        override val expression = "#$hashKeyAttributeName = :$hashKeyAttributeName"
+        override val attributeNames = mapOf("#$hashKeyAttributeName" to hashKeyAttribute.name)
+        override val attributeValues = mapOf(":$hashKeyAttributeName" to hashKeyAttribute.asValue(value))
+    }
+
+    private fun sortKeyCondition(
+        expr: String,
+        attrNames: TokensToNames,
+        attrValues: TokensToValues
+    ) = object : SortKeyCondition<HashKey, SortKey> {
+        override val expression = expr
+        override val attributeNames = attrNames
+        override val attributeValues = attrValues
+    }
+
+    private fun Attribute<SortKey>.sortKeyOperator(op: String, value: SortKey) =
+        sortKeyCondition(
+            "#$sortKeyAttributeName $op :$sortKeyAttributeName",
+            mapOf("#$sortKeyAttributeName" to name),
+            mapOf(":$sortKeyAttributeName" to asValue(value))
         )
-        infix fun Attribute<HashKey>.eq(value: HashKey) = nextAttributeName().let { attributeName ->
-            object : PartitionKeyCondition<HashKey, SortKey> {
-                override val expression = "#$attributeName = :$attributeName"
-                override val attributeNames = mapOf("#$attributeName" to name)
-                override val attributeValues = mapOf(":$attributeName" to asValue(value))
-            }
-        }
 
-        infix fun HashKeySubstitute.eq(value: HashKey) = nextAttributeName().let { attributeName ->
-            object : PartitionKeyCondition<HashKey, SortKey> {
-                override val expression = "#$attributeName = :$attributeName"
-                override val attributeNames = mapOf("#$attributeName" to hashKeyAttribute.name)
-                override val attributeValues = mapOf(":$attributeName" to hashKeyAttribute.asValue(value))
-            }
-        }
-
-        private fun sortKeyCondition(
-            expr: String,
-            attrNames: TokensToNames,
-            attrValues: TokensToValues
-        ) = object : SortKeyCondition<HashKey, SortKey> {
-            override val expression = expr
-            override val attributeNames = attrNames
-            override val attributeValues = attrValues
-        }
-
-        private fun Attribute<SortKey>.sortKeyOperator(op: String, value: SortKey) =
-            nextAttributeName().let { attributeName ->
-                sortKeyCondition(
-                    "#$attributeName $op :$attributeName",
-                    mapOf("#$attributeName" to name),
-                    mapOf(":$attributeName" to asValue(value))
-                )
-            }
-
-        private fun SortKeySubstitute.sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
-            sortKeyAttribute?.let {
-                nextAttributeName().let { attributeName ->
-                    sortKeyCondition(
-                        "#$attributeName $op :$attributeName",
-                        mapOf("#$attributeName" to sortKeyAttribute.name),
-                        mapOf(":$attributeName" to sortKeyAttribute.asValue(value))
-                    )
-                }
-            }
-
-        @Deprecated(
-            "Use the special value 'sortKey' in place of the sort key attribute",
-            replaceWith = ReplaceWith("sortKey lt value")
-        )
-        infix fun Attribute<SortKey>.lt(value: SortKey) = sortKeyOperator("<", value)
-
-        @Deprecated(
-            "Use the special value 'sortKey' in place of the sort key attribute",
-            replaceWith = ReplaceWith("sortKey le value")
-        )
-        infix fun Attribute<SortKey>.le(value: SortKey) = sortKeyOperator("<=", value)
-
-        @Deprecated(
-            "Use the special value 'sortKey' in place of the sort key attribute",
-            replaceWith = ReplaceWith("sortKey gt value")
-        )
-        infix fun Attribute<SortKey>.gt(value: SortKey) = sortKeyOperator(">", value)
-
-        @Deprecated(
-            "Use the special value 'sortKey' in place of the sort key attribute",
-            replaceWith = ReplaceWith("sortKey ge value")
-        )
-        infix fun Attribute<SortKey>.ge(value: SortKey) = sortKeyOperator(">=", value)
-        infix fun SortKeySubstitute.eq(value: SortKey) = sortKeyOperator("=", value)
-        infix fun SortKeySubstitute.lt(value: SortKey) = sortKeyOperator("<", value)
-        infix fun SortKeySubstitute.le(value: SortKey) = sortKeyOperator("<=", value)
-        infix fun SortKeySubstitute.gt(value: SortKey) = sortKeyOperator(">", value)
-        infix fun SortKeySubstitute.ge(value: SortKey) = sortKeyOperator(">=", value)
-
-        @Deprecated(
-            "Use the special value 'sortKey' in place of the sort key attribute",
-            replaceWith = ReplaceWith("sortKey.between(value1, value2)")
-        )
-        fun between(attr: Attribute<SortKey>, value1: SortKey, value2: SortKey) =
-            nextAttributeName().let { attributeName ->
-                sortKeyCondition(
-                    "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
-                    mapOf("#$attributeName" to attr.name),
-                    mapOf(":${attributeName}1" to attr.asValue(value1), ":${attributeName}2" to attr.asValue(value2))
-                )
-            }
-
-        fun SortKeySubstitute.between(value1: SortKey, value2: SortKey): SortKeyCondition<HashKey, SortKey>? =
-            sortKeyAttribute?.let {
-                nextAttributeName().let { attributeName ->
-                    sortKeyCondition(
-                        "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
-                        mapOf("#$attributeName" to sortKeyAttribute.name),
-                        mapOf(
-                            ":${attributeName}1" to sortKeyAttribute.asValue(value1),
-                            ":${attributeName}2" to sortKeyAttribute.asValue(value2)
-                        )
-                    )
-                }
-            }
-
-        @Deprecated(
-            "Use the special value 'sortKey' in place of the sort key attribute",
-            replaceWith = ReplaceWith("sortKey beginsWith value")
-        )
-        infix fun Attribute<SortKey>.beginsWith(value: SortKey) = nextAttributeName().let { attributeName ->
+    private fun sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        sortKeyAttribute?.let {
             sortKeyCondition(
-                "begins_with(#$attributeName,:$attributeName)",
-                mapOf("#$attributeName" to name),
-                mapOf(":$attributeName" to asValue(value))
+                "#$sortKeyAttributeName $op :$sortKeyAttributeName",
+                mapOf("#$sortKeyAttributeName" to sortKeyAttribute.name),
+                mapOf(":$sortKeyAttributeName" to sortKeyAttribute.asValue(value))
             )
         }
 
-        infix fun SortKeySubstitute.beginsWith(value: SortKey): SortKeyCondition<HashKey, SortKey>? =
-            sortKeyAttribute?.let {
-                nextAttributeName().let { attributeName ->
-                    sortKeyCondition(
-                        "begins_with(#$attributeName,:$attributeName)",
-                        mapOf("#$attributeName" to sortKeyAttribute.name),
-                        mapOf(":$attributeName" to sortKeyAttribute.asValue(value))
-                    )
+    @Deprecated(
+        "Use the special value 'sortKey' in place of the sort key attribute",
+        replaceWith = ReplaceWith("sortKey lt value")
+    )
+    infix fun Attribute<SortKey>.lt(value: SortKey) = sortKeyOperator("<", value)
+
+    @Deprecated(
+        "Use the special value 'sortKey' in place of the sort key attribute",
+        replaceWith = ReplaceWith("sortKey le value")
+    )
+    infix fun Attribute<SortKey>.le(value: SortKey) = sortKeyOperator("<=", value)
+
+    @Deprecated(
+        "Use the special value 'sortKey' in place of the sort key attribute",
+        replaceWith = ReplaceWith("sortKey gt value")
+    )
+    infix fun Attribute<SortKey>.gt(value: SortKey) = sortKeyOperator(">", value)
+
+    @Deprecated(
+        "Use the special value 'sortKey' in place of the sort key attribute",
+        replaceWith = ReplaceWith("sortKey ge value")
+    )
+    infix fun Attribute<SortKey>.ge(value: SortKey) = sortKeyOperator(">=", value)
+    infix fun SortKeySubstitute.eq(value: SortKey) = sortKeyOperator("=", value)
+    infix fun SortKeySubstitute.lt(value: SortKey) = sortKeyOperator("<", value)
+    infix fun SortKeySubstitute.le(value: SortKey) = sortKeyOperator("<=", value)
+    infix fun SortKeySubstitute.gt(value: SortKey) = sortKeyOperator(">", value)
+    infix fun SortKeySubstitute.ge(value: SortKey) = sortKeyOperator(">=", value)
+
+    @Deprecated(
+        "Use the special value 'sortKey' in place of the sort key attribute",
+        replaceWith = ReplaceWith("sortKey.between(value1, value2)")
+    )
+    fun between(attr: Attribute<SortKey>, value1: SortKey, value2: SortKey) =
+        sortKeyCondition(
+            "#$sortKeyAttributeName BETWEEN :${sortKeyAttributeName}1 AND :${sortKeyAttributeName}2",
+            mapOf("#$sortKeyAttributeName" to attr.name),
+            mapOf(
+                ":${sortKeyAttributeName}1" to attr.asValue(value1),
+                ":${sortKeyAttributeName}2" to attr.asValue(value2)
+            )
+        )
+
+    fun SortKeySubstitute.between(value1: SortKey, value2: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        sortKeyAttribute?.let {
+            sortKeyCondition(
+                "#$sortKeyAttributeName BETWEEN :${sortKeyAttributeName}1 AND :${sortKeyAttributeName}2",
+                mapOf("#$sortKeyAttributeName" to sortKeyAttribute.name),
+                mapOf(
+                    ":${sortKeyAttributeName}1" to sortKeyAttribute.asValue(value1),
+                    ":${sortKeyAttributeName}2" to sortKeyAttribute.asValue(value2)
+                )
+            )
+        }
+
+    @Deprecated(
+        "Use the special value 'sortKey' in place of the sort key attribute",
+        replaceWith = ReplaceWith("sortKey beginsWith value")
+    )
+    infix fun Attribute<SortKey>.beginsWith(value: SortKey) =
+        sortKeyCondition(
+            "begins_with(#$sortKeyAttributeName,:$sortKeyAttributeName)",
+            mapOf("#$sortKeyAttributeName" to name),
+            mapOf(":$sortKeyAttributeName" to asValue(value))
+        )
+
+    infix fun SortKeySubstitute.beginsWith(value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        sortKeyAttribute?.let {
+            sortKeyCondition(
+                "begins_with(#$sortKeyAttributeName,:$sortKeyAttributeName)",
+                mapOf("#$sortKeyAttributeName" to sortKeyAttribute.name),
+                mapOf(":$sortKeyAttributeName" to sortKeyAttribute.asValue(value))
+            )
+        }
+
+    infix fun PartitionKeyCondition<HashKey, SortKey>.and(secondary: SortKeyCondition<HashKey, SortKey>?): CombinedKeyCondition<HashKey, SortKey> =
+        let {
+            if (secondary == null) {
+                this
+            } else {
+                object : CombinedKeyCondition<HashKey, SortKey> {
+                    override val expression = "${it.expression} AND ${secondary.expression}"
+                    override val attributeNames = it.attributeNames + secondary.attributeNames
+                    override val attributeValues = it.attributeValues + secondary.attributeValues
                 }
             }
-
-        infix fun PartitionKeyCondition<HashKey, SortKey>.and(secondary: SortKeyCondition<HashKey, SortKey>?): CombinedKeyCondition<HashKey, SortKey> =
-            let {
-                if (secondary == null) {
-                    this
-                } else {
-                    object : CombinedKeyCondition<HashKey, SortKey> {
-                        override val expression = "${it.expression} AND ${secondary.expression}"
-                        override val attributeNames = it.attributeNames + secondary.attributeNames
-                        override val attributeValues = it.attributeValues + secondary.attributeValues
-                    }
-                }
-            }
-    }
-
-    /**
-     * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Syntax
-     */
-    inner class FilterExpressionBuilder {
-
-        private fun <T> Attribute<T>.filterOperator(op: String, value: T) = nextAttributeName().let { attributeName ->
-            FilterExpression(
-                "#$attributeName $op :$attributeName",
-                mapOf("#$attributeName" to name),
-                mapOf(":$attributeName" to asValue(value))
-            )
         }
+}
 
-        private fun <T> Attribute<T>.filterOperator(op: String, other: Attribute<T>): FilterExpression {
-            val attributeName1 = nextAttributeName()
-            val attributeName2 = nextAttributeName()
-            return FilterExpression(
-                "#$attributeName1 $op #$attributeName2",
-                mapOf("#$attributeName1" to name, "#$attributeName2" to other.name),
-                emptyMap()
-            )
-        }
+class FilterExpression(
+    val expression: String,
+    val attributeNames: TokensToNames,
+    val attributeValues: TokensToValues,
+)
 
-        infix fun <T> Attribute<T>.eq(value: T) = filterOperator("=", value)
-        infix fun <T> Attribute<T>.eq(other: Attribute<T>) = filterOperator("=", other)
-        infix fun <T> Attribute<T>.ne(value: T) = filterOperator("<>", value)
-        infix fun <T> Attribute<T>.ne(other: Attribute<T>) = filterOperator("<>", other)
-        infix fun <T> Attribute<T>.lt(value: T) = filterOperator("<", value)
-        infix fun <T> Attribute<T>.lt(other: Attribute<T>) = filterOperator("<", other)
-        infix fun <T> Attribute<T>.le(value: T) = filterOperator("<=", value)
-        infix fun <T> Attribute<T>.le(other: Attribute<T>) = filterOperator("<=", other)
-        infix fun <T> Attribute<T>.gt(value: T) = filterOperator(">", value)
-        infix fun <T> Attribute<T>.gt(other: Attribute<T>) = filterOperator(">", other)
-        infix fun <T> Attribute<T>.ge(value: T) = filterOperator(">=", value)
-        infix fun <T> Attribute<T>.ge(other: Attribute<T>) = filterOperator(">=", other)
-
-        @Deprecated("Use attribute.between(value1, value2)", replaceWith = ReplaceWith("attr.between(value1, value2)"))
-        @JvmName("deprecatedBetween")
-        fun <T> between(attr: Attribute<T>, value1: T, value2: T) = attr.between(value1, value2)
-
-        fun <T> Attribute<T>.between(value1: T, value2: T) = nextAttributeName().let { attributeName ->
-            FilterExpression(
-                "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
-                mapOf("#$attributeName" to name),
-                mapOf(":${attributeName}1" to asValue(value1), ":${attributeName}2" to asValue(value2))
-            )
-        }
-
-        infix fun <T> Attribute<T>.isIn(values: Iterable<T>): FilterExpression {
-            val attributeName = nextAttributeName()
-            val attributeValues = mutableMapOf<String, AttributeValue>()
-            val expression = StringBuilder("#$attributeName IN (")
-            values.iterator().withIndex().forEach { (index, value) ->
-                val valueName = ":$attributeName$index"
-                attributeValues[valueName] = asValue(value)
-                if (index > 0) {
-                    expression.append(',')
-                }
-                expression.append(valueName)
-            }
-            expression.append(')')
-
-            require(attributeValues.isNotEmpty()) { "IN operator requires at least one element" }
-            return FilterExpression(expression.toString(), mapOf("#$attributeName" to name), attributeValues)
-        }
-
-        fun attributeExists(attr: Attribute<*>): FilterExpression = nextAttributeName().let { attributeName ->
-            FilterExpression(
-                "attribute_exists(#$attributeName)",
-                mapOf("#$attributeName" to attr.name),
-                emptyMap()
-            )
-        }
-
-        fun attributeNotExists(attr: Attribute<*>): FilterExpression = nextAttributeName().let { attributeName ->
-            FilterExpression(
-                "attribute_not_exists(#$attributeName)",
-                mapOf("#$attributeName" to attr.name),
-                emptyMap()
-            )
-        }
-
-        infix fun <T> Attribute<T>.beginsWith(value: T) = nextAttributeName().let { attributeName ->
-            FilterExpression(
-                "begins_with(#$attributeName,:$attributeName)",
-                mapOf("#$attributeName" to name),
-                mapOf(":$attributeName" to asValue(value))
-            )
-        }
-
-        infix fun <T> Attribute<T>.contains(value: T) = nextAttributeName().let { attributeName ->
-            FilterExpression(
-                "contains(#$attributeName,:$attributeName)",
-                mapOf("#$attributeName" to name),
-                mapOf(":$attributeName" to asValue(value))
-            )
-        }
-
-        infix fun FilterExpression?.and(other: FilterExpression?): FilterExpression? = when {
-            this == null -> other
-            other == null -> this
-            else -> FilterExpression(
-                "($expression AND ${other.expression})",
-                attributeNames + other.attributeNames,
-                attributeValues + other.attributeValues
-            )
-        }
-
-        infix fun FilterExpression?.or(other: FilterExpression?): FilterExpression? = when {
-            this == null -> other
-            other == null -> this
-            else -> FilterExpression(
-                "($expression OR ${other.expression})",
-                attributeNames + other.attributeNames,
-                attributeValues + other.attributeValues
-            )
-        }
-
-        fun not(expr: FilterExpression?): FilterExpression? = expr?.let {
-            FilterExpression(
-                "(NOT ${it.expression})",
-                it.attributeNames,
-                it.attributeValues
-            )
-        }
-    }
+/**
+ * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Syntax
+ */
+class FilterExpressionBuilder internal constructor() {
 
     private var attributeNameCount = 0
 
-    // generate consecutive names "a", "b", ... to be used as expression attribute name
+    // generate consecutive names "fa", "fb", ... to be used as expression attribute names
     private fun nextAttributeName(): String {
         val base = 'z' - 'a' + 1
-        val name = StringBuilder()
+        val name = StringBuilder("f")
         var currentCount = attributeNameCount
         do {
             val remainder = currentCount % base
             currentCount /= base
-            name.insert(0, 'a' + remainder)
+            name.insert(1, 'a' + remainder)
         } while (currentCount > 0)
 
         attributeNameCount += 1
         return name.toString()
     }
 
-    private var _keyCondition: KeyCondition<HashKey, SortKey>? = null
-    private var _filterExpression: FilterExpression? = null
-
-    internal fun keyCondition(block: KeyConditionBuilder.() -> CombinedKeyCondition<HashKey, SortKey>) {
-        _keyCondition = block(KeyConditionBuilder())
+    private fun <T> Attribute<T>.filterOperator(op: String, value: T) = nextAttributeName().let { attributeName ->
+        FilterExpression(
+            "#$attributeName $op :$attributeName",
+            mapOf("#$attributeName" to name),
+            mapOf(":$attributeName" to asValue(value))
+        )
     }
 
-    internal fun filterExpression(block: FilterExpressionBuilder.() -> FilterExpression?) {
-        _filterExpression = block(FilterExpressionBuilder())
+    private fun <T> Attribute<T>.filterOperator(op: String, other: Attribute<T>): FilterExpression {
+        val attributeName1 = nextAttributeName()
+        val attributeName2 = nextAttributeName()
+        return FilterExpression(
+            "#$attributeName1 $op #$attributeName2",
+            mapOf("#$attributeName1" to name, "#$attributeName2" to other.name),
+            emptyMap()
+        )
     }
 
-    internal val keyCondition: KeyCondition<HashKey, SortKey>? get() = _keyCondition
-    internal val filterExpression: FilterExpression? get() = _filterExpression
+    infix fun <T> Attribute<T>.eq(value: T) = filterOperator("=", value)
+    infix fun <T> Attribute<T>.eq(other: Attribute<T>) = filterOperator("=", other)
+    infix fun <T> Attribute<T>.ne(value: T) = filterOperator("<>", value)
+    infix fun <T> Attribute<T>.ne(other: Attribute<T>) = filterOperator("<>", other)
+    infix fun <T> Attribute<T>.lt(value: T) = filterOperator("<", value)
+    infix fun <T> Attribute<T>.lt(other: Attribute<T>) = filterOperator("<", other)
+    infix fun <T> Attribute<T>.le(value: T) = filterOperator("<=", value)
+    infix fun <T> Attribute<T>.le(other: Attribute<T>) = filterOperator("<=", other)
+    infix fun <T> Attribute<T>.gt(value: T) = filterOperator(">", value)
+    infix fun <T> Attribute<T>.gt(other: Attribute<T>) = filterOperator(">", other)
+    infix fun <T> Attribute<T>.ge(value: T) = filterOperator(">=", value)
+    infix fun <T> Attribute<T>.ge(other: Attribute<T>) = filterOperator(">=", other)
+
+    @Deprecated("Use attribute.between(value1, value2)", replaceWith = ReplaceWith("attr.between(value1, value2)"))
+    @JvmName("deprecatedBetween")
+    fun <T> between(attr: Attribute<T>, value1: T, value2: T) = attr.between(value1, value2)
+
+    fun <T> Attribute<T>.between(value1: T, value2: T) = nextAttributeName().let { attributeName ->
+        FilterExpression(
+            "#$attributeName BETWEEN :${attributeName}1 AND :${attributeName}2",
+            mapOf("#$attributeName" to name),
+            mapOf(":${attributeName}1" to asValue(value1), ":${attributeName}2" to asValue(value2))
+        )
+    }
+
+    infix fun <T> Attribute<T>.isIn(values: Iterable<T>): FilterExpression {
+        val attributeName = nextAttributeName()
+        val attributeValues = mutableMapOf<String, AttributeValue>()
+        val expression = StringBuilder("#$attributeName IN (")
+        values.iterator().withIndex().forEach { (index, value) ->
+            val valueName = ":$attributeName$index"
+            attributeValues[valueName] = asValue(value)
+            if (index > 0) {
+                expression.append(',')
+            }
+            expression.append(valueName)
+        }
+        expression.append(')')
+
+        require(attributeValues.isNotEmpty()) { "IN operator requires at least one element" }
+        return FilterExpression(expression.toString(), mapOf("#$attributeName" to name), attributeValues)
+    }
+
+    fun attributeExists(attr: Attribute<*>): FilterExpression = nextAttributeName().let { attributeName ->
+        FilterExpression(
+            "attribute_exists(#$attributeName)",
+            mapOf("#$attributeName" to attr.name),
+            emptyMap()
+        )
+    }
+
+    fun attributeNotExists(attr: Attribute<*>): FilterExpression = nextAttributeName().let { attributeName ->
+        FilterExpression(
+            "attribute_not_exists(#$attributeName)",
+            mapOf("#$attributeName" to attr.name),
+            emptyMap()
+        )
+    }
+
+    infix fun <T> Attribute<T>.beginsWith(value: T) = nextAttributeName().let { attributeName ->
+        FilterExpression(
+            "begins_with(#$attributeName,:$attributeName)",
+            mapOf("#$attributeName" to name),
+            mapOf(":$attributeName" to asValue(value))
+        )
+    }
+
+    infix fun <T> Attribute<T>.contains(value: T) = nextAttributeName().let { attributeName ->
+        FilterExpression(
+            "contains(#$attributeName,:$attributeName)",
+            mapOf("#$attributeName" to name),
+            mapOf(":$attributeName" to asValue(value))
+        )
+    }
+
+    infix fun FilterExpression?.and(other: FilterExpression?): FilterExpression? = when {
+        this == null -> other
+        other == null -> this
+        else -> FilterExpression(
+            "($expression AND ${other.expression})",
+            attributeNames + other.attributeNames,
+            attributeValues + other.attributeValues
+        )
+    }
+
+    infix fun FilterExpression?.or(other: FilterExpression?): FilterExpression? = when {
+        this == null -> other
+        other == null -> this
+        else -> FilterExpression(
+            "($expression OR ${other.expression})",
+            attributeNames + other.attributeNames,
+            attributeValues + other.attributeValues
+        )
+    }
+
+    fun not(expr: FilterExpression?): FilterExpression? = expr?.let {
+        FilterExpression(
+            "(NOT ${it.expression})",
+            it.attributeNames,
+            it.attributeValues
+        )
+    }
 }
 
-class DynamoDbScanBuilder<HashKey : Any, SortKey : Any>(schema: DynamoDbTableMapperSchema<HashKey, SortKey>) {
-    private val delegate = DynamoDbScanAndQueryBuilder(schema.hashKeyAttribute, schema.sortKeyAttribute)
+class DynamoDbScanBuilder {
 
-    fun filterExpression(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.FilterExpressionBuilder.() -> FilterExpression?) =
-        delegate.filterExpression(block)
+    internal class DynamoDbScan(
+        val filterExpression: String?,
+        val expressionAttributeNames: TokensToNames?,
+        val expressionAttributeValues: TokensToValues?,
+    )
 
-    internal fun build() = DynamoDbFilter(
-        filterExpression = delegate.filterExpression?.expression,
-        expressionAttributeNames = delegate.filterExpression?.attributeNames,
-        expressionAttributeValues = delegate.filterExpression?.attributeValues
+    private var filterExpression: FilterExpression? = null
+
+    fun filterExpression(block: FilterExpressionBuilder.() -> FilterExpression?) {
+        filterExpression = block(FilterExpressionBuilder())
+    }
+
+    internal fun build() = DynamoDbScan(
+        filterExpression = filterExpression?.expression,
+        expressionAttributeNames = filterExpression?.attributeNames,
+        expressionAttributeValues = filterExpression?.attributeValues
     )
 }
 
-class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(schema: DynamoDbTableMapperSchema<HashKey, SortKey>) {
+class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(private val schema: DynamoDbTableMapperSchema<HashKey, SortKey>) {
 
-    private val delegate = DynamoDbScanAndQueryBuilder(schema.hashKeyAttribute, schema.sortKeyAttribute)
+    internal class DynamoDbQuery(
+        val keyConditionExpression: String?,
+        val filterExpression: String?,
+        val expressionAttributeNames: TokensToNames?,
+        val expressionAttributeValues: TokensToValues?
+    )
 
-    fun keyCondition(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.KeyConditionBuilder.() -> CombinedKeyCondition<HashKey, SortKey>) =
-        delegate.keyCondition(block)
+    private var keyCondition: KeyCondition<HashKey, SortKey>? = null
+    private var filterExpression: FilterExpression? = null
 
-    fun filterExpression(block: DynamoDbScanAndQueryBuilder<HashKey, SortKey>.FilterExpressionBuilder.() -> FilterExpression?) =
-        delegate.filterExpression(block)
+    fun keyCondition(block: KeyConditionBuilder<HashKey, SortKey>.() -> CombinedKeyCondition<HashKey, SortKey>) {
+        keyCondition = block(KeyConditionBuilder(schema.hashKeyAttribute, schema.sortKeyAttribute))
+    }
+
+    fun filterExpression(block: FilterExpressionBuilder.() -> FilterExpression?) {
+        filterExpression = block(FilterExpressionBuilder())
+    }
 
     private fun <K, V> union(map1: Map<K, V>?, map2: Map<K, V>?) = when {
         map1 == null -> map2
@@ -383,15 +363,15 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(schema: DynamoDbTableMa
     }
 
     internal fun build() = DynamoDbQuery(
-        keyConditionExpression = delegate.keyCondition?.expression,
-        filterExpression = delegate.filterExpression?.expression,
+        keyConditionExpression = keyCondition?.expression,
+        filterExpression = filterExpression?.expression,
         expressionAttributeNames = union(
-            delegate.keyCondition?.attributeNames,
-            delegate.filterExpression?.attributeNames
+            keyCondition?.attributeNames,
+            filterExpression?.attributeNames
         ),
         expressionAttributeValues = union(
-            delegate.keyCondition?.attributeValues,
-            delegate.filterExpression?.attributeValues
+            keyCondition?.attributeValues,
+            filterExpression?.attributeValues
         )
     )
 }
@@ -399,13 +379,13 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(schema: DynamoDbTableMa
 fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.scan(
     PageSize: Int? = null,
     ConsistentRead: Boolean? = null,
-    block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
+    block: DynamoDbScanBuilder.() -> Unit
 ): Sequence<Document> {
-    val filter = DynamoDbScanBuilder(schema).apply(block).build()
+    val scan = DynamoDbScanBuilder().apply(block).build()
     return scan(
-        FilterExpression = filter.filterExpression,
-        ExpressionAttributeNames = filter.expressionAttributeNames,
-        ExpressionAttributeValues = filter.expressionAttributeValues,
+        FilterExpression = scan.filterExpression,
+        ExpressionAttributeNames = scan.expressionAttributeNames,
+        ExpressionAttributeValues = scan.expressionAttributeValues,
         PageSize = PageSize,
         ConsistentRead = ConsistentRead
     )
@@ -415,13 +395,13 @@ fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document,
     ExclusiveStartKey: Key? = null,
     Limit: Int? = null,
     ConsistentRead: Boolean? = null,
-    block: DynamoDbScanBuilder<HashKey, SortKey>.() -> Unit
+    block: DynamoDbScanBuilder.() -> Unit
 ): DynamoDbPage<Document> {
-    val filter = DynamoDbScanBuilder(schema).apply(block).build()
+    val scan = DynamoDbScanBuilder().apply(block).build()
     return scanPage(
-        FilterExpression = filter.filterExpression,
-        ExpressionAttributeNames = filter.expressionAttributeNames,
-        ExpressionAttributeValues = filter.expressionAttributeValues,
+        FilterExpression = scan.filterExpression,
+        ExpressionAttributeNames = scan.expressionAttributeNames,
+        ExpressionAttributeValues = scan.expressionAttributeValues,
         ExclusiveStartKey = ExclusiveStartKey,
         Limit = Limit,
         ConsistentRead = ConsistentRead
