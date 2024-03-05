@@ -21,33 +21,29 @@ interface PartitionKeyCondition<HashKey : Any, SortKey : Any> : SortKeyCondition
  * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
  */
 class KeyConditionBuilder<HashKey : Any, SortKey : Any> internal constructor(
-    private val hashKeyAttribute: Attribute<HashKey>,
-    private val sortKeyAttribute: Attribute<SortKey>?
+    schema: DynamoDbTableMapperSchema<HashKey, SortKey>
 ) {
-    object HashKeySubstitute
-    object SortKeySubstitute
+    inner class HashKeySubstitute(val attribute: Attribute<HashKey>) {
+        val expressionAttributeName = "hk"
+    }
 
-    val hashKey = HashKeySubstitute
-    val sortKey = SortKeySubstitute
+    inner class SortKeySubstitute(val attribute: Attribute<SortKey>?) {
+        val expressionAttributeName = "sk"
+    }
 
-    // expression attribute names for the hash key and sort key attributes
-    private val hashKeyAttributeName = "hk"
-    private val sortKeyAttributeName = "sk"
+    val hashKey = HashKeySubstitute(schema.hashKeyAttribute)
+    val sortKey = SortKeySubstitute(schema.sortKeyAttribute)
 
     @Deprecated(
         "Use the special value 'hashKey' in place of the hash key attribute",
         replaceWith = ReplaceWith("hashKey eq value")
     )
-    infix fun Attribute<HashKey>.eq(value: HashKey) = object : PartitionKeyCondition<HashKey, SortKey> {
-        override val expression = "#$hashKeyAttributeName = :$hashKeyAttributeName"
-        override val attributeNames = mapOf("#$hashKeyAttributeName" to name)
-        override val attributeValues = mapOf(":$hashKeyAttributeName" to asValue(value))
-    }
+    infix fun Attribute<HashKey>.eq(value: HashKey) = HashKeySubstitute(this).eq(value)
 
     infix fun HashKeySubstitute.eq(value: HashKey) = object : PartitionKeyCondition<HashKey, SortKey> {
-        override val expression = "#$hashKeyAttributeName = :$hashKeyAttributeName"
-        override val attributeNames = mapOf("#$hashKeyAttributeName" to hashKeyAttribute.name)
-        override val attributeValues = mapOf(":$hashKeyAttributeName" to hashKeyAttribute.asValue(value))
+        override val expression = "#$expressionAttributeName = :$expressionAttributeName"
+        override val attributeNames = mapOf("#$expressionAttributeName" to attribute.name)
+        override val attributeValues = mapOf(":$expressionAttributeName" to attribute.asValue(value))
     }
 
     private fun sortKeyCondition(
@@ -61,18 +57,14 @@ class KeyConditionBuilder<HashKey : Any, SortKey : Any> internal constructor(
     }
 
     private fun Attribute<SortKey>.sortKeyOperator(op: String, value: SortKey) =
-        sortKeyCondition(
-            "#$sortKeyAttributeName $op :$sortKeyAttributeName",
-            mapOf("#$sortKeyAttributeName" to name),
-            mapOf(":$sortKeyAttributeName" to asValue(value))
-        )
+        SortKeySubstitute(this).sortKeyOperator(op, value)
 
-    private fun sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
-        sortKeyAttribute?.let {
+    private fun SortKeySubstitute.sortKeyOperator(op: String, value: SortKey): SortKeyCondition<HashKey, SortKey>? =
+        attribute?.let {
             sortKeyCondition(
-                "#$sortKeyAttributeName $op :$sortKeyAttributeName",
-                mapOf("#$sortKeyAttributeName" to sortKeyAttribute.name),
-                mapOf(":$sortKeyAttributeName" to sortKeyAttribute.asValue(value))
+                "#$expressionAttributeName $op :$expressionAttributeName",
+                mapOf("#$expressionAttributeName" to attribute.name),
+                mapOf(":$expressionAttributeName" to attribute.asValue(value))
             )
         }
 
@@ -110,23 +102,16 @@ class KeyConditionBuilder<HashKey : Any, SortKey : Any> internal constructor(
         replaceWith = ReplaceWith("sortKey.between(value1, value2)")
     )
     fun between(attr: Attribute<SortKey>, value1: SortKey, value2: SortKey) =
-        sortKeyCondition(
-            "#$sortKeyAttributeName BETWEEN :${sortKeyAttributeName}1 AND :${sortKeyAttributeName}2",
-            mapOf("#$sortKeyAttributeName" to attr.name),
-            mapOf(
-                ":${sortKeyAttributeName}1" to attr.asValue(value1),
-                ":${sortKeyAttributeName}2" to attr.asValue(value2)
-            )
-        )
+        SortKeySubstitute(attr).between(value1, value2)
 
     fun SortKeySubstitute.between(value1: SortKey, value2: SortKey): SortKeyCondition<HashKey, SortKey>? =
-        sortKeyAttribute?.let {
+        attribute?.let {
             sortKeyCondition(
-                "#$sortKeyAttributeName BETWEEN :${sortKeyAttributeName}1 AND :${sortKeyAttributeName}2",
-                mapOf("#$sortKeyAttributeName" to sortKeyAttribute.name),
+                "#$expressionAttributeName BETWEEN :${expressionAttributeName}1 AND :${expressionAttributeName}2",
+                mapOf("#$expressionAttributeName" to attribute.name),
                 mapOf(
-                    ":${sortKeyAttributeName}1" to sortKeyAttribute.asValue(value1),
-                    ":${sortKeyAttributeName}2" to sortKeyAttribute.asValue(value2)
+                    ":${expressionAttributeName}1" to attribute.asValue(value1),
+                    ":${expressionAttributeName}2" to attribute.asValue(value2)
                 )
             )
         }
@@ -135,19 +120,14 @@ class KeyConditionBuilder<HashKey : Any, SortKey : Any> internal constructor(
         "Use the special value 'sortKey' in place of the sort key attribute",
         replaceWith = ReplaceWith("sortKey beginsWith value")
     )
-    infix fun Attribute<SortKey>.beginsWith(value: SortKey) =
-        sortKeyCondition(
-            "begins_with(#$sortKeyAttributeName,:$sortKeyAttributeName)",
-            mapOf("#$sortKeyAttributeName" to name),
-            mapOf(":$sortKeyAttributeName" to asValue(value))
-        )
+    infix fun Attribute<SortKey>.beginsWith(value: SortKey) = SortKeySubstitute(this).beginsWith(value)
 
     infix fun SortKeySubstitute.beginsWith(value: SortKey): SortKeyCondition<HashKey, SortKey>? =
-        sortKeyAttribute?.let {
+        attribute?.let {
             sortKeyCondition(
-                "begins_with(#$sortKeyAttributeName,:$sortKeyAttributeName)",
-                mapOf("#$sortKeyAttributeName" to sortKeyAttribute.name),
-                mapOf(":$sortKeyAttributeName" to sortKeyAttribute.asValue(value))
+                "begins_with(#$expressionAttributeName,:$expressionAttributeName)",
+                mapOf("#$expressionAttributeName" to attribute.name),
+                mapOf(":$expressionAttributeName" to attribute.asValue(value))
             )
         }
 
@@ -349,7 +329,7 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(private val schema: Dyn
     private var filterExpression: FilterExpression? = null
 
     fun keyCondition(block: KeyConditionBuilder<HashKey, SortKey>.() -> CombinedKeyCondition<HashKey, SortKey>) {
-        keyCondition = block(KeyConditionBuilder(schema.hashKeyAttribute, schema.sortKeyAttribute))
+        keyCondition = block(KeyConditionBuilder(schema))
     }
 
     fun filterExpression(block: FilterExpressionBuilder.() -> FilterExpression?) {
