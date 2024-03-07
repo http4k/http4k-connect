@@ -13,8 +13,7 @@ interface KeyCondition<HashKey : Any, SortKey : Any> {
 
 interface SortKeyCondition<HashKey : Any, SortKey : Any> : KeyCondition<HashKey, SortKey>
 interface CombinedKeyCondition<HashKey : Any, SortKey : Any> : KeyCondition<HashKey, SortKey>
-interface PartitionKeyCondition<HashKey : Any, SortKey : Any> : SortKeyCondition<HashKey, SortKey>,
-    CombinedKeyCondition<HashKey, SortKey>
+interface PartitionKeyCondition<HashKey : Any, SortKey : Any> : CombinedKeyCondition<HashKey, SortKey>
 
 /**
  * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
