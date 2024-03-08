@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.AttributeValue
+import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.TokensToNames
 import org.http4k.connect.amazon.dynamodb.model.TokensToValues
 
@@ -351,5 +352,89 @@ class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(private val schema: Dyn
             keyCondition?.attributeValues,
             filterExpression?.attributeValues
         )
+    )
+}
+
+fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.scan(
+    PageSize: Int? = null,
+    ConsistentRead: Boolean? = null,
+    block: DynamoDbScanBuilder.() -> Unit
+): Sequence<Document> {
+    val scan = DynamoDbScanBuilder().apply(block).build()
+    return scan(
+        FilterExpression = scan.filterExpression,
+        ExpressionAttributeNames = scan.expressionAttributeNames,
+        ExpressionAttributeValues = scan.expressionAttributeValues,
+        PageSize = PageSize,
+        ConsistentRead = ConsistentRead
+    )
+}
+
+fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.scanPage(
+    ExclusiveStartKey: Key? = null,
+    Limit: Int? = null,
+    ConsistentRead: Boolean? = null,
+    block: DynamoDbScanBuilder.() -> Unit
+): DynamoDbPage<Document> {
+    val scan = DynamoDbScanBuilder().apply(block).build()
+    return scanPage(
+        FilterExpression = scan.filterExpression,
+        ExpressionAttributeNames = scan.expressionAttributeNames,
+        ExpressionAttributeValues = scan.expressionAttributeValues,
+        ExclusiveStartKey = ExclusiveStartKey,
+        Limit = Limit,
+        ConsistentRead = ConsistentRead
+    )
+}
+
+fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.query(
+    ScanIndexForward: Boolean = true,
+    PageSize: Int? = null,
+    ConsistentRead: Boolean? = null,
+    block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
+): Sequence<Document> {
+    val query = DynamoDbQueryBuilder(schema).apply(block).build()
+    return query(
+        KeyConditionExpression = query.keyConditionExpression,
+        FilterExpression = query.filterExpression,
+        ExpressionAttributeNames = query.expressionAttributeNames,
+        ExpressionAttributeValues = query.expressionAttributeValues,
+        ScanIndexForward = ScanIndexForward,
+        PageSize = PageSize,
+        ConsistentRead = ConsistentRead
+    )
+}
+
+fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.queryPage(
+    ScanIndexForward: Boolean = true,
+    Limit: Int? = null,
+    ConsistentRead: Boolean? = null,
+    ExclusiveStartKey: Key? = null,
+    block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
+): DynamoDbPage<Document> {
+    val query = DynamoDbQueryBuilder(schema).apply(block).build()
+    return queryPage(
+        KeyConditionExpression = query.keyConditionExpression,
+        FilterExpression = query.filterExpression,
+        ExpressionAttributeNames = query.expressionAttributeNames,
+        ExpressionAttributeValues = query.expressionAttributeValues,
+        ExclusiveStartKey = ExclusiveStartKey,
+        ScanIndexForward = ScanIndexForward,
+        Limit = Limit,
+        ConsistentRead = ConsistentRead
+    )
+}
+
+fun <Document : Any, HashKey : Any, SortKey : Any> DynamoDbIndexMapper<Document, HashKey, SortKey>.count(
+    ConsistentRead: Boolean? = null,
+    block: DynamoDbQueryBuilder<HashKey, SortKey>.() -> Unit
+): Int {
+    val query = DynamoDbQueryBuilder(schema).apply(block).build()
+    return count(
+        KeyConditionExpression = query.keyConditionExpression,
+        FilterExpression = query.filterExpression,
+        ExpressionAttributeNames = query.expressionAttributeNames,
+        ExpressionAttributeValues = query.expressionAttributeValues,
+        ConsistentRead = ConsistentRead
     )
 }
