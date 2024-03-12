@@ -3,8 +3,12 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.9.0.0 (uncut)
+- **http4k-connect-amazon-dynamodb** - [Breaking] `keyCondition` in query DSL no longer accepts arbitrary attributes. Fixes #380. H/T @obecker
+
 ### v5.8.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.9.23
+- **http4k-connect-amazon-dynamodb** - [Breaking] `ExclusiveStartKey` in `DynamoDbIndexMapper` functions is now an unconstrained `Key`. Fixes #372. H/T @oharaandrew314
 
 ### v5.7.0.0
 - **http4k-connect-*** - Upgrade dependencies.
