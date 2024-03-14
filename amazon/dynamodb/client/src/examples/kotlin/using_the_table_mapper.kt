@@ -41,7 +41,7 @@ fun main() {
     // define the table mapper and its primary index
     val table = dynamoDb.tableMapper<KittyCat, UUID, Unit>(
         tableName = TableName.of("cats"),
-        primarySchema = primaryIndex,
+        primarySchema = primaryIndex
     )
 
     // optionally, create the table and its secondary indexes
