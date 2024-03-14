@@ -20,7 +20,7 @@ interface PartitionKeyCondition<HashKey : Any, SortKey : Any> : CombinedKeyCondi
  * See https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.KeyConditionExpressions.html
  */
 class KeyConditionBuilder<HashKey : Any, SortKey : Any> internal constructor(
-    schema: DynamoDbTableMapperSchema<HashKey, SortKey>
+    schema: DynamoDbTableMapperSchema<*, HashKey, SortKey>
 ) {
     inner class HashKeySubstitute(val attribute: Attribute<HashKey>) {
         val expressionAttributeName = "hk"
@@ -315,7 +315,7 @@ class DynamoDbScanBuilder {
     )
 }
 
-class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(private val schema: DynamoDbTableMapperSchema<HashKey, SortKey>) {
+class DynamoDbQueryBuilder<HashKey : Any, SortKey : Any>(private val schema: DynamoDbTableMapperSchema<*, HashKey, SortKey>) {
 
     internal class DynamoDbQuery(
         val keyConditionExpression: String?,
