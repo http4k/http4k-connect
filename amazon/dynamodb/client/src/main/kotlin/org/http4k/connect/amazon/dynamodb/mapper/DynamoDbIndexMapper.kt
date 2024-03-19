@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.dynamodb.mapper
 
 import dev.forkhandles.result4k.onFailure
 import org.http4k.connect.amazon.dynamodb.DynamoDb
-import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.Select
 import org.http4k.connect.amazon.dynamodb.model.TableName
@@ -12,13 +11,11 @@ import org.http4k.connect.amazon.dynamodb.query
 import org.http4k.connect.amazon.dynamodb.queryPaginated
 import org.http4k.connect.amazon.dynamodb.scan
 import org.http4k.connect.amazon.dynamodb.scanPaginated
-import org.http4k.lens.BiDiLens
 
 class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
     private val dynamoDb: DynamoDb,
     private val tableName: TableName,
-    private val itemLens: BiDiLens<Item, Document>,
-    internal val schema: DynamoDbTableMapperSchema<HashKey, SortKey>
+    internal val schema: DynamoDbTableMapperSchema<Document, HashKey, SortKey>
 ) {
     fun scan(
         FilterExpression: String? = null,
@@ -36,7 +33,7 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
             ConsistentRead = ConsistentRead
         )
         .flatMap { result -> result.onFailure { it.reason.throwIt() } }
-        .map(itemLens)
+        .map(schema.lens)
 
     fun scanPage(
         FilterExpression: String? = null,
@@ -58,7 +55,7 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
-            items = page.items.map(itemLens),
+            items = page.items.map(schema.lens),
             lastEvaluatedKey = page.LastEvaluatedKey
         )
     }
@@ -84,7 +81,7 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
             ConsistentRead = ConsistentRead
         )
         .flatMap { result -> result.onFailure { it.reason.throwIt() } }
-        .map(itemLens)
+        .map(schema.lens)
 
     fun query(
         hashKey: HashKey,
@@ -124,7 +121,7 @@ class DynamoDbIndexMapper<Document : Any, HashKey : Any, SortKey : Any>(
         ).onFailure { it.reason.throwIt() }
 
         return DynamoDbPage(
-            items = page.items.map(itemLens),
+            items = page.items.map(schema.lens),
             lastEvaluatedKey = page.LastEvaluatedKey
         )
     }

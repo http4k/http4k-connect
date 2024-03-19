@@ -52,7 +52,7 @@ class DynamoDbQueryDslTest {
     private val table =
         mockDynamoDb.tableMapper<MockDocument, UUID, String>(TableName.of("Table"), hashKeyAttr, sortKeyAttr)
     private val index = table.primaryIndex()
-    private val secondaryIndex = DynamoDbTableMapperSchema.GlobalSecondary<Int, Unit>(
+    private val secondaryIndex = DynamoDbTableMapperSchema.GlobalSecondary<MockDocument, Int, Unit>(
         indexName = IndexName.of("Secondary"),
         hashKeyAttribute = intAttr.asRequired(),
         sortKeyAttribute = null

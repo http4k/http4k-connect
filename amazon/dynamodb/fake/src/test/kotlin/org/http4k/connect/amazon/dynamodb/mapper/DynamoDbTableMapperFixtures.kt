@@ -11,6 +11,14 @@ internal data class Cat(
     val born: LocalDate,
 )
 
+internal data class CatRef(
+    val ownerId: UUID,
+    val id: UUID,
+    val name: String
+)
+
+internal fun Cat.ref() = CatRef(ownerId, id, name)
+
 internal val owner1 = UUID.fromString("97f5acb1-7212-44f3-8ade-03cfa115c960")
 internal val owner2 = UUID.fromString("5100dd9e-b28f-4a3b-8641-ff9d39d9bb08")
 

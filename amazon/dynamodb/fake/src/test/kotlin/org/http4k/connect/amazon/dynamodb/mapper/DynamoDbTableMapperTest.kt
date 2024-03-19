@@ -14,6 +14,8 @@ import org.http4k.connect.amazon.dynamodb.model.DynamoDataType
 import org.http4k.connect.amazon.dynamodb.model.IndexName
 import org.http4k.connect.amazon.dynamodb.model.Key
 import org.http4k.connect.amazon.dynamodb.model.KeySchema
+import org.http4k.connect.amazon.dynamodb.model.Projection
+import org.http4k.connect.amazon.dynamodb.model.ProjectionType
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.dynamodb.model.compound
 import org.http4k.connect.storage.InMemory
@@ -29,16 +31,17 @@ private val nickNameAttr = Attribute.string().required("nickName")
 private val bornAttr = Attribute.localDate().required("born")
 private val idAttr = Attribute.uuid().required("id")
 
-private val byOwner = DynamoDbTableMapperSchema.GlobalSecondary(
+private val byOwner = DynamoDbTableMapperSchema.GlobalSecondary<Cat, UUID, String>(
     indexName = IndexName.of("by-owner"),
     hashKeyAttribute = ownerIdAttr,
     sortKeyAttribute = nameAttr
 )
 
-private val byDob = DynamoDbTableMapperSchema.GlobalSecondary(
+private val byDob = DynamoDbTableMapperSchema.GlobalSecondary<CatRef, LocalDate, UUID>(
     indexName = IndexName.of("by-dob"),
     hashKeyAttribute = bornAttr,
-    sortKeyAttribute = idAttr
+    sortKeyAttribute = idAttr,
+    projection = Projection(listOf(nameAttr.name), ProjectionType.INCLUDE)
 )
 
 class DynamoDbTableMapperTest {
@@ -159,7 +162,7 @@ class DynamoDbTableMapperTest {
             ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born))
         ).toList()
 
-        assertThat(results, equalTo(listOf(smokie, bandit)))
+        assertThat(results, equalTo(listOf(smokie.ref(), bandit.ref())))
     }
 
     @Test
@@ -247,7 +250,7 @@ class DynamoDbTableMapperTest {
             ExpressionAttributeValues = mapOf(":val1" to bornAttr.asValue(smokie.born)),
             Limit = 1
         ), equalTo(DynamoDbPage(
-            items = listOf(smokie),
+            items = listOf(smokie.ref()),
             lastEvaluatedKey = Key(
                 idAttr of smokie.id,
                 bornAttr of smokie.born
@@ -264,7 +267,7 @@ class DynamoDbTableMapperTest {
                 bornAttr of smokie.born
             )
         ), equalTo(DynamoDbPage(
-            items = listOf(bandit),
+            items = listOf(bandit.ref()),
             lastEvaluatedKey = null
         )))
     }
@@ -278,7 +281,7 @@ class DynamoDbTableMapperTest {
             }
         }
         assertThat(page1, equalTo(DynamoDbPage(
-            items = listOf(smokie),
+            items = listOf(smokie.ref()),
             lastEvaluatedKey = Key(
                 idAttr of smokie.id,
                 bornAttr of smokie.born
@@ -299,7 +302,7 @@ class DynamoDbTableMapperTest {
         }
         assertThat(
             page2,
-            equalTo(DynamoDbPage(items = listOf(bandit), lastEvaluatedKey = null))
+            equalTo(DynamoDbPage(items = listOf(bandit.ref()), lastEvaluatedKey = null))
         )
     }
 

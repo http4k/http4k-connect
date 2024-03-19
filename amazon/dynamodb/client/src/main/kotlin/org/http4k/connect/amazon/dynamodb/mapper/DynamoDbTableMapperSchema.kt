@@ -1,5 +1,6 @@
 package org.http4k.connect.amazon.dynamodb.mapper
 
+import org.http4k.connect.amazon.dynamodb.DynamoDbMoshi
 import org.http4k.connect.amazon.dynamodb.model.Attribute
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
@@ -10,11 +11,14 @@ import org.http4k.connect.amazon.dynamodb.model.LocalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.Projection
 import org.http4k.connect.amazon.dynamodb.model.asAttributeDefinition
 import org.http4k.connect.amazon.dynamodb.model.compound
+import org.http4k.format.autoDynamoLens
+import org.http4k.lens.BiDiLens
 
-sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
+sealed interface DynamoDbTableMapperSchema<Document: Any, HashKey, SortKey> {
     val hashKeyAttribute: Attribute<HashKey>
     val sortKeyAttribute: Attribute<SortKey>?
     val indexName: IndexName?
+    val lens: BiDiLens<Item, Document>
 
     fun keySchema() = KeySchema.compound(hashKeyAttribute.name, sortKeyAttribute?.name)
     fun attributeDefinitions() = setOfNotNull(
@@ -22,26 +26,41 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
         sortKeyAttribute?.asAttributeDefinition()
     )
 
-    data class Primary<HashKey, SortKey>(
+    data class Primary<Document: Any, HashKey, SortKey>(
         override val hashKeyAttribute: Attribute<HashKey>,
-        override val sortKeyAttribute: Attribute<SortKey>?
-    ) : DynamoDbTableMapperSchema<HashKey, SortKey> {
+        override val sortKeyAttribute: Attribute<SortKey>?,
+        override val lens: BiDiLens<Item, Document>
+    ) : DynamoDbTableMapperSchema<Document, HashKey, SortKey> {
         companion object {
-            operator fun <HashKey> invoke(hashKeyAttribute: Attribute<HashKey>) =
-                Primary<HashKey, Unit>(hashKeyAttribute, null)
+            inline operator fun <reified Document: Any, HashKey> invoke(
+                hashKeyAttribute: Attribute<HashKey>,
+                lens: BiDiLens<Item, Document> = DynamoDbMoshi.autoDynamoLens()
+            ) = Primary<Document, HashKey, Unit>(hashKeyAttribute, null, lens)
         }
 
         override val indexName = null
     }
 
-    sealed interface Secondary<HashKey, SortKey> : DynamoDbTableMapperSchema<HashKey, SortKey>
+    sealed interface Secondary<Document: Any, HashKey, SortKey> : DynamoDbTableMapperSchema<Document, HashKey, SortKey>
 
-    data class GlobalSecondary<HashKey, SortKey>(
+    data class GlobalSecondary<Document: Any, HashKey, SortKey>(
         override val indexName: IndexName,
         override val hashKeyAttribute: Attribute<HashKey>,
         override val sortKeyAttribute: Attribute<SortKey>?,
+        override val lens: BiDiLens<Item, Document>,
         val projection: Projection = Projection.all
-    ) : Secondary<HashKey, SortKey> {
+    ) : Secondary<Document, HashKey, SortKey> {
+
+        companion object {
+            inline operator fun <reified Document: Any, HashKey, SortKey> invoke(
+                indexName: IndexName,
+                hashKeyAttribute: Attribute<HashKey>,
+                sortKeyAttribute: Attribute<SortKey>?,
+                lens: BiDiLens<Item, Document> = DynamoDbMoshi.autoDynamoLens(),
+                projection: Projection = Projection.all
+            ) = GlobalSecondary(indexName, hashKeyAttribute, sortKeyAttribute, lens, projection)
+        }
+
         fun toIndex() = GlobalSecondaryIndex(
             IndexName = indexName,
             KeySchema = keySchema(),
@@ -49,12 +68,22 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
         )
     }
 
-    data class LocalSecondary<HashKey, SortKey>(
+    data class LocalSecondary<Document: Any, HashKey, SortKey>(
         override val indexName: IndexName,
         override val hashKeyAttribute: Attribute<HashKey>,
         override val sortKeyAttribute: Attribute<SortKey>?,
+        override val lens: BiDiLens<Item, Document>,
         val projection: Projection = Projection.all
-    ) : Secondary<HashKey, SortKey> {
+    ) : Secondary<Document, HashKey, SortKey> {
+        companion object {
+            inline operator fun <reified Document: Any, HashKey> invoke(
+                indexName: IndexName,
+                hashKeyAttribute: Attribute<HashKey>,
+                lens: BiDiLens<Item, Document> = DynamoDbMoshi.autoDynamoLens(),
+                projection: Projection = Projection.all
+            ) = LocalSecondary<Document, HashKey, Unit>(indexName, hashKeyAttribute, null, lens, projection)
+        }
+
         fun toIndex() = LocalSecondaryIndex(
             IndexName = indexName,
             KeySchema = keySchema(),
@@ -63,7 +92,7 @@ sealed interface DynamoDbTableMapperSchema<HashKey, SortKey> {
     }
 }
 
-fun <HashKey, SortKey> DynamoDbTableMapperSchema<HashKey, SortKey>.key(hashKey: HashKey, sortKey: SortKey?): Key {
+fun <HashKey, SortKey> DynamoDbTableMapperSchema<*, HashKey, SortKey>.key(hashKey: HashKey, sortKey: SortKey?): Key {
     return if (sortKeyAttribute == null || sortKey == null) {
         Item(hashKeyAttribute of hashKey)
     } else Item(

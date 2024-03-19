@@ -26,10 +26,10 @@ private val ownerIdAttr = Attribute.uuid().required("ownerId")
 private val nameAttr = Attribute.string().required("name")
 
 // define the primary index
-private val primaryIndex = DynamoDbTableMapperSchema.Primary(idAttr)
+private val primaryIndex = DynamoDbTableMapperSchema.Primary<KittyCat, UUID>(idAttr)
 
 // define an optional secondary index
-private val ownerIndex = DynamoDbTableMapperSchema.GlobalSecondary(
+private val ownerIndex = DynamoDbTableMapperSchema.GlobalSecondary<KittyCat, UUID, UUID>(
     indexName = IndexName.of("owners"),
     hashKeyAttribute = ownerIdAttr,
     sortKeyAttribute = idAttr
