@@ -21,7 +21,6 @@ import java.io.File
 private val gitHub = GitHub.Http2()
 
 open class GitHubRepo(val domain: String, var branch: String = "master") {
-    //    infix fun getFile(path: String) = GitHub(GetFile())
 
 
     // https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#get-repository-content
