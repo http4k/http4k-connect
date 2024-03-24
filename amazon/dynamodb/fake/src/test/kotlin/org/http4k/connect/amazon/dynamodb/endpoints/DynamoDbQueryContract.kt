@@ -517,6 +517,44 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
             message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"The table does not have the specified index: missing"}"""
         ))))
     }
+
+    @Test
+    fun `query with reserved word - exact case`() {
+        dynamo.putItem(table, hash1Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "ARRAY = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrN.asValue(1)
+            )
+        )
+        assertThat(result, equalTo(Failure(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"Invalid KeyConditionExpression: Attribute name is a reserved keyword; reserved keyword: ARRAY"}"""
+        ))))
+    }
+
+    @Test
+    fun `query with reserved word - ignore case`() {
+        dynamo.putItem(table, hash1Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "aRrAy = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrN.asValue(1)
+            )
+        )
+        assertThat(result, equalTo(Failure(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"Invalid KeyConditionExpression: Attribute name is a reserved keyword; reserved keyword: aRrAy"}"""
+        ))))
+    }
 }
 
 
