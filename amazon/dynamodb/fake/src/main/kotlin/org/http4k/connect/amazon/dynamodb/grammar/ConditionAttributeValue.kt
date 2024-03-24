@@ -7,12 +7,10 @@ import parser4k.commonparsers.Tokens.identifier
 import parser4k.map
 
 private val reservedWords by lazy {
-    buildSet {
-        ConditionAttributeValue::class.java
-            .getResourceAsStream("reservedWords.txt")!!
-            .reader()
-            .forEachLine(::add)
-    }
+    ConditionAttributeValue::class.java
+        .getResourceAsStream("reservedWords.txt")!!
+        .reader()
+        .readLines()
 }
 
 object ConditionAttributeValue : ExprFactory {
