@@ -43,12 +43,16 @@ fun AmazonJsonFake.query(tables: Storage<DynamoTable>) = route<Query> { query ->
     }
 
     val page = matches.take((query.Limit ?: table.maxPageSize).coerceAtMost(table.maxPageSize))
-    val filteredPage = page.mapNotNull {
-        it.condition(
-            expression = query.FilterExpression,
-            expressionAttributeNames = query.ExpressionAttributeNames,
-            expressionAttributeValues = query.ExpressionAttributeValues
-        )
+    val filteredPage = try {
+        page.mapNotNull {
+            it.condition(
+                expression = query.FilterExpression,
+                expressionAttributeNames = query.ExpressionAttributeNames,
+                expressionAttributeValues = query.ExpressionAttributeValues
+            )
+        }
+    } catch (e: DynamoDbConditionError) {
+        return@route JsonError("com.amazon.coral.validate#ValidationException", "Invalid FilterExpression: ${e.message}")
     }
 
     QueryResponse(

@@ -21,6 +21,7 @@ import org.http4k.connect.amazon.dynamodb.batchWriteItem
 import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
 import org.http4k.connect.amazon.dynamodb.model.Attribute
+import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
@@ -309,6 +310,22 @@ abstract class DynamoDbScanContract : DynamoDbSource {
             status = Status.BAD_REQUEST,
             message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"Invalid FilterExpression: Attribute name is a reserved keyword; reserved keyword: ARRAY"}"""
         ))))
+    }
+
+    @Test
+    fun `scan with reserved word - named`() {
+        dynamo.putItem(table, item1)
+
+        dynamo.scan(
+            TableName = table,
+            FilterExpression = "#key1 = :val1",
+            ExpressionAttributeNames = mapOf(
+                "#key1" to AttributeName.of("ARRAY")
+            ),
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrN.asValue(1)
+            )
+        ).successValue()
     }
 
     @Test

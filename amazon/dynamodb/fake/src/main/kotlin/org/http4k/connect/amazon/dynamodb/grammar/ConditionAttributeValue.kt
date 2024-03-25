@@ -14,10 +14,10 @@ private val reservedWords by lazy {
 }
 
 object ConditionAttributeValue : ExprFactory {
-    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> = identifier.map(::ConditionAttributeValue)
+    override operator fun invoke(parser: () -> Parser<Expr>): Parser<Expr> = identifier.map(::conditionAttributeValue)
 }
 
-fun ConditionAttributeValue(value: String) = Expr { item ->
+private fun conditionAttributeValue(value: String) = Expr { item ->
     if (reservedWords.any { it.equals(value, ignoreCase = true) }) {
         throw DynamoDbConditionError("Attribute name is a reserved keyword; reserved keyword: $value")
     }
