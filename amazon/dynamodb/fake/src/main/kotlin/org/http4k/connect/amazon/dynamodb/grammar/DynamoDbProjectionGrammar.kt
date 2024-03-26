@@ -21,7 +21,7 @@ object DynamoDbProjectionGrammar {
                 ProjectionIndexedAttributeValue(::expr).with(cache),
             ),
             oneOf(
-                ExpressionAttributeName(::expr).with(cache),
+                ExpressionAttributeName.projection(::expr).with(cache),
                 ExpressionAttributeValue(::expr).with(cache),
                 ProjectionAttributeValue(::expr).with(cache)
             )
