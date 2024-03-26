@@ -20,6 +20,7 @@ import org.http4k.connect.amazon.dynamodb.createItem
 import org.http4k.connect.amazon.dynamodb.createTable
 import org.http4k.connect.amazon.dynamodb.deleteTable
 import org.http4k.connect.amazon.dynamodb.model.Attribute
+import org.http4k.connect.amazon.dynamodb.model.AttributeName
 import org.http4k.connect.amazon.dynamodb.model.BillingMode
 import org.http4k.connect.amazon.dynamodb.model.GlobalSecondaryIndex
 import org.http4k.connect.amazon.dynamodb.model.IndexName
@@ -515,6 +516,81 @@ abstract class DynamoDbQueryContract : DynamoDbSource {
             uri = Uri.of("/"),
             status = Status.BAD_REQUEST,
             message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"The table does not have the specified index: missing"}"""
+        ))))
+    }
+
+    @Test
+    fun `query with reserved word - key condition`() {
+        dynamo.putItem(table, hash1Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "ARRAY = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrN.asValue(1)
+            )
+        )
+        assertThat(result, equalTo(Failure(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"Invalid KeyConditionExpression: Attribute name is a reserved keyword; reserved keyword: ARRAY"}"""
+        ))))
+    }
+
+    @Test
+    fun `query with reserved word - filter`() {
+        dynamo.putItem(table, hash1Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            FilterExpression = "ARRAY = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrS.asValue("hash1")
+            )
+        )
+        assertThat(result, equalTo(Failure(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"Invalid FilterExpression: Attribute name is a reserved keyword; reserved keyword: ARRAY"}"""
+        ))))
+    }
+
+    @Test
+    fun `query with named reserved word`() {
+        dynamo.putItem(table, hash1Val1)
+
+        dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "$attrS = :val1",
+            FilterExpression = "#key1 = :val1",
+            ExpressionAttributeNames = mapOf(
+                "#key1" to AttributeName.of("ARRAY")
+            ),
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrS.asValue("hash1")
+            )
+        ).successValue()
+    }
+
+    @Test
+    fun `query with reserved word - ignore case`() {
+        dynamo.putItem(table, hash1Val1)
+
+        val result = dynamo.query(
+            TableName = table,
+            KeyConditionExpression = "aRrAy = :val1",
+            ExpressionAttributeValues = mapOf(
+                ":val1" to attrN.asValue(1)
+            )
+        )
+        assertThat(result, equalTo(Failure(RemoteFailure(
+            method = Method.POST,
+            uri = Uri.of("/"),
+            status = Status.BAD_REQUEST,
+            message = """{"__type":"com.amazon.coral.validate#ValidationException","Message":"Invalid KeyConditionExpression: Attribute name is a reserved keyword; reserved keyword: aRrAy"}"""
         ))))
     }
 }
