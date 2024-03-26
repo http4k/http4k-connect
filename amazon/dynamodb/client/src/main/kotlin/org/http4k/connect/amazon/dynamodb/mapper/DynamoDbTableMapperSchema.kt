@@ -32,10 +32,11 @@ sealed interface DynamoDbTableMapperSchema<Document: Any, HashKey, SortKey> {
         override val lens: BiDiLens<Item, Document>
     ) : DynamoDbTableMapperSchema<Document, HashKey, SortKey> {
         companion object {
-            inline operator fun <reified Document: Any, HashKey> invoke(
+            inline operator fun <reified Document: Any, HashKey, SortKey> invoke(
                 hashKeyAttribute: Attribute<HashKey>,
+                sortKeyAttribute: Attribute<SortKey>? = null,
                 lens: BiDiLens<Item, Document> = DynamoDbMoshi.autoDynamoLens()
-            ) = Primary<Document, HashKey, Unit>(hashKeyAttribute, null, lens)
+            ) = Primary(hashKeyAttribute, sortKeyAttribute, lens)
         }
 
         override val indexName = null
@@ -55,7 +56,7 @@ sealed interface DynamoDbTableMapperSchema<Document: Any, HashKey, SortKey> {
             inline operator fun <reified Document: Any, HashKey, SortKey> invoke(
                 indexName: IndexName,
                 hashKeyAttribute: Attribute<HashKey>,
-                sortKeyAttribute: Attribute<SortKey>?,
+                sortKeyAttribute: Attribute<SortKey>? = null,
                 lens: BiDiLens<Item, Document> = DynamoDbMoshi.autoDynamoLens(),
                 projection: Projection = Projection.all
             ) = GlobalSecondary(indexName, hashKeyAttribute, sortKeyAttribute, lens, projection)
@@ -76,12 +77,13 @@ sealed interface DynamoDbTableMapperSchema<Document: Any, HashKey, SortKey> {
         val projection: Projection = Projection.all
     ) : Secondary<Document, HashKey, SortKey> {
         companion object {
-            inline operator fun <reified Document: Any, HashKey> invoke(
+            inline operator fun <reified Document: Any, HashKey, SortKey> invoke(
                 indexName: IndexName,
                 hashKeyAttribute: Attribute<HashKey>,
+                sortKeyAttribute: Attribute<SortKey>? = null,
                 lens: BiDiLens<Item, Document> = DynamoDbMoshi.autoDynamoLens(),
                 projection: Projection = Projection.all
-            ) = LocalSecondary<Document, HashKey, Unit>(indexName, hashKeyAttribute, null, lens, projection)
+            ) = LocalSecondary(indexName, hashKeyAttribute, sortKeyAttribute, lens, projection)
         }
 
         fun toIndex() = LocalSecondaryIndex(
