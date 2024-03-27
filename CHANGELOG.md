@@ -3,6 +3,11 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.10.1.0
+- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-amazon-dynamodb*** - Align secondary index constructors in DynamoDbTableMapperSchema. H/T @obecker
+- **http4k-connect-amazon-dynamodb*** - Validate reserved words in DynamoDB condition expressions. H/T @obecker
+
 ### v5.10.0.0
 - **http4k-connect-*** - Upgrade dependencies
 - **http4k-connect-amazon-dynamodb** - [Breaking] `DynamoDbIndexMapper` now supports custom projections. Closes #391. H/T @oharaandrew314
