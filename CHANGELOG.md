@@ -6,7 +6,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v5.10.1.0
 - **http4k-connect-*** - Upgrade dependencies
 - **http4k-connect-amazon-dynamodb*** - Align secondary index constructors in DynamoDbTableMapperSchema. H/T @obecker
-- **http4k-connect-amazon-dynamodb*** - Validate reserved words in DynamoDB condition expressions. H/T @obecker
+- **http4k-connect-amazon-dynamodb*** - Validate reserved words in DynamoDB condition expressions. H/T @oharaandrew314
 
 ### v5.10.0.0
 - **http4k-connect-*** - Upgrade dependencies
