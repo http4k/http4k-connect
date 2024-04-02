@@ -36,9 +36,9 @@ fun SystemsManager.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
     overrideEndpoint: Uri? = null,
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, overrideEndpoint, credentialsProvider)
+) = Http(Environment.from(env), http, clock, credentialsProvider, overrideEndpoint)
 
 
 /**
@@ -48,6 +48,6 @@ fun SystemsManager.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
     overrideEndpoint: Uri? = null,
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
 ) = Http(AWS_REGION(env), credentialsProvider, http, clock, overrideEndpoint)

@@ -47,9 +47,9 @@ fun S3.Companion.Http(
     env: Map<String, String> = getenv(),
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
     overrideEndpoint: Uri? = null,
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
-) = Http(Environment.from(env), http, clock, overrideEndpoint, credentialsProvider)
+) = Http(Environment.from(env), http, clock, credentialsProvider, overrideEndpoint)
 
 /**
  * Convenience function to create a S3 from an http4k Environment
@@ -58,6 +58,6 @@ fun S3.Companion.Http(
     env: Environment,
     http: HttpHandler = JavaHttpClient(),
     clock: Clock = systemUTC(),
+    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env),
     overrideEndpoint: Uri? = null,
-    credentialsProvider: CredentialsProvider = CredentialsProvider.Environment(env)
 ) = Http(credentialsProvider, http, clock, overrideEndpoint = overrideEndpoint)
