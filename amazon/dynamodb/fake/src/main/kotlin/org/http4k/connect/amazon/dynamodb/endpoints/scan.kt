@@ -5,6 +5,7 @@ import org.http4k.connect.amazon.JsonError
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.action.Scan
 import org.http4k.connect.amazon.dynamodb.action.ScanResponse
+import org.http4k.connect.amazon.dynamodb.grammar.DynamoDbConditionError
 import org.http4k.connect.storage.Storage
 
 fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
@@ -30,12 +31,16 @@ fun AmazonJsonFake.scan(tables: Storage<DynamoTable>) = route<Scan> { scan ->
         .toList()
 
     val page = matches.take((scan.Limit ?: table.maxPageSize).coerceAtMost(table.maxPageSize))
-    val filteredPage = page.mapNotNull {
-        it.condition(
-            expression = scan.FilterExpression,
-            expressionAttributeNames = scan.ExpressionAttributeNames,
-            expressionAttributeValues = scan.ExpressionAttributeValues
-        )
+    val filteredPage = try {
+        page.mapNotNull {
+            it.condition(
+                expression = scan.FilterExpression,
+                expressionAttributeNames = scan.ExpressionAttributeNames,
+                expressionAttributeValues = scan.ExpressionAttributeValues
+            )
+        }
+    } catch (e: DynamoDbConditionError) {
+        return@route JsonError("com.amazon.coral.validate#ValidationException", "Invalid FilterExpression: ${e.message}")
     }
 
     ScanResponse(

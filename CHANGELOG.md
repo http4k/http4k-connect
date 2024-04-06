@@ -3,6 +3,19 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.11.0.0
+- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-*** - [Breaking] Reordering of the parameters in adapter constructors to put `overrideEndpoint` at the end of the list, since it is the least commonly used. To fix, just reorder your parameters.
+
+### v5.10.1.0
+- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-amazon-dynamodb*** - Align secondary index constructors in DynamoDbTableMapperSchema. H/T @obecker
+- **http4k-connect-amazon-dynamodb-fake** - Validate reserved words in DynamoDB condition expressions. H/T @oharaandrew314
+
+### v5.10.0.0
+- **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-amazon-dynamodb** - [Breaking] `DynamoDbIndexMapper` now supports custom projections. Closes #391. H/T @oharaandrew314
+
 ### v5.9.0.0
 - **http4k-connect-amazon-dynamodb** - [Breaking] `keyCondition` in query DSL no longer accepts arbitrary attributes. Fixes #380. H/T @obecker
 
