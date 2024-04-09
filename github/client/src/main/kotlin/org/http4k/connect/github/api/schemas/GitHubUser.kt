@@ -1,4 +1,4 @@
-package org.http4k.connect.github.api.action
+package org.http4k.connect.github.api.schemas
 
 import org.http4k.connect.github.model.Owner
 import org.http4k.core.Uri

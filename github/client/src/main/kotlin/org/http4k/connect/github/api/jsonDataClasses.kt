@@ -1,17 +1,14 @@
 package org.http4k.connect.github.api
 
-// Generic
-data class _Link(val git: String,
-                 val html: String,
-                 val self: String)
+import org.http4k.core.Uri
 
 data class GetGitRefData(val ref: String,
                          val node_id: String,
-                         val url: String,
+                         val uri: Uri,
                          val `object`: Object) {
     data class Object(val type: String,
                       val sha: String,
-                      val url: String)
+                      val uri: Uri)
 }
 
 data class CreateRefData(val ref: String)
@@ -22,17 +19,17 @@ data class UploadContentData(val content: Content,
                        val path: String,
                        val sha: String,
                        val size: Int,
-                       val url: String,
-                       val html_url: String,
-                       val git_url: String,
-                       val download_url: String,
+                       val uri: Uri,
+                       val html_uri: Uri,
+                       val git_uri: Uri,
+                       val download_uri: Uri,
                        val type: String,
-                       val _links: _Link)
+                       val _links: Link)
 
     data class Commit(val sha: String,
                       val node_id: String,
-                      val url: String,
-                      val html_url: String,
+                      val uri: Uri,
+                      val html_uri: Uri,
                       val author: Person,
                       val committer: Person,
                       val message: String,
@@ -44,26 +41,26 @@ data class UploadContentData(val content: Content,
         val body by lazy { """{"name":"$name","email":"$email"${date?.let { ""","date":"$it"""" } ?: ""}}""" }
     }
 
-    data class Tree(val url: String, val sha: String)
-    data class Parent(val url: String, val html_url: String, val sha: String)
+    data class Tree(val uri: Uri, val sha: String)
+    data class Parent(val uri: Uri, val html_uri: Uri, val sha: String)
     data class Verification(val verified: Boolean,
                             val reason: String,
                             val signature: String?,
                             val payload: String?)
 }
 
-data class PushRequest(val url: String,
+data class PushRequest(val uri: Uri,
                        val id: Int,
                        val node_id: String,
-                       val html_url: String,
-                       val diff_url: String,
-                       val patch_url: String,
-                       val issue_url: String,
-                       val commits_url: String,
-                       val review_comments_url: String,
-                       val review_comment_url: String,
-                       val comments_url: String,
-                       val statuses_url: String,
+                       val html_uri: Uri,
+                       val diff_uri: Uri,
+                       val patch_uri: Uri,
+                       val issue_uri: Uri,
+                       val commits_uri: Uri,
+                       val review_comments_uri: Uri,
+                       val review_comment_uri: Uri,
+                       val comments_uri: Uri,
+                       val statuses_uri: Uri,
                        val number: Int,
                        val state: State,
                        val locked: Boolean,
@@ -77,26 +74,26 @@ data class PushRequest(val url: String,
                     val login: String,
                     val id: Int,
                     val node_id: String,
-                    val avatar_url: String,
+                    val avatar_uri: Uri,
                     val gravatar_id: String,
-                    val url: String,
-                    val html_url: String,
-                    val followers_url: String,
-                    val following_url: String,
-                    val gists_url: String,
-                    val starred_url: String,
-                    val subscriptions_url: String,
-                    val organizations_url: String,
-                    val repos_url: String,
-                    val events_url: String,
-                    val received_events_url: String,
+                    val uri: Uri,
+                    val html_uri: Uri,
+                    val followers_uri: Uri,
+                    val following_uri: Uri,
+                    val gists_uri: Uri,
+                    val starred_uri: Uri,
+                    val subscriptions_uri: Uri,
+                    val organizations_uri: Uri,
+                    val repos_uri: Uri,
+                    val events_uri: Uri,
+                    val received_events_uri: Uri,
                     val type: String,
                     val site_admin: Boolean,
                     val starred_at: String?)
 
     data class Label(val id: Long,
                      val node_id: String,
-                     val url: String,
+                     val uri: Uri,
                      val name: String,
                      val description: String,
                      val color: String,
@@ -106,14 +103,14 @@ data class PushRequest(val url: String,
 
 data class PullRequests(val pullRequests: Array<PushRequest>)
 
-data class CommitData(val url: String,
+data class CommitData(val uri: Uri,
                       val sha: String,
                       val node_id: String,
-                      val html_url: String,
-                      val comments_url: String,
+                      val html_uri: Uri,
+                      val comments_uri: Uri,
                       val commit: Commit) {
     data class Commit(
-        val url: String,
+        val uri: Uri,
         // TODO finish
     )
     // TODO finish

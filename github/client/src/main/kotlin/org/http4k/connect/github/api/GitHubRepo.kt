@@ -25,47 +25,19 @@ open class GitHubRepo(val domain: String, var branch: String = "master") {
 
     // https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#get-repository-content
 
-    fun getContent(path: String, branch: String = this@GitHubRepo.branch) = gitHub(GetContentTree(path, branch))
-
-    inner class GetContentTree(path: String, branch: String) : GitHubAction<ContentTree> {
-        val responseBody = Body.auto<ContentTree>().toLens()
-        val uri = Uri.of("$api/$domain/contents/$path?ref=$branch")
-
-        override fun toRequest() = Request(Method.GET, uri)
-
-        override fun toResult(response: Response) = when {
-            response.status.successful -> Success(responseBody(response))
-            else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
-        }
-    }
-
-    data class ContentTree(val type: String,
-                           val encoding: String,
-                           val size: Int,
-                           val name: String,
-                           val path: String,
-                           val sha: String,
-                           val url: String, // URI?
-                           val content: String,
-                           val git_url: String,
-                           val html_url: String,
-                           val download_url: String,
-                           val entries: Array<Entry>?,
-                           val _links: _Link) {
-        data class Entry(val type: String,
-                         val size: Int,
-                         val name: String,
-                         val path: String,
-                         val content: String,
-                         val sha: String,
-                         val url: String,
-                         val git_url: String,
-                         val html_url: String,
-                         val download_url: String,
-                         val _links: _Link)
-
-        val rawContent by lazy { content.replace("\n", "").base64Decoded() }
-    }
+//    fun getContent(path: String, branch: String = this@GitHubRepo.branch) = gitHub(GetContentTree(path, branch))
+//
+//    inner class GetContentTree(path: String, branch: String) : GitHubAction<ContentTree> {
+//        val responseBody = Body.auto<ContentTree>().toLens()
+//        val uri = Uri.of("$api/$domain/contents/$path?ref=$branch")
+//
+//        override fun toRequest() = Request(Method.GET, uri)
+//
+//        override fun toResult(response: Response) = when {
+//            response.status.successful -> Success(responseBody(response))
+//            else -> Failure(RemoteFailure(Method.GET, uri, response.status, response.bodyString()))
+//        }
+//    }
 
     // https://docs.github.com/en/rest/git/refs?apiVersion=2022-11-28#get-a-reference
 
@@ -258,11 +230,6 @@ open class GitHubRepo(val domain: String, var branch: String = "master") {
         val api = "https://api.github.com/repos"
     }
 }
-
-
-//class GitHubMavenRepo(domain: String, token: String) {
-//
-//}
 
 fun GitHub.Companion.Http2(token: GitHubToken = GitHubToken.of(System.getenv("TOKEN")),
                            http: HttpHandler = JavaHttpClient(),
