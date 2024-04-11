@@ -12,7 +12,7 @@ import org.http4k.lens.ParamMeta.ObjectParam
  * across the table, and complex objects and lists are preserved in place.
  */
 inline fun <reified T : Any> AutoMarshalling.autoDynamoLens() = BiDiLens<Item, T>(
-    Meta(true, "dynamo", ObjectParam, "item"),
+    Meta(true, "dynamo", ObjectParam, "item", null, emptyMap()),
     {
         convert(it.map { it.key.value to fromAttributeValue(it.value) }.toMap())
     },
