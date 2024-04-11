@@ -123,54 +123,69 @@ class Attribute<FINAL>(
     open class AttrLensSpec<OUT>(
         private val dataType: DynamoDataType,
         private val get: LensGet<Item, OUT>,
-        private val set: LensSet<Item, OUT>
+        private val set: LensSet<Item, OUT>,
     ) : LensSpec<Item, OUT>("item", ObjectParam, get) {
         fun <NEXT> map(nextIn: (OUT) -> NEXT, nextOut: (NEXT) -> OUT) =
             AttrLensSpec(dataType, get.map(nextIn), set.map(nextOut))
 
         fun <NEXT> map(mapping: BiDiMapping<OUT, NEXT>) = map(mapping::invoke, mapping::invoke)
 
-        override fun optional(name: String, description: String?): Attribute<OUT?> =
+        override fun optional(name: String, description: String?, metadata: Map<String, Any>): Attribute<OUT?> =
             optional(name, description, ignoreNull = false)
 
-        fun optional(name: String, description: String? = null, ignoreNull: Boolean): Attribute<OUT?> {
+        fun optional(
+            name: String,
+            description: String? = null,
+            ignoreNull: Boolean,
+            metadata: Map<String, Any> = emptyMap()
+        ): Attribute<OUT?> {
             val getLens = get(name)
             val setLens = set(name)
             return Attribute(
                 dataType,
-                Meta(false, location, paramMeta, name, description),
+                Meta(false, location, paramMeta, name, description, metadata),
                 { getLens(it).run { if (isEmpty()) null else first() } },
                 { out: OUT?, target -> setLens(out?.let { listOf(it) } ?: emptyList(), target) },
                 ignoreNull
             )
         }
 
-        fun defaulted(name: String, default: Attribute<OUT>, description: String? = null): Attribute<OUT> {
+        fun defaulted(
+            name: String,
+            default: Attribute<OUT>,
+            description: String? = null,
+            metadata: Map<String, Any> = emptyMap()
+        ): Attribute<OUT> {
             val getLens = get(name)
             val setLens = set(name)
             return Attribute(
                 dataType,
-                Meta(false, location, paramMeta, name, description),
+                Meta(false, location, paramMeta, name, description, metadata),
                 { getLens(it).run { if (isEmpty()) default(it) else first() } },
                 { out: OUT?, target -> setLens(out?.let { listOf(it) } ?: emptyList(), target) }
             )
         }
 
-        override fun defaulted(name: String, default: OUT, description: String?): Attribute<OUT> {
+        override fun defaulted(
+            name: String,
+            default: OUT,
+            description: String?,
+            metadata: Map<String, Any>
+        ): Attribute<OUT> {
             val getLens = get(name)
             val setLens = set(name)
             return Attribute(
                 dataType,
-                Meta(false, location, paramMeta, name, description),
+                Meta(false, location, paramMeta, name, description, metadata),
                 { getLens(it).run { if (isEmpty()) default else first() } },
                 { out: OUT?, target -> setLens(out?.let { listOf(it) } ?: emptyList(), target) }
             )
         }
 
-        override fun required(name: String, description: String?): Attribute<OUT> {
+        override fun required(name: String, description: String?, metadata: Map<String, Any>): Attribute<OUT> {
             val getLens = get(name)
             val setLens = set(name)
-            val meta = Meta(true, location, paramMeta, name, description)
+            val meta = Meta(true, location, paramMeta, name, description, metadata)
             return Attribute(
                 dataType,
                 meta,
@@ -180,8 +195,11 @@ class Attribute<FINAL>(
     }
 }
 
-fun <OUT> Attribute<OUT?>.asRequired(description: String? = null): Attribute<OUT> {
-    val requiredMeta = meta.copy(required = true, description = description ?: meta.description)
+fun <OUT> Attribute<OUT?>.asRequired(
+    description: String? = null,
+    metadata: Map<String, Any> = emptyMap()
+): Attribute<OUT> {
+    val requiredMeta = meta.copy(required = true, description = description ?: meta.description, metadata = metadata)
     return Attribute(
         dataType,
         requiredMeta,

@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.12.0.0
+- **http4k-connect-*** - Upgrade dependencies
+
 ### v5.11.0.0
 - **http4k-connect-*** - Upgrade dependencies
 - **http4k-connect-*** - [Breaking] Reordering of the parameters in adapter constructors to put `overrideEndpoint` at the end of the list, since it is the least commonly used. To fix, just reorder your parameters.
