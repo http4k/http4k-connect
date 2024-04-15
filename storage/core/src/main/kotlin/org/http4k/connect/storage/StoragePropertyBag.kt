@@ -13,14 +13,15 @@ open class StoragePropertyBag(
     private val storage: Storage<String>,
     private val autoMarshalling: AutoMarshalling = Moshi
 ) {
-    protected fun <OUT : Any?> item() = object : ReadWriteProperty<StoragePropertyBag, OUT> {
+    protected fun <OUT : Any?> item(default: OUT? = null) = object : ReadWriteProperty<StoragePropertyBag, OUT> {
         @Suppress("UNCHECKED_CAST")
         override fun getValue(thisRef: StoragePropertyBag, property: KProperty<*>): OUT {
             val stored = storage[property.name]
 
             return when {
                 stored == null -> when {
-                    property.returnType.isMarkedNullable -> null
+                    property.returnType.isMarkedNullable -> default
+                    default != null -> default
                     else -> throw NoSuchElementException("Field <${property.name}> is missing")
                 }
 

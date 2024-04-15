@@ -23,6 +23,7 @@ class StoragePropertyBagTest {
         var nullableLong by item<Long?>()
         var value by item<MyType>()
         var child by item<MyDataClass>()
+        var defaulted by item(MyDataClass("hello"))
     }
 
     @Test
@@ -33,17 +34,19 @@ class StoragePropertyBagTest {
         assertThrows<NoSuchElementException> { parent.string }
         assertThat(parent.standardField, equalTo("foobar"))
         assertThat(parent.nullableLong, absent())
+        assertThat(parent.defaulted, equalTo(MyDataClass("hello")))
 
         expectSetWorks(parent::string, "helloworld")
         expectSetWorks(parent::nullableLong, 123L)
         expectSetWorks(parent::value, MyType.of(123))
         expectSetWorks(parent::child, MyDataClass("helloworld"))
+        expectSetWorks(parent::defaulted, MyDataClass("goodbye"))
 
-        assertThat(storage.keySet(), equalTo(setOf("string", "value", "nullableLong", "child")))
+        assertThat(storage.keySet(), equalTo(setOf("string", "value", "defaulted", "nullableLong", "child")))
 
         expectSetWorks(parent::nullableLong, null)
 
-        assertThat(storage.keySet(), equalTo(setOf("string", "value", "child")))
+        assertThat(storage.keySet(), equalTo(setOf("string", "value", "defaulted", "child")))
     }
 
     private fun <T> expectSetWorks(prop: KMutableProperty0<T>, value: T) {
