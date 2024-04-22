@@ -3,7 +3,9 @@ package org.http4k.connect.amazon.sqs
 import org.http4k.aws.AwsCredentials
 import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.start
+import org.http4k.connect.amazon.AmazonRestfulFake
 import org.http4k.connect.amazon.core.model.AwsAccount
+import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.storage.InMemory
@@ -18,17 +20,19 @@ class FakeSQS(
     private val region: Region = Region.of("ldn-north-1")
 ) : ChaoticHttpHandler() {
 
+    private val api = AmazonRestfulFake(SqsMoshi, AwsService.of("sqs"), region, awsAccount)
+
     override val app = routes(
         "/" bind POST to routes(
-            deleteMessage(queues),
-            deleteQueue(queues),
-            deleteMessageBatch(queues),
-            receiveMessage(queues),
-            createQueue(queues, awsAccount),
-            getQueueAttributes(queues),
-            sendMessage(queues),
-            sendMessageBatch(queues),
-            listQueues(region, awsAccount, queues)
+            api.deleteMessage(queues),
+            api.deleteQueue(queues),
+            api.deleteMessageBatch(queues),
+            api.receiveMessage(queues),
+            api.createQueue(queues, awsAccount),
+            api.getQueueAttributes(queues),
+            api.sendMessage(queues),
+            api.sendMessageBatch(queues),
+            api.listQueues(region, awsAccount, queues)
         )
     )
 

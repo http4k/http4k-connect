@@ -28,7 +28,7 @@ sealed class SQSMessageAttribute(
     }
 
     class ListValue(
-        private val values: List<String>,
+        internal val values: List<String>,
         private val category: String,
         private val typePrefix: String,
         name: String,

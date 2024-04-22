@@ -1,48 +1,29 @@
 package org.http4k.connect.amazon.sqs.action
 
-import dev.forkhandles.result4k.Failure
-import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.amazon.core.firstChildText
-import org.http4k.connect.amazon.core.sequenceOfNodes
-import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.sqs.SQSAction
-import org.http4k.connect.asRemoteFailure
-import org.http4k.core.Response
 import org.http4k.core.Uri
+import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.Json
 
-// can be QueueUrl
 @Http4kConnectAction
 data class GetQueueAttributes(
     val queueUrl: Uri,
     val attributes: List<String> = listOf("All"),
-) : SQSAction<QueueAttributes>(
-    "GetQueueAttributes",
-    *(
-        attributes
-            .mapIndexed { i, it -> "AttributeName.${i + 1}" to it }
-            + ("QueueUrl" to queueUrl.toString())
-        ).toTypedArray()
-) {
-    override fun toResult(response: Response) = with(response) {
-        when {
-            status.successful -> Success(QueueAttributes.from(response))
-            else -> Failure(asRemoteFailure(this))
-        }
-    }
+) : SQSAction<QueueAttributes, QueueAttributes>("GetQueueAttributes", QueueAttributes::class, { it }) {
+    override fun requestBody() = GetQueueAttributesData(
+        QueueUrl = queueUrl,
+        AttributeNames = attributes
+    )
 }
 
+@JsonSerializable
+data class GetQueueAttributesData(
+    val QueueUrl: Uri,
+    val AttributeNames: List<String>? = null
+)
+
+@JsonSerializable
 data class QueueAttributes(
-    val attributes: Map<String, String>
-) {
-    companion object {
-        fun from(response: Response) = QueueAttributes(
-            response.xmlDoc()
-                .getElementsByTagName("Attribute").sequenceOfNodes()
-                .map {
-                    it.firstChildText("Name")!! to it.firstChildText("Value")!!
-                }
-                .toMap()
-        )
-    }
-}
+    @Json(name = "Attributes") val attributes: Map<String, String>
+)
