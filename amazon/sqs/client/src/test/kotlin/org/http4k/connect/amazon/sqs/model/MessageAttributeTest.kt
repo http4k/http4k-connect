@@ -55,6 +55,6 @@ class MessageAttributeTest {
     @Test
     fun `round trip binary list value`() = roundTrip(
         MessageAttribute("foo", listOf(Base64Blob.encode("foo"), Base64Blob.encode("bar"))),
-        MessageFieldsDto(DataType.Binary, stringListValues = listOf("foo".base64Encode(), "bar".base64Encode()))
+        MessageFieldsDto(DataType.Binary, binaryListValues = listOf("foo".base64Encode(), "bar".base64Encode()))
     )
 }

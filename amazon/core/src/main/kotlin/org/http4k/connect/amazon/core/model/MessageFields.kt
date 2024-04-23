@@ -5,6 +5,7 @@ import com.squareup.moshi.Json
 
 interface MessageFields {
     fun toFields(index: Int): Map<String, String>
+    fun toDto(): MessageFieldsDto
     val name: String
     val value: String
     val dataType: DataType

@@ -5,7 +5,6 @@ import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.connect.amazon.sqs.model.toDto
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 import java.time.ZonedDateTime
