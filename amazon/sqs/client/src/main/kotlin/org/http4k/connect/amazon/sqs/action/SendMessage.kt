@@ -1,12 +1,9 @@
 package org.http4k.connect.amazon.sqs.action
 
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.amazon.core.model.DataType
-import org.http4k.connect.amazon.core.model.MessageFields
 import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
-import org.http4k.connect.amazon.sqs.model.SQSMessageAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.connect.amazon.sqs.model.SqsMessageAttributeDto
 import org.http4k.connect.amazon.sqs.model.toDto

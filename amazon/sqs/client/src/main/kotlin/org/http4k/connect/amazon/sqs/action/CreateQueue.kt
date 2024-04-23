@@ -12,14 +12,14 @@ import se.ansman.kotshi.JsonSerializable
 @Http4kConnectAction
 data class CreateQueue(
     val queueName: QueueName,
-    val tags: List<Tag> = emptyList(),
-    val attributes: Map<String, String> = emptyMap(),
+    val tags: List<Tag>? = null,
+    val attributes: Map<String, String>? = null,
     val expires: ZonedDateTime? = null
 ) : SQSAction<CreatedQueue, CreatedQueue>("CreateQueue", CreatedQueue::class, {it}) {
 
     override fun requestBody() = CreateQueueData(
         QueueName = queueName,
-        tags = tags.associate { it.Key to it.Value },
+        tags = tags?.associate { it.Key to it.Value },
         Attributes = attributes
     )
 }
@@ -27,8 +27,8 @@ data class CreateQueue(
 @JsonSerializable
 data class CreateQueueData(
     val QueueName: QueueName,
-    val tags: Map<String, String>,
-    val Attributes: Map<String, String>
+    val tags: Map<String, String>? = null,
+    val Attributes: Map<String, String>? = null
 )
 
 @JsonSerializable

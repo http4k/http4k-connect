@@ -7,7 +7,23 @@ import com.squareup.moshi.Json
 data class SQSMessage(
     @Json(name = "MessageId") val messageId: SQSMessageId,
     @Json(name = "Body") val body: String,
-    @Json(name = "Md5OfBody") val md5OfBody: String,
+    @Json(name = "MD5OfBody") val md5OfBody: String,
     @Json(name = "ReceiptHandle") val receiptHandle: ReceiptHandle,
-    @Json(name = "Attributes")  val attributes: List<MessageAttribute>
-)
+    val Attributes: Map<String, SqsMessageAttributeDto>
+) {
+    constructor(
+        messageId: SQSMessageId,
+        body: String,
+        md5OfBody: String,
+        receiptHandle: ReceiptHandle,
+        attributes: List<MessageAttribute>
+    ): this(
+        messageId = messageId,
+        body = body,
+        md5OfBody = md5OfBody,
+        receiptHandle = receiptHandle,
+        Attributes = attributes.associate { it.name to it.toDto() }
+    )
+
+    val attributes get() = Attributes.map { (name, value) -> value.toInternal(name) }
+}
