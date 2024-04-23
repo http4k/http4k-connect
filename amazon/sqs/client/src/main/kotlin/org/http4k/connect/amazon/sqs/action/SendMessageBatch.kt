@@ -6,11 +6,11 @@ import org.http4k.connect.amazon.sqs.model.BatchResultErrorEntry
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.connect.amazon.sqs.model.SqsMessageAttributeDto
 import org.http4k.connect.amazon.sqs.model.toDto
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 import com.squareup.moshi.Json
+import org.http4k.connect.amazon.core.model.MessageFieldsDto
 
 @JsonSerializable
 @Http4kConnectAction
@@ -27,10 +27,10 @@ data class SendMessageBatchEntry(
     val Id: String,
     val MessageBody: String,
     val DelaySeconds: Int?,
-    val MessageAttributes: Map<String, SqsMessageAttributeDto>?,
+    val MessageAttributes: Map<String, MessageFieldsDto>?,
     val MessageDedeuplicationId: String?,
     val MessageGroupId: String?,
-    val MessageSystemAttributes: Map<String, SqsMessageAttributeDto>?,
+    val MessageSystemAttributes: Map<String, MessageFieldsDto>?,
 ) {
     constructor(
         id: String,

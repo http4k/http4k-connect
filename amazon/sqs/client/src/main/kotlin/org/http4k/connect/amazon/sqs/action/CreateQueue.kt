@@ -6,30 +6,27 @@ import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.QueueName
 import org.http4k.core.Uri
 import java.time.ZonedDateTime
-
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class CreateQueue(
-    val queueName: QueueName,
-    val tags: List<Tag>? = null,
-    val attributes: Map<String, String>? = null,
-    val expires: ZonedDateTime? = null
+    val QueueName: QueueName,
+    val Tags: Map<String, String>? = null,
+    val Attributes: Map<String, String>? = null,
 ) : SQSAction<CreatedQueue, CreatedQueue>("CreateQueue", CreatedQueue::class, {it}) {
 
-    override fun requestBody() = CreateQueueData(
+    constructor(
+        queueName: QueueName,
+        tags: List<Tag>? = null,
+        attributes: Map<String, String>? = null,
+        expires: ZonedDateTime? = null
+    ): this(
         QueueName = queueName,
-        tags = tags?.associate { it.Key to it.Value },
+        Tags = tags?.associate { it.Key to it.Value },
         Attributes = attributes
     )
 }
-
-@JsonSerializable
-data class CreateQueueData(
-    val QueueName: QueueName,
-    val tags: Map<String, String>? = null,
-    val Attributes: Map<String, String>? = null
-)
 
 @JsonSerializable
 data class CreatedQueue(

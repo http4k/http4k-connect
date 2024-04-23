@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.sqs.model
 
 import se.ansman.kotshi.JsonSerializable
 import com.squareup.moshi.Json
+import org.http4k.connect.amazon.core.model.MessageFieldsDto
 
 @JsonSerializable
 data class SQSMessage(
@@ -9,7 +10,7 @@ data class SQSMessage(
     @Json(name = "Body") val body: String,
     @Json(name = "MD5OfBody") val md5OfBody: String,
     @Json(name = "ReceiptHandle") val receiptHandle: ReceiptHandle,
-    val Attributes: Map<String, SqsMessageAttributeDto>
+    @Json(name = "Attributes") val messageAttributes: Map<String, MessageFieldsDto>
 ) {
     constructor(
         messageId: SQSMessageId,
@@ -22,8 +23,8 @@ data class SQSMessage(
         body = body,
         md5OfBody = md5OfBody,
         receiptHandle = receiptHandle,
-        Attributes = attributes.associate { it.name to it.toDto() }
+        messageAttributes = attributes.associate { it.name to it.toDto() }
     )
 
-    val attributes get() = Attributes.map { (name, value) -> value.toInternal(name) }
+    val attributes get() = messageAttributes.map { (name, value) -> value.toSqs(name) }
 }

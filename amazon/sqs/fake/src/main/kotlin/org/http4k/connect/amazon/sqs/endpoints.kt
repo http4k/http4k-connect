@@ -10,23 +10,23 @@ import org.http4k.connect.amazon.RestfulError
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.sqs.action.CreateQueueData
+import org.http4k.connect.amazon.sqs.action.CreateQueue
 import org.http4k.connect.amazon.sqs.action.CreatedQueue
 import org.http4k.connect.amazon.sqs.action.DeleteMessageBatch
 import org.http4k.connect.amazon.sqs.action.DeleteMessageBatchResponse
 import org.http4k.connect.amazon.sqs.action.DeleteMessageBatchResultEntry
 import org.http4k.connect.amazon.sqs.action.DeleteMessageData
 import org.http4k.connect.amazon.sqs.action.DeleteQueue
-import org.http4k.connect.amazon.sqs.action.GetQueueAttributesData
+import org.http4k.connect.amazon.sqs.action.GetQueueAttributes
 import org.http4k.connect.amazon.sqs.action.ListQueues
 import org.http4k.connect.amazon.sqs.action.ListQueuesResponse
 import org.http4k.connect.amazon.sqs.action.QueueAttributes
-import org.http4k.connect.amazon.sqs.action.ReceiveMessageData
+import org.http4k.connect.amazon.sqs.action.ReceiveMessage
 import org.http4k.connect.amazon.sqs.action.ReceiveMessageResponse
+import org.http4k.connect.amazon.sqs.action.SendMessage
 import org.http4k.connect.amazon.sqs.action.SendMessageBatch
 import org.http4k.connect.amazon.sqs.action.SendMessageBatchResponse
 import org.http4k.connect.amazon.sqs.action.SendMessageBatchResultEntry
-import org.http4k.connect.amazon.sqs.action.SendMessageData
 import org.http4k.connect.amazon.sqs.action.SentMessage
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
@@ -46,7 +46,7 @@ private fun forAction(name: String) = { r: Request ->
 }.asRouter()
 
 fun AmazonRestfulFake.createQueue(queues: Storage<List<SQSMessage>>, awsAccount: AwsAccount) =
-    forAction("CreateQueue") bind route<CreateQueueData> { data ->
+    forAction("CreateQueue") bind route<CreateQueue> { data ->
         if (queues.keySet(data.QueueName.value).isEmpty()) {
             queues[data.QueueName.value] = listOf()
         }
@@ -55,8 +55,8 @@ fun AmazonRestfulFake.createQueue(queues: Storage<List<SQSMessage>>, awsAccount:
     }
 
 fun AmazonRestfulFake.getQueueAttributes(queues: Storage<List<SQSMessage>>) =
-    forAction("GetQueueAttributes") bind route<GetQueueAttributesData> { data ->
-        val name = data.QueueUrl.queueName()
+    forAction("GetQueueAttributes") bind route<GetQueueAttributes> { data ->
+        val name = data.queueUrl.queueName()
 
         queues[name]
             .asResultOr { queueNotFound(name) }
@@ -95,14 +95,14 @@ fun AmazonRestfulFake.deleteQueue(queues: Storage<List<SQSMessage>>) =
     }
 
 fun AmazonRestfulFake.sendMessage(queues: Storage<List<SQSMessage>>) =
-    forAction("SendMessage") bind route<SendMessageData> { data ->
-        val name = data.QueueUrl.queueName()
+    forAction("SendMessage") bind route<SendMessage> { data ->
+        val name = data.queueUrl.queueName()
 
         queues[name].asResultOr { queueNotFound(name) }.map { queue ->
             val messageId = SQSMessageId.of(UUID.randomUUID().toString())
             val receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString())
 
-            val sqsMessage = SQSMessage(messageId, data.MessageBody, data.MessageBody.md5(), receiptHandle, data.MessageAttributes.orEmpty())
+            val sqsMessage = SQSMessage(messageId, data.messageBody, data.messageBody.md5(), receiptHandle, data.messageAttributes.orEmpty())
             queues[name] = queue + sqsMessage
 
             SentMessage(
@@ -125,7 +125,7 @@ fun AmazonRestfulFake.sendMessageBatch(queues: Storage<List<SQSMessage>>) =
                 body = entry.MessageBody,
                 md5OfBody = entry.MessageBody.md5(),
                 receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString()),
-                Attributes = entry.MessageAttributes.orEmpty()
+                messageAttributes = entry.MessageAttributes.orEmpty()
             )
 
             val result = SendMessageBatchResultEntry(
@@ -147,12 +147,11 @@ fun AmazonRestfulFake.sendMessageBatch(queues: Storage<List<SQSMessage>>) =
     }
 
 fun AmazonRestfulFake.receiveMessage(queues: Storage<List<SQSMessage>>) =
-    forAction("ReceiveMessage") bind route<ReceiveMessageData> { data ->
-        val maxNumberOfMessages = data.MaxNumberOfMessages
-        val name = data.QueueUrl.queueName()
+    forAction("ReceiveMessage") bind route<ReceiveMessage> { data ->
+        val name = data.queueUrl.queueName()
 
         queues[name].asResultOr { queueNotFound(name) }.map { queue ->
-            val messagesToSend = maxNumberOfMessages?.let { queue.take(it) } ?: queue
+            val messagesToSend = data.maxNumberOfMessages?.let { queue.take(it) } ?: queue
             ReceiveMessageResponse(messagesToSend)
         }
     }

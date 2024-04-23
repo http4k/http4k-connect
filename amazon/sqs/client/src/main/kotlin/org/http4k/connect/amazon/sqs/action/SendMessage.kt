@@ -5,44 +5,43 @@ import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
 import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
-import org.http4k.connect.amazon.sqs.model.SqsMessageAttributeDto
 import org.http4k.connect.amazon.sqs.model.toDto
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 import java.time.ZonedDateTime
+import com.squareup.moshi.Json
+import org.http4k.connect.amazon.core.model.MessageFieldsDto
 
 @Http4kConnectAction
+@JsonSerializable
 data class SendMessage(
-    val queueUrl: Uri,
-    val payload: String,
-    val delaySeconds: Int? = null,
-    val deduplicationId: String? = null,
-    val messageGroupId: String? = null,
-    val expires: ZonedDateTime? = null,
-    val attributes: List<MessageAttribute>? = null,
-    val systemAttributes: List<MessageSystemAttribute>? = null
+    @Json(name = "QueueUrl") val queueUrl: Uri,
+    @Json(name = "MessageBody") val messageBody: String,
+    @Json(name = "DelaySeconds") val delaySeconds: Int? = null,
+    @Json(name = "MessageDeDuplicationId") val messageDeduplicationId: String? = null,
+    @Json(name = "MessageGroupId") val messageGroupId: String? = null,
+    @Json(name = "MessageAttributes") val messageAttributes: Map<String, MessageFieldsDto>? = null,
+    @Json(name = "MessageSystemAttributes") val messageSystemAttributes: Map<String, MessageFieldsDto>? = null
 ) : SQSAction<SentMessage, SentMessage>("SendMessage", SentMessage::class, { it} ) {
-    override fun requestBody() = SendMessageData(
-        DelaySeconds = delaySeconds,
-        MessageAttributes = attributes?.associate { it.name to it.toDto() },
-        MessageBody = payload,
-        MessageDeDuplicationId = deduplicationId,
-        MessageGroupId = messageGroupId,
-        MessageSystemAttributes = systemAttributes?.associate { it.name to it.toDto() },
-        QueueUrl = queueUrl
+    constructor(
+        queueUrl: Uri,
+        payload: String,
+        delaySeconds: Int? = null,
+        deduplicationId: String? = null,
+        messageGroupId: String? = null,
+        expires: ZonedDateTime? = null,
+        attributes: List<MessageAttribute>? = null,
+        systemAttributes: List<MessageSystemAttribute>? = null
+    ): this(
+        queueUrl = queueUrl,
+        messageBody = payload,
+        delaySeconds = delaySeconds,
+        messageDeduplicationId = deduplicationId,
+        messageGroupId = messageGroupId,
+        messageAttributes = attributes?.associate { it.name to it.toDto() },
+        messageSystemAttributes = systemAttributes?.associate { it.name to it.toDto() }
     )
 }
-
-@JsonSerializable
-data class SendMessageData(
-    val DelaySeconds: Int? = null,
-    val MessageAttributes: Map<String, SqsMessageAttributeDto>? = null,
-    val MessageBody: String,
-    val MessageDeDuplicationId: String? = null,
-    val MessageGroupId: String? = null,
-    val MessageSystemAttributes: Map<String, SqsMessageAttributeDto>? = null,
-    val QueueUrl: Uri
-)
 
 @JsonSerializable
 data class SentMessage(

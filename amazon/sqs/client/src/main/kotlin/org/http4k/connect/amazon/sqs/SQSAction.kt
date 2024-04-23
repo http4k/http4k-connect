@@ -41,5 +41,5 @@ abstract class SQSAction<ResultOut: Any, ResponseBody: Any>(
         }
     }
 
-    abstract fun requestBody(): Any
+    open fun requestBody(): Any = this
 }

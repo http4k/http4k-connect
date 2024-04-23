@@ -7,21 +7,11 @@ import se.ansman.kotshi.JsonSerializable
 import com.squareup.moshi.Json
 
 @Http4kConnectAction
-data class GetQueueAttributes(
-    val queueUrl: Uri,
-    val attributes: List<String> = listOf("All"),
-) : SQSAction<QueueAttributes, QueueAttributes>("GetQueueAttributes", QueueAttributes::class, { it }) {
-    override fun requestBody() = GetQueueAttributesData(
-        QueueUrl = queueUrl,
-        AttributeNames = attributes
-    )
-}
-
 @JsonSerializable
-data class GetQueueAttributesData(
-    val QueueUrl: Uri,
-    val AttributeNames: List<String>? = null
-)
+data class GetQueueAttributes(
+    @Json(name = "QueueUrl") val queueUrl: Uri,
+    @Json(name = "AttributeNames") val attributes: List<String>? = null,
+) : SQSAction<QueueAttributes, QueueAttributes>("GetQueueAttributes", QueueAttributes::class, { it })
 
 @JsonSerializable
 data class QueueAttributes(
