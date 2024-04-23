@@ -58,7 +58,7 @@ data class SentMessageBatchEntry(
 
 @JsonSerializable
 data class SendMessageBatchResponse(
-    val Failed: List<BatchResultErrorEntry>,
+    val Failed: List<BatchResultErrorEntry>?,
     val Successful: List<SendMessageBatchResultEntry>
 )
 

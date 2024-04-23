@@ -33,7 +33,7 @@ data class DeleteMessageBatchEntry(
 
 @JsonSerializable
 data class DeleteMessageBatchResponse(
-    val Failed: List<BatchResultErrorEntry>,
+    val Failed: List<BatchResultErrorEntry>?,
     val Successful: List<DeleteMessageBatchResultEntry>
 )
 

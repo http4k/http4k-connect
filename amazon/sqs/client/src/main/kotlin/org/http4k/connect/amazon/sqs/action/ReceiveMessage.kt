@@ -19,9 +19,9 @@ data class ReceiveMessage(
     @Json(name = "MessageAttributeNames") val messageAttributes: List<String>? = null,
     @Json(name = "EeceiveRequestAttemptId") val receiveRequestAttemptId: String? = null,
     @Json(name = "AttributeNames") val attributeNames: List<String>? = null,
-) : SQSAction<List<SQSMessage>, ReceiveMessageResponse>("ReceiveMessage", ReceiveMessageResponse::class, { it.Messages })
+) : SQSAction<List<SQSMessage>, ReceiveMessageResponse>("ReceiveMessage", ReceiveMessageResponse::class, { it.Messages.orEmpty() })
 
 @JsonSerializable
 data class ReceiveMessageResponse(
-    val Messages: List<SQSMessage>
+    val Messages: List<SQSMessage>?
 )

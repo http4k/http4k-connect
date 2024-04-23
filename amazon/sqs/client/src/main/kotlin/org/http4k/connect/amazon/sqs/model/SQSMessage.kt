@@ -12,7 +12,7 @@ data class SQSMessage(
     @Json(name = "Body") val body: String,
     @Json(name = "MD5OfBody") val md5OfBody: String,
     @Json(name = "ReceiptHandle") val receiptHandle: ReceiptHandle,
-    @Json(name = "Attributes") val messageAttributes: Map<String, MessageFieldsDto>
+    @Json(name = "MessageAttributes") val messageAttributes: Map<String, MessageFieldsDto> = emptyMap()
 ) {
     constructor(
         messageId: SQSMessageId,

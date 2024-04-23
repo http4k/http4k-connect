@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.sqs
 
 import org.http4k.aws.AwsSdkClient
-import org.http4k.filter.debug
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.regions.Region
@@ -11,7 +10,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry
 
 class AwsSdkV2CompatibilityTest {
 
-    private val fake = FakeSQS().debug()
+    private val fake = FakeSQS()
 
     private val client = SqsClient.builder()
         .httpClient(AwsSdkClient(fake))
