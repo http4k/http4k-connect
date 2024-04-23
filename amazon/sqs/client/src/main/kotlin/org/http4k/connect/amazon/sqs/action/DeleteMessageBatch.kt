@@ -23,8 +23,6 @@ data class DeleteMessageBatch(
         queueUrl = queueUrl,
         entries = entries.map { DeleteMessageBatchEntry(it.first, it.second) }
     )
-
-    override fun requestBody() = this
 }
 
 @JsonSerializable

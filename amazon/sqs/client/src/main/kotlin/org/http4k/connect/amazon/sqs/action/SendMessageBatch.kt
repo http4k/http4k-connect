@@ -17,10 +17,7 @@ import org.http4k.connect.amazon.core.model.MessageFieldsDto
 data class SendMessageBatch(
     @Json(name = "QueueUrl") val queueUrl: Uri,
     @Json(name = "Entries") val entries: List<SendMessageBatchEntry>,
-) : SQSAction<List<SendMessageBatchResultEntry>, SendMessageBatchResponse>("SendMessageBatch", SendMessageBatchResponse::class, { it.Successful }) {
-
-    override fun requestBody() = this
-}
+) : SQSAction<List<SendMessageBatchResultEntry>, SendMessageBatchResponse>("SendMessageBatch", SendMessageBatchResponse::class, { it.Successful })
 
 @JsonSerializable
 data class SendMessageBatchEntry(

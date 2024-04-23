@@ -12,7 +12,4 @@ import se.ansman.kotshi.JsonSerializable
 data class DeleteQueue(
     val QueueUrl: Uri,
     val expires: ZonedDateTime? = null,
-) : SQSAction<Unit, Unit>("DeleteQueue", Unit::class, { }) {
-
-    override fun requestBody() = this
-}
+) : SQSAction<Unit, Unit>("DeleteQueue", Unit::class, { })

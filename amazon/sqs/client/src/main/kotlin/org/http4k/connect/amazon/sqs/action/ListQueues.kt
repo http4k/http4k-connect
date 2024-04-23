@@ -11,10 +11,7 @@ data class ListQueues(
     val MaxResults: Int? = null,
     val NextToken: String? = null,
     val QueueNamePrefix: String? = null
-) : SQSAction<List<Uri>, ListQueuesResponse>("ListQueues", ListQueuesResponse::class, { it.QueueUrls }) {
-
-    override fun requestBody() = this
-}
+) : SQSAction<List<Uri>, ListQueuesResponse>("ListQueues", ListQueuesResponse::class, { it.QueueUrls })
 
 @JsonSerializable
 data class ListQueuesResponse(

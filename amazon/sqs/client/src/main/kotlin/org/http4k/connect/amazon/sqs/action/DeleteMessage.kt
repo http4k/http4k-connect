@@ -15,10 +15,7 @@ data class DeleteMessage(
     @Json(name = "QueueUrl") val queueUrl: Uri,
     @Json(name = "ReceiptHandle") val receiptHandle: ReceiptHandle,
     val expires: ZonedDateTime? = null
-) : SQSAction<Unit, Unit>("DeleteMessage", Unit::class, { }) {
-
-    override fun requestBody() = this
-}
+) : SQSAction<Unit, Unit>("DeleteMessage", Unit::class, { })
 
 @JsonSerializable
 data class DeleteMessageData(
