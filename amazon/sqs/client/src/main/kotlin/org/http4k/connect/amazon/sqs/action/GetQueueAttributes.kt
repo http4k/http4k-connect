@@ -15,5 +15,5 @@ data class GetQueueAttributes(
 
 @JsonSerializable
 data class QueueAttributes(
-    @Json(name = "Attributes") val attributes: Map<String, String>
+    @Json(name = "Attributes") val attributes: Map<String, String> = emptyMap()
 )
