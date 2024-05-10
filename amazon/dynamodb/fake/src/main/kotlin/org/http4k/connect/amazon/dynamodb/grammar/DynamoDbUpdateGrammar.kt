@@ -34,6 +34,7 @@ object DynamoDbUpdateGrammar {
     ).map { updates ->
         Expr { item ->
             updates.fold(item) { curItem, expr ->
+                @Suppress("UNCHECKED_CAST")
                 curItem.copy(item = expr.eval(curItem) as Item)
             }.item
         }

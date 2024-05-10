@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package org.http4k.connect.amazon.dynamodb.endpoints
 
 import org.http4k.connect.amazon.JsonError
