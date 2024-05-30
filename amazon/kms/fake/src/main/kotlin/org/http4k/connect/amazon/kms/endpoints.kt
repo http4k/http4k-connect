@@ -42,6 +42,7 @@ import java.security.PrivateKey
 import java.security.Provider
 import java.util.UUID
 
+@Suppress("DEPRECATION")
 fun AmazonJsonFake.createKey(keys: Storage<StoredCMK>, crypto: Provider) = route<CreateKey> {
     val keyId = KMSKeyId.of(UUID.randomUUID().toString())
     val keySpec = it.KeySpec ?: it.CustomerMasterKeySpec ?: SYMMETRIC_DEFAULT

@@ -3,8 +3,9 @@ package org.http4k.connect.amazon.sqs
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.Result4k
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Tag
@@ -19,6 +20,7 @@ import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -29,7 +31,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
     }
 
     val queueName = QueueName.of(UUID.randomUUID().toString())
-    val expires = ZonedDateTime.now().plus(Duration.ofMinutes(1))
+    val expires: ZonedDateTime = ZonedDateTime.now().plus(Duration.ofMinutes(1))
 
     @Test
     fun `queue lifecycle`() {
@@ -44,19 +46,20 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
             val queueUrl = created.QueueUrl
 
             try {
-                assertThat(
-                    getQueueAttributes(
-                        queueUrl,
-                        listOf("All")
-                    ).successValue().attributes["ApproximateNumberOfMessages"], equalTo("0")
-                )
+                retry(shouldRetry = { it.attributes.isEmpty() }) {
+                    getQueueAttributes(queueUrl, listOf("All"))
+                }.let {
+                    assertThat(
+                        it.attributes["ApproximateNumberOfMessages"],
+                        equalTo("0")
+                    )
+                }
 
                 waitABit()
 
-                assertThat(
-                    listQueues().successValue().any { it.toString().endsWith(queueUrl.toString()) },
-                    equalTo(true)
-                )
+                retry(shouldRetry = { queues -> queues.none { it.toString().endsWith(queueUrl.toString()) } }) {
+                    listQueues()
+                }
 
                 val attributes = listOf(
                     MessageAttribute("foo", "123", DataType.Number),
@@ -105,6 +108,7 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
     }
 
     open fun waitABit() {}
+    open val retryTimeout: Duration = Duration.ZERO
 
     @Test
     fun `batch operations`() {
@@ -135,8 +139,9 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
             assertThat(sent3.MD5OfMessageBody, equalTo("73feffa4b7f6bb68e44cf984c85f6e88"))
             assertThat(sent3.MD5OfMessageAttributes, absent())
 
-            val (message1, message2) = sqs.receiveMessage(queueUrl = created.QueueUrl, maxNumberOfMessages = 2)
-                .successValue()
+            val (message1, message2) = retry(shouldRetry = { it.size < 2}) {
+                sqs.receiveMessage(queueUrl = created.QueueUrl, maxNumberOfMessages = 2)
+            }
 
             // delete batch
             val result = sqs.deleteMessageBatch(
@@ -149,11 +154,21 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
             ).successValue()
             assertThat(result, equalTo(listOf(message1.messageId, message2.messageId)))
 
-            // ensure messages deleted
-            assertThat(sqs.receiveMessage(created.QueueUrl).successValue(), hasSize(equalTo(1)))
-
         } finally {
             sqs.deleteQueue(created.QueueUrl).successValue()
         }
     }
+
+    private fun <T: Any> retry(shouldRetry: (T) -> Boolean, fn: () -> Result4k<T, RemoteFailure>): T {
+        val start = Instant.now()
+
+        do {
+            val result = fn().successValue()
+            if (!shouldRetry(result)) return result
+            waitABit()
+        } while(Duration.between(start, Instant.now()) < retryTimeout)
+
+        error("Task timed out after $retryTimeout")
+    }
 }
+

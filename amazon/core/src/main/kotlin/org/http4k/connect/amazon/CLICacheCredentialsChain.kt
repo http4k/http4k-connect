@@ -9,9 +9,10 @@ import org.http4k.format.AwsCoreMoshi
 import se.ansman.kotshi.JsonSerializable
 import java.io.File
 import java.time.Clock
+import java.time.Clock.systemUTC
 import kotlin.io.path.Path
 
-fun CredentialsChain.Companion.CliCache(clock: Clock) = CredentialsChain {
+fun CredentialsChain.Companion.CliCache(clock: Clock = systemUTC()) = CredentialsChain {
     val dir = Path(System.getProperty("user.home")).resolve(".aws/cli/cache").toFile()
     if (!dir.exists() || !dir.isDirectory) null
     else {
