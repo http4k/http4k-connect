@@ -1,225 +1,196 @@
 package org.http4k.connect.amazon.sqs
 
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Success
+import dev.forkhandles.result4k.asResultOr
+import dev.forkhandles.result4k.map
+import dev.forkhandles.result4k.peek
+import org.http4k.connect.amazon.AmazonRestfulFake
+import org.http4k.connect.amazon.RestfulError
+import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
-import org.http4k.connect.amazon.core.model.DataType
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.sqs.action.SentMessageBatchEntry
-import org.http4k.connect.amazon.sqs.model.MessageAttribute
+import org.http4k.connect.amazon.sqs.action.CreateQueue
+import org.http4k.connect.amazon.sqs.action.CreatedQueue
+import org.http4k.connect.amazon.sqs.action.DeleteMessageBatch
+import org.http4k.connect.amazon.sqs.action.DeleteMessageBatchResponse
+import org.http4k.connect.amazon.sqs.action.DeleteMessageBatchResultEntry
+import org.http4k.connect.amazon.sqs.action.DeleteMessageData
+import org.http4k.connect.amazon.sqs.action.DeleteQueue
+import org.http4k.connect.amazon.sqs.action.GetQueueAttributes
+import org.http4k.connect.amazon.sqs.action.ListQueues
+import org.http4k.connect.amazon.sqs.action.ListQueuesResponse
+import org.http4k.connect.amazon.sqs.action.QueueAttributes
+import org.http4k.connect.amazon.sqs.action.ReceiveMessage
+import org.http4k.connect.amazon.sqs.action.ReceiveMessageResponse
+import org.http4k.connect.amazon.sqs.action.SendMessage
+import org.http4k.connect.amazon.sqs.action.SendMessageBatch
+import org.http4k.connect.amazon.sqs.action.SendMessageBatchResponse
+import org.http4k.connect.amazon.sqs.action.SendMessageBatchResultEntry
+import org.http4k.connect.amazon.sqs.action.SentMessage
 import org.http4k.connect.amazon.sqs.model.ReceiptHandle
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.connect.storage.Storage
-import org.http4k.core.Body
-import org.http4k.core.ContentType
+import org.http4k.core.Method
 import org.http4k.core.Request
-import org.http4k.core.Response
-import org.http4k.core.Status.Companion.BAD_REQUEST
-import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Status
 import org.http4k.core.Uri
-import org.http4k.core.body.form
-import org.http4k.core.body.formAsMap
 import org.http4k.core.extend
-import org.http4k.core.with
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
-import org.http4k.template.HandlebarsTemplates
-import org.http4k.template.viewModel
 import java.util.UUID
 
-fun createQueue(queues: Storage<List<SQSMessage>>, awsAccount: AwsAccount) =
-    { r: Request -> r.form("Action") == "CreateQueue" }
-        .asRouter() bind { req: Request ->
-        val queueName = req.form("QueueName")!!
-        if (queues.keySet(queueName).isEmpty()) queues[queueName] = listOf()
+private fun forAction(name: String) = { r: Request ->
+    r.method == Method.POST && r.header("X-Amz-Target") == "AmazonSQS.$name"
+}.asRouter()
 
-        Response(OK).with(
-            viewModelLens of CreateQueueResponse(
-                req.uri.extend(Uri.of("/$awsAccount/$queueName"))
+fun AmazonRestfulFake.createQueue(queues: Storage<List<SQSMessage>>, awsAccount: AwsAccount) =
+    forAction("CreateQueue") bind route<CreateQueue> { data ->
+        if (queues.keySet(data.QueueName.value).isEmpty()) {
+            queues[data.QueueName.value] = listOf()
+        }
+
+        Success(CreatedQueue(uri.extend(Uri.of("/$awsAccount/${data.QueueName}"))))
+    }
+
+fun AmazonRestfulFake.getQueueAttributes(queues: Storage<List<SQSMessage>>) =
+    forAction("GetQueueAttributes") bind route<GetQueueAttributes> { data ->
+        val name = data.queueUrl.queueName()
+
+        queues[name]
+            .asResultOr { queueNotFound(name) }
+            .map { queue ->
+                QueueAttributes(mapOf(
+                    "LastModifiedTimestamp" to "0",
+                    "CreatedTimestamp" to "0",
+                    "MessageRetentionPeriod" to "0",
+                    "DelaySeconds" to "0",
+                    "ReceiveMessageWaitTimeSeconds" to "0",
+                    "MaximumMessageSize" to "0",
+                    "VisibilityTimeout" to "0",
+                    "ApproximateNumberOfMessagesDelayed" to queue.size.toString(),
+                    "ApproximateNumberOfMessages" to queue.size.toString(),
+                    "ApproximateNumberOfMessagesNotVisible" to "0"
+                ))
+            }
+    }
+
+fun AmazonRestfulFake.listQueues(region: Region, account: AwsAccount, queues: Storage<List<SQSMessage>>) =
+    forAction("ListQueues") bind route<ListQueues> {
+        // TODO handle pagination
+        Success(ListQueuesResponse(
+            NextToken = null,
+            QueueUrls = queues.keySet().map { Uri.of("https://sqs.${region}.amazonaws.com/${account}/$it") }
+        ))
+    }
+
+fun AmazonRestfulFake.deleteQueue(queues: Storage<List<SQSMessage>>) =
+    forAction("DeleteQueue") bind route<DeleteQueue> { data ->
+        val queueName = data.QueueUrl.queueName()
+        queues[queueName]
+            .asResultOr { queueNotFound(queueName) }
+            .peek { queues -= queueName }
+            .map {  }
+    }
+
+fun AmazonRestfulFake.sendMessage(queues: Storage<List<SQSMessage>>) =
+    forAction("SendMessage") bind route<SendMessage> { data ->
+        val name = data.queueUrl.queueName()
+
+        queues[name].asResultOr { queueNotFound(name) }.map { queue ->
+            val messageId = SQSMessageId.of(UUID.randomUUID().toString())
+            val receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString())
+
+            val sqsMessage = SQSMessage(messageId, data.messageBody, data.messageBody.md5(), receiptHandle, data.messageAttributes.orEmpty())
+            queues[name] = queue + sqsMessage
+
+            SentMessage(
+                MessageId = sqsMessage.messageId,
+                SequenceNumber = null,
+                MD5OfMessageBody = sqsMessage.md5OfBody,
+                MD5OfMessageAttributes = if (sqsMessage.attributes.isNotEmpty()) sqsMessage.md5OfAttributes() else null
             )
-        )
-    }
-
-fun getQueueAttributes(queues: Storage<List<SQSMessage>>) =
-    { r: Request -> r.form("Action") == "GetQueueAttributes" }
-        .asRouter() bind { req: Request ->
-        val queueUri = req.form("QueueUrl")!!
-
-        when (val queue = queues[queueUri.queueName()]) {
-            null -> Response(BAD_REQUEST)
-            else -> {
-                Response(OK).with(
-                    viewModelLens of GetQueueAttributesResponse(
-                        mapOf(
-                            "LastModifiedTimestamp" to "0",
-                            "CreatedTimestamp" to "0",
-                            "MessageRetentionPeriod" to "0",
-                            "DelaySeconds" to "0",
-                            "ReceiveMessageWaitTimeSeconds" to "0",
-                            "MaximumMessageSize" to "0",
-                            "VisibilityTimeout" to "0",
-                            "ApproximateNumberOfMessagesDelayed" to queue.size.toString(),
-                            "ApproximateNumberOfMessages" to queue.size.toString(),
-                            "ApproximateNumberOfMessagesNotVisible" to "0"
-                        ).toList()
-                    )
-                )
-            }
         }
     }
 
-fun listQueues(region: Region, account: AwsAccount, queues: Storage<List<SQSMessage>>) =
-    { r: Request -> r.form("Action") == "ListQueues" }
-        .asRouter() bind { _: Request ->
-        Response(OK).with(
-            viewModelLens of ListQueuesResponse(
-                queues.keySet().map { "https://sqs.${region}.amazonaws.com/${account}/$it" })
-        )
-    }
+fun AmazonRestfulFake.sendMessageBatch(queues: Storage<List<SQSMessage>>) =
+    forAction("SendMessageBatch") bind route<SendMessageBatch> fn@{ data ->
+        val queueName = data.queueUrl.queueName()
+        val queue = queues[queueName] ?: return@fn Failure(queueNotFound(queueName))
 
-private fun String.queueName() = substring(lastIndexOf('/') + 1)
+        val results = data.entries.map { entry ->
+            val message = SQSMessage(
+                messageId = SQSMessageId.of(UUID.randomUUID().toString()),
+                body = entry.MessageBody,
+                md5OfBody = entry.MessageBody.md5(),
+                receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString()),
+                messageAttributes = entry.MessageAttributes.orEmpty()
+            )
 
-fun deleteQueue(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteQueue" }
-    .asRouter() bind { req: Request ->
-    val queueName = req.form("QueueUrl")!!.queueName()
+            val result = SendMessageBatchResultEntry(
+                Id = entry.Id,
+                MessageId = message.messageId,
+                MD5OfMessageBody = message.md5OfBody(),
+                MD5OfMessageAttributes = if (message.attributes.isNotEmpty()) message.md5OfAttributes() else null
+            )
 
-    when {
-        queues.keySet(queueName).isEmpty() -> Response(BAD_REQUEST)
-        else -> {
-            queues.remove(queueName)
-            Response(OK).with(viewModelLens of DeleteQueueResponse)
+            message to result
         }
-    }
-}
-
-fun sendMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "SendMessage" }
-    .asRouter() bind { req: Request ->
-    val queue = req.form("QueueUrl")!!.queueName()
-
-    queues[queue]?.let {
-        val message = req.form("MessageBody")!!
-        val messageId = SQSMessageId.of(UUID.randomUUID().toString())
-        val receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString())
-
-        val sqsMessage = SQSMessage(messageId, message, message.md5(), receiptHandle, attributesFrom(req))
-        queues[queue] = it + sqsMessage
-        Response(OK).with(viewModelLens of SendMessageResponse(sqsMessage, messageId))
-    } ?: Response(BAD_REQUEST).body("Queue named $queue not found")
-}
-
-fun sendMessageBatch(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "SendMessageBatch" }
-    .asRouter().bind fn@{ req: Request ->
-        val queueName = req.form("QueueUrl")!!.queueName()
-        val queue = queues[queueName] ?: return@fn Response(BAD_REQUEST).body("Queue named $queueName not found")
-
-        val results = (1 until Int.MAX_VALUE)
-            .asSequence()
-            .map { index ->
-                val body = req.form("SendMessageBatchRequestEntry.$index.MessageBody") ?: return@map null
-                val message = SQSMessage(
-                    messageId = SQSMessageId.of(UUID.randomUUID().toString()),
-                    body = body,
-                    md5OfBody = body.md5(),
-                    receiptHandle = ReceiptHandle.of(UUID.randomUUID().toString()),
-                    attributes = attributesFrom(req, "SendMessageBatchRequestEntry.$index.")
-                )
-
-                val result = SentMessageBatchEntry(
-                    Id = req.form("SendMessageBatchRequestEntry.$index.Id") ?: return@map null,
-                    MessageId = message.messageId,
-                    MD5OfMessageBody = message.md5OfBody(),
-                    MD5OfMessageAttributes = if (message.attributes.isNotEmpty()) message.md5OfAttributes() else null
-                )
-
-                message to result
-            }
-            .takeWhile { it != null }
-            .filterNotNull()
-            .toList()
 
         queues[queueName] = queue + results.map { it.first }
 
-        Response(OK).with(viewModelLens of SendMessageBatchResponse(results.map { it.second }))
-    }
-
-private fun attributesFrom(req: Request, prefix: String = ""): List<MessageAttribute> {
-    val names = req.formAsMap()
-        .filter { it.key.startsWith("${prefix}MessageAttribute") }
-        .filter { it.key.endsWith(".Name") }
-        .map {
-            it.value.first()!!.removePrefix("[").removeSuffix("]") to
-                it.key.removePrefix("${prefix}MessageAttribute.").removeSuffix(".Name")
-        }
-
-    val cleanedValues = req.formAsMap().mapKeys {
-        it.key
-            .removeSuffix(".StringValue")
-            .removeSuffix(".BinaryValue")
-    }
-
-    return names.map {
-        MessageAttribute(
-            it.first,
-            cleanedValues["${prefix}MessageAttribute.${it.second}.Value"]
-            !!.toString().removePrefix("[").removeSuffix("]"),
-            DataType.valueOf(cleanedValues["${prefix}MessageAttribute.${it.second}.Value.DataType"]!![0]!!)
-        )
-    }
-}
-
-fun receiveMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "ReceiveMessage" }
-    .asRouter() bind { req: Request ->
-    val maxNumberOfMessages = req.form("MaxNumberOfMessages")?.toInt()
-    val queue = req.form("QueueUrl")!!.queueName()
-    queues[queue]?.let { sqsMessages ->
-        val messagesToSend = maxNumberOfMessages?.let { sqsMessages.take(it) } ?: sqsMessages
-        Response(OK).with(viewModelLens of ReceiveMessageResponse(
-            messagesToSend.map { ReceivedMessage(it, it.md5OfAttributes()) }
+        Success(SendMessageBatchResponse(
+            Failed = emptyList(),
+            Successful = results.map { it.second }
         ))
-    } ?: Response(BAD_REQUEST).body("Queue named $queue not found")
-}
-
-fun deleteMessage(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessage" }
-    .asRouter() bind { req: Request ->
-    val queue = req.form("QueueUrl")!!.queueName()
-    val receiptHandle = ReceiptHandle.of(req.form("ReceiptHandle")!!)
-    queues[queue]
-        ?.let {
-            queues[queue] = it.filterNot { it.receiptHandle == receiptHandle }
-            Response(OK).with(viewModelLens of DeleteMessageResponse)
-        }
-        ?: Response(BAD_REQUEST).body("Queue named $queue not found")
-}
-
-fun deleteMessageBatch(queues: Storage<List<SQSMessage>>) = { r: Request -> r.form("Action") == "DeleteMessageBatch" }
-    .asRouter().bind fn@{ req: Request ->
-        val queueName = req.form("QueueUrl")!!.queueName()
-        val queue = queues[queueName] ?: return@fn Response(BAD_REQUEST).body("Queue named $queueName not found")
-
-        val messages = (1 until Int.MAX_VALUE)
-            .asSequence()
-            .map { index ->
-                val id = req
-                    .form("DeleteMessageBatchRequestEntry.$index.Id")?.let(SQSMessageId::of)
-                    ?: return@map null
-                val handle = req
-                    .form("DeleteMessageBatchRequestEntry.$index.ReceiptHandle")?.let(ReceiptHandle::of)
-                    ?: return@map null
-
-                id to handle
-            }
-            .takeWhile { it != null }
-            .filterNotNull()
-            .mapNotNull { (id, handle) -> queue.find { it.messageId == id && it.receiptHandle == handle } }
-            .toSet()
-
-        queues[queueName] = queue - messages
-
-        val result = DeleteMessageBatchResponse(
-            entries = messages.map { DeleteMessageBatchResultEntry(it.messageId) }
-        )
-        Response(OK).with(viewModelLens of result)
     }
 
-val viewModelLens by lazy {
-    Body.viewModel(HandlebarsTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()
+fun AmazonRestfulFake.receiveMessage(queues: Storage<List<SQSMessage>>) =
+    forAction("ReceiveMessage") bind route<ReceiveMessage> { data ->
+        val name = data.queueUrl.queueName()
+
+        queues[name].asResultOr { queueNotFound(name) }.map { queue ->
+            val messagesToSend = data.maxNumberOfMessages?.let { queue.take(it) } ?: queue
+            ReceiveMessageResponse(messagesToSend)
+        }
+    }
+
+fun AmazonRestfulFake.deleteMessage(queues: Storage<List<SQSMessage>>) =
+    forAction("DeleteMessage") bind route<DeleteMessageData> { data ->
+        val name = data.QueueUrl.queueName()
+        val receiptHandle = data.ReceiptHandle
+
+        queues[name]
+            .asResultOr { queueNotFound(name) }
+            .peek { queue -> queues[name] = queue.filterNot { it.receiptHandle == receiptHandle } }
+            .map {  }
+    }
+
+fun AmazonRestfulFake.deleteMessageBatch(queues: Storage<List<SQSMessage>>) =
+    forAction("DeleteMessageBatch") bind route<DeleteMessageBatch> fn@{ data ->
+        val queueName = data.queueUrl.queueName()
+        val queue = queues[queueName] ?: return@fn Failure(queueNotFound(queueName))
+
+        val toDelete = data.entries.mapNotNull { entry ->
+            queue.find { it.receiptHandle == entry.ReceiptHandle }
+        }.toSet()
+
+        queues[queueName] = queue - toDelete
+
+        Success(DeleteMessageBatchResponse(
+            Failed = emptyList(),
+            Successful = toDelete.map {
+                DeleteMessageBatchResultEntry(it.messageId)
+            }
+        ))
+    }
+
+private fun Uri.queueName() = toString().queueName()
+private fun String.queueName() = substring(lastIndexOf('/') + 1)
+
+private fun AmazonRestfulFake.queueNotFound(name: String): RestfulError {
+    val resourceArn = ARN.of(awsService, region, accountId, name)
+    val message = "Queue $name not found"
+    return RestfulError(Status(404, ""), message, resourceArn, "queue")
 }
