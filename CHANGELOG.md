@@ -3,6 +3,10 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.15.0.0 (uncut)
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-amazon-sqs-** - [Possible break] Implement JSON version of SQS in both fake and adapter. Ensure you are using an up-to-date version of the AWS SDK (which will support the JSON message format). Massive H/T @oharaandrew314
+
 ### v5.14.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to V2!
 
