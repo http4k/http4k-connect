@@ -27,6 +27,8 @@ includeStorage("s3")
 includeStorage("http")
 
 includeCommon("amazon-core", "amazon/core")
+includeCommon("amazon-autogen", "amazon/autogen")
+
 includeVendorSystem("amazon", "apprunner")
 includeVendorSystem("amazon", "cloudfront")
 includeVendorSystem("amazon", "cloudwatchlogs")
@@ -43,7 +45,7 @@ includeVendorSystem("amazon", "s3")
 includeVendorSystem("amazon", "secretsmanager")
 includeVendorSystem("amazon", "sns")
 includeVendorSystem("amazon", "ses")
-includeVendorSystem("amazon", "sqs")
+includeVendorSystem("amazon", "sqs", "autogen")
 includeVendorSystem("amazon", "sts")
 includeVendorSystem("amazon", "systemsmanager")
 includeVendorSystem("amazon", "evidently")
@@ -72,10 +74,13 @@ fun includeSystem(system: String, vararg extraModules: String) {
     }
 }
 
-fun includeVendorSystem(owner: String, system: String) {
+fun includeVendorSystem(owner: String, system: String, vararg extraModules: String) {
     val projectName = "http4k-connect-$owner-$system"
     includeWithName(projectName, "$owner/$system/client")
     includeWithName("$projectName-fake", "$owner/$system/fake")
+    extraModules.forEach {
+        includeWithName("$projectName-$it", "$owner/$it")
+    }
 }
 
 fun includeCommon(projectName: String, file: String) {
