@@ -2,7 +2,8 @@ import com.google.devtools.ksp.gradle.KspTask
 import groovy.namespace.QName
 import groovy.util.Node
 import org.gradle.api.JavaVersion.VERSION_1_8
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.time.Duration
 
 plugins {
@@ -53,9 +54,10 @@ allprojects {
             outputs.upToDateWhen { false }
         }
 
-        withType<KotlinCompile> {
-            kotlinOptions {
-                jvmTarget = "1.8"
+        withType<KotlinJvmCompile>().configureEach {
+            compilerOptions {
+                allWarningsAsErrors = false
+                jvmTarget.set(JVM_1_8)
             }
         }
 
@@ -107,6 +109,7 @@ allprojects {
             project.name.endsWith("core-fake") -> {
                 api(project(":http4k-connect-core"))
             }
+
             project.name.endsWith("fake") -> {
                 api(project(":http4k-connect-core-fake"))
                 api(project(":${project.name.substring(0, project.name.length - 5)}"))
@@ -118,32 +121,40 @@ allprojects {
                 )
                 testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
             }
+
             project.name.startsWith("http4k-connect-storage-core") -> {
                 // bom - no code
             }
+
             project.name.startsWith("http4k-connect-langchain") -> {
                 api("dev.langchain4j:langchain4j-core:_")
             }
+
             project.name.startsWith("http4k-connect-storage") -> {
                 api(project(":http4k-connect-storage-core"))
                 testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
                 testImplementation(project(path = ":http4k-connect-storage-core", configuration = "testArtifacts"))
             }
+
             project.name == "http4k-connect" -> {
                 rootProject.subprojects.forEach {
                     testImplementation(project(it.name))
                 }
             }
+
             project.name == "http4k-connect-bom" -> {
                 // bom - no code
             }
+
             project.name == "http4k-connect-kapt-generator" -> {
                 api(project(":http4k-connect-core"))
             }
+
             project.name == "http4k-connect-ksp-generator" -> {
                 api(project(":http4k-connect-core"))
                 kspTest(project(":http4k-connect-ksp-generator"))
             }
+
             project.name != "http4k-connect-core" -> {
                 api(Http4k.cloudnative)
                 api(project(":http4k-connect-core"))
@@ -342,10 +353,10 @@ fun Node.childrenCalled(wanted: String) = children()
         (name is QName) && name.localPart == wanted
     }
 
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += listOf("-Xjvm-default=all")
+tasks.named<KotlinJvmCompile>("compileTestKotlin") {
+    compilerOptions {
+        jvmTarget.set(JVM_1_8)
+        freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
 
