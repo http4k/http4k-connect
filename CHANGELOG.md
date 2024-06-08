@@ -7,8 +7,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-langchain** - [New module!] LangChain adapter module so you can use Http4k-connect adapters in LangChain apps. Currently only OpenAI is supported.
 - **http4k-connect-openai-*** - [Breaking] Support tool calls and more modern API version for ChatCompletion.
-[
-]()### v5.15.0.0
+
+### v5.15.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-sqs-** - [Possible break] Implement JSON version of SQS in both fake and adapter. Ensure you are using an up-to-date version of the AWS SDK (which will support the JSON message format). Massive H/T @oharaandrew314
 
