@@ -136,7 +136,7 @@ data class Choice(
     @JsonProperty(name = "message")
     internal val msg: ChoiceDetail?,
     internal val delta: ChoiceDetail?,
-    val finish_reason: FinishReason
+    val finish_reason: FinishReason?
 ) {
     val message get() = msg ?: delta
 }
@@ -171,7 +171,7 @@ data class CompletionResponse(
     val id: CompletionId,
     val created: Timestamp,
     val model: ModelName,
-    val choices: List<Choice>,
+    val choices: List<Choice>? = null,
     @JsonProperty(name = "object")
     val objectType: ObjectType,
     val usage: Usage? = null,
