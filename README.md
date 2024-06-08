@@ -107,6 +107,7 @@ dependencies {
 - Google Analytics
     - [GA4](./google/analytics-ga4) -> `"org.http4k:http4k-connect-google-analytics-ga4"` / `"org.http4k:http4k-connect-google-analytic-ga4-fake"`
     - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`
+- [LangChain4J](./langchain) -> `"org.http4k:http4k-connect-langchain"`
 - Kafka
     - [Rest Proxy](kafka/rest) -> `"org.http4k:http4k-connect-kafka-rest"` / `"org.http4k:http4k-connect-kafka-rest-fake"`
     - [Schema Registry](kafka/schemaregistry) -> `"org.http4k:http4k-connect-kafka-schemaregistry"` / `"org.http4k:http4k-connect-kafka-schemaregistry-fake"`
