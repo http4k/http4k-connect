@@ -126,10 +126,6 @@ allprojects {
                 // bom - no code
             }
 
-            project.name.startsWith("http4k-connect-langchain") -> {
-                api("dev.langchain4j:langchain4j-core:_")
-            }
-
             project.name.startsWith("http4k-connect-storage") -> {
                 api(project(":http4k-connect-storage-core"))
                 testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))

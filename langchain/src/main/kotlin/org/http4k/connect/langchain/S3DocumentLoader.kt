@@ -1,4 +1,4 @@
-package org.http4k.connect.langchain.org.http4k.connect.langchain
+package org.http4k.connect.langchain
 
 import dev.forkhandles.result4k.allValues
 import dev.forkhandles.result4k.flatMap

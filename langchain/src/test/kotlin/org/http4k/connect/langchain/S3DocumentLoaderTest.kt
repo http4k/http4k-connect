@@ -3,7 +3,6 @@ package org.http4k.connect.langchain
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
-import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.valueOrNull
 import dev.langchain4j.data.document.Document
 import dev.langchain4j.data.document.DocumentParser
@@ -22,7 +21,6 @@ import org.http4k.connect.amazon.s3.createBucket
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.putObject
-import org.http4k.connect.langchain.org.http4k.connect.langchain.S3DocumentLoader
 import org.junit.jupiter.api.Test
 
 class S3DocumentLoaderTest {
