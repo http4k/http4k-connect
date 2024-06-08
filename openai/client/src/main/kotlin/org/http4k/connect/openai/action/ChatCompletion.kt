@@ -113,12 +113,33 @@ data class Message(
 data class Choice(
     val index: Int,
     @JsonProperty(name = "message")
-    internal val content: Message?,
-    internal val delta: Message?,
+    internal val msg: ChoiceDetail?,
+    internal val delta: ChoiceDetail?,
     val finish_reason: String?
 ) {
-    val message get() = content ?: delta
+    val message get() = msg ?: delta
 }
+
+@JsonSerializable
+data class ChoiceDetail(
+    val role: Role? = null,
+    val content: String? = null,
+    val tool_calls: List<ToolCall>? = emptyList(),
+)
+
+@JsonSerializable
+data class ToolCall(
+    val index: Int,
+    val id: String,
+    val type: String,
+    val function: FunctionCall
+)
+
+@JsonSerializable
+data class FunctionCall(
+    val name: String,
+    val arguments: String
+)
 
 @JsonSerializable
 data class CompletionResponse(

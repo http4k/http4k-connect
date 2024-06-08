@@ -1,10 +1,9 @@
 package org.http4k.connect.openai
 
-import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
-import org.http4k.connect.openai.action.Message
+import org.http4k.connect.openai.action.ChoiceDetail
 import java.util.Random
 
 /**
@@ -38,4 +37,4 @@ val ChatCompletionGenerator.Companion.Echo
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))
-    .map { Choice(0, null, Message(System, it), "stop") }
+    .map { Choice(0, ChoiceDetail(Role.System, it, null), null, "stop") }

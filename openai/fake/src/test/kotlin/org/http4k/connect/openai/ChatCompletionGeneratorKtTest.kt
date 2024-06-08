@@ -7,6 +7,7 @@ import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
+import org.http4k.connect.openai.action.ChoiceDetail
 import org.http4k.connect.openai.action.Message
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
@@ -33,7 +34,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.ReverseInput(input),
             equalTo(
-                listOf(Choice(0, null, Message(System, "raboof "), "stop"))
+                listOf(Choice(0, null, ChoiceDetail(System, "raboof "), "stop"))
             )
         )
     }
@@ -43,7 +44,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.Echo(input),
             equalTo(
-                listOf(Choice(0, null, Message(System, "foobar "), "stop"))
+                listOf(Choice(0, null, ChoiceDetail(System, "foobar "), "stop"))
             )
         )
     }
