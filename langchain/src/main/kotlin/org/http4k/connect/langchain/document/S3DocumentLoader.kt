@@ -31,7 +31,7 @@ class S3DocumentLoader(
     operator fun invoke(bucket: BucketName, key: BucketKey, parser: DocumentParser) =
         s3Client(bucket)[key]
             .map(parser::parse)
-            .peek { it.metadata().add("source", "s3://$bucket/$key") }
+            .peek { it.metadata().put("source", "s3://$bucket/$key") }
 
     operator fun invoke(bucket: BucketName, parser: DocumentParser) = this(bucket, null, parser)
 
@@ -45,7 +45,7 @@ class S3DocumentLoader(
             it.map {
                 it.map { item ->
                     this(bucket, item.Key, parser)
-                        .peek { it.metadata().add("source", "s3://$bucket/${item.Key}") }
+                        .peek { it.metadata().put("source", "s3://$bucket/${item.Key}") }
                 }
                     .allValues()
             }.flatMap { it }

@@ -47,7 +47,10 @@ data class ChatCompletion(
     val logit_bias: Map<TokenId, Double>? = null,
     val user: User? = null,
     val stream: Boolean = false,
-    val response_format: ResponseFormat? = null
+    val response_format: ResponseFormat? = null,
+    val tools: List<Tool>? = null,
+    val tool_choice: Any? = null,
+    val parallel_tool_calls: Boolean? = null,
 ) : OpenAIAction<Sequence<CompletionResponse>> {
     constructor(model: ModelName, messages: List<Message>, max_tokens: Int = 16, stream: Boolean = true) : this(
         model,
@@ -113,6 +116,14 @@ data class Message(
 }
 
 @JsonSerializable
+data class Function(val name: String)
+
+@JsonSerializable
+data class ToolChoice(val function: Function) {
+    val type = "function"
+}
+
+@JsonSerializable
 data class MessageContent(
     val type: ContentType,
     val text: String? = null,
@@ -159,6 +170,20 @@ data class ToolCall(
     val function: FunctionCall,
     val index: Int? = null
 )
+
+@JsonSerializable
+data class Tool(val function: FunctionSpec) {
+    val type = "function"
+}
+
+@JsonSerializable
+data class FunctionSpec(
+    val name: String,
+    val parameters: Any? = null, // JSON schema format
+    val description: String? = null,
+) {
+    val type = "function"
+}
 
 @JsonSerializable
 data class FunctionCall(

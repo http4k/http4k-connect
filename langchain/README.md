@@ -8,3 +8,10 @@ Current adapters support http4k client integrations for the following models, al
 - OpenAiChatImageModel
 - OpenAiChatEmbeddingModel
 - S3 Document Loaders
+
+Using these adapters is as simple as:
+
+```kotlin
+val model: ChatLanguageModel = OpenAiChatLanguageModel(OpenAI.Http(OpenAIToken.of("hello"), FakeOpenAI()))
+val chat: Response<> = model.generate("hello kitty")
+```

@@ -1,7 +1,9 @@
 package org.http4k.connect.langchain.chat
 
 import dev.forkhandles.result4k.map
+import dev.langchain4j.agent.tool.ToolSpecification
 import dev.langchain4j.data.message.AiMessage
+import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.ImageContent
 import dev.langchain4j.data.message.ImageContent.DetailLevel.AUTO
 import dev.langchain4j.data.message.ImageContent.DetailLevel.HIGH
@@ -24,19 +26,24 @@ import org.http4k.connect.openai.action.FinishReason.content_filter
 import org.http4k.connect.openai.action.FinishReason.length
 import org.http4k.connect.openai.action.FinishReason.stop
 import org.http4k.connect.openai.action.FinishReason.tool_calls
+import org.http4k.connect.openai.action.FunctionSpec
 import org.http4k.connect.openai.action.ImageUrl
 import org.http4k.connect.openai.action.Message
 import org.http4k.connect.openai.action.MessageContent
+import org.http4k.connect.openai.action.Tool
 import org.http4k.connect.openai.chatCompletion
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
 
 fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatModelOptions()) =
-    ChatLanguageModel {
-        with(options) {
+    object : ChatLanguageModel {
+        override fun generate(p0: List<ChatMessage>) = generate(p0, emptyList())
+
+        override fun generate(messages: List<ChatMessage>, toolSpecifications: List<ToolSpecification>?)
+            : Response<AiMessage> = with(options) {
             openAi.chatCompletion(
                 model,
-                it.map {
+                messages.map {
                     when (it) {
                         is UserMessage -> it.toHttp4k()
                         is SystemMessage -> it.toHttp4k()
@@ -53,7 +60,10 @@ fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatMode
                 logitBias,
                 user,
                 false,
-                responseFormat
+                responseFormat,
+                toolSpecifications?.map { it.toHttp4k() },
+                toolChoice,
+                parallelToolCalls
             )
         }
             .map {
@@ -104,3 +114,4 @@ private fun ImageContent.toHttp4k() =
         )
     )
 
+private fun ToolSpecification.toHttp4k() = Tool(FunctionSpec(name(), parameters(), description()))

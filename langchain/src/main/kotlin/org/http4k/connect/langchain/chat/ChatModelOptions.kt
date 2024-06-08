@@ -16,5 +16,7 @@ data class ChatModelOptions(
     val frequencyPenalty: Double = 0.0,
     val logitBias: Map<TokenId, Double>? = null,
     val user: User? = null,
-    val responseFormat: ResponseFormat? = null
+    val responseFormat: ResponseFormat? = null,
+    val toolChoice: Any? = null,
+    val parallelToolCalls: Boolean? = null,
 )
