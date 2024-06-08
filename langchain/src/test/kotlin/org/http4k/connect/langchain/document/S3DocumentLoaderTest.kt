@@ -1,4 +1,4 @@
-package org.http4k.connect.langchain
+package org.http4k.connect.langchain.document
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

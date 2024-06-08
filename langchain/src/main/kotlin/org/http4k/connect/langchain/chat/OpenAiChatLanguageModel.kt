@@ -1,4 +1,4 @@
-package org.http4k.connect.langchain
+package org.http4k.connect.langchain.chat
 
 import dev.forkhandles.result4k.map
 import dev.langchain4j.data.message.AiMessage
