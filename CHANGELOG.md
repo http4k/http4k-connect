@@ -5,7 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.15.0.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-langchain-*** - [Breaking] Fix to package of document loader.
+- **http4k-connect-langchain** - [New module!] LangChain adapter module so you can use Http4k-connect adapters in LangChain apps. Currently only OpenAI is supported.
 - **http4k-connect-openai-*** - [Breaking] Support tool calls and more modern API version for ChatCompletion.
 [
 ]()### v5.15.0.0

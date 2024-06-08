@@ -8,6 +8,7 @@ import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
+import org.http4k.connect.openai.action.FinishReason.stop
 import org.http4k.connect.openai.action.Message
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(ApprovalTest::class)
-class ChatCompletionGeneratorKtTest {
+class ChatCompletionGeneratorTest {
 
     private val input = ChatCompletion(
         GPT3_5, listOf(Message(User, "foobar"))
@@ -34,7 +35,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.ReverseInput(input),
             equalTo(
-                listOf(Choice(0, ChoiceDetail(System, "raboof"), null, "stop"))
+                listOf(Choice(0, ChoiceDetail(System, "raboof"), null, stop))
             )
         )
     }
@@ -44,7 +45,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.Echo(input),
             equalTo(
-                listOf(Choice(0, ChoiceDetail(System, "foobar "), null, "stop"))
+                listOf(Choice(0, ChoiceDetail(System, "foobar "), null, stop))
             )
         )
     }

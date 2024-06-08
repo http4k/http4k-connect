@@ -37,7 +37,7 @@ import kotlin.text.Charsets.UTF_8
 data class ChatCompletion(
     val model: ModelName,
     val messages: List<Message>,
-    val max_tokens: Int = 16,
+    val max_tokens: Int? = null,
     val temperature: Double = 1.0,
     val top_p: Double = 1.0,
     val n: Int = 1,
@@ -104,16 +104,16 @@ data class ResponseFormat(
 @JsonSerializable
 data class Message(
     val role: Role?,
-    val content: List<Content>,
+    val content: List<MessageContent>,
     val name: User? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
     constructor(role: Role, text: String, name: User? = null, tool_calls: List<ToolCall>? = null) :
-        this(role, listOf(Content(ContentType.text, text)), name, tool_calls)
+        this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
 }
 
 @JsonSerializable
-data class Content(
+data class MessageContent(
     val type: ContentType,
     val text: String? = null,
     val image_url: ImageUrl? = null
@@ -136,9 +136,13 @@ data class Choice(
     @JsonProperty(name = "message")
     internal val msg: ChoiceDetail?,
     internal val delta: ChoiceDetail?,
-    val finish_reason: String?
+    val finish_reason: FinishReason
 ) {
     val message get() = msg ?: delta
+}
+
+enum class FinishReason {
+    stop, length, content_filter, tool_calls
 }
 
 @JsonSerializable

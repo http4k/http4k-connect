@@ -4,6 +4,7 @@ import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
+import org.http4k.connect.openai.action.FinishReason
 import java.util.Random
 
 /**
@@ -20,7 +21,7 @@ val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
         req.messages.flatMap { m ->
             m.content.mapIndexed { i, content ->
-                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, "stop")
+                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, FinishReason.stop)
             }
         }
     }
@@ -41,4 +42,4 @@ val ChatCompletionGenerator.Companion.Echo
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))
-    .map { Choice(0, ChoiceDetail(Role.System, it, null), null, "stop") }
+    .map { Choice(0, ChoiceDetail(Role.System, it, null), null, FinishReason.stop) }
