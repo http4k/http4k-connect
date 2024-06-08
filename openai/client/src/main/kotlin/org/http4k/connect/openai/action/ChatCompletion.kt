@@ -17,10 +17,12 @@ import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
+import org.http4k.connect.openai.action.Detail.auto
 import org.http4k.core.ContentType.Companion.APPLICATION_JSON
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Uri
 import org.http4k.core.with
 import org.http4k.lens.Header.CONTENT_TYPE
 import se.ansman.kotshi.ExperimentalKotshiApi
@@ -102,12 +104,30 @@ data class ResponseFormat(
 @JsonSerializable
 data class Message(
     val role: Role?,
-    @JsonProperty(name = "content")
-    internal val msg: String?,
+    val content: List<Content>,
     val name: User? = null,
-    val tool_calls: List<ToolCall>? = emptyList()
+    val tool_calls: List<ToolCall>? = null
 ) {
-    val content get() = msg ?: ""
+    constructor(role: Role, text: String, name: User? = null, tool_calls: List<ToolCall>? = null) :
+        this(role, listOf(Content(ContentType.text, text)), name, tool_calls)
+}
+
+@JsonSerializable
+data class Content(
+    val type: ContentType,
+    val text: String? = null,
+    val image_url: ImageUrl? = null
+)
+
+@JsonSerializable
+data class ImageUrl(val url: Uri, val detail: Detail = auto)
+
+enum class Detail {
+    low, high, auto
+}
+
+enum class ContentType {
+    text, image_url
 }
 
 @JsonSerializable
@@ -125,7 +145,7 @@ data class Choice(
 data class ChoiceDetail(
     val role: Role? = null,
     val content: String? = null,
-    val tool_calls: List<ToolCall>? = emptyList(),
+    val tool_calls: List<ToolCall>? = null,
 )
 
 @JsonSerializable

@@ -136,14 +136,14 @@ private fun completionResponse(
     objectType: ObjectType,
     modelName: ModelName,
     now: Instant,
-    choicess: List<Choice>
+    choices: List<Choice>
 ): CompletionResponse = CompletionResponse(
     CompletionId.of(
         UUID.nameUUIDFromBytes((request.bodyString() + "$it").toByteArray()).toString()
     ),
     Timestamp.of(now),
     modelName,
-    choicess,
+    choices,
     objectType,
     usage
 )

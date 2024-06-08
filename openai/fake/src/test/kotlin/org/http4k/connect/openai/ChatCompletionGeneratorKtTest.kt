@@ -34,7 +34,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.ReverseInput(input),
             equalTo(
-                listOf(Choice(0, null, ChoiceDetail(System, "raboof "), "stop"))
+                listOf(Choice(0, ChoiceDetail(System, "raboof"), null, "stop"))
             )
         )
     }
@@ -44,7 +44,7 @@ class ChatCompletionGeneratorKtTest {
         assertThat(
             ChatCompletionGenerator.Echo(input),
             equalTo(
-                listOf(Choice(0, null, ChoiceDetail(System, "foobar "), "stop"))
+                listOf(Choice(0, ChoiceDetail(System, "foobar "), null, "stop"))
             )
         )
     }
