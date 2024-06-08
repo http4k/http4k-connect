@@ -42,9 +42,18 @@ class Timestamp private constructor(value: Long) : LongValue(value) {
     }
 }
 
+enum class Quality {
+    standard, hd
+}
+
+enum class Style {
+    vivid, natural
+}
+
 class ModelName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ModelName>(::ModelName) {
         val GPT4 = ModelName.of("gpt-4")
+        val DALL_E_2 = ModelName.of("dall-e-2")
         val GPT4_TURBO_PREVIEW = ModelName.of("gpt-4-turbo-preview")
         val GPT3_5 = ModelName.of("gpt-3.5-turbo")
         val TEXT_EMBEDDING_ADA_002 = ModelName.of("text-embedding-ada-002")
@@ -54,6 +63,7 @@ class ModelName private constructor(value: String) : StringValue(value) {
 class ResponseFormatType private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ResponseFormatType>(::ResponseFormatType) {
         val JsonObject = ResponseFormatType.of("json_object")
+        val url = ResponseFormatType.of("url")
     }
 }
 

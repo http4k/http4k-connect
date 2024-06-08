@@ -6,6 +6,8 @@ import org.http4k.connect.kClass
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
+import org.http4k.connect.openai.Quality
+import org.http4k.connect.openai.Style
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.ImageResponseFormat.url
@@ -22,10 +24,13 @@ data class GenerateImage(
     val size: Size = Size.`1024x1024`,
     val response_format: ImageResponseFormat = url,
     val n: Int = 1,
-    val user: User? = null
-) : NonNullAutoMarshalledAction<GeneratedImage>(kClass(), OpenAIMoshi), OpenAIAction<GeneratedImage> {
+    val quality: Quality = Quality.standard,
+    val style: Style = Style.vivid,
+    val user: User? = null,
 
-    constructor(prompt: String, size: Size) : this(prompt, size, url, 1, null)
+    ) : NonNullAutoMarshalledAction<GeneratedImage>(kClass(), OpenAIMoshi), OpenAIAction<GeneratedImage> {
+
+    constructor(prompt: String, size: Size) : this(prompt, size, url, 1)
 
     override fun toRequest() = Request(POST, "/v1/images/generations")
         .with(OpenAIMoshi.autoBody<GenerateImage>().toLens() of this)
