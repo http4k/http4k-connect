@@ -60,13 +60,14 @@ fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatMode
             .map {
                 it.map {
                     Response(
-                        AiMessage(it.choices.mapNotNull { it.message?.content }.joinToString("")),
+                        AiMessage(it.choices?.mapNotNull { it.message?.content }?.joinToString("") ?: ""),
                         it.usage?.let { TokenUsage(it.prompt_tokens, it.completion_tokens, it.total_tokens) },
-                        when (it.choices.last().finish_reason) {
+                        when (it.choices?.last()?.finish_reason) {
                             stop -> FinishReason.STOP
                             length -> FinishReason.LENGTH
                             content_filter -> FinishReason.CONTENT_FILTER
                             tool_calls -> FinishReason.TOOL_EXECUTION
+                            else -> FinishReason.OTHER
                         }
                     )
                 }.toList()

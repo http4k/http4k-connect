@@ -34,7 +34,7 @@ fun main() {
         .toList()
         .first()
         .choices
-        .forEach {
+        ?.forEach {
             println(it.message?.role)
             println(it.message?.content)
         }
