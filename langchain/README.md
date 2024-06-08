@@ -13,5 +13,5 @@ Using these adapters is as simple as:
 
 ```kotlin
 val model: ChatLanguageModel = OpenAiChatLanguageModel(OpenAI.Http(OpenAIToken.of("hello"), FakeOpenAI()))
-val chat: Response<> = model.generate("hello kitty")
+val chat: Response<AiMessage> = model.generate("hello kitty")
 ```
