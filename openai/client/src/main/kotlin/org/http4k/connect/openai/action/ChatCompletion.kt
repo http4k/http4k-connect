@@ -104,7 +104,8 @@ data class Message(
     val role: Role?,
     @JsonProperty(name = "content")
     internal val msg: String?,
-    val name: User? = null
+    val name: User? = null,
+    val tool_calls: List<ToolCall>? = emptyList()
 ) {
     val content get() = msg ?: ""
 }
@@ -129,10 +130,10 @@ data class ChoiceDetail(
 
 @JsonSerializable
 data class ToolCall(
-    val index: Int,
     val id: String,
     val type: String,
-    val function: FunctionCall
+    val function: FunctionCall,
+    val index: Int? = null
 )
 
 @JsonSerializable
