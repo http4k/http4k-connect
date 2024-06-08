@@ -6,7 +6,7 @@ import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.ResponseFormat
 
 data class ChatModelOptions(
-    val model: ModelName,
+    val model: ModelName = ModelName.GPT3_5,
     val maxTokens: Int? = null,
     val temperature: Double = 1.0,
     val top_p: Double = 1.0,

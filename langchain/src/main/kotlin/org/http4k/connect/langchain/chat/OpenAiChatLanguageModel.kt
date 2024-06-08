@@ -13,7 +13,6 @@ import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.output.FinishReason
 import dev.langchain4j.model.output.Response
 import dev.langchain4j.model.output.TokenUsage
-import org.http4k.connect.openai.ModelName
 import org.http4k.connect.openai.OpenAI
 import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.User
@@ -32,7 +31,7 @@ import org.http4k.connect.openai.chatCompletion
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
 
-fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatModelOptions(ModelName.GPT3_5)) =
+fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatModelOptions()) =
     ChatLanguageModel {
         with(options) {
             openAi.chatCompletion(
