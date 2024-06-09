@@ -1,0 +1,23 @@
+package org.http4k.connect.langchain.chat
+
+import org.http4k.connect.openai.OpenAI
+import org.http4k.testing.ApprovalTest
+import org.http4k.testing.Approver
+import org.http4k.testing.assertApproved
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+
+@ExtendWith(ApprovalTest::class)
+abstract class OpenAIChatLanguageModelContract {
+
+    abstract val openAi: OpenAI
+
+    private val model by lazy { OpenAiChatLanguageModel(openAi, ChatModelOptions(temperature = 0.0)) }
+
+    @Test
+    fun `can call through to language model`(approver: Approver) {
+        val content1 = model.generate("what is 1+1? just answer with the number")
+        val content2 = model.generate("what is 2+2? just answer with the number")
+        approver.assertApproved(listOf(content1, content2).joinToString("\n"))
+    }
+}
