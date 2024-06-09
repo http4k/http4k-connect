@@ -67,6 +67,10 @@ data class ChatCompletion(
         stream = stream
     )
 
+    init {
+        require(tools == null || tools.isNotEmpty()) { "Tools cannot be empty" }
+    }
+
     override fun toRequest() = Request(POST, "/v1/chat/completions")
         .with(autoBody<ChatCompletion>().toLens() of this)
 

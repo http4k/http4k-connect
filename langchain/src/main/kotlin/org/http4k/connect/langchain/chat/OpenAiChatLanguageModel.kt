@@ -61,7 +61,7 @@ fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatMode
                 user,
                 false,
                 responseFormat,
-                toolSpecifications?.map { it.toHttp4k() },
+                toolSpecifications?.takeIf { it.isNotEmpty() }?.map { it.toHttp4k() },
                 toolChoice,
                 parallelToolCalls
             )
