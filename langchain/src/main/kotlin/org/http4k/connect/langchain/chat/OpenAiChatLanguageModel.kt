@@ -47,6 +47,7 @@ fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatMode
                     when (it) {
                         is UserMessage -> it.toHttp4k()
                         is SystemMessage -> it.toHttp4k()
+                        is AiMessage -> it.toHttp4k()
                         else -> error("unknown message type")
                     }
                 },
@@ -97,6 +98,11 @@ private fun UserMessage.toHttp4k() = Message(
 
 private fun SystemMessage.toHttp4k() = Message(
     Role.System,
+    listOf(MessageContent(ContentType.text, text()))
+)
+
+private fun AiMessage.toHttp4k() = Message(
+    Role.Assistant,
     listOf(MessageContent(ContentType.text, text()))
 )
 

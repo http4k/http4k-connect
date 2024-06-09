@@ -1,5 +1,7 @@
 package org.http4k.connect.langchain.chat
 
+import dev.langchain4j.chain.ConversationalChain
+import dev.langchain4j.memory.chat.MessageWindowChatMemory
 import org.http4k.connect.openai.OpenAI
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
@@ -18,6 +20,17 @@ abstract class OpenAIChatLanguageModelContract {
     fun `can call through to language model`(approver: Approver) {
         val content1 = model.generate("what is 1+1? just answer with the number")
         val content2 = model.generate("what is 2+2? just answer with the number")
+        approver.assertApproved(listOf(content1, content2).joinToString("\n"))
+    }
+
+    @Test
+    fun `can use the model in a chain`(approver: Approver) {
+        val chain = ConversationalChain.builder()
+            .chatLanguageModel(model)
+            .chatMemory(MessageWindowChatMemory.builder().maxMessages(10).build())
+            .build()
+        val content1 = chain.execute("what is 1+1? just answer with the number")
+        val content2 = chain.execute("what is 2+2? just answer with the number")
         approver.assertApproved(listOf(content1, content2).joinToString("\n"))
     }
 }
