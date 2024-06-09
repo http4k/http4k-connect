@@ -1,6 +1,7 @@
 package org.http4k.connect.langchain.chat
 
 import dev.forkhandles.result4k.map
+import dev.langchain4j.agent.tool.ToolExecutionRequest
 import dev.langchain4j.agent.tool.ToolSpecification
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
@@ -26,11 +27,13 @@ import org.http4k.connect.openai.action.FinishReason.content_filter
 import org.http4k.connect.openai.action.FinishReason.length
 import org.http4k.connect.openai.action.FinishReason.stop
 import org.http4k.connect.openai.action.FinishReason.tool_calls
+import org.http4k.connect.openai.action.FunctionCall
 import org.http4k.connect.openai.action.FunctionSpec
 import org.http4k.connect.openai.action.ImageUrl
 import org.http4k.connect.openai.action.Message
 import org.http4k.connect.openai.action.MessageContent
 import org.http4k.connect.openai.action.Tool
+import org.http4k.connect.openai.action.ToolCall
 import org.http4k.connect.openai.chatCompletion
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
@@ -101,18 +104,20 @@ private fun SystemMessage.toHttp4k() = Message(
     listOf(MessageContent(ContentType.text, text()))
 )
 
-private fun AiMessage.toHttp4k() = Message(
-    Role.Assistant,
-    listOf(MessageContent(ContentType.text, text()))
-)
+private fun AiMessage.toHttp4k(): Message {
+    val toolCalls = toolExecutionRequests()?.map { it.toHttp4k() }?.takeIf { it.isNotEmpty() }
+    return Message(Role.Assistant, listOf(MessageContent(ContentType.text, text())), tool_calls = toolCalls)
+}
 
-private fun TextContent.toHttp4k() = MessageContent(ContentType.text, text())
+private fun ToolExecutionRequest.toHttp4k() = ToolCall(id(), "function", FunctionCall(name(), arguments()))
+
+private fun TextContent.toHttp4k() = MessageContent(ContentType.text, this@toHttp4k.text())
 
 private fun ImageContent.toHttp4k() =
     MessageContent(
         ContentType.image_url, null, ImageUrl(
-            Uri.of(image().url().toString()),
-            when (detailLevel()) {
+            Uri.of(this@toHttp4k.image().url().toString()),
+            when (this@toHttp4k.detailLevel()) {
                 LOW -> low
                 HIGH -> high
                 AUTO -> auto
@@ -120,4 +125,10 @@ private fun ImageContent.toHttp4k() =
         )
     )
 
-private fun ToolSpecification.toHttp4k() = Tool(FunctionSpec(name(), parameters(), description()))
+private fun ToolSpecification.toHttp4k() = Tool(
+    FunctionSpec(
+        this@toHttp4k.name(),
+        this@toHttp4k.parameters(),
+        this@toHttp4k.description()
+    )
+)
