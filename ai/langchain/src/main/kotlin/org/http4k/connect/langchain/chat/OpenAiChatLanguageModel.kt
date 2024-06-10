@@ -38,7 +38,10 @@ import org.http4k.connect.openai.chatCompletion
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
 
-fun OpenAiChatLanguageModel(openAi: OpenAI, options: ChatModelOptions = ChatModelOptions()) =
+fun OpenAiChatLanguageModel(
+    openAi: OpenAI,
+    options: ChatModelOptions = ChatModelOptions()
+) =
     object : ChatLanguageModel {
         override fun generate(p0: List<ChatMessage>) = generate(p0, emptyList())
 
