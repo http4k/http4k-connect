@@ -26,6 +26,13 @@ includeStorage("redis")
 includeStorage("s3")
 includeStorage("http")
 
+
+includeVendorSystem("ai", "openai")
+includeVendorSystem("ai", "ollama")
+
+includeCommon("ai-langchain", "ai/langchain")
+includeCommon("ai-openai-plugin", "ai/openai/plugin")
+
 includeCommon("amazon-core", "amazon/core")
 includeVendorSystem("amazon", "apprunner")
 includeVendorSystem("amazon", "cloudfront")
@@ -53,10 +60,6 @@ includeSystem("github")
 includeSystem("gitlab")
 includeSystem("mattermost")
 includeSystem("openai", "plugin")
-
-includeVendorSystem("ai", "openai")
-includeCommon("ai-langchain", "ai/langchain")
-includeCommon("ai-openai-plugin", "ai/openai/plugin")
 
 includeCommon("langchain", "langchain")
 

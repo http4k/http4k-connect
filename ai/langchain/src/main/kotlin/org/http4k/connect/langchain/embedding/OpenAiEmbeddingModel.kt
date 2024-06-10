@@ -11,6 +11,6 @@ import org.http4k.connect.orThrow
 
 fun OpenAiEmbeddingModel(openAi: OpenAI, model: ModelName = ModelName.TEXT_EMBEDDING_ADA_002) = EmbeddingModel {
     openAi.createEmbeddings(model, it?.map { it.text() } ?: emptyList())
-        .map { Response(it.data.map { Embedding(it.embedding.toFloatArray()) }) }
+        .map { Response(it.data.map { Embedding(it.embedding) }) }
         .orThrow()
 }

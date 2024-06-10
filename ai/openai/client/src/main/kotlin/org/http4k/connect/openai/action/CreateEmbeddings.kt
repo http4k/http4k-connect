@@ -28,9 +28,29 @@ data class CreateEmbeddings(val model: ModelName, val input: List<String>) :
 }
 
 @JsonSerializable
-data class Embedding(val embedding: List<Float>, val index: Int) {
+data class Embedding(val embedding: FloatArray, val index: Int) {
+
     @JsonProperty(name = "object")
     val objectType: ObjectType = Embedding
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Embedding
+
+        if (!embedding.contentEquals(other.embedding)) return false
+        if (index != other.index) return false
+        if (objectType != other.objectType) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = embedding.contentHashCode()
+        result = 31 * result + index
+        result = 31 * result + objectType.hashCode()
+        return result
+    }
 }
 
 @JsonSerializable

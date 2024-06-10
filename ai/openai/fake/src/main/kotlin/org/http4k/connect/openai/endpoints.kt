@@ -81,7 +81,7 @@ fun createEmbeddings(models: Storage<Model>) = "/v1/embeddings" bind POST to
             Response(OK).with(
                 autoBody<Embeddings>().toLens() of
                     Embeddings(request.input.mapIndexed { index, token ->
-                        Embedding(token.split(" ").map { it.hashCode().absoluteValue / 100000000f }, index)
+                        Embedding(token.split(" ").map { it.hashCode().absoluteValue / 100000000f }.toFloatArray(), index)
                     }, request.model, Usage(0, 0, 0))
 
             )

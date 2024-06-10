@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.17.0.0 (uncut)
 - **http4k-connect-ai-*** - Migration of the various AI packages (OpenAI/Langchain) to `http4k-ai-` subpackage name. 
+- **http4k-connect-ai-openai** - [Breaking] Use FloatArray for embeddings instead of List<Float>
 
 ### v5.16.0.2
 - **http4k-connect-langchain** - Properly support all message types in OpenAI Adapter.
