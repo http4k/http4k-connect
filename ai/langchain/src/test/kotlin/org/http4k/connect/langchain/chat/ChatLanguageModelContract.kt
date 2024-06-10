@@ -1,6 +1,9 @@
 package org.http4k.connect.langchain.chat
 
 import dev.langchain4j.chain.ConversationalChain
+import dev.langchain4j.data.message.AiMessage
+import dev.langchain4j.data.message.SystemMessage
+import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.memory.chat.MessageWindowChatMemory
 import dev.langchain4j.model.chat.ChatLanguageModel
 import org.http4k.testing.ApprovalTest
@@ -25,10 +28,14 @@ interface ChatLanguageModelContract {
     fun `can use the model in a chain`(approver: Approver) {
         val chain = ConversationalChain.builder()
             .chatLanguageModel(model)
-            .chatMemory(MessageWindowChatMemory.builder().maxMessages(10).build())
+            .chatMemory(MessageWindowChatMemory.builder().maxMessages(10).build().apply {
+                add(SystemMessage("just answer with a number"))
+                add(UserMessage("what is 1+1"))
+                add(AiMessage("2"))
+            })
             .build()
-        val content1 = chain.execute("what is 1+1? just answer with the number")
-        val content2 = chain.execute("what is 2+2? just answer with the number")
+        val content1 = chain.execute("Double it")
+        val content2 = chain.execute("Double it")
         approver.assertApproved(listOf(content1, content2).joinToString("\n"))
     }
 }

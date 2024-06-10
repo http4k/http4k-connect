@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.17.0.1
+- **http4k-connect-ai-langchain** - Added support for System messages in Ollama models
+
 ### v5.17.0.0 
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-ai-*** - Migration of the various AI packages (OpenAI/Langchain) to `http4k-ai-` subpackage name. 

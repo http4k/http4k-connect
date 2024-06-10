@@ -6,6 +6,7 @@ import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.ContentType
 import dev.langchain4j.data.message.ImageContent
+import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.TextContent
 import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
@@ -47,6 +48,7 @@ fun OllamaChatLanguageModel(
 private fun ChatMessage.toHttp4k(): Message = when (this) {
     is UserMessage -> toHttp4k()
     is AiMessage -> toHttp4k()
+    is SystemMessage -> toHttp4k()
     else -> error("unknown message type")
 }
 
@@ -62,3 +64,4 @@ private fun UserMessage.toHttp4k(): Message {
 }
 
 private fun AiMessage.toHttp4k() = Message(Role.assistant, text())
+private fun SystemMessage.toHttp4k() = Message(Role.system, text())
