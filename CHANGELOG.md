@@ -4,6 +4,7 @@ This list is not intended to be all-encompassing - it will document major and br
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
 ### v5.17.0.0 
+- **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-ai-*** - Migration of the various AI packages (OpenAI/Langchain) to `http4k-ai-` subpackage name. 
 - **http4k-connect-ai-openai** - [Breaking] Use FloatArray for embeddings instead of `List<Float>`
 - **http4k-connect-ai-ollama** - [New module!] Ollama adapter module so you can use Http4k-connect adapters in LangChain apps. 
