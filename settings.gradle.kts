@@ -54,6 +54,10 @@ includeSystem("gitlab")
 includeSystem("mattermost")
 includeSystem("openai", "plugin")
 
+includeVendorSystem("ai", "openai")
+includeCommon("ai-langchain", "ai/langchain")
+includeCommon("ai-openai-plugin", "ai/openai/plugin")
+
 includeCommon("langchain", "langchain")
 
 includeVendorSystem("kafka", "rest")

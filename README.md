@@ -107,12 +107,12 @@ dependencies {
 - Google Analytics
     - [GA4](./google/analytics-ga4) -> `"org.http4k:http4k-connect-google-analytics-ga4"` / `"org.http4k:http4k-connect-google-analytic-ga4-fake"`
     - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`
-- [LangChain4J](./langchain) -> `"org.http4k:http4k-connect-langchain"`
+- [LangChain4J](./ai/langchain) -> `"org.http4k:http4k-connect-ai-langchain"`
 - Kafka
     - [Rest Proxy](kafka/rest) -> `"org.http4k:http4k-connect-kafka-rest"` / `"org.http4k:http4k-connect-kafka-rest-fake"`
     - [Schema Registry](kafka/schemaregistry) -> `"org.http4k:http4k-connect-kafka-schemaregistry"` / `"org.http4k:http4k-connect-kafka-schemaregistry-fake"`
 - [Mattermost Webhook](./mattermost) -> `"org.http4k:http4k-connect-mattermost"` / `"org.http4k:http4k-connect-mattermost-fake"`
-- [OpenAI](./openai) -> `"org.http4k:http4k-connect-openai"` / `"org.http4k:http4k-connect-openai-plugin"`/ `"org.http4k:http4k-connect-openai-fake"`
+- [OpenAI](./ai/openai) -> `"org.http4k:http4k-connect-ai-openai"` / `"org.http4k:http4k-connect-ai-openai-plugin"`/ `"org.http4k:http4k-connect-ai-openai-fake"`
 - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
 ## Supported Storage backends (named http4k-connect-storage-{technology}>)
