@@ -8,12 +8,17 @@ import org.http4k.connect.openai.OpenAIToken
 import org.http4k.lens.value
 import org.junit.jupiter.api.Assumptions.assumeTrue
 
-class RealOpenAiChatLanguageModelTest : OpenAIChatLanguageModelContract() {
+class RealOpenAiChatLanguageModelTest : ChatLanguageModelContract {
     val apiKey = EnvironmentKey.value(OpenAIToken).optional("OPEN_AI_TOKEN")
 
     init {
         assumeTrue(apiKey(ENV) != null, "No API Key set - skipping")
     }
 
-    override val openAi by lazy { OpenAI.Http(apiKey(ENV)!!) }
+    override val model by lazy {
+        OpenAiChatLanguageModel(
+            OpenAI.Http(apiKey(ENV)!!),
+            ChatModelOptions(temperature = 0.0)
+        )
+    }
 }

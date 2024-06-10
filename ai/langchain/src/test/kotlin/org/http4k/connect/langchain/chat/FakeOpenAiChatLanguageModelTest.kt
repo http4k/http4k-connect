@@ -5,6 +5,11 @@ import org.http4k.connect.openai.Http
 import org.http4k.connect.openai.OpenAI
 import org.http4k.connect.openai.OpenAIToken
 
-class FakeOpenAiChatLanguageModelTest : OpenAIChatLanguageModelContract() {
-    override val openAi = OpenAI.Http(OpenAIToken.of("hello"), FakeOpenAI())
+class FakeOpenAiChatLanguageModelTest : ChatLanguageModelContract {
+    override val model by lazy {
+        OpenAiChatLanguageModel(
+            OpenAI.Http(OpenAIToken.of("hello"), FakeOpenAI()),
+            ChatModelOptions(temperature = 0.0)
+        )
+    }
 }
