@@ -4,9 +4,16 @@ LangChain4J is a versatile library that simplifies the creation and management o
 
 Current adapters support http4k client integrations for the following models, allowing you to use them in your http4k applications:
 
-- OpenAiChatLanguageModel
-- OpenAiChatImageModel
-- OpenAiChatEmbeddingModel
+- OpenAI
+  - OpenAiChatLanguageModel
+  - OpenAiChatImageModel
+  - OpenAiChatEmbeddingModel
+- 
+- Ollama
+  - OllamaChatLanguageModel
+  - OllamaChatImageModel
+  - OllamaChatEmbeddingModel
+- 
 - S3 Document Loaders
 
 Using these adapters is as simple as:
