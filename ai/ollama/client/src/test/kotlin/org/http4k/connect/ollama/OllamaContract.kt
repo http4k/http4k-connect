@@ -91,7 +91,6 @@ interface OllamaContract {
             null,
             ModelOptions(temperature = 0.0)
         ).successValue().toList()
-        println(responses)
         assertThat(responses.size, greaterThan(1))
         assertThat(responses.first().message?.role, equalTo(Role.assistant))
     }

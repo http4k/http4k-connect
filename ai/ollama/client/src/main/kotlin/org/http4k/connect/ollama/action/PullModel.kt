@@ -54,7 +54,7 @@ data class PullModel(val name: ModelName, val stream: Boolean? = false) : Ollama
 @JsonSerializable
 data class PullResponse(
     val status: String,
-    val digest: String?,
-    val total: Long?,
-    val completed: Long?
+    val digest: String? = null,
+    val total: Long? = null,
+    val completed: Long? = null
 )

@@ -67,10 +67,10 @@ data class ChatCompletionResponse(
     val created_at: Instant,
     val message: Message?,
     val done: Boolean,
-    val total_duration: Long?,
-    val load_duration: Long?,
-    val prompt_eval_count: Long?,
-    val prompt_eval_duration: Long?,
-    val eval_count: Long?,
-    val eval_duration: Long?
+    val total_duration: Long? = null,
+    val load_duration: Long? = null,
+    val prompt_eval_count: Long? = null,
+    val prompt_eval_duration: Long? = null,
+    val eval_count: Long? = null,
+    val eval_duration: Long? = null
 )

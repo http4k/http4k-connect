@@ -70,7 +70,7 @@ data class Completion(
 data class CompletionResponse(
     val model: ModelName,
     val created_at: Instant,
-    val response: String,
+    val response: String?,
     val done: Boolean,
     val context: List<Long>? = null,
     val total_duration: Long? = null,

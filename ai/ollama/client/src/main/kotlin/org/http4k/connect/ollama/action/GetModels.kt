@@ -10,7 +10,7 @@ import java.time.Instant
 @Http4kConnectAction
 @JsonSerializable
 data object GetModels : NonNullOllamaAction<ModelList>(ModelList::class) {
-    override fun toRequest() = Request(GET, "/api/tags")
+    override fun toRequest() = Request(GET, "/api/ps")
 }
 
 @JsonSerializable
