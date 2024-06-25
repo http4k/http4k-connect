@@ -81,7 +81,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
-            s3Bucket.restoreObject(key, 1).let {
+            s3Bucket.restoreObject(key, 1).also {
                 val failure = (it as Failure<RemoteFailure>).reason
 
                 assertThat(failure.method, equalTo(Method.POST))

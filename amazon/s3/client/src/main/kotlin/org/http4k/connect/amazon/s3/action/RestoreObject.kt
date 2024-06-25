@@ -20,8 +20,12 @@ data class RestoreObject(
     val tier: RestoreTier? = null
 ) : S3BucketAction<Unit> {
     override fun toRequest() = Request(POST, uri()).body(
-"""<?xml version="1.0" encoding="UTF-8"?><RestoreRequest xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Days>$days</Days>${ if (tier != null) "<Tier>$tier</Tier>" else ""}</RestoreRequest>"""
-    )
+"""<?xml version="1.0" encoding="UTF-8"?>
+<RestoreRequest xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <Days>$days</Days>
+  ${ if (tier != null) "<GlacierJobParameters><Tier>$tier</Tier></GlacierJobParameters>" else ""}
+</RestoreRequest>"""
+)
 
     override fun toResult(response: Response) = with(response) {
         when {
