@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.core.model.Region
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3GlobalContract(http: HttpHandler) : AwsContract() {
+abstract class S3GlobalContract(private val http: HttpHandler) : AwsContract() {
     private val s3 by lazy {
         S3.Http({ aws.credentials }, http)
     }
@@ -38,6 +39,14 @@ abstract class S3GlobalContract(http: HttpHandler) : AwsContract() {
         } finally {
             s3Bucket.deleteBucket().successValue()
         }
+    }
+
+    @Test
+    fun `create bucket in default (us-east-1) region`() {
+        assertThat(s3.createBucket(bucket, Region.US_EAST_1), equalTo(Success(Unit)))
+
+        val s3Bucket = S3Bucket.Http(bucket, Region.US_EAST_1, { aws.credentials }, http)
+        s3Bucket.deleteBucket().successValue()
     }
 }
 
