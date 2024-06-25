@@ -5,6 +5,7 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.s3.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
+import org.http4k.connect.amazon.s3.model.StorageClass
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Headers
 import org.http4k.core.Method.PUT
@@ -14,9 +15,18 @@ import org.http4k.core.Uri
 import java.io.InputStream
 
 @Http4kConnectAction
-data class PutObject(val key: BucketKey, val content: InputStream, val headers: Headers = emptyList()) :
+data class PutObject(
+    val key: BucketKey,
+    val content: InputStream,
+    val headers: Headers = emptyList(),
+    val storageClass: StorageClass? = null,
+) :
     S3BucketAction<Unit> {
-    override fun toRequest() = Request(PUT, Uri.of("/$key")).headers(headers).body(content)
+    override fun toRequest() = Request(PUT, Uri.of("/$key"))
+        .headers(headers + buildList {
+            if (storageClass != null) add("x-amz-storage-class" to storageClass.toString())
+        })
+        .body(content)
 
     override fun toResult(response: Response) = with(response) {
         when {
