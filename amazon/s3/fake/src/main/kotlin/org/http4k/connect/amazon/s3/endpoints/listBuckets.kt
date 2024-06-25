@@ -11,5 +11,5 @@ import org.http4k.routing.bind
 
 fun globalListBuckets(buckets: Storage<Unit>) = "/" bind Method.GET to {
     Response(Status.OK)
-        .with(lens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
+        .with(s3ErrorLens of ListAllMyBuckets(buckets.keySet("").map { BucketName.of(it) }.toList().sortedBy { it.value }))
 }

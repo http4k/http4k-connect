@@ -10,6 +10,7 @@ import org.http4k.connect.amazon.s3.endpoints.bucketGetKey
 import org.http4k.connect.amazon.s3.endpoints.bucketHeadBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketHeadKey
 import org.http4k.connect.amazon.s3.endpoints.bucketListObjectsV2
+import org.http4k.connect.amazon.s3.endpoints.bucketPostKey
 import org.http4k.connect.amazon.s3.endpoints.bucketPutBucket
 import org.http4k.connect.amazon.s3.endpoints.bucketPutKey
 import org.http4k.connect.amazon.s3.endpoints.copyKey
@@ -61,6 +62,7 @@ class FakeS3(
             bucketHeadBucket(buckets),
             bucketHeadKey(buckets, bucketContent),
             bucketGetKey(buckets, bucketContent),
+            bucketPostKey(buckets, bucketContent),
             bucketPutKey(buckets, bucketContent, clock),
             bucketDeleteKey(buckets, bucketContent),
             bucketPutBucket(buckets),

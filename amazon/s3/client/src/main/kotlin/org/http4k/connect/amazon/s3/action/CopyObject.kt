@@ -6,6 +6,7 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.s3.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
+import org.http4k.connect.amazon.s3.model.StorageClass
 import org.http4k.connect.asRemoteFailure
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
@@ -13,10 +14,11 @@ import org.http4k.core.Response
 import org.http4k.core.Uri
 
 @Http4kConnectAction
-data class CopyObject(val sourceBucket: BucketName, val source: BucketKey, val destination: BucketKey) :
+data class CopyObject(val sourceBucket: BucketName, val source: BucketKey, val destination: BucketKey, val storageClass: StorageClass? = null) :
     S3BucketAction<Unit> {
     override fun toRequest() = Request(PUT, uri())
         .header("x-amz-copy-source", "$sourceBucket/${source}")
+        .let { if (storageClass == null) it else it.header("x-amz-storage-class", storageClass.toString()) }
 
     override fun toResult(response: Response) = with(response) {
         when {

@@ -27,6 +27,9 @@ class FakeS3BucketTest : S3BucketContract(FakeS3()) {
     override val bucket = BucketName.of(UUID.randomUUID().toString())
 
     @Test
+    fun foo() = `bucket key lifecycle`()
+
+    @Test
     fun `can set last-modified on an object`() {
         try {
             val lastModifiedDate = ZonedDateTime.of(LocalDate.EPOCH, LocalTime.MIDNIGHT, ZoneId.of("GMT"))

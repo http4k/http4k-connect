@@ -1,5 +1,6 @@
 package org.http4k.connect.amazon.core
 
+import org.http4k.core.Request
 import org.http4k.core.Response
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -9,6 +10,7 @@ import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
 fun Response.xmlDoc(): Document = documentBuilderFactory().parse(body.stream)
+fun Request.xmlDoc(): Document = documentBuilderFactory().parse(body.stream)
 
 private fun documentBuilderFactory() =
     DocumentBuilderFactory.newInstance()

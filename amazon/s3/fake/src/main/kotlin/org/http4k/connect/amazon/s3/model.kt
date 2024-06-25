@@ -22,4 +22,4 @@ data class ListBucketResult(val bucketName: String, val keys: List<BucketKeyCont
     val maxKeys = Integer.MAX_VALUE
 }
 
-data class S3Error(val code: String, val resource: String? = "") : ViewModel
+data class S3Error(val code: String, val resource: String? = "", val message: String) : ViewModel
