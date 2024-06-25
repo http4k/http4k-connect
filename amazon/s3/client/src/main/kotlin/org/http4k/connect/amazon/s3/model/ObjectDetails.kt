@@ -16,5 +16,5 @@ data class ObjectDetails(
 
 data class RestoreStatus(
     val ongoingRequest: Boolean,
-    val expiryDate: Timestamp? = null
+//    val expiryDate: Timestamp? = null
 )

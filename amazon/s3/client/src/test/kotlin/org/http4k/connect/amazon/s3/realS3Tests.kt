@@ -5,6 +5,7 @@ import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.filter.debug
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.UUID
 
@@ -13,11 +14,14 @@ class RealS3BucketTest : S3BucketContract(JavaHttpClient().debug()), RealAwsEnvi
     override fun waitForBucketCreation() {
         Thread.sleep(10000)
     }
-    override fun waitForRestore() {
-        Thread.sleep(Duration.ofMinutes(5))
-    }
 
     override val bucket: BucketName = BucketName.of(UUID.randomUUID().toString())
+
+    @Test
+    fun foo() = `bucket key lifecycle`()
+
+    @Test
+    fun bar() = `glacier lifecycle`()
 }
 
 class RealS3BucketPathStyleTest : S3BucketContract(JavaHttpClient()), RealAwsEnvironment {
@@ -25,9 +29,6 @@ class RealS3BucketPathStyleTest : S3BucketContract(JavaHttpClient()), RealAwsEnv
 
     override fun waitForBucketCreation() {
         Thread.sleep(10000)
-    }
-    override fun waitForRestore() {
-        Thread.sleep(Duration.ofMinutes(5))
     }
 
     override val bucket = BucketName.of(UUID.randomUUID().toString().replace('-', '.'))

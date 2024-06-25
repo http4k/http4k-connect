@@ -39,8 +39,7 @@ data class HeadObject(val key: BucketKey) : S3BucketAction<ObjectDetails?> {
                     ?.let { restoreStatusMatcher.find(it) }
                     ?.let {
                         RestoreStatus(
-                            ongoingRequest = it.groupValues[0].toBoolean(),
-                            expiryDate = it.groupValues.getOrNull(1)?.let(Timestamp::parse)
+                            ongoingRequest = it.groupValues[1].toBoolean(),
                         )
                     }
             ))

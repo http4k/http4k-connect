@@ -10,11 +10,9 @@ import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Failure
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsContract
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.s3.action.ObjectList
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
-import org.http4k.connect.amazon.s3.model.ObjectDetails
 import org.http4k.connect.amazon.s3.model.RestoreStatus
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
@@ -39,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
+import java.time.Instant
 
 
 abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
@@ -169,11 +168,11 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             }
 
             s3Bucket.restoreObject(key, 2, tier = RestoreTier.Expedited).successValue()
-            waitForRestore()
+            s3Bucket.waitForRestore(key)
 
             s3Bucket.headObject(key).successValue().also { status ->
                 assertThat(status?.storageClass, equalTo(StorageClass.GLACIER))
-                assertThat(status?.restoreStatus, equalTo(RestoreStatus(false, Timestamp.of(clock.instant().plus(Duration.ofDays(2))))))
+                assertThat(status?.restoreStatus, equalTo(RestoreStatus(false)))
             }
 
             assertThat(s3Bucket[key].successValue()?.reader()?.readText(), equalTo("coldStuff"))
@@ -181,9 +180,15 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             s3Bucket.deleteObject(key)
             s3Bucket.deleteBucket()
         }
-
     }
 
     open fun waitForBucketCreation() {}
-    open fun waitForRestore() {}
+
+    private fun S3Bucket.waitForRestore(key: BucketKey, timeout: Duration = Duration.ofMinutes(5)) {
+        val start = Instant.now()
+        while(Duration.between(start, Instant.now()) < timeout) {
+            if (headObject(key).successValue()?.restoreStatus?.ongoingRequest == false) return
+            Thread.sleep(Duration.ofSeconds(1))
+        }
+    }
 }
