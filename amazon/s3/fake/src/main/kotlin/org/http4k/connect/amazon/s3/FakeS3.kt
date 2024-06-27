@@ -21,6 +21,7 @@ import org.http4k.connect.amazon.s3.endpoints.globalPutBucket
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketDeleteKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketGetKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketHeadKey
+import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketPostKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedBucketPutKey
 import org.http4k.connect.amazon.s3.endpoints.pathBasedCopyKey
 import org.http4k.connect.amazon.s3.endpoints.subdomain
@@ -49,6 +50,7 @@ class FakeS3(
         isS3 bind routes(
             pathBasedCopyKey(buckets, bucketContent, clock),
             pathBasedBucketGetKey(buckets, bucketContent),
+            pathBasedBucketPostKey(buckets, bucketContent),
             pathBasedBucketPutKey(buckets, bucketContent, clock),
             pathBasedBucketDeleteKey(buckets, bucketContent),
             pathBasedBucketHeadKey(buckets, bucketContent),

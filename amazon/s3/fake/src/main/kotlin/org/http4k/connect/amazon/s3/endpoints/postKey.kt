@@ -7,6 +7,7 @@ import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.s3.BucketKeyContent
 import org.http4k.connect.amazon.s3.action.RestoreObject
 import org.http4k.connect.amazon.s3.model.BucketKey
+import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.replaceHeader
 import org.http4k.connect.amazon.s3.requiresRestore
@@ -20,17 +21,44 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 
-fun bucketPostKey(buckets: Storage<Unit>,  bucketContent: Storage<BucketKeyContent>) = "/{bucketKey:.+}" bind POST to routes(
-    queryPresent("restore") bind { request ->
-        restoreObject(buckets, bucketContent, request)
-    }
-)
+fun bucketPostKey(buckets: Storage<Unit>,  bucketContent: Storage<BucketKeyContent>) =
+    "/{bucketKey:.+}" bind POST to routes(
+        queryPresent("restore") bind { request ->
+            restoreObject(
+                buckets,
+                bucketContent,
+                BucketName.of(request.subdomain(buckets)),
+                BucketKey.of(request.path("bucketKey")!!),
+                request
+            )
+        }
+    )
 
-private fun restoreObject(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, request: Request): Response {
+fun pathBasedBucketPostKey(buckets: Storage<Unit>,  bucketContent: Storage<BucketKeyContent>) =
+    "/{bucketName}/{bucketKey:.+}" bind POST to routes(
+        queryPresent("restore") bind { request ->
+            restoreObject(
+                buckets,
+                bucketContent,
+                BucketName.of(request.path("bucketName")!!),
+                BucketKey.of(request.path("bucketKey")!!),
+                request
+            )
+        }
+    )
+
+
+private fun restoreObject(
+    buckets: Storage<Unit>,
+    bucketContent: Storage<BucketKeyContent>,
+    bucket: BucketName,
+    bucketKey: BucketKey,
+    request: Request
+): Response {
     val doc = request.xmlDoc().getElementsByTagName("RestoreRequest").sequenceOfNodes().first()
 
     val data = RestoreObject(
-        key = BucketKey.of(request.path("bucketKey")!!),
+        key = bucketKey,
         days = doc.firstChild("Days")!!.text().toInt(),
         tier = doc.firstChild("GlacierJobParameters")
             ?.firstChild("Tier")
@@ -38,8 +66,7 @@ private fun restoreObject(buckets: Storage<Unit>, bucketContent: Storage<BucketK
             ?.let { RestoreTier.valueOf(it) }
     )
 
-    val bucket = request.subdomain(buckets)
-    if (buckets[bucket] == null) return invalidBucketNameResponse()
+    if (buckets[bucket.value] == null) return invalidBucketNameResponse()
     val obj = bucketContent["$bucket-${data.key}"] ?: return invalidBucketKeyResponse()
     if (!obj.storageClass().requiresRestore()) return invalidObjectStateResponse()
 
