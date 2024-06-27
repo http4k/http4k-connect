@@ -35,13 +35,6 @@ val s3ErrorLens by lazy {
 
 const val GLOBAL_BUCKET = "unknown"
 
-// TODO may be overlooked that `queries` router only passes if the query has a value
-fun queryPresent(name: String) = { req: Request -> req.queries(name).isNotEmpty() }.asRouter("Query present: $name")
-
-// TODO may want to consider adding to http4k-core routing.kt
-val otherwise = { _: Request -> true }.asRouter("Catch-all")
-
-
 internal fun invalidBucketNameResponse() = Response(NOT_FOUND)
     .with(s3ErrorLens of S3Error("NoSuchBucket", message = "The resource you requested does not exist"))
 
@@ -56,11 +49,17 @@ internal val excludedObjectHeaders = setOf(
     "x-forwarded-host",
     "x-amz-content-sha256",
     "x-amz-date",
-    "x-amz-tagging"
+    "x-amz-tagging",
 )
 
 internal fun getHeadersWithoutXHttp4kPrefix(it: BucketKeyContent) =
     it.headers.map { it.first.removePrefix("x-http4k-") to it.second }
+
+// TODO may be overlooked that `queries` router only passes if the query has a value
+fun queryPresent(name: String) = { req: Request -> req.queries(name).isNotEmpty() }.asRouter("Query present: $name")
+
+// TODO may want to consider adding to http4k-core routing.kt
+val otherwise = { _: Request -> true }.asRouter("Catch-all")
 
 internal fun lastModified(headers: Headers, clock: Clock) = headers
     .firstOrNull { it.first == X_HTTP4K_LAST_MODIFIED }?.second?.let { LastModified.parse(it) }?.value?.toInstant()

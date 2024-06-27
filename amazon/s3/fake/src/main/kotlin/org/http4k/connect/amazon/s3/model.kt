@@ -14,7 +14,7 @@ data class BucketKeyContent(
     val content: String,
     val modified: Instant,
     val headers: Headers,
-    val tags: List<Tag>
+    val tags: List<Tag>,
 ) {
     val size = content.length
 }

@@ -15,7 +15,6 @@ import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.s3.action.ObjectList
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
-import org.http4k.connect.amazon.s3.model.RestoreStatus
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
 import org.http4k.connect.errorValue
@@ -35,7 +34,6 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetXForwardedHost
-import org.http4k.filter.debug
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
 import org.junit.jupiter.api.BeforeEach
@@ -51,7 +49,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
     private val clock = Clock.systemUTC()
 
     protected val s3Bucket by lazy {
-        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http.debug(), clock)
+        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
     }
 
     private val s3 by lazy {
@@ -157,59 +155,6 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
     }
 
     @Test
-    fun `tag lifecycle`() {
-        waitForBucketCreation()
-
-        try {
-            // tag operations on missing key
-            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).errorValue {
-                assertThat(it.status, equalTo(NOT_FOUND))
-                assertThat(it.message!!, containsSubstring("NoSuchKey"))
-            }
-            s3Bucket.deleteObjectTagging(key).errorValue {
-                assertThat(it.status, equalTo(NOT_FOUND))
-                assertThat(it.message!!, containsSubstring("NoSuchKey"))
-            }
-            s3Bucket.getObjectTagging(key).errorValue {
-                assertThat(it.status, equalTo(NOT_FOUND))
-                assertThat(it.message!!, containsSubstring("NoSuchKey"))
-            }
-
-            // get tags for object with no tags
-            s3Bucket.putObject(key, "hello there".byteInputStream()).successValue()
-            assertThat(
-                s3Bucket.getObjectTagging(key).successValue(),
-                equalTo(emptyList())
-            )
-
-            // tag operations for object with tags
-            s3Bucket.putObject(
-                key = key,
-                content = "hello there".byteInputStream(),
-                tags = listOf(Tag("hello", "there"))
-            ).successValue()
-            assertThat(
-                s3Bucket.getObjectTagging(key).successValue(),
-                equalTo(listOf(Tag("hello", "there")))
-            )
-            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).successValue()
-            assertThat(
-                s3Bucket.getObjectTagging(key).successValue(),
-                equalTo(listOf(Tag("foo", "bar")))
-            )
-
-            s3Bucket.deleteObjectTagging(key).successValue()
-            assertThat(
-                s3Bucket.getObjectTagging(key).successValue(),
-                equalTo(emptyList())
-            )
-        } finally {
-            s3Bucket.deleteObject(key)
-            s3Bucket.deleteBucket()
-        }
-    }
-
-    @Test
     fun `glacier lifecycle`() {
         waitForBucketCreation()
         val newKey = BucketKey.of("newKey")
@@ -294,6 +239,59 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
         } finally {
             s3Bucket.deleteObject(key)
             s3Bucket.deleteObject(newKey)
+            s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `tag lifecycle`() {
+        waitForBucketCreation()
+
+        try {
+            // tag operations on missing key
+            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).errorValue {
+                assertThat(it.status, equalTo(NOT_FOUND))
+                assertThat(it.message!!, containsSubstring("NoSuchKey"))
+            }
+            s3Bucket.deleteObjectTagging(key).errorValue {
+                assertThat(it.status, equalTo(NOT_FOUND))
+                assertThat(it.message!!, containsSubstring("NoSuchKey"))
+            }
+            s3Bucket.getObjectTagging(key).errorValue {
+                assertThat(it.status, equalTo(NOT_FOUND))
+                assertThat(it.message!!, containsSubstring("NoSuchKey"))
+            }
+
+            // get tags for object with no tags
+            s3Bucket.putObject(key, "hello there".byteInputStream()).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(emptyList())
+            )
+
+            // tag operations for object with tags
+            s3Bucket.putObject(
+                key = key,
+                content = "hello there".byteInputStream(),
+                tags = listOf(Tag("hello", "there"))
+            ).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(listOf(Tag("hello", "there")))
+            )
+            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(listOf(Tag("foo", "bar")))
+            )
+
+            s3Bucket.deleteObjectTagging(key).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(emptyList())
+            )
+        } finally {
+            s3Bucket.deleteObject(key)
             s3Bucket.deleteBucket()
         }
     }
