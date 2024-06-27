@@ -1,5 +1,6 @@
 package org.http4k.connect.amazon.s3.endpoints
 
+import org.http4k.connect.amazon.core.model.RfcTimestamp
 import org.http4k.connect.amazon.s3.BucketKeyContent
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.HEAD
@@ -28,4 +29,5 @@ fun bucketHeadKey(
     if (buckets[bucket] == null) return invalidBucketNameResponse()
     val obj = bucketContent["${bucket}-${req.path("bucketKey")!!}"] ?: return invalidBucketKeyResponse()
     return Response(OK).headers(getHeadersWithoutXHttp4kPrefix(obj))
+        .header("last-modified", RfcTimestamp.of(obj.modified).toString())
 }

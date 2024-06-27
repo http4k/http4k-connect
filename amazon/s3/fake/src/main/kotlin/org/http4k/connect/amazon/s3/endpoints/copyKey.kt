@@ -38,7 +38,7 @@ private fun copyKey(
     val obj = bucketContent["$sourceBucket-$sourceKey"] ?: return invalidBucketKeyResponse()
     if (obj.storageClass().requiresRestore() && !obj.restoreReady()) return invalidObjectStateResponse()
 
-    putKey(
+    putObject(
         bucket,
         req.path("bucketKey")!!,
         Base64.getDecoder().decode(obj.content),

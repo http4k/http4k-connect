@@ -24,9 +24,14 @@ class CapturingHttpHandler : HttpHandler {
     }
 }
 
-fun <T, E> Result<T, E>.successValue(): T = when (this) {
-    is Success -> value
+fun <T, E> Result<T, E>.successValue(fn: (T) -> Unit = {}): T = when (this) {
+    is Success -> value.also(fn)
     is Failure -> throw AssertionError("Failed: $reason")
+}
+
+fun <T, E> Result<T, E>.errorValue(fn: (E) -> Unit = {}): E = when(this) {
+    is Success -> throw AssertionError("Should have failed, but was $value")
+    is Failure -> reason.also(fn)
 }
 
 fun assumeDockerDaemonRunning() {

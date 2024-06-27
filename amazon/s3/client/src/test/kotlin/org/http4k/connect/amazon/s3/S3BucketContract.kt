@@ -5,17 +5,19 @@ import com.natpryce.hamkrest.and
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.or
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Failure
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsContract
+import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.s3.action.ObjectList
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
-import org.http4k.connect.amazon.s3.model.RestoreStatus
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
+import org.http4k.connect.errorValue
 import org.http4k.connect.amazon.s3.model.StorageClass
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
@@ -26,6 +28,7 @@ import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.Status.Companion.CREATED
+import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
@@ -38,7 +41,7 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-
+import java.time.ZonedDateTime
 
 abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
 
@@ -74,7 +77,9 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             assertThat(s3Bucket[key].successValue(), absent())
             assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
-            assertThat(s3Bucket.headObject(key).successValue(), present())
+            s3Bucket.headObject(key).successValue {
+                assertThat(it!!.lastModified, present())
+            }
 
             assertThat(s3Bucket.listObjectsV2().successValue().items.map { it.Key }, equalTo(listOf(key)))
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
@@ -183,8 +188,9 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             s3Bucket.restoreObject(key, 2, tier = RestoreTier.Expedited).successValue()
             s3Bucket.waitForRestore(key)
             s3Bucket.headObject(key).successValue().also { status ->
-                assertThat(status?.storageClass, equalTo(StorageClass.GLACIER))
-                assertThat(status?.restoreStatus, equalTo(RestoreStatus(false)))
+                assertThat(status!!.storageClass, equalTo(StorageClass.GLACIER))
+                assertThat(status.restoreStatus!!.ongoingRequest, equalTo(false))
+                assertThat(status.restoreStatus!!.expiryDate!!.value, greaterThan(ZonedDateTime.now(clock)))
             }
             assertThat(s3Bucket[key].successValue()?.reader()?.readText(), equalTo("coldStuff"))
         } finally {
@@ -233,6 +239,59 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
         } finally {
             s3Bucket.deleteObject(key)
             s3Bucket.deleteObject(newKey)
+            s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `tag lifecycle`() {
+        waitForBucketCreation()
+
+        try {
+            // tag operations on missing key
+            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).errorValue {
+                assertThat(it.status, equalTo(NOT_FOUND))
+                assertThat(it.message!!, containsSubstring("NoSuchKey"))
+            }
+            s3Bucket.deleteObjectTagging(key).errorValue {
+                assertThat(it.status, equalTo(NOT_FOUND))
+                assertThat(it.message!!, containsSubstring("NoSuchKey"))
+            }
+            s3Bucket.getObjectTagging(key).errorValue {
+                assertThat(it.status, equalTo(NOT_FOUND))
+                assertThat(it.message!!, containsSubstring("NoSuchKey"))
+            }
+
+            // get tags for object with no tags
+            s3Bucket.putObject(key, "hello there".byteInputStream()).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(emptyList())
+            )
+
+            // tag operations for object with tags
+            s3Bucket.putObject(
+                key = key,
+                content = "hello there".byteInputStream(),
+                tags = listOf(Tag("hello", "there"))
+            ).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(listOf(Tag("hello", "there")))
+            )
+            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(listOf(Tag("foo", "bar")))
+            )
+
+            s3Bucket.deleteObjectTagging(key).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(emptyList())
+            )
+        } finally {
+            s3Bucket.deleteObject(key)
             s3Bucket.deleteBucket()
         }
     }

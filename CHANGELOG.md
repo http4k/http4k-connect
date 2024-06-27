@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.17.1.0 (uncut)
 - **http4k-connect-amazon-s3-*** - Support all storage classes, including the restore lifecycle for glacier. H/T @oharaandrew314
+- **http4k-connect-amazon-s3-*** - Support S3 object tagging. H/T @oharaandrew314
 - **http4k-connect-*** - Upgrade dependencies.
 
 ### v5.17.0.2
