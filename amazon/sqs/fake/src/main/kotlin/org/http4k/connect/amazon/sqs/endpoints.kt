@@ -141,7 +141,7 @@ fun AmazonRestfulFake.sendMessageBatch(queues: Storage<List<SQSMessage>>) =
         queues[queueName] = queue + results.map { it.first }
 
         Success(SendMessageBatchResponse(
-            Failed = emptyList(),
+            Failed = null,
             Successful = results.map { it.second }
         ))
     }
