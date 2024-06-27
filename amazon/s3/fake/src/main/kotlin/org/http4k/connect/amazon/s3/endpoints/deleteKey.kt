@@ -1,14 +1,11 @@
 package org.http4k.connect.amazon.s3.endpoints
 
 import org.http4k.connect.amazon.s3.BucketKeyContent
-import org.http4k.connect.amazon.s3.S3Error
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
-import org.http4k.core.Status.Companion.NOT_FOUND
-import org.http4k.core.with
 import org.http4k.routing.bind
 import org.http4k.routing.path
 
@@ -30,6 +27,6 @@ private fun deleteKey(
 ) = (buckets[bucket]
     ?.let {
         if (bucketContent.remove("${bucket}-${req.path("bucketKey")!!}")) Response(Status.OK)
-        else Response(NOT_FOUND).with(lens of S3Error("NoSuchKey"))
+        else invalidBucketKeyResponse()
     }
     ?: invalidBucketNameResponse())

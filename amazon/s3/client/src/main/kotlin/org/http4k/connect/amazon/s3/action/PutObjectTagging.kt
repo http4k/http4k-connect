@@ -8,6 +8,7 @@ import org.http4k.connect.amazon.s3.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.appendAll
 import org.http4k.connect.asRemoteFailure
+import org.http4k.core.MemoryBody
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -16,14 +17,7 @@ import org.http4k.core.Uri
 @Http4kConnectAction
 class PutObjectTagging(val key: BucketKey, val tags: List<Tag>): S3BucketAction<Unit> {
     override fun toRequest(): Request {
-        val doc = StringBuilder("<Tagging xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">")
-            .append("<TagSet>")
-            .appendAll(tags) { (key, value) -> "<Tag><Key>$key</Key><Value>$value</Value></Tag>" }
-            .append("</TagSet>")
-            .append("</Tagging>")
-            .toString()
-
-        return Request(PUT, Uri.of("/$key?tagging")).body(doc)
+        return Request(PUT, Uri.of("/$key?tagging")).body(bodyFor(tags))
     }
 
     override fun toResult(response: Response) = with(response) {
@@ -33,3 +27,10 @@ class PutObjectTagging(val key: BucketKey, val tags: List<Tag>): S3BucketAction<
         }
     }
 }
+
+fun bodyFor(tags: List<Tag>) = StringBuilder("<Tagging xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">")
+    .append("<TagSet>")
+    .appendAll(tags) { (key, value) -> "<Tag><Key>$key</Key><Value>$value</Value></Tag>" }
+    .append("</TagSet>")
+    .append("</Tagging>")
+    .let { MemoryBody(it.toString()) }

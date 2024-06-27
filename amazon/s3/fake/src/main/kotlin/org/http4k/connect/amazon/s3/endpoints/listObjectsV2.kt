@@ -26,7 +26,7 @@ fun listObjectsV2(bucket: String, buckets: Storage<Unit>, bucketContent: Storage
         ?.let {
             Response(Status.OK)
                 .with(
-                    lens of ListBucketResult(
+                    s3ErrorLens of ListBucketResult(
                         bucket,
                         bucketContent.keySet(bucket)
                             .map { it.removePrefix("$bucket-") }

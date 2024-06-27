@@ -14,10 +14,14 @@ The S3 connector consists of 2 interfaces:
     * CreateObject
     * DeleteBucket
     * DeleteObject
+    * DeleteObjectTagging
     * GetObject
+    * GetObjectTagging
     * HeadObject
     * ListObjectsV2
     * PutObject
+    * PutObjectTagging
+    * RestoreObject
 
 ### Example usage
 

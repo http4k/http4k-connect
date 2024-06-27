@@ -6,24 +6,32 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.or
+import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.Failure
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.s3.action.ObjectList
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
+import org.http4k.connect.amazon.s3.model.RestoreStatus
+import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
 import org.http4k.connect.errorValue
+import org.http4k.connect.amazon.s3.model.StorageClass
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
+import org.http4k.core.Status
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.hamkrest.hasBody
@@ -32,12 +40,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 
 abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
 
     abstract val bucket: BucketName
-    private val clock = Clock.systemUTC()
+
+    private var time = Instant.parse("2024-06-27T12:00:00Z")
+    private val clock = object : Clock() {
+        override fun instant() = time
+        override fun withZone(zone: ZoneId?) = TODO()
+        override fun getZone() = ZoneOffset.UTC
+    }
 
     protected val s3Bucket by lazy {
         S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
@@ -68,11 +85,20 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             assertThat(s3Bucket[key].successValue(), absent())
             assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
-            assertThat(s3Bucket.headObject(key).successValue(), equalTo(Unit))
+            assertThat(s3Bucket.headObject(key).successValue(), present())
 
             assertThat(s3Bucket.listObjectsV2().successValue().items.map { it.Key }, equalTo(listOf(key)))
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
+
+            s3Bucket.restoreObject(key, 1).also {
+                val failure = (it as Failure<RemoteFailure>).reason
+
+                assertThat(failure.method, equalTo(Method.POST))
+                assertThat(failure.uri, equalTo(Uri.of("/$key?restore")))
+                assertThat(failure.status, equalTo(Status.FORBIDDEN))
+                assertThat(failure.message!!, containsSubstring("<Code>InvalidObjectState</Code>"))
+            }
 
             assertThat(s3Bucket.copyObject(bucket, key, newKey).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
@@ -84,6 +110,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             assertThat(s3Bucket.deleteObject(key).successValue(), equalTo(Unit))
             assertThat(s3Bucket[key].successValue(), equalTo(null))
             assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(emptyList())))
+
         } finally {
             s3Bucket.deleteObject(key)
             s3Bucket.deleteBucket()
@@ -138,6 +165,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
         waitForBucketCreation()
 
         try {
+            // tag operations on missing key
             s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).errorValue {
                 assertThat(it.status, equalTo(NOT_FOUND))
                 assertThat(it.message!!, containsSubstring("NoSuchKey"))
@@ -151,6 +179,14 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
                 assertThat(it.message!!, containsSubstring("NoSuchKey"))
             }
 
+            // get tags for object with no tags
+            s3Bucket.putObject(key, "hello there".byteInputStream()).successValue()
+            assertThat(
+                s3Bucket.getObjectTagging(key).successValue(),
+                equalTo(emptyList())
+            )
+
+            // tag operations for object with tags
             s3Bucket.putObject(
                 key = key,
                 content = "hello there".byteInputStream(),
@@ -161,13 +197,18 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
                 equalTo(listOf(Tag("hello", "there")))
             )
 
+            time += Duration.ofMinutes(1)
             s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).successValue()
             assertThat(
                 s3Bucket.getObjectTagging(key).successValue(),
                 equalTo(listOf(Tag("foo", "bar")))
             )
+            assertThat(s3Bucket.headObject(key).successValue()?.lastModified?.toInstant(), equalTo(time))
 
+            time += Duration.ofMinutes(1)
             s3Bucket.deleteObjectTagging(key).successValue()
+            assertThat(s3Bucket.headObject(key).successValue()?.lastModified?.toInstant(), equalTo(time))
+
             assertThat(
                 s3Bucket.getObjectTagging(key).successValue(),
                 equalTo(emptyList())
@@ -178,5 +219,102 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
         }
     }
 
+    @Test
+    fun `glacier lifecycle`() {
+        waitForBucketCreation()
+        val newKey = BucketKey.of("newKey")
+        try {
+            // put object into glacier
+            s3Bucket.putObject(key, "coldStuff".byteInputStream(), storageClass = StorageClass.GLACIER).successValue()
+            s3Bucket.headObject(key).successValue().also { status ->
+                assertThat(status?.storageClass, equalTo(StorageClass.GLACIER))
+                assertThat(status?.restoreStatus, absent())
+            }
+
+            // try to get object from glacier
+            s3Bucket[key].also {
+                val failure = (it as Failure<RemoteFailure>).reason
+                assertThat(failure.method, equalTo(GET))
+                assertThat(failure.uri, equalTo(Uri.of("/$key")))
+                assertThat(failure.status, equalTo(Status.FORBIDDEN))
+                assertThat(failure.message!!, containsSubstring("<Code>InvalidObjectState</Code>"))
+            }
+
+            // try to copy object from glacier
+            s3Bucket.copyObject(bucket, key, newKey).also {
+                val failure = (it as Failure<RemoteFailure>).reason
+                assertThat(failure.method, equalTo(PUT))
+                assertThat(failure.uri, equalTo(Uri.of("/$newKey")))
+                assertThat(failure.status, equalTo(Status.FORBIDDEN))
+                assertThat(failure.message!!, containsSubstring("<Code>InvalidObjectState</Code>"))
+            }
+
+            // restore, head, and get object from glacier
+            s3Bucket.restoreObject(key, 2, tier = RestoreTier.Expedited).successValue()
+            s3Bucket.waitForRestore(key)
+            s3Bucket.headObject(key).successValue().also { status ->
+                assertThat(status?.storageClass, equalTo(StorageClass.GLACIER))
+                assertThat(status?.restoreStatus, equalTo(RestoreStatus(false)))
+            }
+            assertThat(s3Bucket[key].successValue()?.reader()?.readText(), equalTo("coldStuff"))
+        } finally {
+            s3Bucket.deleteObject(key)
+            s3Bucket.deleteObject(newKey)
+            s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `glacier instant retrieval lifecycle`() {
+        waitForBucketCreation()
+        try {
+            s3Bucket.putObject(key, "lukewarmStuff".byteInputStream(), storageClass = StorageClass.GLACIER_IR)
+            s3Bucket.headObject(key).successValue().also {
+                assertThat(it?.storageClass, equalTo(StorageClass.GLACIER_IR))
+            }
+            s3Bucket.restoreObject(key, 1).also {
+                val failure = (it as Failure<RemoteFailure>).reason
+
+                assertThat(failure.method, equalTo(Method.POST))
+                assertThat(failure.uri, equalTo(Uri.of("/$key?restore")))
+                assertThat(failure.status, equalTo(Status.FORBIDDEN))
+                assertThat(failure.message!!, containsSubstring("<Code>InvalidObjectState</Code>"))
+            }
+            assertThat(s3Bucket[key].successValue()?.reader()?.readText(), equalTo("lukewarmStuff"))
+        } finally {
+            s3Bucket.deleteObject(key)
+            s3Bucket.deleteBucket()
+        }
+    }
+
+    @Test
+    fun `glacier deep archive lifecycle`() {
+        waitForBucketCreation()
+        val newKey = BucketKey.of("newKey")
+        try {
+            // copy object from standard to glacier DA
+            s3Bucket.putObject(key, "warmStuff".byteInputStream()).successValue()
+            s3Bucket.copyObject(bucket, key, newKey, StorageClass.DEEP_ARCHIVE)
+
+            s3Bucket.headObject(newKey).successValue().also {
+                assertThat(it, present())
+                assertThat(it?.storageClass, equalTo(StorageClass.DEEP_ARCHIVE))
+            }
+        } finally {
+            s3Bucket.deleteObject(key)
+            s3Bucket.deleteObject(newKey)
+            s3Bucket.deleteBucket()
+        }
+    }
+
     open fun waitForBucketCreation() {}
+
+    private fun S3Bucket.waitForRestore(key: BucketKey, timeout: Duration = Duration.ofMinutes(5)) {
+        println("Restoring $key... please wait for up to $timeout")
+        val start = Instant.now()
+        while(Duration.between(start, Instant.now()) < timeout) {
+            if (headObject(key).successValue()?.restoreStatus?.ongoingRequest == false) return
+            Thread.sleep(Duration.ofSeconds(1))
+        }
+    }
 }

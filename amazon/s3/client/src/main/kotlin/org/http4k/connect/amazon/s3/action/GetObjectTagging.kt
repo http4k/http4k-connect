@@ -12,6 +12,7 @@ import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.s3.S3BucketAction
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.asRemoteFailure
+import org.http4k.core.Body
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -25,11 +26,13 @@ class GetObjectTagging(val key: BucketKey): S3BucketAction<List<Tag>> {
     override fun toResult(response: Response): Result<List<Tag>, RemoteFailure> {
         if (!response.status.successful) return Failure(asRemoteFailure(response))
 
-        return response.xmlDoc()
-            .getElementsByTagName("Tag")
-            .sequenceOfNodes()
-            .map { tagEle -> Tag(tagEle.firstChildText("Key")!!, tagEle.firstChildText("Value")!!) }
-            .toList()
-            .let(::Success)
+        return Success(tagsFor(response.body))
     }
 }
+
+fun tagsFor(body: Body) = body
+    .xmlDoc()
+    .getElementsByTagName("Tag")
+    .sequenceOfNodes()
+    .map { tagEle -> Tag(tagEle.firstChildText("Key")!!, tagEle.firstChildText("Value")!!) }
+    .toList()

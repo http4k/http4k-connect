@@ -1,5 +1,9 @@
 package org.http4k.connect.amazon.sqs
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.isEmpty
 import org.http4k.aws.AwsSdkClient
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -48,6 +52,10 @@ class AwsSdkV2CompatibilityTest {
             it.entries(
                 SendMessageBatchRequestEntry.builder().id("1").messageBody("hi").build()
             )
+        }.also { result ->
+            assertThat(result.hasFailed(), equalTo(false))
+            assertThat(result.failed(), isEmpty)
+            assertThat(result.successful(), hasSize(equalTo(1)))
         }
 
         val message2 = client.receiveMessage {
