@@ -1,6 +1,9 @@
 package org.http4k.connect.amazon.s3.endpoints
 
 import org.http4k.connect.amazon.s3.BucketKeyContent
+import org.http4k.connect.amazon.s3.requiresRestore
+import org.http4k.connect.amazon.s3.restoreReady
+import org.http4k.connect.amazon.s3.storageClass
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.PUT
 import org.http4k.core.Request
@@ -29,17 +32,20 @@ private fun copyKey(
     req: Request,
     buckets: Storage<Unit>,
     clock: Clock
-) = bucketContent[req.header("x-amz-copy-source")!!.split("/", limit = 2)
-    .let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
-    ?.let {
-        putKey(
-            bucket,
-            req.path("bucketKey")!!,
-            Base64.getDecoder().decode(it.content),
-            buckets,
-            bucketContent,
-            clock,
-            it.headers
-        )
-        Response(Status.OK)
-    } ?: invalidBucketNameResponse()
+): Response {
+    val (sourceBucket, sourceKey) = req.header("x-amz-copy-source")!!.split("/", limit = 2)
+    if (buckets[sourceBucket] == null) return invalidBucketNameResponse()
+    val obj = bucketContent["$sourceBucket-$sourceKey"] ?: return invalidBucketKeyResponse()
+    if (obj.storageClass().requiresRestore() && !obj.restoreReady()) return invalidObjectStateResponse()
+
+    putKey(
+        bucket,
+        req.path("bucketKey")!!,
+        Base64.getDecoder().decode(obj.content),
+        buckets,
+        bucketContent,
+        clock,
+        obj.headers + req.headers.filter { (name, _) -> name !in excludedObjectHeaders }
+    )
+    return Response(Status.OK)
+}

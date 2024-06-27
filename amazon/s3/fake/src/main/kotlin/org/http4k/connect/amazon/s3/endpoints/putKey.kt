@@ -55,14 +55,7 @@ fun putKey(
             BucketKey.of(key),
             Base64.getEncoder().encodeToString(bytes),
             lastModified(headers, clock),
-            headers.filter {
-                it.first !in setOf(
-                    "authorization",
-                    "x-forwarded-host",
-                    "x-amz-content-sha256",
-                    "x-amz-date"
-                )
-            }
+            headers.filter { it.first !in excludedObjectHeaders }
         )
         Response(CREATED)
     }
