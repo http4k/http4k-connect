@@ -36,11 +36,11 @@ data class PutObject(
     }
 }
 
-private fun headersFor(tags: List<Tag>) = listOfNotNull(headerFor(tags))
-
-fun headerFor(tags: List<Tag>) = tags
-    .takeIf { it.isNotEmpty() }
-    .let { "x-amz-tagging" to tags.joinToString("&") { (key, value) -> "$key=$value" } }
+private fun headersFor(tags: Collection<Tag>) = if (tags.isEmpty()) {
+    emptyList()
+} else {
+    listOf("x-amz-tagging" to tags.joinToString("&") { (key, value) -> "$key=$value" })
+}
 
 private fun headersFor(storageClass: StorageClass?) = if (storageClass == null) {
     emptyList()

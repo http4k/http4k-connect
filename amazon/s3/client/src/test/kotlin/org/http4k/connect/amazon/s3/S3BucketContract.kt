@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.and
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.or
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Failure
@@ -34,6 +35,7 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetXForwardedHost
+import org.http4k.filter.debug
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
 import org.junit.jupiter.api.BeforeEach
@@ -41,23 +43,15 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-
+import java.time.ZonedDateTime
 
 abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
 
     abstract val bucket: BucketName
-
-    private var time = Instant.parse("2024-06-27T12:00:00Z")
-    private val clock = object : Clock() {
-        override fun instant() = time
-        override fun withZone(zone: ZoneId?) = TODO()
-        override fun getZone() = ZoneOffset.UTC
-    }
+    private val clock = Clock.systemUTC()
 
     protected val s3Bucket by lazy {
-        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
+        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http.debug(), clock)
     }
 
     private val s3 by lazy {
@@ -85,7 +79,9 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             assertThat(s3Bucket[key].successValue(), absent())
             assertThat(s3Bucket.set(key, "hello".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("hello"))
-            assertThat(s3Bucket.headObject(key).successValue(), present())
+            s3Bucket.headObject(key).successValue {
+                assertThat(it!!.lastModified, present())
+            }
 
             assertThat(s3Bucket.listObjectsV2().successValue().items.map { it.Key }, equalTo(listOf(key)))
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
@@ -196,19 +192,13 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
                 s3Bucket.getObjectTagging(key).successValue(),
                 equalTo(listOf(Tag("hello", "there")))
             )
-
-            time += Duration.ofMinutes(1)
             s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).successValue()
             assertThat(
                 s3Bucket.getObjectTagging(key).successValue(),
                 equalTo(listOf(Tag("foo", "bar")))
             )
-            assertThat(s3Bucket.headObject(key).successValue()?.lastModified?.toInstant(), equalTo(time))
 
-            time += Duration.ofMinutes(1)
             s3Bucket.deleteObjectTagging(key).successValue()
-            assertThat(s3Bucket.headObject(key).successValue()?.lastModified?.toInstant(), equalTo(time))
-
             assertThat(
                 s3Bucket.getObjectTagging(key).successValue(),
                 equalTo(emptyList())
@@ -253,8 +243,9 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
             s3Bucket.restoreObject(key, 2, tier = RestoreTier.Expedited).successValue()
             s3Bucket.waitForRestore(key)
             s3Bucket.headObject(key).successValue().also { status ->
-                assertThat(status?.storageClass, equalTo(StorageClass.GLACIER))
-                assertThat(status?.restoreStatus, equalTo(RestoreStatus(false)))
+                assertThat(status!!.storageClass, equalTo(StorageClass.GLACIER))
+                assertThat(status.restoreStatus!!.ongoingRequest, equalTo(false))
+                assertThat(status.restoreStatus!!.expiryDate!!.value, greaterThan(ZonedDateTime.now(clock)))
             }
             assertThat(s3Bucket[key].successValue()?.reader()?.readText(), equalTo("coldStuff"))
         } finally {

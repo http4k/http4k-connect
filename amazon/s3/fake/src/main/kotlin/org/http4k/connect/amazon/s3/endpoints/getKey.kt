@@ -12,17 +12,28 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.bind
 import org.http4k.routing.path
+import org.http4k.routing.routes
 import java.util.Base64
 
-fun pathBasedBucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
-    "/{bucketName}/{bucketKey:.+}" bind Method.GET to { req ->
-        bucketGetObject(buckets, req.path("bucketName")!!, bucketContent, keyFor(req))
-    }
+internal fun pathBasedBucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+    "/{bucketName}/{bucketKey:.+}" bind Method.GET to routes(
+        queryPresent("tagging") bind {
+            bucketGetTagging(buckets, it.path("bucketName")!!, bucketContent, keyFor(it))
+        },
+        otherwise bind { req ->
+            bucketGetObject(buckets, req.path("bucketName")!!, bucketContent, keyFor(req))
+        }
+    )
 
-fun bucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
-    "/{bucketKey:.+}" bind Method.GET to { req ->
-        bucketGetObject(buckets, req.subdomain(buckets), bucketContent, keyFor(req))
-    }
+internal fun bucketGetKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>) =
+    "/{bucketKey:.+}" bind Method.GET to routes(
+        queryPresent("tagging") bind {
+            bucketGetTagging(buckets, it.subdomain(buckets), bucketContent, keyFor(it))
+        },
+        otherwise bind { req ->
+            bucketGetObject(buckets, req.subdomain(buckets), bucketContent, keyFor(req))
+        }
+    )
 
 private fun bucketGetObject(
     buckets: Storage<Unit>,

@@ -24,8 +24,8 @@ class CapturingHttpHandler : HttpHandler {
     }
 }
 
-fun <T, E> Result<T, E>.successValue(): T = when (this) {
-    is Success -> value
+fun <T, E> Result<T, E>.successValue(fn: (T) -> Unit = {}): T = when (this) {
+    is Success -> value.also(fn)
     is Failure -> throw AssertionError("Failed: $reason")
 }
 

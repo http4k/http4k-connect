@@ -2,17 +2,22 @@ package org.http4k.connect.amazon.s3.endpoints
 
 import org.http4k.connect.amazon.s3.BucketKeyContent
 import org.http4k.connect.amazon.s3.S3Error
+import org.http4k.connect.amazon.s3.TestingHeaders.X_HTTP4K_LAST_MODIFIED
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Body
 import org.http4k.core.ContentType.Companion.APPLICATION_XML
+import org.http4k.core.Headers
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.FORBIDDEN
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.with
+import org.http4k.lens.LastModified
 import org.http4k.routing.asRouter
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
+import java.time.Clock
+import java.time.Instant
 
 
 fun Request.subdomain(buckets: Storage<Unit>): String =
@@ -56,3 +61,7 @@ internal val excludedObjectHeaders = setOf(
 
 internal fun getHeadersWithoutXHttp4kPrefix(it: BucketKeyContent) =
     it.headers.map { it.first.removePrefix("x-http4k-") to it.second }
+
+internal fun lastModified(headers: Headers, clock: Clock) = headers
+    .firstOrNull { it.first == X_HTTP4K_LAST_MODIFIED }?.second?.let { LastModified.parse(it) }?.value?.toInstant()
+    ?: Instant.now(clock)

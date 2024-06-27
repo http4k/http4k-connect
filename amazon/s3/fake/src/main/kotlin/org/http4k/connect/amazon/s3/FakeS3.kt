@@ -29,6 +29,7 @@ import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Request
+import org.http4k.filter.debug
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
 import org.http4k.routing.routes
@@ -50,9 +51,9 @@ class FakeS3(
         isS3 bind routes(
             pathBasedCopyKey(buckets, bucketContent, clock),
             pathBasedBucketGetKey(buckets, bucketContent),
-            pathBasedBucketPostKey(buckets, bucketContent),
+            pathBasedBucketPostKey(buckets, bucketContent, clock),
             pathBasedBucketPutKey(buckets, bucketContent, clock),
-            pathBasedBucketDeleteKey(buckets, bucketContent),
+            pathBasedBucketDeleteKey(buckets, bucketContent, clock),
             pathBasedBucketHeadKey(buckets, bucketContent),
             globalListObjectsV2(buckets, bucketContent),
             globalHeadBucket(buckets),
@@ -64,9 +65,9 @@ class FakeS3(
             bucketHeadBucket(buckets),
             bucketHeadKey(buckets, bucketContent),
             bucketGetKey(buckets, bucketContent),
-            bucketPostKey(buckets, bucketContent),
+            bucketPostKey(buckets, bucketContent, clock),
             bucketPutKey(buckets, bucketContent, clock),
-            bucketDeleteKey(buckets, bucketContent),
+            bucketDeleteKey(buckets, bucketContent, clock),
             bucketPutBucket(buckets),
             bucketDeleteBucket(buckets),
             bucketListObjectsV2(buckets, bucketContent)
@@ -84,7 +85,7 @@ class FakeS3(
     fun s3BucketClient(name: BucketName, region: Region) = S3Bucket.Http(
         name,
         region,
-        { AwsCredentials("accessKey", "secret") }, this, clock
+        { AwsCredentials("accessKey", "secret") }, this.debug(), clock
     )
 }
 
