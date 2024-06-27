@@ -36,14 +36,3 @@ data class RestoreObject(
 
     private fun uri() = Uri.of("/$key?restore")
 }
-
-/**
- * <?xml version="1.0" encoding="UTF-8"?>
- * <RestoreRequest xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
- *   <Days>2</Days>
- *   <Tier>Expedited</Tier>
- * </RestoreRequest>
- */
-
-// <?xml version="1.0" encoding="UTF-8"?><RestoreRequest xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Days>2</Days><Tier>Expedited</Tier></RestoreRequest>
-// <?xml version="1.0" encoding="UTF-8"?><RestoreRequest xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Days>2</Days><Tier>Expedited</Tier></RestoreRequest>
