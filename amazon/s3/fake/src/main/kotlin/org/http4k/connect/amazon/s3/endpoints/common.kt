@@ -8,6 +8,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.with
+import org.http4k.routing.asRouter
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.viewModel
 
@@ -28,3 +29,9 @@ val lens by lazy {
 const val GLOBAL_BUCKET = "unknown"
 
 fun invalidBucketNameResponse() = Response(NOT_FOUND).with(lens of S3Error("NoSuchBucket"))
+
+// TODO may be overlooked that `queries` router only passes if the query has a value
+fun queryPresent(name: String) = { req: Request -> req.queries(name).isNotEmpty() }.asRouter("Query present: $name")
+
+// TODO may want to consider adding to http4k-core routing.kt
+val otherwise = { _: Request -> true }.asRouter("Catch-all")

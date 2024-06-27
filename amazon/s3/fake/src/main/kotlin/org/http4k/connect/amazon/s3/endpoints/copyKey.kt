@@ -32,7 +32,7 @@ private fun copyKey(
 ) = bucketContent[req.header("x-amz-copy-source")!!.split("/", limit = 2)
     .let { (sourceBucket, sourceKey) -> "$sourceBucket-$sourceKey" }]
     ?.let {
-        putKey(
+        putObject(
             bucket,
             req.path("bucketKey")!!,
             Base64.getDecoder().decode(it.content),

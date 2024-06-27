@@ -42,7 +42,7 @@ class RealImportTableFromS3Test : ImportTableFromS3Contract() {
         s3Bucket.putObject(
             key = BucketKey.of("data.csv"),
             content = csv.byteInputStream(),
-            headers = emptyList()
+            headers = emptyList(),
         ).successValue()
     }
 

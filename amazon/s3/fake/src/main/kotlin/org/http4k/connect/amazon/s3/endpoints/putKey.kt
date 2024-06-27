@@ -8,29 +8,43 @@ import org.http4k.core.Headers
 import org.http4k.core.Method.PUT
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.CREATED
+import org.http4k.core.Status.Companion.OK
 import org.http4k.lens.LastModified
 import org.http4k.routing.bind
 import org.http4k.routing.path
+import org.http4k.routing.routes
 import java.time.Clock
 import java.time.Instant
 import java.util.Base64
 
 fun bucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, clock: Clock) =
-    "/{bucketKey:.+}" bind PUT to {
-        putKey(
-            it.subdomain(buckets),
-            it.path("bucketKey")!!,
-            it.body.payload.array(),
-            buckets,
-            bucketContent,
-            clock,
-            it.headers
-        )
-    }
+    "/{bucketKey:.+}" bind PUT to routes(
+        queryPresent("tagging") bind {
+            putObjectTagging(
+                it.subdomain(buckets),
+                it.path("bucketKey")!!,
+                it.body.payload.array(),
+                buckets,
+                bucketContent,
+                clock
+            )
+        },
+        otherwise bind {
+            putObject(
+                it.subdomain(buckets),
+                it.path("bucketKey")!!,
+                it.body.payload.array(),
+                buckets,
+                bucketContent,
+                clock,
+                it.headers
+            )
+        }
+    )
 
 fun pathBasedBucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketKeyContent>, clock: Clock) =
     "/{bucketName}/{bucketKey:.+}" bind PUT to {
-        putKey(
+        putObject(
             it.path("bucketName")!!,
             it.path("bucketKey")!!,
             it.body.payload.array(),
@@ -41,7 +55,7 @@ fun pathBasedBucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketK
         )
     }
 
-fun putKey(
+internal fun putObject(
     bucket: String,
     key: String,
     bytes: ByteArray,
@@ -67,6 +81,17 @@ fun putKey(
         Response(CREATED)
     }
     ?: invalidBucketNameResponse()
+
+internal fun putObjectTagging(
+    bucket: String,
+    key: String,
+    bytes: ByteArray,
+    buckets: Storage<Unit>,
+    bucketContent: Storage<BucketKeyContent>,
+    clock: Clock
+): Response {
+    if (buckets[bucket] == null) return invalidBucketNameResponse()
+}
 
 private fun lastModified(headers: Headers, clock: Clock) = headers
     .firstOrNull { it.first == X_HTTP4K_LAST_MODIFIED }?.second?.let { LastModified.parse(it) }?.value?.toInstant()

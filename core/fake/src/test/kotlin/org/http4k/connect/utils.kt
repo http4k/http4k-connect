@@ -29,6 +29,11 @@ fun <T, E> Result<T, E>.successValue(): T = when (this) {
     is Failure -> throw AssertionError("Failed: $reason")
 }
 
+fun <T, E> Result<T, E>.errorValue(fn: (E) -> Unit = {}): E = when(this) {
+    is Success -> throw AssertionError("Should have failed, but was $value")
+    is Failure -> reason.also(fn)
+}
+
 fun assumeDockerDaemonRunning() {
     assumeTrue(
         getRuntime().exec(arrayOf("docker", "ps")).errorStream.bufferedReader().readText().isEmpty(),
