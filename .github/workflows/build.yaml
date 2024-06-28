@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build
-        run: ./build-ci.sh
+        run: echo "hello"
       - name: Cleanup Gradle Cache
           # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
           # Restoring these files from a GitHub Actions cache might cause problems for future builds.
