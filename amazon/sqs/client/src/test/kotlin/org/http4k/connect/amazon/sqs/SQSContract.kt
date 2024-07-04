@@ -80,7 +80,8 @@ abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
                 val received = receiveMessage(
                     queueUrl,
-                    messageAttributes = listOf("foo", "bar", "binaryfoo")
+                    messageAttributes = listOf("foo", "bar", "binaryfoo"),
+                    waitTimeSeconds = 2
                 ).successValue().first()
 
                 assertThat(received.messageId, equalTo(id))
