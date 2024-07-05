@@ -414,9 +414,44 @@ class AttributeName private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<AttributeName>(::AttributeName)
 }
 
+class HeaderName private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<HeaderName>(::HeaderName)
+}
+
+class HeaderValue private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<HeaderValue>(::HeaderValue)
+}
+
+class IpAddress private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<IpAddress>(::IpAddress)
+}
+
+class ServerName private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ServerName>(::ServerName)
+}
+
+class ServerPath private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ServerPath>(::ServerPath)
+}
+
 @JsonSerializable
 data class CodeDeliveryDetails(
     val AttributeName: AttributeName?,
     val DeliveryMedium: DeliveryMedium?,
     val Destination: Destination?
+)
+
+@JsonSerializable
+data class ContextData(
+    val HttpHeaders: List<HttpHeader>,
+    val IpAddress: IpAddress,
+    val ServerName: ServerName,
+    val ServerPath: ServerPath,
+    val EncodedData: String? = null
+)
+
+@JsonSerializable
+data class HttpHeader(
+    val headerName: HeaderName? = null,
+    val headerValue: HeaderValue? = null
 )

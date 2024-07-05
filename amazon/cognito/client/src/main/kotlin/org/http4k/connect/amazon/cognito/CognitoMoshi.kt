@@ -10,11 +10,16 @@ import org.http4k.connect.amazon.cognito.model.ClientSecret
 import org.http4k.connect.amazon.cognito.model.CloudFrontDomain
 import org.http4k.connect.amazon.cognito.model.ConfirmationCode
 import org.http4k.connect.amazon.cognito.model.Destination
+import org.http4k.connect.amazon.cognito.model.HeaderName
+import org.http4k.connect.amazon.cognito.model.HeaderValue
 import org.http4k.connect.amazon.cognito.model.IdToken
+import org.http4k.connect.amazon.cognito.model.IpAddress
 import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.RefreshToken
 import org.http4k.connect.amazon.cognito.model.SecretCode
 import org.http4k.connect.amazon.cognito.model.SecretHash
+import org.http4k.connect.amazon.cognito.model.ServerName
+import org.http4k.connect.amazon.cognito.model.ServerPath
 import org.http4k.connect.amazon.cognito.model.Session
 import org.http4k.connect.amazon.cognito.model.UserCode
 import org.http4k.connect.amazon.cognito.model.UserPoolId
@@ -46,12 +51,17 @@ object CognitoMoshi : ConfigurableMoshi(
         .value(ClientSecret)
         .value(ConfirmationCode)
         .value(Destination)
+        .value(HeaderName)
+        .value(HeaderValue)
         .value(IdToken)
+        .value(IpAddress)
         .value(RefreshToken)
         .value(Password)
         .value(PoolName)
         .value(SecretCode)
         .value(SecretHash)
+        .value(ServerName)
+        .value(ServerPath)
         .value(Session)
         .value(UserCode)
         .value(Username)
