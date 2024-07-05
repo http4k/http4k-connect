@@ -70,11 +70,13 @@ class SecretHash private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<SecretHash>(::SecretHash)
 }
 
+@JsonSerializable
 data class NewDeviceMetadata(
     val DeviceGroupKey: String? = null,
     val DeviceKey: String? = null
 )
 
+@JsonSerializable
 data class AuthenticationResult(
     val AccessToken: AccessToken? = null,
     val ExpiresIn: Int? = null,
