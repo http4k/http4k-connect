@@ -3,6 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.17.1.1
+- **http4k-connect-amazon-sqs-*** - [Fix] Type of SQS ReceiveMessage waitTimeSeconds parameter was incorrect. H/T @oharaandrew314
+
 ### v5.17.1.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-s3-*** - Support all storage classes, including the restore lifecycle for glacier. H/T @oharaandrew314
