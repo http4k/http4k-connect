@@ -6,7 +6,6 @@ import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.Test
-import java.time.Duration
 
 class FakeSQSTest : SQSContract(FakeSQS()) {
     override val aws = fakeAwsEnvironment
@@ -29,7 +28,7 @@ class FakeSQSTest : SQSContract(FakeSQS()) {
                 val messages = receiveMessage(
                     created.QueueUrl,
                     maxNumberOfMessages = 2,
-                    longPollTime = Duration.ofSeconds(10)
+                    waitTimeSeconds = 10
                 ).successValue()
                 assertThat(messages.size, equalTo(2))
                 assertThat(messages[0].messageId, equalTo(id))

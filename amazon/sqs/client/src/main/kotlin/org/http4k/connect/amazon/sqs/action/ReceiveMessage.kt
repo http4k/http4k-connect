@@ -15,7 +15,7 @@ data class ReceiveMessage(
     @Json(name = "MaxNumberOfMessages") val maxNumberOfMessages: Int? = null,
     @Json(name = "VisibilityTimeout") val visibilityTimeout: Int? = null,
     val expires: ZonedDateTime? = null,
-    @Json(name = "WaitTimeSeconds") val longPollTime: Duration? = null,
+    @Json(name = "WaitTimeSeconds") val waitTimeSeconds: Int? = null,
     @Json(name = "MessageAttributeNames") val messageAttributes: List<String>? = null,
     @Json(name = "EeceiveRequestAttemptId") val receiveRequestAttemptId: String? = null,
     @Json(name = "AttributeNames") val attributeNames: List<String>? = null,
