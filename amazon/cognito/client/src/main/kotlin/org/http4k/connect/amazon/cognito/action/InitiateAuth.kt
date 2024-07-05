@@ -24,8 +24,8 @@ data class InitiateAuth(
 
 @JsonSerializable
 data class AuthInitiated(
-    val AuthenticationResult: AuthenticationResult,
+    val AuthenticationResult: AuthenticationResult?,
     val ChallengeName: ChallengeName?,
-    val ChallengeParameters: Map<String, String>,
+    val ChallengeParameters: Map<String, String>?,
     val Session: Session?
 )
