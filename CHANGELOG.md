@@ -8,6 +8,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-amazon-cognito*** - [Breaking] AWS Cognito: Add support for server side authentication (
   AdminInitiateAuth and AdminRespondToAuthChallenge). H/T @markth0mas
 - **http4k-connect-ai-**** - [Breaking] Repackaged `ModelName` to common location. Just update imports!
+- **http4k-connect-ai-langchain** -  [Breaking] Added support for LmStudio chat and embedding models. Break is
+  renamed: `ChatModelOptions` to `OpenAiChatModelOptions`.
 - **http4k-connect-ai-lmstudio*** - [New module!] LmStudio adapter module and fake so you can connect to a locally
   running LLM server running any model.
 

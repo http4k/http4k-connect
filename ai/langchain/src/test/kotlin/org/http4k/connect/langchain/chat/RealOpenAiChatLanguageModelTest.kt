@@ -21,7 +21,7 @@ class RealOpenAiChatLanguageModelTest : ChatLanguageModelContract {
     override val model by lazy {
         OpenAiChatLanguageModel(
             OpenAI.Http(apiKey(ENV)!!, JavaHttpClient().debug()),
-            ChatModelOptions(temperature = 0.0)
+            OpenAiChatModelOptions(temperature = 0.0)
         )
     }
 }

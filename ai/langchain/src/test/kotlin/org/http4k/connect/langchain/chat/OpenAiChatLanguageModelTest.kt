@@ -9,7 +9,7 @@ class OpenAiChatLanguageModelTest : ChatLanguageModelContract {
     override val model by lazy {
         OpenAiChatLanguageModel(
             OpenAI.Http(OpenAIToken.of("hello"), FakeOpenAI()),
-            ChatModelOptions(temperature = 0.0)
+            OpenAiChatModelOptions(temperature = 0.0)
         )
     }
 }

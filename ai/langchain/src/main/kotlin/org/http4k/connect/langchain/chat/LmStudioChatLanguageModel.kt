@@ -16,35 +16,34 @@ import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.output.FinishReason
 import dev.langchain4j.model.output.Response
 import dev.langchain4j.model.output.TokenUsage
+import org.http4k.connect.lmstudio.LmStudio
+import org.http4k.connect.lmstudio.Role
+import org.http4k.connect.lmstudio.TokenId
+import org.http4k.connect.lmstudio.User
+import org.http4k.connect.lmstudio.action.ContentType
+import org.http4k.connect.lmstudio.action.Detail.auto
+import org.http4k.connect.lmstudio.action.Detail.high
+import org.http4k.connect.lmstudio.action.Detail.low
+import org.http4k.connect.lmstudio.action.FinishReason.content_filter
+import org.http4k.connect.lmstudio.action.FinishReason.length
+import org.http4k.connect.lmstudio.action.FinishReason.stop
+import org.http4k.connect.lmstudio.action.FinishReason.tool_calls
+import org.http4k.connect.lmstudio.action.FunctionCall
+import org.http4k.connect.lmstudio.action.FunctionSpec
+import org.http4k.connect.lmstudio.action.ImageUrl
+import org.http4k.connect.lmstudio.action.Message
+import org.http4k.connect.lmstudio.action.MessageContent
+import org.http4k.connect.lmstudio.action.ResponseFormat
+import org.http4k.connect.lmstudio.action.Tool
+import org.http4k.connect.lmstudio.action.ToolCall
+import org.http4k.connect.lmstudio.chatCompletion
 import org.http4k.connect.model.ModelName
-import org.http4k.connect.openai.GPT3_5
-import org.http4k.connect.openai.OpenAI
-import org.http4k.connect.openai.Role
-import org.http4k.connect.openai.TokenId
-import org.http4k.connect.openai.User
-import org.http4k.connect.openai.action.ContentType
-import org.http4k.connect.openai.action.Detail.auto
-import org.http4k.connect.openai.action.Detail.high
-import org.http4k.connect.openai.action.Detail.low
-import org.http4k.connect.openai.action.FinishReason.content_filter
-import org.http4k.connect.openai.action.FinishReason.length
-import org.http4k.connect.openai.action.FinishReason.stop
-import org.http4k.connect.openai.action.FinishReason.tool_calls
-import org.http4k.connect.openai.action.FunctionCall
-import org.http4k.connect.openai.action.FunctionSpec
-import org.http4k.connect.openai.action.ImageUrl
-import org.http4k.connect.openai.action.Message
-import org.http4k.connect.openai.action.MessageContent
-import org.http4k.connect.openai.action.ResponseFormat
-import org.http4k.connect.openai.action.Tool
-import org.http4k.connect.openai.action.ToolCall
-import org.http4k.connect.openai.chatCompletion
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
 
 
-data class OpenAiChatModelOptions(
-    val model: ModelName = ModelName.GPT3_5,
+data class LmStudioChatModelOptions(
+    val model: ModelName,
     val stream: Boolean? = null,
     val maxTokens: Int? = null,
     val temperature: Double = 1.0,
@@ -60,16 +59,16 @@ data class OpenAiChatModelOptions(
     val parallelToolCalls: Boolean? = null,
 )
 
-fun OpenAiChatLanguageModel(
-    openAi: OpenAI,
-    options: OpenAiChatModelOptions = OpenAiChatModelOptions()
+fun LmStudioChatLanguageModel(
+    lmStudio: LmStudio,
+    options: LmStudioChatModelOptions
 ) =
     object : ChatLanguageModel {
         override fun generate(p0: List<ChatMessage>) = generate(p0, emptyList())
 
         override fun generate(messages: List<ChatMessage>, toolSpecifications: List<ToolSpecification>?)
             : Response<AiMessage> = with(options) {
-            openAi.chatCompletion(
+            lmStudio.chatCompletion(
                 model,
                 messages.map {
                     when (it) {
