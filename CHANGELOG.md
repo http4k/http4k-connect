@@ -4,10 +4,11 @@ This list is not intended to be all-encompassing - it will document major and br
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
 ### v5.18.0.0 (uncut)
-
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-cognito*** - [Breaking] AWS Cognito: Add support for server side authentication (
   AdminInitiateAuth and AdminRespondToAuthChallenge). H/T @markth0mas
+- **http4k-connect-ai-lmstudio*** - [New module!] LmStudio adapter module and fake so you can connect to a locally
+  running LLM server running any model.
 
 ### v5.17.1.1
 - **http4k-connect-amazon-sqs-*** - [Fix] Type of SQS ReceiveMessage waitTimeSeconds parameter was incorrect. H/T @oharaandrew314
@@ -28,7 +29,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-ai-*** - Migration of the various AI packages (OpenAI/Langchain) to `http4k-ai-` subpackage name. 
 - **http4k-connect-ai-openai** - [Breaking] Use FloatArray for embeddings instead of `List<Float>`
-- **http4k-connect-ai-ollama** - [New module!] Ollama adapter module so you can use Http4k-connect adapters in LangChain apps. 
+- **http4k-connect-ai-ollama*** - [New module!] Ollama adapter module so you can use Http4k-connect adapters in
+  LangChain apps.
 - **http4k-connect-ai-langchain** - Added support for Ollama models
 
 ### v5.16.0.2

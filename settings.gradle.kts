@@ -26,7 +26,7 @@ includeStorage("redis")
 includeStorage("s3")
 includeStorage("http")
 
-
+includeVendorSystem("ai", "lmstudio")
 includeVendorSystem("ai", "openai")
 includeVendorSystem("ai", "ollama")
 

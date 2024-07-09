@@ -5,7 +5,11 @@
 <a href="https://github.com/http4k/http4k-connect/actions?query=workflow%3A.github%2Fworkflows%2Fbuild.yaml"><img alt="build" src="https://github.com/http4k/http4k-connect/workflows/.github/workflows/build.yaml/badge.svg"></a>
 <a href="https://mvnrepository.com/artifact/org.http4k"><img alt="download" src="https://img.shields.io/maven-central/v/org.http4k/http4k-connect-core"></a>
 
-http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services using [http4k](https://http4k.org) compatible APIs, along with Fake implementations for usage during local testing. These are all underpinned by a variation on the uniform [Server as a Function](https://monkey.org/~marius/funsrv.pdf) model powered by the `HttpHandler` interface exposed by [http4k](https://http4k.org), so you can:
+http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services and AI
+backends using [http4k](https://http4k.org) compatible APIs, along with Fake implementations for usage during local
+testing. These are all underpinned by a variation on the
+uniform [Server as a Function](https://monkey.org/~marius/funsrv.pdf) model powered by the `HttpHandler` interface
+exposed by [http4k](https://http4k.org), so you can:
  
 1. Take advantage of the simple and powerful SaaF model and APIs used in http4k.
 1. Plug everything together completely in-memory and take advantage of this powerful model.
@@ -107,12 +111,15 @@ dependencies {
 - Google Analytics
     - [GA4](./google/analytics-ga4) -> `"org.http4k:http4k-connect-google-analytics-ga4"` / `"org.http4k:http4k-connect-google-analytic-ga4-fake"`
     - [UA](./google/analytics-ua) -> `"org.http4k:http4k-connect-google-analytics-ua"` / `"org.http4k:http4k-connect-google-analytic-ua-fake"`
-- [LangChain4J](./ai/langchain) -> `"org.http4k:http4k-connect-ai-langchain"`
 - Kafka
     - [Rest Proxy](kafka/rest) -> `"org.http4k:http4k-connect-kafka-rest"` / `"org.http4k:http4k-connect-kafka-rest-fake"`
     - [Schema Registry](kafka/schemaregistry) -> `"org.http4k:http4k-connect-kafka-schemaregistry"` / `"org.http4k:http4k-connect-kafka-schemaregistry-fake"`
 - [Mattermost Webhook](./mattermost) -> `"org.http4k:http4k-connect-mattermost"` / `"org.http4k:http4k-connect-mattermost-fake"`
-- [OpenAI](./ai/openai) -> `"org.http4k:http4k-connect-ai-openai"` / `"org.http4k:http4k-connect-ai-openai-plugin"`/ `"org.http4k:http4k-connect-ai-openai-fake"`
+- AI:
+    - [LangChain4J](./ai/langchain) -> `"org.http4k:http4k-connect-ai-langchain"`
+    - [LmStudio](./ai/lmstudio) -> `"org.http4k:http4k-connect-ai-lmstudio"` / `"org.http4k:http4k-connect-ai-lmstudio-fake"`
+    - [OpenAI](./ai/openai) -> `"org.http4k:http4k-connect-ai-openai"` / `"org.http4k:http4k-connect-ai-openai-plugin"`/ `"org.http4k:http4k-connect-ai-openai-fake"`
+    - [Ollama](./ai/ollama) -> `"org.http4k:http4k-connect-ai-ollama"` / `"org.http4k:http4k-connect-ai-ollama-fake"`
 - [Example Template](./example) -> `"org.http4k:http4k-connect-example"` / `"org.http4k:http4k-connect-example-fake"`
 
 ## Supported Storage backends (named http4k-connect-storage-{technology}>)
