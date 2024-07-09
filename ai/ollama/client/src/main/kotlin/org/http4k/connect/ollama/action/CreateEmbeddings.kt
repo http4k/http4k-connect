@@ -1,7 +1,7 @@
 package org.http4k.connect.ollama.action
 
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.ollama.ModelName
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.ollama.OllamaMoshi.autoBody
 import org.http4k.connect.ollama.Prompt
 import org.http4k.core.Method.POST

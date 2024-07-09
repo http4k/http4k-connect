@@ -5,13 +5,12 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
-import org.http4k.connect.lmstudio.ModelName.Companion.CHAT_MODEL
-import org.http4k.connect.lmstudio.ModelName.Companion.EMBEDDING_MODEL
 import org.http4k.connect.lmstudio.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.lmstudio.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.lmstudio.Role.Companion.System
 import org.http4k.connect.lmstudio.Role.Companion.User
 import org.http4k.connect.lmstudio.action.Message
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.successValue
 import org.http4k.testing.ApprovalTest
 import org.junit.jupiter.api.Test
@@ -34,7 +33,7 @@ interface LmStudioContract {
     @Test
     fun `get chat response non-stream`() {
         val responses = lmStudio.chatCompletion(
-            CHAT_MODEL,
+            ModelName.CHAT_MODEL,
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
                 Message(User, "What is your favourite colour?")
@@ -50,7 +49,7 @@ interface LmStudioContract {
     @Test
     fun `get chat response streaming`() {
         val responses = lmStudio.chatCompletion(
-            CHAT_MODEL,
+            ModelName.CHAT_MODEL,
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
                 Message(User, "What is your favourite colour?")
@@ -67,7 +66,7 @@ interface LmStudioContract {
     fun `get embeddings`() {
         assertThat(
             lmStudio.createEmbeddings(
-                EMBEDDING_MODEL,
+                ModelName.EMBEDDING_MODEL,
                 listOf("What is your favourite colour?")
             ).successValue().data.isNotEmpty(),
             equalTo(true)

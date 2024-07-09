@@ -4,6 +4,7 @@ import org.http4k.chaos.ChaoticHttpHandler
 import org.http4k.chaos.defaultLocalUri
 import org.http4k.chaos.start
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.openai.action.Model
 import org.http4k.connect.openai.plugins.PluginIntegration
 import org.http4k.connect.storage.Storage

@@ -1,5 +1,6 @@
+import org.http4k.connect.model.ModelName
+import org.http4k.connect.openai.GPT3_5
 import org.http4k.connect.openai.Http
-import org.http4k.connect.openai.ModelName.Companion.GPT3_5
 import org.http4k.connect.openai.OpenAI
 import org.http4k.connect.openai.OpenAIToken
 import org.http4k.connect.openai.Role.Companion.User
@@ -15,7 +16,7 @@ fun main() {
     // get a chat completion
     println(
         openai.chatCompletion(
-            GPT3_5,
+            ModelName.GPT3_5,
             listOf(
                 Message(User, "Explain pythagoras's theorem to a 5 year old child"),
             ),

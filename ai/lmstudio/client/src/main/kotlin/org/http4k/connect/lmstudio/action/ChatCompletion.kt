@@ -10,7 +10,6 @@ import org.http4k.connect.lmstudio.CompletionId
 import org.http4k.connect.lmstudio.LmStudioAction
 import org.http4k.connect.lmstudio.LmStudioMoshi
 import org.http4k.connect.lmstudio.LmStudioMoshi.autoBody
-import org.http4k.connect.lmstudio.ModelName
 import org.http4k.connect.lmstudio.ObjectType
 import org.http4k.connect.lmstudio.ResponseFormatType
 import org.http4k.connect.lmstudio.Role
@@ -18,6 +17,7 @@ import org.http4k.connect.lmstudio.Timestamp
 import org.http4k.connect.lmstudio.TokenId
 import org.http4k.connect.lmstudio.User
 import org.http4k.connect.lmstudio.action.Detail.auto
+import org.http4k.connect.model.ModelName
 import org.http4k.core.ContentType.Companion.APPLICATION_JSON
 import org.http4k.core.Method.POST
 import org.http4k.core.Request

@@ -4,10 +4,6 @@ import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import org.http4k.connect.model.Base64Blob
 
-class ModelName private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<ModelName>(::ModelName)
-}
-
 class Prompt private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Prompt>(::Prompt)
 }

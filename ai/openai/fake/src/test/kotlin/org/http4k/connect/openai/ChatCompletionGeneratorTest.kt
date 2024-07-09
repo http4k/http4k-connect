@@ -2,7 +2,7 @@ package org.http4k.connect.openai
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.openai.ModelName.Companion.GPT3_5
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.openai.Role.Companion.System
 import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.ChatCompletion
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class ChatCompletionGeneratorTest {
 
     private val input = ChatCompletion(
-        GPT3_5, listOf(Message(User, "foobar"))
+        ModelName.GPT3_5, listOf(Message(User, "foobar"))
     )
 
     @Test

@@ -1,6 +1,7 @@
 package org.http4k.connect.langchain.chat
 
-import org.http4k.connect.openai.ModelName
+import org.http4k.connect.model.ModelName
+import org.http4k.connect.openai.GPT3_5
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.ResponseFormat

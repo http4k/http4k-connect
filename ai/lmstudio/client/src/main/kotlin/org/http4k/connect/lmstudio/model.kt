@@ -5,6 +5,7 @@ import dev.forkhandles.values.LongValueFactory
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import dev.forkhandles.values.minValue
+import org.http4k.connect.model.ModelName
 import java.time.Instant
 import java.time.Instant.ofEpochSecond
 
@@ -39,12 +40,8 @@ class Timestamp private constructor(value: Long) : LongValue(value) {
     }
 }
 
-class ModelName private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<ModelName>(::ModelName) {
-        val CHAT_MODEL = ModelName.of("chat-model")
-        val EMBEDDING_MODEL = ModelName.of("embedding-model")
-    }
-}
+val ModelName.Companion.CHAT_MODEL get() = ModelName.of("chat-model")
+val ModelName.Companion.EMBEDDING_MODEL get() = ModelName.of("embedding-model")
 
 class ResponseFormatType private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ResponseFormatType>(::ResponseFormatType) {

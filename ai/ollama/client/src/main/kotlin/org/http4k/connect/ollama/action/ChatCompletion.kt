@@ -4,8 +4,8 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.ollama.Message
-import org.http4k.connect.ollama.ModelName
 import org.http4k.connect.ollama.OllamaAction
 import org.http4k.connect.ollama.OllamaMoshi
 import org.http4k.connect.ollama.OllamaMoshi.autoBody

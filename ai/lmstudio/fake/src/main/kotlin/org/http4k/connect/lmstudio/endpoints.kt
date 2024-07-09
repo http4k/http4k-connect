@@ -13,6 +13,7 @@ import org.http4k.connect.lmstudio.action.Embeddings
 import org.http4k.connect.lmstudio.action.Model
 import org.http4k.connect.lmstudio.action.Models
 import org.http4k.connect.lmstudio.action.Usage
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.storage.Storage
 import org.http4k.core.ContentType.Companion.TEXT_EVENT_STREAM
 import org.http4k.core.Method.GET

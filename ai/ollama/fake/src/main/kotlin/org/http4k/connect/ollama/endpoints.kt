@@ -1,6 +1,7 @@
 package org.http4k.connect.ollama
 
 
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.ollama.OllamaMoshi.asFormatString
 import org.http4k.connect.ollama.OllamaMoshi.autoBody
 import org.http4k.connect.ollama.action.ChatCompletion

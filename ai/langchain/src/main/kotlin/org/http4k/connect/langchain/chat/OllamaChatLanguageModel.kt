@@ -12,8 +12,8 @@ import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.output.Response
 import org.http4k.connect.model.Base64Blob
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.ollama.Message
-import org.http4k.connect.ollama.ModelName
 import org.http4k.connect.ollama.Ollama
 import org.http4k.connect.ollama.ResponseFormat
 import org.http4k.connect.ollama.Role

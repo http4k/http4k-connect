@@ -7,10 +7,10 @@ import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
 import org.http4k.connect.lmstudio.LmStudioAction
 import org.http4k.connect.lmstudio.LmStudioMoshi
-import org.http4k.connect.lmstudio.ModelName
 import org.http4k.connect.lmstudio.ObjectType
 import org.http4k.connect.lmstudio.ObjectType.Companion.Embedding
 import org.http4k.connect.lmstudio.ObjectType.Companion.List
+import org.http4k.connect.model.ModelName
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.with

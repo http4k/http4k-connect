@@ -5,7 +5,7 @@ import dev.forkhandles.result4k.map
 import dev.langchain4j.data.embedding.Embedding
 import dev.langchain4j.model.embedding.EmbeddingModel
 import dev.langchain4j.model.output.Response
-import org.http4k.connect.ollama.ModelName
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.ollama.Ollama
 import org.http4k.connect.ollama.Prompt
 import org.http4k.connect.ollama.createEmbeddings

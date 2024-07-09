@@ -6,8 +6,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.startsWith
-import org.http4k.connect.openai.ModelName.Companion.GPT3_5
-import org.http4k.connect.openai.ModelName.Companion.TEXT_EMBEDDING_ADA_002
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.openai.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.openai.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
@@ -38,7 +37,7 @@ interface OpenAIContract {
     @Test
     fun `get chat response non-stream`() {
         val responses = openAi.chatCompletion(
-            GPT3_5,
+            ModelName.GPT3_5,
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
                 Message(User, "What is your favourite colour?")
@@ -54,7 +53,7 @@ interface OpenAIContract {
     @Test
     fun `get chat response streaming`() {
         val responses = openAi.chatCompletion(
-            GPT3_5,
+            ModelName.GPT3_5,
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
                 Message(User, "What is your favourite colour?")
@@ -71,7 +70,7 @@ interface OpenAIContract {
     fun `get embeddings`() {
         assertThat(
             openAi.createEmbeddings(
-                TEXT_EMBEDDING_ADA_002,
+                ModelName.TEXT_EMBEDDING_ADA_002,
                 listOf("What is your favourite colour?")
             ).successValue().model.value,
             startsWith("text-embedding-ada-002")
