@@ -11,7 +11,6 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
   fix this.
 
 ### v5.18.0.1
-
 - **http4k-connect-*** - [Fix] Add missing Kotshi adapter to Core Moshi adapter factory.
 
 ### v5.18.0.0
