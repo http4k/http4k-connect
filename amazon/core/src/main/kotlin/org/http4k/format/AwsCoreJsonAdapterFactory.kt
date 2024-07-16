@@ -3,6 +3,7 @@ package org.http4k.format
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.core.model.KotshiCredentialsJsonAdapter
+import org.http4k.connect.amazon.core.model.KotshiMessageFieldsDtoJsonAdapter
 import org.http4k.connect.amazon.core.model.KotshiTagJsonAdapter
 import se.ansman.kotshi.InternalKotshiApi
 import se.ansman.kotshi.KotshiJsonAdapterFactory
@@ -14,10 +15,11 @@ class AwsCoreJsonAdapterFactory(
     *(
         typesToAdapters.toList()
             + adapter { KotshiTagJsonAdapter() }
+            + adapter { moshi -> KotshiMessageFieldsDtoJsonAdapter(moshi) }
             + adapter { moshi -> KotshiCredentialsJsonAdapter(moshi) }
         )
         .toTypedArray()
 )
 
 @KotshiJsonAdapterFactory
-internal object CoreAdapterFactory : JsonAdapter.Factory by KotshiCoreAdapterFactory
+object CoreAdapterFactory : JsonAdapter.Factory by KotshiCoreAdapterFactory

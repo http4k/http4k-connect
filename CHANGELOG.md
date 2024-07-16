@@ -10,6 +10,10 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
   now in `org.http4k.config` instead of `org.http4k.cloudnative.env`. Just updating your imports should be sufficient to
   fix this.
 
+### v5.18.0.1
+
+- **http4k-connect-*** - [Fix] Add missing Kotshi adapter to Core Moshi adapter factory.
+
 ### v5.18.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-cognito*** - [Breaking] AWS Cognito: Add support for server side authentication (
