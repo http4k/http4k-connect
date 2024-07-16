@@ -3,8 +3,7 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v5.19.0.0 (uncut)
-
+### v5.19.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-*** - [Breaking] http4k has introduced a breaking change in 5.26.0.0. If you are using the typesafe
   configuration environment, you will need to update your code to use the repackaged `Environment` classes - these are
