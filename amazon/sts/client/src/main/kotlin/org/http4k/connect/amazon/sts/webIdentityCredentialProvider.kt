@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.sts
 
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.AWS_ROLE_ARN
 import org.http4k.connect.amazon.AWS_ROLE_SESSION_NAME

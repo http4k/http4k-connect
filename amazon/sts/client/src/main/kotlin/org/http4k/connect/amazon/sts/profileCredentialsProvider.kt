@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.sts
 
 import dev.forkhandles.result4k.onFailure
 import org.http4k.aws.AwsCredentials
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.AWS_CREDENTIAL_PROFILES_FILE
 import org.http4k.connect.amazon.AWS_PROFILE
 import org.http4k.connect.amazon.CredentialsChain

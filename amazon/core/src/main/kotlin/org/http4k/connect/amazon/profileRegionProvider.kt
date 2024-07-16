@@ -1,6 +1,6 @@
 package org.http4k.connect.amazon
 
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.core.model.AwsProfile
 import org.http4k.connect.amazon.core.model.ProfileName
 import java.nio.file.Path

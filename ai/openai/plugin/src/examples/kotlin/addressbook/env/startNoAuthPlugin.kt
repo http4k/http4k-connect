@@ -4,7 +4,7 @@ import addressbook.noauth.NoAuthPlugin
 import addressbook.noauth.NoAuthPluginSettings.EMAIL
 import addressbook.noauth.NoAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.noauth.NoAuthPluginSettings.PORT
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.OpenAIPluginId
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.plugins.NoAuthPluginIntegration

@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.containercredentials
 
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
-import org.http4k.cloudnative.env.EnvironmentKey
+import org.http4k.config.EnvironmentKey
 import org.http4k.core.Uri
 import org.http4k.lens.uri
 import org.http4k.lens.value

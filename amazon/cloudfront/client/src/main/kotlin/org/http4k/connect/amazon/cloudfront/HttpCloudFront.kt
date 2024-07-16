@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.cloudfront
 
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.core.ContentType.Companion.APPLICATION_XML

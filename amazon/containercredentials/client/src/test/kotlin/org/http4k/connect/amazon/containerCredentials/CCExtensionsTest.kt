@@ -2,8 +2,8 @@ package org.http4k.connect.amazon.containerCredentials
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.Environment.Companion.EMPTY
+import org.http4k.config.Environment
+import org.http4k.config.Environment.Companion.EMPTY
 import org.http4k.connect.amazon.containercredentials.AWS_CONTAINER_CREDENTIALS_FULL_URI
 import org.http4k.connect.amazon.containercredentials.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
 import org.http4k.core.Uri

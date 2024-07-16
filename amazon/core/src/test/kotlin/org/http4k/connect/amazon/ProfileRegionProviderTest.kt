@@ -3,7 +3,7 @@ package org.http4k.connect.amazon
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.core.model.ProfileName
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.core.with

@@ -6,7 +6,7 @@ import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.peek
 import dev.forkhandles.result4k.valueOrNull
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider

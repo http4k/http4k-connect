@@ -17,8 +17,8 @@ import addressbook.shared.GetAllUsers
 import addressbook.shared.GetAnAddress
 import addressbook.shared.GetMyAddress
 import addressbook.shared.UserDirectory
-import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.oauth.OAuth
 import org.http4k.connect.openai.auth.oauth.OAuthPluginConfig
 import org.http4k.connect.openai.auth.oauth.openaiPlugin

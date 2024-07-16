@@ -1,8 +1,8 @@
 package addressbook.user
 
 import addressbook.user.UserPluginSettings.PORT
-import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 

@@ -1,6 +1,6 @@
 package addressbook.shared
 
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.core.Credentials
 import org.http4k.lens.BiDiLensSpec
 

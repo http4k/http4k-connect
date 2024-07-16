@@ -6,7 +6,7 @@ import addressbook.service.ServicePluginSettings.OPENAI_VERIFICATION_TOKEN
 import addressbook.user.UserPluginSettings.EMAIL
 import addressbook.user.UserPluginSettings.PLUGIN_BASE_URL
 import addressbook.user.UserPluginSettings.PORT
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.OpenAIPluginId
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken

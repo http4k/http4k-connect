@@ -3,6 +3,14 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
+### v5.19.0.0 (uncut)
+
+- **http4k-connect-*** - Upgrade dependencies.
+- **http4k-connect-*** - [Breaking] http4k has introduced a breaking change in 5.26.0.0. If you are using the typesafe
+  configuration environment, you will need to update your code to use the repackaged `Environment` classes - these are
+  now in `org.http4k.config` instead of `org.http4k.cloudnative.env`. Just updating your imports should be sufficient to
+  fix this.
+
 ### v5.18.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-cognito*** - [Breaking] AWS Cognito: Add support for server side authentication (

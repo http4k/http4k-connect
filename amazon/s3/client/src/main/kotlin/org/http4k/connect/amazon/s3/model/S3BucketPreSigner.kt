@@ -3,7 +3,7 @@ package org.http4k.connect.amazon.s3.model
 import org.http4k.aws.AwsCredentialScope
 import org.http4k.aws.AwsCredentials
 import org.http4k.aws.AwsRequestPreSigner
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region

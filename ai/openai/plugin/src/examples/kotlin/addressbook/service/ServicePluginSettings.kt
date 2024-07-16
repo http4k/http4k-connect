@@ -1,6 +1,6 @@
 package addressbook.service
 
-import org.http4k.cloudnative.env.EnvironmentKey
+import org.http4k.config.EnvironmentKey
 import org.http4k.connect.openai.model.Email
 import org.http4k.connect.openai.model.VerificationToken
 import org.http4k.lens.int

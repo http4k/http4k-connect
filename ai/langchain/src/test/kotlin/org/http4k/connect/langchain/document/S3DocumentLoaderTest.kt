@@ -7,7 +7,7 @@ import dev.forkhandles.result4k.valueOrNull
 import dev.langchain4j.data.document.Document
 import dev.langchain4j.data.document.DocumentParser
 import dev.langchain4j.data.document.Metadata
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.AWS_ACCESS_KEY_ID
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.AWS_SECRET_ACCESS_KEY

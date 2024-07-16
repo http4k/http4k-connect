@@ -2,7 +2,7 @@ package org.http4k.connect.amazon.evidently
 
 import dev.forkhandles.result4k.Result
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.CredentialsProvider

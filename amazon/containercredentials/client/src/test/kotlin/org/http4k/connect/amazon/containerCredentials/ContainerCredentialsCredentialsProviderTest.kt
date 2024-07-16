@@ -7,7 +7,7 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.CredentialsChain
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.containercredentials.ContainerCredentials

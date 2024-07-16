@@ -1,5 +1,5 @@
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.sqs.Http
 import org.http4k.connect.amazon.sqs.SQS

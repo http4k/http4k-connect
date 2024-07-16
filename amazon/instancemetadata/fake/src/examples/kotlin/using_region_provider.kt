@@ -1,6 +1,6 @@
 import org.http4k.aws.AwsCredentials
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.Profile
 import org.http4k.connect.amazon.RegionProvider

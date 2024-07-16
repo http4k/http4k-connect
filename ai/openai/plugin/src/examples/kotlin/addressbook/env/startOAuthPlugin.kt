@@ -9,7 +9,7 @@ import addressbook.oauth.OAuthPluginSettings.OPENAI_VERIFICATION_TOKEN
 import addressbook.oauth.OAuthPluginSettings.PLUGIN_BASE_URL
 import addressbook.oauth.OAuthPluginSettings.PORT
 import addressbook.oauth.OAuthPluginSettings.REDIRECTION_URLS
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.OpenAIPluginId
 import org.http4k.connect.openai.auth.oauth.openaiPlugin
 import org.http4k.connect.openai.model.Email

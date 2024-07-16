@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.s3
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.CredentialsProvider
 import org.http4k.connect.amazon.Environment
 import org.http4k.connect.amazon.core.model.Region

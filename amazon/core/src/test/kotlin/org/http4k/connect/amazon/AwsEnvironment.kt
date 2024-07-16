@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon
 
 import org.http4k.aws.AwsCredentials
-import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.EnvironmentKey
-import org.http4k.cloudnative.env.fromConfigFile
+import org.http4k.config.Environment
+import org.http4k.config.EnvironmentKey
+import org.http4k.config.fromConfigFile
 import org.http4k.connect.amazon.core.model.Region
 import org.http4k.lens.LensFailure
 import org.http4k.lens.composite

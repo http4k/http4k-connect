@@ -1,8 +1,8 @@
 package org.http4k.connect.openai
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.cloudnative.env.Environment.Companion.ENV
-import org.http4k.cloudnative.env.EnvironmentKey
+import org.http4k.config.Environment.Companion.ENV
+import org.http4k.config.EnvironmentKey
 import org.http4k.filter.debug
 import org.http4k.lens.value
 import org.junit.jupiter.api.Assumptions.assumeTrue

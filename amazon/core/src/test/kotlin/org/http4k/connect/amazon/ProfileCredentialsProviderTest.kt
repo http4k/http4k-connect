@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.aws.AwsCredentials
-import org.http4k.cloudnative.env.Environment
+import org.http4k.config.Environment
 import org.http4k.connect.amazon.core.model.ProfileName
 import org.http4k.core.with
 import org.junit.jupiter.api.AfterEach

@@ -5,8 +5,8 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.Environment.Companion.EMPTY
+import org.http4k.config.Environment
+import org.http4k.config.Environment.Companion.EMPTY
 import org.http4k.connect.TestClock
 import org.http4k.connect.amazon.AWS_REGION
 import org.http4k.connect.amazon.AWS_ROLE_ARN

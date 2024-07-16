@@ -7,8 +7,8 @@ import addressbook.service.ServicePluginSettings.PLUGIN_BASE_URL
 import addressbook.shared.GetAllUsers
 import addressbook.shared.GetAnAddress
 import addressbook.shared.UserDirectory
-import org.http4k.cloudnative.env.Environment
-import org.http4k.cloudnative.env.Environment.Companion.ENV
+import org.http4k.config.Environment
+import org.http4k.config.Environment.Companion.ENV
 import org.http4k.connect.openai.auth.PluginAuthToken.Bearer
 import org.http4k.connect.openai.auth.service.ServiceLevelAuth
 import org.http4k.connect.openai.info
