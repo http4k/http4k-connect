@@ -14,6 +14,7 @@ import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class ListServices(val NextToken: NextToken? = null) : AppRunnerAction<ServiceSummaryList>(kClass()),
     PagedAction<NextToken, ServiceSummary, ServiceSummaryList, ListServices> {
     override fun next(token: NextToken) = copy(NextToken = token)

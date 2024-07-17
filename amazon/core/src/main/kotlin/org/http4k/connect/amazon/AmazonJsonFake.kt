@@ -7,6 +7,7 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.format.AutoMarshalling
 import org.http4k.routing.bind
 import org.http4k.routing.header
+import se.ansman.kotshi.JsonSerializable
 
 class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsService) {
     inline fun <reified Req : Any> route(
@@ -31,4 +32,5 @@ class AmazonJsonFake(val autoMarshalling: AutoMarshalling, val awsService: AwsSe
         }
 }
 
+@JsonSerializable
 data class JsonError(val __type: String, val Message: String)

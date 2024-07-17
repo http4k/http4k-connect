@@ -14,7 +14,7 @@ import se.ansman.kotshi.KotshiJsonAdapterFactory
 
 object LmStudioMoshi : ConfigurableMoshi(
     Moshi.Builder()
-        .add(LnStudioJsonAdapterFactory)
+        .add(LmStudioJsonAdapterFactory)
         .add(ListAdapter)
         .add(MapAdapter)
         .asConfigurable()
@@ -34,4 +34,4 @@ object LmStudioMoshi : ConfigurableMoshi(
 )
 
 @KotshiJsonAdapterFactory
-object LnStudioJsonAdapterFactory : JsonAdapter.Factory by KotshiLnStudioJsonAdapterFactory
+object LmStudioJsonAdapterFactory : JsonAdapter.Factory by KotshiLmStudioJsonAdapterFactory

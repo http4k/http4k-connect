@@ -15,6 +15,7 @@ import org.http4k.core.with
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class RegisterClient(
     val clientName: ClientName,
     val scopes: List<String>? = null

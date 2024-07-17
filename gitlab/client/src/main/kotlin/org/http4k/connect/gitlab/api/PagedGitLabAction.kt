@@ -8,11 +8,7 @@ import org.http4k.format.AutoMarshalling
 import org.http4k.lens.Header
 import kotlin.reflect.KClass
 
-abstract class PagedGitLabAction<
-    ItemType : Any,
-    PageType : Paged<Uri, ItemType>,
-    Self : PagedGitLabAction<ItemType, PageType, Self>
-    >(
+abstract class PagedGitLabAction<ItemType : Any, PageType : Paged<Uri, ItemType>, Self : PagedGitLabAction<ItemType, PageType, Self>>(
     toResult: (List<ItemType>, Uri?) -> PageType,
     autoMarshalling: AutoMarshalling,
     kClass: KClass<PageType>

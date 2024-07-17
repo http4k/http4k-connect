@@ -14,6 +14,7 @@ import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
+@JsonSerializable
 data class CreateService(
     val ServiceName: ServiceName,
     val SourceConfiguration: SourceConfiguration,

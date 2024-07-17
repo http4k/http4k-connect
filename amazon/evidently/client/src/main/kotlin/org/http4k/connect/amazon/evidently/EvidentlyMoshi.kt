@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.evidently
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.http4k.connect.amazon.evidently.model.EntityId
+import org.http4k.connect.amazon.evidently.model.EvaluationContext
 import org.http4k.connect.amazon.evidently.model.FeatureName
 import org.http4k.connect.amazon.evidently.model.ProjectName
 import org.http4k.connect.amazon.evidently.model.VariationName
@@ -27,6 +28,7 @@ object EvidentlyMoshi : ConfigurableMoshi(
         .withAwsCoreMappings()
         .value(ProjectName)
         .value(FeatureName)
+        .value(EvaluationContext)
         .value(VariationName)
         .value(EntityId)
         .done()
