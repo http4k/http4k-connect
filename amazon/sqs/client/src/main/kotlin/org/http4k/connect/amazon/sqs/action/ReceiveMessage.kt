@@ -1,15 +1,15 @@
 package org.http4k.connect.amazon.sqs.action
 
+import com.squareup.moshi.Json
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.SQSMessage
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
-import java.time.Duration
 import java.time.ZonedDateTime
-import com.squareup.moshi.Json
 
 @Http4kConnectAction
+@JsonSerializable
 data class ReceiveMessage(
     @Json(name = "QueueUrl") val queueUrl: Uri,
     @Json(name = "MaxNumberOfMessages") val maxNumberOfMessages: Int? = null,

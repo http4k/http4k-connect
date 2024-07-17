@@ -1,6 +1,8 @@
 package org.http4k.connect.amazon.sqs.action
 
+import com.squareup.moshi.Json
 import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.amazon.core.model.MessageFieldsDto
 import org.http4k.connect.amazon.sqs.SQSAction
 import org.http4k.connect.amazon.sqs.model.BatchResultErrorEntry
 import org.http4k.connect.amazon.sqs.model.MessageAttribute
@@ -8,11 +10,9 @@ import org.http4k.connect.amazon.sqs.model.MessageSystemAttribute
 import org.http4k.connect.amazon.sqs.model.SQSMessageId
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
-import com.squareup.moshi.Json
-import org.http4k.connect.amazon.core.model.MessageFieldsDto
 
-@JsonSerializable
 @Http4kConnectAction
+@JsonSerializable
 data class SendMessageBatch(
     @Json(name = "QueueUrl") val queueUrl: Uri,
     @Json(name = "Entries") val entries: List<SendMessageBatchEntry>,
