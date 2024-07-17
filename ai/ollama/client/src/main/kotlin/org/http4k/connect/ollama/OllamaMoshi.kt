@@ -2,6 +2,7 @@ package org.http4k.connect.ollama
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.model.ModelName
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter
@@ -17,6 +18,7 @@ object OllamaMoshi : ConfigurableMoshi(
         .add(ListAdapter)
         .add(MapAdapter)
         .asConfigurable()
+        .value(Base64Blob)
         .value(ModelName)
         .value(Prompt)
         .value(SystemMessage)
