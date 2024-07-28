@@ -50,6 +50,7 @@ data class ListObjectsV2(
             status.successful -> {
                 val xmlDoc = xmlDoc()
                 val contents = xmlDoc.getElementsByTagName("Contents")
+                val commonPrefixes = xmlDoc.getElementsByTagName("CommonPrefixes")
                 Success(
                     ObjectList(
                         (0 until contents.length)
@@ -68,6 +69,9 @@ data class ListObjectsV2(
                                     it.firstChildText("StorageClass")?.let { StorageClass.valueOf(it) }
                                 )
                             },
+                        (0 until commonPrefixes.length)
+                            .map { commonPrefixes.item(it) }
+                            .mapNotNull { it.firstChildText("Prefix") },
                         xmlDoc.getElementsByTagName("NextContinuationToken").item(0)?.text()
                     )
                 )
@@ -84,6 +88,7 @@ data class ListObjectsV2(
 
 data class ObjectList(
     override val items: List<ObjectSummary>,
+    val commonPrefixes: List<String> = emptyList(),
     val continuationToken: String? = null
 ) : Paged<String, ObjectSummary> {
     override fun token() = continuationToken
