@@ -17,8 +17,8 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
-import org.http4k.connect.errorValue
 import org.http4k.connect.amazon.s3.model.StorageClass
+import org.http4k.connect.errorValue
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
@@ -36,6 +36,8 @@ import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
+import org.http4k.metrics.MetricsDefaults.Companion.server
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -43,26 +45,33 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 
-abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
+interface S3BucketContract : AwsContract {
 
-    abstract val bucket: BucketName
-    private val clock = Clock.systemUTC()
+    val bucket: BucketName
+    private val clock get() = Clock.systemUTC()
 
-    protected val s3Bucket by lazy {
-        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
-    }
+    val s3Bucket get() = S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
 
-    private val s3 by lazy {
-        S3.Http({ aws.credentials }, http)
-    }
+    private val s3 get() = S3.Http({ aws.credentials }, http)
 
-    protected val key = BucketKey.of("originalKey")
+    val key get() = BucketKey.of("originalKey")
+
+    fun open() {}
+
+    fun close() {}
 
     @BeforeEach
-    fun recreate() {
+    fun z_recreate() {
+        open()
+        System.err.println("Recreating bucket $bucket")
         s3Bucket.deleteObject(key)
         s3Bucket.deleteBucket()
         s3.createBucket(bucket, aws.region).successValue()
+    }
+
+    @AfterEach
+    fun stop() {
+        close()
     }
 
     @Test
@@ -301,7 +310,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
     private fun S3Bucket.waitForRestore(key: BucketKey, timeout: Duration = Duration.ofMinutes(5)) {
         println("Restoring $key... please wait for up to $timeout")
         val start = Instant.now()
-        while(Duration.between(start, Instant.now()) < timeout) {
+        while (Duration.between(start, Instant.now()) < timeout) {
             if (headObject(key).successValue()?.restoreStatus?.ongoingRequest == false) return
             Thread.sleep(Duration.ofSeconds(1))
         }

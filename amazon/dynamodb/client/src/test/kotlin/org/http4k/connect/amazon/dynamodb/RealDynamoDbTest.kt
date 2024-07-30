@@ -1,10 +1,8 @@
 package org.http4k.connect.amazon.dynamodb
 
-import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.RealAwsEnvironment
-import org.http4k.connect.amazon.configAwsEnvironment
+import org.http4k.connect.amazon.RealAwsContract
+import java.time.Duration
 
-class RealDynamoDbTest : DynamoDbContract(), RealAwsEnvironment {
-    override val http = JavaHttpClient()
-    override val aws get() = configAwsEnvironment()
+class RealDynamoDbTest : DynamoDbContract, RealAwsContract {
+    override val duration: Duration get() = Duration.ofSeconds(10)
 }

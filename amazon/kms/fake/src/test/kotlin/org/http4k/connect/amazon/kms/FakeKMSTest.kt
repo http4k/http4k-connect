@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.kms
 
-import org.http4k.connect.amazon.fakeAwsEnvironment
+import org.http4k.connect.amazon.FakeAwsContract
 
-class FakeKMSTest : KMSContract(FakeKMS()) {
-    override val aws = fakeAwsEnvironment
+class FakeKMSTest : KMSContract, FakeAwsContract {
+    override val http = FakeKMS()
 }

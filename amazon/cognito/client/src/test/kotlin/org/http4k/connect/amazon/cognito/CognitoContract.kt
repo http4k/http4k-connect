@@ -55,10 +55,10 @@ import org.junit.jupiter.api.Test
 import java.util.UUID.randomUUID
 
 
-abstract class CognitoContract(private val http: HttpHandler) : AwsContract() {
-    private val cognito by lazy {
+interface CognitoContract : AwsContract {
+    private val cognito
+        get() =
         Cognito.Http(aws.region, { aws.credentials }, http)
-    }
 
     @Test
     @Disabled
