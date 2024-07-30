@@ -29,8 +29,10 @@ import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
 
 
-interface KMSContract : AwsContract {
-    private val kms get() = KMS.Http(aws.region, { aws.credentials }, http)
+abstract class KMSContract(http: HttpHandler) : AwsContract() {
+    private val kms by lazy {
+        KMS.Http(aws.region, { aws.credentials }, http)
+    }
 
     @Test
     fun `encrypt-decrypt key lifecycle`() {

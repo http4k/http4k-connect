@@ -21,10 +21,11 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 import org.junit.jupiter.api.Test
 
-interface LambdaContract : AwsContract {
-    private val lambda
-        get() =
+abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
+
+    private val lambda by lazy {
         Lambda.Http(aws.region, { aws.credentials }, http)
+    }
 
     @Test
     fun `can use invokeFunction with an automarshalled event`() {

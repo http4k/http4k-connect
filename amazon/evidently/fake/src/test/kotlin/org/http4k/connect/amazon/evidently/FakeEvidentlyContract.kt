@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.evidently
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeEvidentlyContract : EvidentlyContract, FakeAwsContract {
-    override val http = FakeEvidently()
+class FakeEvidentlyContract : EvidentlyContract(FakeEvidently()) {
+    override val aws = fakeAwsEnvironment
 }

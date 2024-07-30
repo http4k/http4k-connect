@@ -12,10 +12,11 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.ZonedDateTime
 
-interface ContainerCredentialsContract : AwsContract {
-    val clock get() = Clock.systemUTC()!!
-    private val containerCredentials get() = ContainerCredentials.Http(http)
-    val fullUri: Uri
+abstract class ContainerCredentialsContract(http: HttpHandler) : AwsContract() {
+
+    protected val clock = Clock.systemUTC()!!
+    private val containerCredentials by lazy { ContainerCredentials.Http(http) }
+    protected abstract val fullUri: Uri
 
     @Test
     fun `get credentials`() {

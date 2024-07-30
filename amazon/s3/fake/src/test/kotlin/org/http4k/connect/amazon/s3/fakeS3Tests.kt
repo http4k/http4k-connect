@@ -3,8 +3,8 @@ package org.http4k.connect.amazon.s3
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.recover
-import org.http4k.connect.amazon.FakeAwsContract
 import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.amazon.s3.TestingHeaders.X_HTTP4K_LAST_MODIFIED
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
@@ -22,8 +22,8 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class FakeS3BucketTest : S3BucketContract, FakeAwsContract {
-    override val http = FakeS3()
+class FakeS3BucketTest : S3BucketContract(FakeS3()) {
+    override val aws = fakeAwsEnvironment
     override val bucket = BucketName.of(UUID.randomUUID().toString())
 
     @Test
@@ -120,11 +120,11 @@ class FakeS3BucketTest : S3BucketContract, FakeAwsContract {
     }
 }
 
-class FakeS3BucketPathStyleTest : S3BucketContract, FakeAwsContract {
-    override val http = FakeS3()
+class FakeS3BucketPathStyleTest : S3BucketContract(FakeS3()) {
+    override val aws = fakeAwsEnvironment
     override val bucket = BucketName.of(UUID.randomUUID().toString().replace('-', '.'))
 }
 
-class FakeS3GlobalTest : S3GlobalContract, FakeAwsContract {
-    override val http = FakeS3()
+class FakeS3GlobalTest : S3GlobalContract(FakeS3()) {
+    override val aws = fakeAwsEnvironment
 }

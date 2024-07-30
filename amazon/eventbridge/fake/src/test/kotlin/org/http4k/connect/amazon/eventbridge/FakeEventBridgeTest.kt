@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.eventbridge
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeEventBridgeTest : EventBridgeContract, FakeAwsContract {
-    override val http = FakeEventBridge()
+class FakeEventBridgeTest : EventBridgeContract(FakeEventBridge()) {
+    override val aws = fakeAwsEnvironment
 }

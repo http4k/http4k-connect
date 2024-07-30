@@ -24,13 +24,14 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.UUID
 
-interface SQSContract : AwsContract {
-    val sqs
-        get() =
-        SQS.Http(aws.region, { aws.credentials }, http)
+abstract class SQSContract(http: HttpHandler) : AwsContract() {
 
-    val queueName get() = QueueName.of(uuid().toString())
-    val expires: ZonedDateTime get() = ZonedDateTime.now().plus(Duration.ofMinutes(1))
+    val sqs by lazy {
+        SQS.Http(aws.region, { aws.credentials }, http)
+    }
+
+    val queueName = QueueName.of(UUID.randomUUID().toString())
+    val expires: ZonedDateTime = ZonedDateTime.now().plus(Duration.ofMinutes(1))
 
     @Test
     fun `queue lifecycle`() {
@@ -107,8 +108,8 @@ interface SQSContract : AwsContract {
         }
     }
 
-    fun waitABit() {}
-    val retryTimeout: Duration get() = Duration.ZERO
+    open fun waitABit() {}
+    open val retryTimeout: Duration = Duration.ZERO
 
     @Test
     fun `batch operations`() {

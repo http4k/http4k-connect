@@ -1,5 +1,9 @@
 package org.http4k.connect.amazon.sns
 
-import org.http4k.connect.amazon.RealAwsContract
+import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.RealAwsEnvironment
+import org.http4k.connect.amazon.configAwsEnvironment
 
-class RealSNSTest : SNSContract, RealAwsContract
+class RealSNSTest : SNSContract(JavaHttpClient()), RealAwsEnvironment {
+    override val aws get() = configAwsEnvironment()
+}

@@ -12,16 +12,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-interface S3GlobalContract : AwsContract {
-    private val s3
-        get() =
+abstract class S3GlobalContract(private val http: HttpHandler) : AwsContract() {
+    private val s3 by lazy {
         S3.Http({ aws.credentials }, http)
+    }
 
-    private val s3Bucket
-        get() =
+    private val s3Bucket by lazy {
         S3Bucket.Http(bucket, aws.region, { aws.credentials }, http)
+    }
 
-    private val bucket get() = BucketName.of(uuid().toString())
+    private val bucket = BucketName.of(UUID.randomUUID().toString())
 
     @BeforeEach
     fun deleteBucket() {

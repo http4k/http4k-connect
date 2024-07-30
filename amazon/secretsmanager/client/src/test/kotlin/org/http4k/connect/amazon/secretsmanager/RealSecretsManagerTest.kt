@@ -1,12 +1,12 @@
 package org.http4k.connect.amazon.secretsmanager
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.RealAwsContract
+import org.http4k.connect.amazon.RealAwsEnvironment
+import org.http4k.connect.amazon.configAwsEnvironment
 import java.util.UUID
 
-class RealSecretsManagerTest : SecretsManagerContract, RealAwsContract {
-    override val http = JavaHttpClient()
-
+class RealSecretsManagerTest : SecretsManagerContract(JavaHttpClient()), RealAwsEnvironment {
+    override val aws get() = configAwsEnvironment()
 
     override val propogateTime: Long = 5000
 

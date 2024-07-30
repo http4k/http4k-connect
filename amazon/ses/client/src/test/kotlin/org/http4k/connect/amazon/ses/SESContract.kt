@@ -12,12 +12,13 @@ import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 
-interface SESContract : AwsContract {
-    private val ses
-        get() =
-        SES.Http(aws.region, aws::credentials, http)
+abstract class SESContract(http: HttpHandler) : AwsContract() {
 
-    val from get() = EmailAddress.of("source@example.com")
+    private val ses by lazy {
+        SES.Http(aws.region, aws::credentials, http)
+    }
+
+    protected val from = EmailAddress.of("source@example.com")
 
     @Test
     fun `sends emails`() {

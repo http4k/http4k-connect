@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.firehose
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeFirehoseTest : FirehoseContract, FakeAwsContract {
-    override val http = FakeFirehose()
+class FakeFirehoseTest : FirehoseContract(FakeFirehose()) {
+    override val aws = fakeAwsEnvironment
 }

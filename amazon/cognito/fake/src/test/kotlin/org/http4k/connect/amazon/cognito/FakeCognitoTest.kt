@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.cognito
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeCognitoTest : CognitoContract, FakeAwsContract {
-    override val http = FakeCognito()
+class FakeCognitoTest : CognitoContract(FakeCognito()) {
+    override val aws = fakeAwsEnvironment
 }

@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.dynamodb
 
-import org.http4k.connect.amazon.RealAwsContract
+import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.configAwsEnvironment
 import org.http4k.connect.amazon.s3.Http
 import org.http4k.connect.amazon.s3.S3
 import org.http4k.connect.amazon.s3.S3Bucket
@@ -17,7 +18,9 @@ import org.junit.jupiter.api.Disabled
 import java.time.Duration
 
 @Disabled
-class RealImportTableFromS3Test : ImportTableFromS3Contract, RealAwsContract {
+class RealImportTableFromS3Test : ImportTableFromS3Contract() {
+    override val aws = configAwsEnvironment()
+    override val http = JavaHttpClient()
 
     override fun initBucket(bucketName: BucketName, csv: String) {
         bucketName.create()
