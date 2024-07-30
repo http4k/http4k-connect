@@ -6,5 +6,5 @@ set -o pipefail
 set -o nounset
 
 ./gradlew check --info
-#./gradlew check jacocoRootReport --build-cache --parallel
+#./gradlew check --build-cache --parallel
 #bash <(curl -s https://codecov.io/bash)

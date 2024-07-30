@@ -25,23 +25,23 @@ jobs:
           distribution: temurin
           java-version: 20
           cache: gradle
-      - name: Cache Gradle packages
-        uses: actions/cache@v4.0.0
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+#      - name: Cache Gradle packages
+#        uses: actions/cache@v4.0.0
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
       - name: Build
         run: ./build-ci.sh
-      - name: Cleanup Gradle Cache
-          # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
-          # Restoring these files from a GitHub Actions cache might cause problems for future builds.
-        run: |
-          rm -f ~/.gradle/caches/modules-2/modules-2.lock
-          rm -f ~/.gradle/caches/modules-2/gc.properties
+#      - name: Cleanup Gradle Cache
+#          # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
+#          # Restoring these files from a GitHub Actions cache might cause problems for future builds.
+#        run: |
+#          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+#          rm -f ~/.gradle/caches/modules-2/gc.properties
       - name: Tag automerge branch
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
         uses: TimonVS/pr-labeler-action@v5.0.0
