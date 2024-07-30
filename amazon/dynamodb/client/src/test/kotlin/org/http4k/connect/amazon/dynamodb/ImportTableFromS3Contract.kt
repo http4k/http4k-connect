@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.UUID
 
-abstract class ImportTableFromS3Contract : AwsContract() {
+abstract class ImportTableFromS3Contract : AwsContract {
     abstract val http: HttpHandler
 
     private val dynamo by lazy {

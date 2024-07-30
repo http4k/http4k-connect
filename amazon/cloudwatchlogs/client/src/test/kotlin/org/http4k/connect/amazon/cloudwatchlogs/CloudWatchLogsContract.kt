@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.util.UUID
 
-abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
+abstract class CloudWatchLogsContract : AwsContract {
+
+    abstract val http: HttpHandler
 
     private val clock = Clock.systemUTC()
 

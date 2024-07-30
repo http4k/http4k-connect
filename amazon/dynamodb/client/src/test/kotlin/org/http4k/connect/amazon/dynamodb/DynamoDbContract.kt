@@ -45,7 +45,7 @@ class MyValueType(value: UUID) : UUIDValue(value) {
 
 abstract class DynamoDbContract(
     private val duration: Duration = Duration.ofSeconds(10)
-) : AwsContract() {
+) : AwsContract {
 
     abstract val http: HttpHandler
 

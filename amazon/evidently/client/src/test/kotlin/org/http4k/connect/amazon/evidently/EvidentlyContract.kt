@@ -30,7 +30,8 @@ import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class EvidentlyContract(private val http: HttpHandler) : AwsContract() {
+abstract class EvidentlyContract : AwsContract {
+    abstract val http: HttpHandler
 
     private val evidently by lazy {
         Evidently.Http(aws.region, { aws.credentials }, http)

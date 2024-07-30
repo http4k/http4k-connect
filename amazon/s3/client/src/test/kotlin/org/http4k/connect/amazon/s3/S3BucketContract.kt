@@ -17,8 +17,8 @@ import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
-import org.http4k.connect.errorValue
 import org.http4k.connect.amazon.s3.model.StorageClass
+import org.http4k.connect.errorValue
 import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
@@ -43,7 +43,9 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 
-abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract() {
+abstract class S3BucketContract : AwsContract {
+
+    abstract val http: HttpHandler
 
     abstract val bucket: BucketName
     private val clock = Clock.systemUTC()
@@ -301,7 +303,7 @@ abstract class S3BucketContract(protected val http: HttpHandler) : AwsContract()
     private fun S3Bucket.waitForRestore(key: BucketKey, timeout: Duration = Duration.ofMinutes(5)) {
         println("Restoring $key... please wait for up to $timeout")
         val start = Instant.now()
-        while(Duration.between(start, Instant.now()) < timeout) {
+        while (Duration.between(start, Instant.now()) < timeout) {
             if (headObject(key).successValue()?.restoreStatus?.ongoingRequest == false) return
             Thread.sleep(Duration.ofSeconds(1))
         }

@@ -29,7 +29,9 @@ import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
 
 
-abstract class KMSContract(http: HttpHandler) : AwsContract() {
+abstract class KMSContract : AwsContract {
+    abstract val http: HttpHandler
+
     private val kms by lazy {
         KMS.Http(aws.region, { aws.credentials }, http)
     }

@@ -6,7 +6,8 @@ import org.http4k.connect.amazon.configAwsEnvironment
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
-class RealCognitoTest : CognitoContract(JavaHttpClient()), RealAwsEnvironment {
+class RealCognitoTest : CognitoContract(), RealAwsEnvironment {
+    override val http = JavaHttpClient()
     override val aws get() = configAwsEnvironment()
 
     @Test

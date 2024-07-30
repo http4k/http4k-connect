@@ -14,7 +14,8 @@ import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
+abstract class FirehoseContract : AwsContract {
+    abstract val http: HttpHandler
 
     private val firehose by lazy {
         Firehose.Http(aws.region, { aws.credentials }, http)

@@ -5,7 +5,9 @@ import org.http4k.connect.amazon.RealAwsEnvironment
 import org.http4k.connect.amazon.configAwsEnvironment
 import java.time.Duration
 
-class RealSQSTest : SQSContract(JavaHttpClient()), RealAwsEnvironment {
+class RealSQSTest : SQSContract(), RealAwsEnvironment {
+    override val http = JavaHttpClient()
+
     override val aws get() = configAwsEnvironment()
     override val retryTimeout: Duration = Duration.ofMinutes(1)
     override fun waitABit() {

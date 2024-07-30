@@ -13,7 +13,8 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 
-abstract class IAMIdentityCenterContract(private val http: HttpHandler) : AwsContract() {
+abstract class IAMIdentityCenterContract : AwsContract {
+    abstract val http: HttpHandler
 
     @Test
     fun `log in via SSO`() {

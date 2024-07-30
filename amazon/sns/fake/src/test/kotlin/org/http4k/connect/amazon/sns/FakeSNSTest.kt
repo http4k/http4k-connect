@@ -2,6 +2,7 @@ package org.http4k.connect.amazon.sns
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.http4k.connect.amazon.FakeAwsContract
 import org.http4k.connect.amazon.core.model.DataType.Number
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.amazon.sns.action.PublishBatchRequestEntry
@@ -15,8 +16,8 @@ import org.junit.jupiter.api.Test
 
 val topics = Storage.InMemory<List<SNSMessage>>()
 
-class FakeSNSTest : SNSContract(FakeSNS(topics)) {
-    override val aws = fakeAwsEnvironment
+class FakeSNSTest : SNSContract() , FakeAwsContract {
+    override val http = FakeSNS(topics)
 
     @AfterEach
     fun clean() {

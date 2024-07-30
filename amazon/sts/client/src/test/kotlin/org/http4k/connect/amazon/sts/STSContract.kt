@@ -12,8 +12,9 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-abstract class STSContract(http: HttpHandler) : AwsContract() {
+abstract class STSContract : AwsContract {
 
+    abstract val http: HttpHandler
     protected val clock = Clock.systemUTC()!!
     protected val sts by lazy {
         STS.Http(aws.region, { aws.credentials }, http, clock)

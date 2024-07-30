@@ -12,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class S3GlobalContract(private val http: HttpHandler) : AwsContract() {
+abstract class S3GlobalContract : AwsContract {
+    abstract val http: HttpHandler
+
     private val s3 by lazy {
         S3.Http({ aws.credentials }, http)
     }

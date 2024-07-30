@@ -21,7 +21,8 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 import org.junit.jupiter.api.Test
 
-abstract class LambdaContract(private val http: HttpHandler) : AwsContract() {
+abstract class LambdaContract : AwsContract {
+    abstract val http: HttpHandler
 
     private val lambda by lazy {
         Lambda.Http(aws.region, { aws.credentials }, http)
