@@ -59,3 +59,4 @@ jobs:
         if: github.ref == 'refs/heads/master'
         env:
           GH_TOKEN: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
+
