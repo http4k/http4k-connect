@@ -1,6 +1,7 @@
 package org.http4k.connect.amazon.dynamodb
 
 import org.http4k.client.JavaHttpClient
+import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.assumeDockerDaemonRunning
 import org.http4k.core.Uri
@@ -10,7 +11,6 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Duration
-import java.time.Duration.ZERO
 import java.util.UUID
 
 @Testcontainers
@@ -18,6 +18,8 @@ class LocalDynamoTest : DynamoDbContract {
     init {
         assumeDockerDaemonRunning()
     }
+
+    override val table = TableName.sample()
 
     override val duration: Duration get() = Duration.ofSeconds(1)
 
