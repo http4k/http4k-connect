@@ -1,7 +1,8 @@
 package org.http4k.connect.amazon.lambda
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeLambdaTest : LambdaContract, FakeAwsContract {
-    override val http = FakeLambda(functions)
+class FakeLambdaTest : LambdaContract(FakeLambda(functions)) {
+    override val aws = fakeAwsEnvironment
 }
+

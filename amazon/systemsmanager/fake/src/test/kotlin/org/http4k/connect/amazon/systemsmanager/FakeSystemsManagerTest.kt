@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.systemsmanager
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeSystemsManagerTest : SystemsManagerContract, FakeAwsContract {
-    override val http = FakeSystemsManager()
+class FakeSystemsManagerTest : SystemsManagerContract(FakeSystemsManager()) {
+    override val aws = fakeAwsEnvironment
 }

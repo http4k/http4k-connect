@@ -9,8 +9,11 @@ import org.http4k.connect.successValue
 import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 
-interface AppRunnerContract : AwsContract {
-    private val appRunner get() = AppRunner.Http(aws.region, { aws.credentials }, http)
+abstract class AppRunnerContract(private val http: HttpHandler) : AwsContract() {
+
+    private val appRunner by lazy {
+        AppRunner.Http(aws.region, { aws.credentials }, http)
+    }
 
     @Test
     fun `service lifecycle`() {

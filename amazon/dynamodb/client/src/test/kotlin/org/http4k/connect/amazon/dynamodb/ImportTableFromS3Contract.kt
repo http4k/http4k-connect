@@ -31,12 +31,17 @@ import org.http4k.connect.amazon.dynamodb.model.TableCreationParameters
 import org.http4k.connect.amazon.dynamodb.model.TableName
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.successValue
+import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.UUID
 
-interface ImportTableFromS3Contract : AwsContract {
-    private val dynamo get() = DynamoDb.Http(aws.region, { aws.credentials }, http)
+abstract class ImportTableFromS3Contract : AwsContract() {
+    abstract val http: HttpHandler
+
+    private val dynamo by lazy {
+        DynamoDb.Http(aws.region, { aws.credentials }, http)
+    }
 
     @Test
     fun `import table is successful`() {

@@ -15,16 +15,16 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.util.UUID
 
-interface CloudWatchLogsContract : AwsContract {
+abstract class CloudWatchLogsContract(http: HttpHandler) : AwsContract() {
 
-    private val clock get() = Clock.systemUTC()
+    private val clock = Clock.systemUTC()
 
-    private val cloudWatchLogs
-        get() =
+    private val cloudWatchLogs by lazy {
         CloudWatchLogs.Http(aws.region, { aws.credentials }, http.debug())
+    }
 
-    private val logGroupName get() = LogGroupName.of(uuid().toString())
-    private val logStreamName get() = LogStreamName.of(uuid().toString())
+    private val logGroupName = LogGroupName.of(UUID.randomUUID().toString())
+    private val logStreamName = LogStreamName.of(UUID.randomUUID().toString())
 
     @Test
     fun `log events lifecycle`() {

@@ -14,10 +14,13 @@ import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-interface FirehoseContract : AwsContract {
-    private val firehose get() = Firehose.Http(aws.region, { aws.credentials }, http)
+abstract class FirehoseContract(http: HttpHandler) : AwsContract() {
 
-    private val deliveryStreamName get() = DeliveryStreamName.of(uuid().toString())
+    private val firehose by lazy {
+        Firehose.Http(aws.region, { aws.credentials }, http)
+    }
+
+    private val deliveryStreamName = DeliveryStreamName.of(UUID.randomUUID().toString())
 
     @Test
     fun `delivery stream lifecycle`() {

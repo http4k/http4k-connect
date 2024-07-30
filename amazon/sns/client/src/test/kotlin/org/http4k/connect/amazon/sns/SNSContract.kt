@@ -17,12 +17,12 @@ import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-interface SNSContract : AwsContract {
-    val sns
-        get() =
+abstract class SNSContract(http: HttpHandler) : AwsContract() {
+    val sns by lazy {
         SNS.Http(aws.region, { aws.credentials }, http)
+    }
 
-    val topicName get() = TopicName.of(uuid().toString())
+    protected val topicName = TopicName.of(UUID.randomUUID().toString())
 
     @Test
     fun `topic lifecycle`() {

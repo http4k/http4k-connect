@@ -2,13 +2,13 @@ package org.http4k.connect.amazon.sqs
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.amazon.FakeAwsContract
 import org.http4k.connect.amazon.core.model.Tag
+import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.Test
 
-class FakeSQSTest : SQSContract, FakeAwsContract {
-    override val http = FakeSQS()
+class FakeSQSTest : SQSContract(FakeSQS()) {
+    override val aws = fakeAwsEnvironment
 
     @Test
     fun `multiple messages are handled correctly`() {

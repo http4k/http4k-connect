@@ -2,7 +2,6 @@ package org.http4k.connect.amazon.eventbridge
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.eventbridge.model.Event
 import org.http4k.connect.amazon.model.EventBusName
@@ -14,10 +13,13 @@ import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-interface EventBridgeContract : AwsContract {
-    private val eventBridge get() = EventBridge.Http(aws.region, { aws.credentials }, http)
+abstract class EventBridgeContract(http: HttpHandler) : AwsContract() {
 
-    private val eventBusName get() = EventBusName.of(uuid().toString())
+    private val eventBridge by lazy {
+        EventBridge.Http(aws.region, { aws.credentials }, http)
+    }
+
+    private val eventBusName = EventBusName.of(UUID.randomUUID().toString())
 
     @Test
     fun `delivery stream lifecycle`() {

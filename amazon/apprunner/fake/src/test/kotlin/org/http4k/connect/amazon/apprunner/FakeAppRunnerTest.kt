@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.apprunner
 
-import org.http4k.connect.amazon.FakeAwsContract
+import org.http4k.connect.amazon.fakeAwsEnvironment
 
-class FakeAppRunnerTest : AppRunnerContract, FakeAwsContract {
-    override val http = FakeAppRunner()
+class FakeAppRunnerTest : AppRunnerContract(FakeAppRunner()) {
+    override val aws = fakeAwsEnvironment
 }

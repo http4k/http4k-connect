@@ -3,12 +3,15 @@ package org.http4k.connect.amazon.cloudfront
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.cloudfront.model.DistributionId
 import org.http4k.connect.successValue
+import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 
-interface CloudFrontContract : AwsContract {
-    private val cloudFront get() = CloudFront.Http({ aws.credentials }, http)
+abstract class CloudFrontContract(http: HttpHandler) : AwsContract() {
+    private val cloudFront by lazy {
+        CloudFront.Http({ aws.credentials }, http)
+    }
 
-    private val distribution get() = DistributionId.of("E1HHLORGLBAQYP")
+    private val distribution = DistributionId.of("E1HHLORGLBAQYP")
 
     @Test
     fun `invalidate cache`() {
