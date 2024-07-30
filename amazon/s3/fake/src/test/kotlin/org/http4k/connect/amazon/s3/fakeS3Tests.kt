@@ -22,7 +22,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class FakeS3BucketTest : S3BucketContract(), FakeAwsContract {
+class FakeS3BucketTest : S3BucketContract, FakeAwsContract {
     override val http = FakeS3()
     override val bucket = BucketName.of(UUID.randomUUID().toString())
 
@@ -120,11 +120,11 @@ class FakeS3BucketTest : S3BucketContract(), FakeAwsContract {
     }
 }
 
-class FakeS3BucketPathStyleTest : S3BucketContract(), FakeAwsContract {
+class FakeS3BucketPathStyleTest : S3BucketContract, FakeAwsContract {
     override val http = FakeS3()
     override val bucket = BucketName.of(UUID.randomUUID().toString().replace('-', '.'))
 }
 
-class FakeS3GlobalTest : S3GlobalContract(), FakeAwsContract {
+class FakeS3GlobalTest : S3GlobalContract, FakeAwsContract {
     override val http = FakeS3()
 }

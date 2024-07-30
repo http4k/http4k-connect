@@ -47,9 +47,7 @@ abstract class DynamoDbContract(
     private val duration: Duration = Duration.ofSeconds(10)
 ) : AwsContract {
 
-    private val dynamo by lazy {
-        DynamoDb.Http(aws.region, { aws.credentials }, http)
-    }
+    private val dynamo get() = DynamoDb.Http(aws.region, { aws.credentials }, http)
 
     private val table = TableName.sample()
 

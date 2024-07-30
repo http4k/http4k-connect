@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Disabled
 import java.time.Duration
 
 @Disabled
-class RealImportTableFromS3Test : ImportTableFromS3Contract(), RealAwsContract {
+class RealImportTableFromS3Test : ImportTableFromS3Contract, RealAwsContract {
 
     override fun initBucket(bucketName: BucketName, csv: String) {
         bucketName.create()

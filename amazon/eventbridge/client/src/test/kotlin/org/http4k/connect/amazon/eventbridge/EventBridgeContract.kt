@@ -14,10 +14,8 @@ import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class EventBridgeContract : AwsContract {
-    private val eventBridge by lazy {
-        EventBridge.Http(aws.region, { aws.credentials }, http)
-    }
+interface EventBridgeContract : AwsContract {
+    private val eventBridge get() = EventBridge.Http(aws.region, { aws.credentials }, http)
 
     private val eventBusName get() = EventBusName.of(uuid().toString())
 

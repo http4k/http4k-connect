@@ -13,7 +13,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-class RunningFakeContainerCredentialsTest : ContainerCredentialsContract(), FakeAwsContract {
+class RunningFakeContainerCredentialsTest : ContainerCredentialsContract, FakeAwsContract {
     override val http = SetHostFrom(FakeContainerCredentials::class.defaultLocalUri).then(JavaHttpClient())
     override val fullUri = Uri.of("http://localhost:80/foobar")
 

@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.Test
 
-class FakeSQSTest : SQSContract(), FakeAwsContract {
+class FakeSQSTest : SQSContract, FakeAwsContract {
     override val http = FakeSQS()
 
     @Test

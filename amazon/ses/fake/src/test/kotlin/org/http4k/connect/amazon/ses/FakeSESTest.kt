@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 
-class FakeSESTest : SESContract(), FakeAwsContract {
+class FakeSESTest : SESContract, FakeAwsContract {
 
     override val http = FakeSES(messagesBySender)
 

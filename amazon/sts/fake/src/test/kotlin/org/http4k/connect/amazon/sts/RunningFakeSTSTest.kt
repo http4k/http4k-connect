@@ -11,7 +11,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-class RunningFakeSTSTest : STSContract() , FakeAwsContract {
+class RunningFakeSTSTest : STSContract, FakeAwsContract {
     override val http = SetHostFrom(FakeSTS::class.defaultLocalUri).then(JavaHttpClient())
 
     private lateinit var server: Http4kServer

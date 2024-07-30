@@ -45,27 +45,20 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 
-abstract class S3BucketContract : AwsContract {
+interface S3BucketContract : AwsContract {
 
-    abstract val bucket: BucketName
-    private val clock = Clock.systemUTC()
+    val bucket: BucketName
+    private val clock get() = Clock.systemUTC()
 
-    protected val s3Bucket by lazy {
-        S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
-    }
+    val s3Bucket get() = S3Bucket.Http(bucket, aws.region, { aws.credentials }, http, clock)
 
-    private val s3 by lazy {
-        S3.Http({ aws.credentials }, http)
-    }
+    private val s3 get() = S3.Http({ aws.credentials }, http)
 
-    protected val key = BucketKey.of("originalKey")
+    val key get() = BucketKey.of("originalKey")
 
-    open fun open() {
-    }
+    fun open() {}
 
-    open fun close() {
-
-    }
+    fun close() {}
 
     @BeforeEach
     fun z_recreate() {

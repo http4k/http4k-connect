@@ -4,7 +4,7 @@ import org.http4k.client.JavaHttpClient
 import org.http4k.connect.amazon.RealAwsContract
 import java.time.Duration
 
-class RealSQSTest : SQSContract(), RealAwsContract {
+class RealSQSTest : SQSContract, RealAwsContract {
     override val http = JavaHttpClient()
 
 

@@ -11,7 +11,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class FakeSTSTest : STSContract(), FakeAwsContract {
+class FakeSTSTest : STSContract, FakeAwsContract {
 
     override val http = FakeSTS()
 

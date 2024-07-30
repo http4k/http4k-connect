@@ -10,7 +10,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-class RunningFakeS3GlobalTest : S3GlobalContract() , FakeAwsContract {
+class RunningFakeS3GlobalTest : S3GlobalContract, FakeAwsContract {
 
     override val http = SetHostFrom(FakeS3::class.defaultLocalUri).then(JavaHttpClient())
     private lateinit var server: Http4kServer

@@ -11,7 +11,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-class RunningFakeEventBridgeTest : EventBridgeContract() , FakeAwsContract {
+class RunningFakeEventBridgeTest : EventBridgeContract, FakeAwsContract {
 
     override val http = SetHostFrom(FakeEventBridge::class.defaultLocalUri).then(JavaHttpClient())
 

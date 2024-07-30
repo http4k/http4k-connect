@@ -13,7 +13,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-class RunningFakeSecretManagerTest : SecretsManagerContract(), FakeAwsContract {
+class RunningFakeSecretManagerTest : SecretsManagerContract, FakeAwsContract {
     override val http = SetHostFrom(FakeSecretsManager::class.defaultLocalUri).then(JavaHttpClient())
     override val nameOrArn = ARN.of("arn:aws:secretsmanager:us-west-2:123456789012:secret:MYSECRET").value
 

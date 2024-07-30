@@ -27,13 +27,14 @@ import org.http4k.core.Status
 import org.http4k.core.Status.Companion.CONFLICT
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Uri
+import org.http4k.lens.StringBiDiMappings.uuid
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class EvidentlyContract : AwsContract {
-    private val evidently by lazy {
+interface EvidentlyContract : AwsContract {
+    private val evidently
+        get() =
         Evidently.Http(aws.region, { aws.credentials }, http)
-    }
 
     private val projectName get() = ProjectName.of(uuid(0).toString())
     private val missingProjectName get() = ProjectName.of(uuid(11).toString())

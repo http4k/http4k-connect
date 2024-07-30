@@ -10,7 +10,7 @@ import org.http4k.server.Http4kServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-class RunningFakeKMSTest : KMSContract(), FakeAwsContract {
+class RunningFakeKMSTest : KMSContract, FakeAwsContract {
     override val http = SetHostFrom(FakeKMS::class.defaultLocalUri).then(JavaHttpClient())
     private lateinit var server: Http4kServer
 

@@ -5,7 +5,7 @@ import org.http4k.connect.amazon.RealAwsContract
 import org.http4k.connect.amazon.s3.model.BucketName
 import java.util.UUID
 
-class RealS3BucketTest : S3BucketContract(), RealAwsContract {
+class RealS3BucketTest : S3BucketContract, RealAwsContract {
     override val http = JavaHttpClient()
 
 
@@ -16,7 +16,7 @@ class RealS3BucketTest : S3BucketContract(), RealAwsContract {
     override val bucket: BucketName = BucketName.of(UUID.randomUUID().toString())
 }
 
-class RealS3BucketPathStyleTest : S3BucketContract(), RealAwsContract {
+class RealS3BucketPathStyleTest : S3BucketContract, RealAwsContract {
     override val http = JavaHttpClient()
 
 
@@ -27,4 +27,4 @@ class RealS3BucketPathStyleTest : S3BucketContract(), RealAwsContract {
     override val bucket = BucketName.of(UUID.randomUUID().toString().replace('-', '.'))
 }
 
-class RealS3GlobalTest : S3GlobalContract(), RealAwsContract
+class RealS3GlobalTest : S3GlobalContract, RealAwsContract
