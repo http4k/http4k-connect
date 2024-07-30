@@ -401,13 +401,13 @@ fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
 //    jacocoReportPath = file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml")
 //}
 
-tasks.named<JacocoReport>("jacocoTestReport") {
-    afterEvaluate {
-        classDirectories.setFrom(classDirectories.files.map {
-            fileTree(it) {
-                exclude("**/Kotshi**/**")
-                exclude("**/**Extensions**")
-            }
-        })
-    }
-}
+//tasks.named<JacocoReport>("jacocoTestReport") {
+//    afterEvaluate {
+//        classDirectories.setFrom(classDirectories.files.map {
+//            fileTree(it) {
+//                exclude("**/Kotshi**/**")
+//                exclude("**/**Extensions**")
+//            }
+//        })
+//    }
+//}
