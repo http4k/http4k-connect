@@ -36,6 +36,8 @@ import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
+import org.http4k.metrics.MetricsDefaults.Companion.server
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -60,11 +62,25 @@ abstract class S3BucketContract : AwsContract {
 
     protected val key = BucketKey.of("originalKey")
 
+    open fun open() {
+    }
+
+    open fun close() {
+
+    }
+
     @BeforeEach
-    fun recreate() {
+    fun z_recreate() {
+        open()
+        System.err.println("Recreating bucket $bucket")
         s3Bucket.deleteObject(key)
         s3Bucket.deleteBucket()
         s3.createBucket(bucket, aws.region).successValue()
+    }
+
+    @AfterEach
+    fun stop() {
+        close()
     }
 
     @Test

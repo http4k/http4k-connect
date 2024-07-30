@@ -15,18 +15,15 @@ import java.util.UUID
 class RunningFakeS3BucketTest : S3BucketContract(), FakeAwsContract {
 
     override val http = SetHostFrom(FakeS3::class.defaultLocalUri).then(JavaHttpClient())
-
     private lateinit var server: Http4kServer
 
     override val bucket = BucketName.of(UUID.randomUUID().toString())
 
-    @BeforeEach
-    fun setUp() {
+    override fun open() {
         server = FakeS3().start()
     }
 
-    @AfterEach
-    fun stop() {
+    override fun close() {
         server.stop()
     }
 }
