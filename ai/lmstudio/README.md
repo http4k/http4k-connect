@@ -55,7 +55,7 @@ By default, a random LoremIpsum generator creates chat completion responses for 
 overridden to generate custom response formats (eg. structured responses) if required. To do so, create instances of
 the `ChatCompletionGenerator` interface and return as appropriate.
 
-### Default Fake port: 45674
+### Default Fake port: 58438
 
 To start:
 
