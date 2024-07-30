@@ -31,7 +31,6 @@ import org.http4k.connect.amazon.dynamodb.model.TransactWriteItem.Companion.Upda
 import org.http4k.connect.amazon.dynamodb.model.with
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
-import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -43,17 +42,12 @@ class MyValueType(value: UUID) : UUIDValue(value) {
     companion object : UUIDValueFactory<MyValueType>(::MyValueType)
 }
 
-abstract class DynamoDbContract(
-    private val duration: Duration = Duration.ofSeconds(10)
-) : AwsContract() {
+interface DynamoDbContract : AwsContract {
+    val duration: Duration
 
-    abstract val http: HttpHandler
+    private val dynamo get() = DynamoDb.Http(aws.region, { aws.credentials }, http)
 
-    private val dynamo by lazy {
-        DynamoDb.Http(aws.region, { aws.credentials }, http)
-    }
-
-    private val table = TableName.sample()
+    private val table get() = TableName.sample(suffix = uuid(0).toString())
 
     @BeforeEach
     fun create() {

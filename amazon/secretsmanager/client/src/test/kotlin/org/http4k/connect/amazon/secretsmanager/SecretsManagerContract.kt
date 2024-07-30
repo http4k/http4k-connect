@@ -7,22 +7,18 @@ import dev.forkhandles.result4k.failureOrNull
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.secretsmanager.model.SecretId
 import org.http4k.connect.successValue
-import org.http4k.core.HttpHandler
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-abstract class SecretsManagerContract(http: HttpHandler) : AwsContract() {
+interface SecretsManagerContract : AwsContract {
+    private val sm get() = SecretsManager.Http(aws.region, { aws.credentials }, http)
 
-    private val sm by lazy {
-        SecretsManager.Http(aws.region, { aws.credentials }, http)
-    }
-
-    abstract val nameOrArn: String
-    private val secretValue = UUID.randomUUID().toString()
-    private val updatedValue = UUID.randomUUID().toString()
-    private val finalValue = UUID.randomUUID().toString()
-    open val propogateTime: Long = 0
+    val nameOrArn: String
+    private val secretValue get() = uuid(1).toString()
+    private val updatedValue get() = uuid(2).toString()
+    private val finalValue get() = uuid(3).toString()
+    val propogateTime: Long get() = 0
 
     @Test
     fun `secret lifecycle`() {

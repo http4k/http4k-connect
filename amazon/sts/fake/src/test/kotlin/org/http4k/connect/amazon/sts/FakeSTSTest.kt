@@ -1,9 +1,9 @@
 package org.http4k.connect.amazon.sts
 
+import org.http4k.connect.amazon.FakeAwsContract
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.RoleSessionName
 import org.http4k.connect.amazon.core.model.WebIdentityToken
-import org.http4k.connect.amazon.fakeAwsEnvironment
 import org.http4k.connect.successValue
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -11,8 +11,9 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class FakeSTSTest : STSContract(FakeSTS()) {
-    override val aws = fakeAwsEnvironment
+class FakeSTSTest : STSContract, FakeAwsContract {
+
+    override val http = FakeSTS()
 
     @Test
     fun `assume role with web identity`() {
