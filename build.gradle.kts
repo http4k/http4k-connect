@@ -10,12 +10,12 @@ plugins {
     kotlin("jvm")
     id("com.google.devtools.ksp")
     idea
-    jacoco
+//    jacoco
     `java-library`
     `maven-publish`
     signing
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
-    id("com.github.kt3k.coveralls") version "2.12.2"
+//    id("com.github.kt3k.coveralls") version "2.12.2"
 }
 
 buildscript {
@@ -25,7 +25,7 @@ buildscript {
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
-        classpath("com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_")
+//        classpath("com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_")
         classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_")
     }
 }
@@ -33,8 +33,8 @@ buildscript {
 allprojects {
     apply(plugin = "java")
     apply(plugin = "kotlin")
-    apply(plugin = "org.gradle.jacoco")
-    apply(plugin = "com.github.kt3k.coveralls")
+//    apply(plugin = "org.gradle.jacoco")
+//    apply(plugin = "com.github.kt3k.coveralls")
     apply(plugin = "com.google.devtools.ksp")
     apply(plugin = "java-test-fixtures")
 
@@ -45,9 +45,9 @@ allprojects {
     version = project.properties["releaseVersion"] ?: "LOCAL"
     group = "org.http4k"
 
-    jacoco {
-        toolVersion = "0.8.9"
-    }
+//    jacoco {
+//        toolVersion = "0.8.11"
+//    }
 
     tasks {
         withType<KspTask> {
@@ -70,15 +70,15 @@ allprojects {
             useJUnitPlatform()
         }
 
-        if (hasCodeCoverage(project)) {
-            named<JacocoReport>("jacocoTestReport") {
-                reports {
-                    html.required.set(true)
-                    xml.required.set(true)
-                    csv.required.set(false)
-                }
-            }
-        }
+//        if (hasCodeCoverage(project)) {
+//            named<JacocoReport>("jacocoTestReport") {
+//                reports {
+//                    html.required.set(true)
+//                    xml.required.set(true)
+//                    csv.required.set(false)
+//                }
+//            }
+//        }
 
         withType<GenerateModuleMetadata> {
             enabled = false
@@ -284,25 +284,25 @@ subprojects {
     }
 }
 
-tasks.register<JacocoReport>("jacocoRootReport") {
-    dependsOn(subprojects.map { it.tasks.named<Test>("test").get() })
-
-    sourceDirectories.from(subprojects.flatMap { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
-    classDirectories.from(subprojects.map { it.the<SourceSetContainer>()["main"].output })
-    executionData.from(subprojects
-        .filter { it.name != "http4k-bom" && hasAnArtifact(it) }
-        .map {
-            it.tasks.named<JacocoReport>("jacocoTestReport").get().executionData
-        }
-    )
-
-    reports {
-        html.required.set(true)
-        xml.required.set(true)
-        csv.required.set(false)
-        xml.outputLocation.set(file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml"))
-    }
-}
+//tasks.register<JacocoReport>("jacocoRootReport") {
+//    dependsOn(subprojects.map { it.tasks.named<Test>("test").get() })
+//
+//    sourceDirectories.from(subprojects.flatMap { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
+//    classDirectories.from(subprojects.map { it.the<SourceSetContainer>()["main"].output })
+//    executionData.from(subprojects
+//        .filter { it.name != "http4k-bom" && hasAnArtifact(it) }
+//        .map {
+//            it.tasks.named<JacocoReport>("jacocoTestReport").get().executionData
+//        }
+//    )
+//
+//    reports {
+//        html.required.set(true)
+//        xml.required.set(true)
+//        csv.required.set(false)
+//        xml.outputLocation.set(file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml"))
+//    }
+//}
 
 dependencies {
     subprojects
@@ -396,10 +396,10 @@ dependencies {
 fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
     !project.name.endsWith("generator")
 
-coveralls {
-    sourceDirs = subprojects.map { it.sourceSets.getByName("main").allSource.srcDirs }.flatten().map { it.absolutePath }
-    jacocoReportPath = file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml")
-}
+//coveralls {
+//    sourceDirs = subprojects.map { it.sourceSets.getByName("main").allSource.srcDirs }.flatten().map { it.absolutePath }
+//    jacocoReportPath = file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml")
+//}
 
 tasks.named<JacocoReport>("jacocoTestReport") {
     afterEvaluate {
