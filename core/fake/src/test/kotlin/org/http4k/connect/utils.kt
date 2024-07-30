@@ -40,7 +40,7 @@ fun assumeDockerDaemonRunning() {
         getRuntime().exec(arrayOf("docker", "ps")).errorStream.bufferedReader().readText().isEmpty(),
         "Docker is not running"
     )
-    throw TestAbortedException("Ignoring all Docker tests")
+    assumeTrue(System.getenv("GITHUB_ACTIONS") == null, "Running in GHA")
 }
 
 class TestClock(private var time: Instant = Instant.EPOCH) : Clock() {
