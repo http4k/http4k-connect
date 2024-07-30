@@ -8,8 +8,6 @@ import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetHostFrom
 import org.http4k.server.Http4kServer
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import java.util.UUID
 
 class RunningFakeS3BucketTest : S3BucketContract, FakeAwsContract {
