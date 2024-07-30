@@ -8,6 +8,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.opentest4j.TestAbortedException
 import java.lang.Runtime.getRuntime
 import java.time.Clock
 import java.time.Duration
@@ -29,7 +30,7 @@ fun <T, E> Result<T, E>.successValue(fn: (T) -> Unit = {}): T = when (this) {
     is Failure -> throw AssertionError("Failed: $reason")
 }
 
-fun <T, E> Result<T, E>.errorValue(fn: (E) -> Unit = {}): E = when(this) {
+fun <T, E> Result<T, E>.errorValue(fn: (E) -> Unit = {}): E = when (this) {
     is Success -> throw AssertionError("Should have failed, but was $value")
     is Failure -> reason.also(fn)
 }
@@ -39,6 +40,7 @@ fun assumeDockerDaemonRunning() {
         getRuntime().exec(arrayOf("docker", "ps")).errorStream.bufferedReader().readText().isEmpty(),
         "Docker is not running"
     )
+    throw TestAbortedException("Ignoring all Docker tests")
 }
 
 class TestClock(private var time: Instant = Instant.EPOCH) : Clock() {
