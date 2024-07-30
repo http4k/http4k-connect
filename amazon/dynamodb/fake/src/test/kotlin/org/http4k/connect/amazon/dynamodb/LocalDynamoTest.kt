@@ -10,13 +10,16 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Duration
+import java.time.Duration.ZERO
 import java.util.UUID
 
 @Testcontainers
-class LocalDynamoTest : DynamoDbContract(Duration.ofSeconds(1)) {
+class LocalDynamoTest : DynamoDbContract {
     init {
         assumeDockerDaemonRunning()
     }
+
+    override val duration: Duration get() = Duration.ofSeconds(1)
 
     override val http by lazy {
         SetBaseUriFrom(Uri.of("http://localhost:${dynamo.getMappedPort(8000)}"))
