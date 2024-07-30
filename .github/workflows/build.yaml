@@ -12,16 +12,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 11
     steps:
-      - uses: actions/checkout@v4.1.1
+        -   uses: actions/checkout@v4.1.7
         with:
           # required by release-tag.sh to correctly identify files changed in the last commit
           fetch-depth: 2
           # required by release-tag.sh to allow pushing with another credentials so other workflows are triggered
           persist-credentials: false
       - name: Setup Java
-        uses: actions/setup-java@v4.0.0
+        uses: actions/setup-java@v4.2.1
         with:
           distribution: temurin
           java-version: 20
@@ -32,7 +31,7 @@ jobs:
               path: |
                   ~/.gradle/caches
                   ~/.gradle/wrapper
-              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}-new-key
               restore-keys: |
                   ${{ runner.os }}-gradle-
       - name: Build
