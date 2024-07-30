@@ -22,7 +22,7 @@ abstract class SNSContract : AwsContract {
         SNS.Http(aws.region, { aws.credentials }, http)
     }
 
-    protected val topicName = TopicName.of(UUID.randomUUID().toString())
+    protected val topicName get() = TopicName.of(uuid().toString())
 
     @Test
     fun `topic lifecycle`() {

@@ -19,7 +19,7 @@ abstract class EventBridgeContract : AwsContract {
         EventBridge.Http(aws.region, { aws.credentials }, http)
     }
 
-    private val eventBusName = EventBusName.of(UUID.randomUUID().toString())
+    private val eventBusName get() = EventBusName.of(uuid().toString())
 
     @Test
     fun `delivery stream lifecycle`() {

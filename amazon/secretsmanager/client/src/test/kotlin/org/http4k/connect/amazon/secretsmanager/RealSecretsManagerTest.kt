@@ -1,11 +1,10 @@
 package org.http4k.connect.amazon.secretsmanager
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.RealAwsEnvironment
-import org.http4k.connect.amazon.configAwsEnvironment
+import org.http4k.connect.amazon.RealAwsContract
 import java.util.UUID
 
-class RealSecretsManagerTest : SecretsManagerContract(), RealAwsEnvironment {
+class RealSecretsManagerTest : SecretsManagerContract(), RealAwsContract {
     override val http = JavaHttpClient()
 
 

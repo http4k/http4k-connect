@@ -1,10 +1,9 @@
 package org.http4k.connect.amazon.sts
 
 import org.http4k.client.JavaHttpClient
-import org.http4k.connect.amazon.RealAwsEnvironment
-import org.http4k.connect.amazon.configAwsEnvironment
+import org.http4k.connect.amazon.RealAwsContract
 
-class RealSTSTest : STSContract(), RealAwsEnvironment {
+class RealSTSTest : STSContract(), RealAwsContract {
     
     override val http = JavaHttpClient()
 

@@ -23,8 +23,8 @@ abstract class CloudWatchLogsContract : AwsContract {
         CloudWatchLogs.Http(aws.region, { aws.credentials }, http.debug())
     }
 
-    private val logGroupName = LogGroupName.of(UUID.randomUUID().toString())
-    private val logStreamName = LogStreamName.of(UUID.randomUUID().toString())
+    private val logGroupName get() = LogGroupName.of(uuid().toString())
+    private val logStreamName get() = LogStreamName.of(uuid().toString())
 
     @Test
     fun `log events lifecycle`() {

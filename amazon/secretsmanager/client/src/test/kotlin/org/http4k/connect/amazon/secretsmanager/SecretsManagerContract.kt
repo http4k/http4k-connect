@@ -18,9 +18,9 @@ abstract class SecretsManagerContract : AwsContract {
     }
 
     abstract val nameOrArn: String
-    private val secretValue = UUID.randomUUID().toString()
-    private val updatedValue = UUID.randomUUID().toString()
-    private val finalValue = UUID.randomUUID().toString()
+    private val secretValue get() = uuid(1).toString()
+    private val updatedValue get() = uuid(2).toString()
+    private val finalValue get() = uuid(3).toString()
     open val propogateTime: Long = 0
 
     @Test

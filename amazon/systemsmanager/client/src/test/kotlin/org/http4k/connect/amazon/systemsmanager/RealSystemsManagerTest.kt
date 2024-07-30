@@ -1,5 +1,5 @@
 package org.http4k.connect.amazon.systemsmanager
 
-import org.http4k.connect.amazon.RealAwsEnvironment
+import org.http4k.connect.amazon.RealAwsContract
 
-class RealSystemsManagerTest : SystemsManagerContract(), RealAwsEnvironment
+class RealSystemsManagerTest : SystemsManagerContract(), RealAwsContract

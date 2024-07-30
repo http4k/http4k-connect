@@ -29,7 +29,7 @@ abstract class SQSContract : AwsContract {
         SQS.Http(aws.region, { aws.credentials }, http)
     }
 
-    val queueName = QueueName.of(UUID.randomUUID().toString())
+    val queueName get() = QueueName.of(uuid().toString())
     val expires: ZonedDateTime = ZonedDateTime.now().plus(Duration.ofMinutes(1))
 
     @Test

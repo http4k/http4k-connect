@@ -1,5 +1,5 @@
 package org.http4k.connect.amazon.kms
 
-import org.http4k.connect.amazon.RealAwsEnvironment
+import org.http4k.connect.amazon.RealAwsContract
 
-class RealKMSTest : KMSContract(), RealAwsEnvironment
+class RealKMSTest : KMSContract(), RealAwsContract

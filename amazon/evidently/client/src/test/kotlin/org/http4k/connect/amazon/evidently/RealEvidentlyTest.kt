@@ -1,5 +1,5 @@
 package org.http4k.connect.amazon.evidently
 
-import org.http4k.connect.amazon.RealAwsEnvironment
+import org.http4k.connect.amazon.RealAwsContract
 
-class RealEvidentlyTest : EvidentlyContract(), RealAwsEnvironment
+class RealEvidentlyTest : EvidentlyContract(), RealAwsContract

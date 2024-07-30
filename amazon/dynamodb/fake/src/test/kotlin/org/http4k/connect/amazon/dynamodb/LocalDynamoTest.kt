@@ -10,6 +10,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Duration
+import java.util.UUID
 
 @Testcontainers
 class LocalDynamoTest : DynamoDbContract(Duration.ofSeconds(1)) {
@@ -21,6 +22,8 @@ class LocalDynamoTest : DynamoDbContract(Duration.ofSeconds(1)) {
         SetBaseUriFrom(Uri.of("http://localhost:${dynamo.getMappedPort(8000)}"))
             .then(JavaHttpClient())
     }
+
+    override fun uuid(seed: Int) = UUID.randomUUID()
 
     @Container
     val dynamo = GenericContainer(dynamoDbLocalDockerImageName).withExposedPorts(8000)

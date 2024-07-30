@@ -35,12 +35,12 @@ abstract class EvidentlyContract : AwsContract {
         Evidently.Http(aws.region, { aws.credentials }, http)
     }
 
-    private val projectName = ProjectName.of(UUID.randomUUID().toString())
-    private val missingProjectName = ProjectName.of(UUID.randomUUID().toString())
-    private val featureName = FeatureName.of(UUID.randomUUID().toString())
-    private val missingFeatureName = FeatureName.of(UUID.randomUUID().toString())
-    private val entity1 = EntityId.of(UUID.randomUUID().toString())
-    private val entity2 = EntityId.of(UUID.randomUUID().toString())
+    private val projectName get() = ProjectName.of(uuid(0).toString())
+    private val missingProjectName get() = ProjectName.of(uuid(11).toString())
+    private val featureName get() = FeatureName.of(uuid(1).toString())
+    private val missingFeatureName get() = FeatureName.of(uuid(2).toString())
+    private val entity1 get() = EntityId.of(uuid(1).toString())
+    private val entity2 get() = EntityId.of(uuid(2).toString())
 
     @Test
     fun `project lifecycle`() = try {

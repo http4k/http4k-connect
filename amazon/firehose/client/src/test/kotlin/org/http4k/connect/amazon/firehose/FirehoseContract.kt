@@ -19,7 +19,7 @@ abstract class FirehoseContract : AwsContract {
         Firehose.Http(aws.region, { aws.credentials }, http)
     }
 
-    private val deliveryStreamName = DeliveryStreamName.of(UUID.randomUUID().toString())
+    private val deliveryStreamName get() = DeliveryStreamName.of(uuid().toString())
 
     @Test
     fun `delivery stream lifecycle`() {
