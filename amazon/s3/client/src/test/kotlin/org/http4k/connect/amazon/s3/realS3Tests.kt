@@ -10,7 +10,7 @@ import java.util.UUID
 class RealS3BucketTest : S3BucketContract(), RealAwsEnvironment {
     override val http = JavaHttpClient()
 
-    override val aws get() = configAwsEnvironment()
+
     override fun waitForBucketCreation() {
         Thread.sleep(10000)
     }
@@ -20,7 +20,7 @@ class RealS3BucketTest : S3BucketContract(), RealAwsEnvironment {
 
 class RealS3BucketPathStyleTest : S3BucketContract(), RealAwsEnvironment {
     override val http = JavaHttpClient()
-    override val aws get() = configAwsEnvironment()
+
 
     override fun waitForBucketCreation() {
         Thread.sleep(10000)
@@ -29,7 +29,4 @@ class RealS3BucketPathStyleTest : S3BucketContract(), RealAwsEnvironment {
     override val bucket = BucketName.of(UUID.randomUUID().toString().replace('-', '.'))
 }
 
-class RealS3GlobalTest : S3GlobalContract(), RealAwsEnvironment {
-    override val http = JavaHttpClient()
-    override val aws get() = configAwsEnvironment()
-}
+class RealS3GlobalTest : S3GlobalContract(), RealAwsEnvironment 

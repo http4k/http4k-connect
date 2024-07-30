@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class EventBridgeContract : AwsContract {
-    abstract val http: HttpHandler
-
     private val eventBridge by lazy {
         EventBridge.Http(aws.region, { aws.credentials }, http)
     }

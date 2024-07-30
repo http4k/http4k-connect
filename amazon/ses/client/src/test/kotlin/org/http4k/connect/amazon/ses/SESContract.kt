@@ -13,8 +13,6 @@ import org.http4k.core.HttpHandler
 import org.junit.jupiter.api.Test
 
 abstract class SESContract : AwsContract {
-    abstract val http: HttpHandler
-
     private val ses by lazy {
         SES.Http(aws.region, aws::credentials, http)
     }

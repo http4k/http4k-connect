@@ -47,8 +47,6 @@ import java.time.ZonedDateTime
 
 abstract class S3BucketContract : AwsContract {
 
-    abstract val http: HttpHandler
-
     abstract val bucket: BucketName
     private val clock = Clock.systemUTC()
 

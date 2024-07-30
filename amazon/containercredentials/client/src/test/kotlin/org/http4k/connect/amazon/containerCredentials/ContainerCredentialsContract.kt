@@ -13,8 +13,6 @@ import java.time.Clock
 import java.time.ZonedDateTime
 
 abstract class ContainerCredentialsContract : AwsContract {
-    abstract val http: HttpHandler
-
     protected val clock = Clock.systemUTC()!!
     private val containerCredentials by lazy { ContainerCredentials.Http(http) }
     protected abstract val fullUri: Uri

@@ -37,8 +37,6 @@ import java.time.Duration
 import java.util.UUID
 
 abstract class ImportTableFromS3Contract : AwsContract {
-    abstract val http: HttpHandler
-
     private val dynamo by lazy {
         DynamoDb.Http(aws.region, { aws.credentials }, http)
     }

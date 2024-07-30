@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class SystemsManagerContract : AwsContract {
-    abstract val http: HttpHandler
-
     private val secretsManager by lazy {
         SystemsManager.Http(aws.region, { aws.credentials }, http)
     }

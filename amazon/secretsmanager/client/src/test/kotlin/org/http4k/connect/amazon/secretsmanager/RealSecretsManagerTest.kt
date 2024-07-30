@@ -8,7 +8,6 @@ import java.util.UUID
 class RealSecretsManagerTest : SecretsManagerContract(), RealAwsEnvironment {
     override val http = JavaHttpClient()
 
-    override val aws get() = configAwsEnvironment()
 
     override val propogateTime: Long = 5000
 

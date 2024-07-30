@@ -8,7 +8,7 @@ import java.time.Duration
 class RealSQSTest : SQSContract(), RealAwsEnvironment {
     override val http = JavaHttpClient()
 
-    override val aws get() = configAwsEnvironment()
+
     override val retryTimeout: Duration = Duration.ofMinutes(1)
     override fun waitABit() {
         Thread.sleep(10000)

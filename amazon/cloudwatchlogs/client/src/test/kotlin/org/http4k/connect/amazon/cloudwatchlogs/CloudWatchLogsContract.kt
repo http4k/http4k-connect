@@ -17,8 +17,6 @@ import java.util.UUID
 
 abstract class CloudWatchLogsContract : AwsContract {
 
-    abstract val http: HttpHandler
-
     private val clock = Clock.systemUTC()
 
     private val cloudWatchLogs by lazy {

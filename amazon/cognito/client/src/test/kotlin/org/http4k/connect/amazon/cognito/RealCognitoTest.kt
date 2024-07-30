@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 class RealCognitoTest : CognitoContract(), RealAwsEnvironment {
     override val http = JavaHttpClient()
-    override val aws get() = configAwsEnvironment()
+
 
     @Test
     @Disabled("takes ages to create a domain in AWS")

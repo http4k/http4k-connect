@@ -47,8 +47,6 @@ abstract class DynamoDbContract(
     private val duration: Duration = Duration.ofSeconds(10)
 ) : AwsContract {
 
-    abstract val http: HttpHandler
-
     private val dynamo by lazy {
         DynamoDb.Http(aws.region, { aws.credentials }, http)
     }

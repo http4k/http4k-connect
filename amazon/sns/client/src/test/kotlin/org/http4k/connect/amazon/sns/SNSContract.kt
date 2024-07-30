@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 abstract class SNSContract : AwsContract {
-    abstract val http: HttpHandler
-
     val sns by lazy {
         SNS.Http(aws.region, { aws.credentials }, http)
     }
