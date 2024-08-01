@@ -36,7 +36,7 @@ data class PutObject(
     }
 }
 
-private fun headersFor(tags: Collection<Tag>) = if (tags.isEmpty()) {
+internal fun headersFor(tags: Collection<Tag>) = if (tags.isEmpty()) {
     emptyList()
 } else {
     listOf("x-amz-tagging" to tags.joinToString("&") { (key, value) -> "$key=$value" })
