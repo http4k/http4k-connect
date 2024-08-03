@@ -45,7 +45,8 @@ private fun copyKey(
         buckets,
         bucketContent,
         clock,
-        obj.headers + req.headers.filter { (name, _) -> name !in excludedObjectHeaders }
+        obj.headers + req.headers.filter { (name, _) -> name !in excludedObjectHeaders },
+        if (req.header("x-amz-tagging-directive") == "REPLACE") tagsFor(req.headers) else obj.tags
     )
     return Response(Status.OK)
 }

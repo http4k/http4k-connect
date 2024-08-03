@@ -6,21 +6,20 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
+import com.natpryce.hamkrest.isEmpty
 import com.natpryce.hamkrest.or
 import com.natpryce.hamkrest.present
-import dev.forkhandles.result4k.Failure
-import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsContract
 import org.http4k.connect.amazon.core.model.Tag
 import org.http4k.connect.amazon.s3.action.ObjectList
+import org.http4k.connect.amazon.s3.action.TaggingDirective
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
 import org.http4k.connect.amazon.s3.model.RestoreTier
 import org.http4k.connect.amazon.s3.model.S3BucketPreSigner
 import org.http4k.connect.amazon.s3.model.StorageClass
-import org.http4k.connect.errorValue
+import org.http4k.connect.failureValue
 import org.http4k.connect.successValue
-import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
@@ -36,7 +35,6 @@ import org.http4k.core.then
 import org.http4k.filter.ClientFilters.SetXForwardedHost
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
-import org.http4k.metrics.MetricsDefaults.Companion.server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -94,22 +92,30 @@ interface S3BucketContract : AwsContract {
             assertThat(s3Bucket.set(key, "there".byteInputStream()).successValue(), equalTo(Unit))
             assertThat(String(s3Bucket[key].successValue()!!.readBytes()), equalTo("there"))
 
-            s3Bucket.restoreObject(key, 1).also {
-                val failure = (it as Failure<RemoteFailure>).reason
-
+            s3Bucket.restoreObject(key, 1).failureValue { failure ->
                 assertThat(failure.method, equalTo(Method.POST))
                 assertThat(failure.uri, equalTo(Uri.of("/$key?restore")))
                 assertThat(failure.status, equalTo(Status.FORBIDDEN))
                 assertThat(failure.message!!, containsSubstring("<Code>InvalidObjectState</Code>"))
             }
 
-            assertThat(s3Bucket.copyObject(bucket, key, newKey).successValue(), equalTo(Unit))
+            // copy object (replace tagging)
+            assertThat(s3Bucket.copyObject(bucket, key, newKey, taggingDirective = TaggingDirective.REPLACE, tags = listOf(Tag("foo", "bar"))).successValue(), equalTo(Unit))
+            assertThat(s3Bucket.headObject(newKey).successValue(), present())
             assertThat(String(s3Bucket[newKey].successValue()!!.readBytes()), equalTo("there"))
+            assertThat(s3Bucket.getObjectTagging(newKey).successValue(), equalTo(listOf(Tag("foo", "bar")))) // ensure tags were added during copy
             assertThat(
                 s3Bucket.listObjectsV2().successValue().items.map { it.Key },
                 equalTo(listOf(key, newKey).sortedBy { it.value })
             )
             assertThat(s3Bucket.deleteObject(newKey).successValue(), equalTo(Unit))
+
+            // copy object (copy tagging)
+            assertThat(s3Bucket.copyObject(bucket, key, newKey, tags = listOf(Tag("foo", "bar"))).successValue(), equalTo(Unit))
+            assertThat(s3Bucket.getObjectTagging(newKey).successValue(), isEmpty) // ensure new tags were ignored
+            assertThat(s3Bucket.deleteObject(newKey).successValue(), equalTo(Unit))
+
+            // delete object
             assertThat(s3Bucket.deleteObject(key).successValue(), equalTo(Unit))
             assertThat(s3Bucket[key].successValue(), equalTo(null))
             assertThat(s3Bucket.listObjectsV2().successValue(), equalTo(ObjectList(emptyList())))
@@ -176,8 +182,7 @@ interface S3BucketContract : AwsContract {
             }
 
             // try to get object from glacier
-            s3Bucket[key].also {
-                val failure = (it as Failure<RemoteFailure>).reason
+            s3Bucket[key].failureValue { failure ->
                 assertThat(failure.method, equalTo(GET))
                 assertThat(failure.uri, equalTo(Uri.of("/$key")))
                 assertThat(failure.status, equalTo(Status.FORBIDDEN))
@@ -185,8 +190,7 @@ interface S3BucketContract : AwsContract {
             }
 
             // try to copy object from glacier
-            s3Bucket.copyObject(bucket, key, newKey).also {
-                val failure = (it as Failure<RemoteFailure>).reason
+            s3Bucket.copyObject(bucket, key, newKey).failureValue { failure ->
                 assertThat(failure.method, equalTo(PUT))
                 assertThat(failure.uri, equalTo(Uri.of("/$newKey")))
                 assertThat(failure.status, equalTo(Status.FORBIDDEN))
@@ -217,9 +221,7 @@ interface S3BucketContract : AwsContract {
             s3Bucket.headObject(key).successValue().also {
                 assertThat(it?.storageClass, equalTo(StorageClass.GLACIER_IR))
             }
-            s3Bucket.restoreObject(key, 1).also {
-                val failure = (it as Failure<RemoteFailure>).reason
-
+            s3Bucket.restoreObject(key, 1).failureValue { failure ->
                 assertThat(failure.method, equalTo(Method.POST))
                 assertThat(failure.uri, equalTo(Uri.of("/$key?restore")))
                 assertThat(failure.status, equalTo(Status.FORBIDDEN))
@@ -258,15 +260,15 @@ interface S3BucketContract : AwsContract {
 
         try {
             // tag operations on missing key
-            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).errorValue {
+            s3Bucket.putObjectTagging(key, listOf(Tag("foo", "bar"))).failureValue {
                 assertThat(it.status, equalTo(NOT_FOUND))
                 assertThat(it.message!!, containsSubstring("NoSuchKey"))
             }
-            s3Bucket.deleteObjectTagging(key).errorValue {
+            s3Bucket.deleteObjectTagging(key).failureValue {
                 assertThat(it.status, equalTo(NOT_FOUND))
                 assertThat(it.message!!, containsSubstring("NoSuchKey"))
             }
-            s3Bucket.getObjectTagging(key).errorValue {
+            s3Bucket.getObjectTagging(key).failureValue {
                 assertThat(it.status, equalTo(NOT_FOUND))
                 assertThat(it.message!!, containsSubstring("NoSuchKey"))
             }

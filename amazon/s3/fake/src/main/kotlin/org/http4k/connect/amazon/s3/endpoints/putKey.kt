@@ -37,7 +37,8 @@ internal fun bucketPutKey(buckets: Storage<Unit>, bucketContent: Storage<BucketK
                 buckets,
                 bucketContent,
                 clock,
-                it.headers
+                it.headers,
+                tagsFor(it.headers)
             )
         }
     )
@@ -63,7 +64,8 @@ internal fun pathBasedBucketPutKey(buckets: Storage<Unit>, bucketContent: Storag
                 buckets,
                 bucketContent,
                 clock,
-                it.headers
+                it.headers,
+                tagsFor(it.headers)
             )
         }
     )
@@ -75,7 +77,8 @@ internal fun putObject(
     buckets: Storage<Unit>,
     bucketContent: Storage<BucketKeyContent>,
     clock: Clock,
-    headers: Headers
+    headers: Headers,
+    tags: List<Tag>
 ) = buckets[bucket]
     ?.let {
         bucketContent["$bucket-$key"] = BucketKeyContent(
@@ -83,15 +86,7 @@ internal fun putObject(
             Base64.getEncoder().encodeToString(bytes),
             lastModified(headers, clock),
             headers.filter { it.first !in excludedObjectHeaders },
-            headers.find { it.first.equals("x-amz-tagging", true) }
-                ?.second
-                ?.split("&")
-                .orEmpty()
-                .filter { it.isNotEmpty() }
-                .map {
-                    val (key, value) = it.split("=")
-                    Tag(key, value)
-                }
+            tags
         )
         Response(CREATED)
     }
@@ -116,3 +111,14 @@ private fun putObjectTagging(
 
     return Response(OK)
 }
+
+internal fun tagsFor(headers: Headers) = headers
+    .find { it.first.equals("x-amz-tagging", true) }
+    ?.second
+    ?.split("&")
+    .orEmpty()
+    .filter { it.isNotEmpty() }
+    .map {
+        val (key, value) = it.split("=")
+        Tag(key, value)
+    }

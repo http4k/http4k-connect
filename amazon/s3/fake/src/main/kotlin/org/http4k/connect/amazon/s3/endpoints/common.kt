@@ -50,6 +50,7 @@ internal val excludedObjectHeaders = setOf(
     "x-amz-content-sha256",
     "x-amz-date",
     "x-amz-tagging",
+    "x-amz-tagging-directive"
 )
 
 internal fun getHeadersWithoutXHttp4kPrefix(it: BucketKeyContent) =
