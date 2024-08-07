@@ -398,7 +398,7 @@ data class Jwk(
     val e: String,
     val kid: String,
     val n: String,
-    val alg: String = "RSA256",
+    val alg: String = "RS256",
     val kty: String = "RSA",
     val use: String = "sig"
 )
