@@ -3,8 +3,9 @@
 This list is not intended to be all-encompassing - it will document major and breaking API 
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
-### v5.20.1.0 (uncut)
+### v5.21.0.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 2.0.10
+  - **http4k-connect-ai-openai-**** - [Breaking] Model ResponseFormat as a sealed class hierarchy. Removed ResponseFormatType as now inherent in the JSON marshalling. Alpha support for `json_schema` response format, but it's just a map right now with no class structure.
 
 ### v5.20.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotshi to 3.0.0. Version bump to highlight that this could be a breaking change if you are using the Kotshi annotation processor.

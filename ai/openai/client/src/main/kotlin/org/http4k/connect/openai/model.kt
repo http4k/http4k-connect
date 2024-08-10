@@ -57,13 +57,6 @@ val ModelName.Companion.GPT4_TURBO_PREVIEW get() = ModelName.of("gpt-4-turbo-pre
 val ModelName.Companion.GPT3_5 get() = ModelName.of("gpt-3.5-turbo")
 val ModelName.Companion.TEXT_EMBEDDING_ADA_002 get() = ModelName.of("text-embedding-ada-002")
 
-class ResponseFormatType private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<ResponseFormatType>(::ResponseFormatType) {
-        val JsonObject = ResponseFormatType.of("json_object")
-        val url = ResponseFormatType.of("url")
-    }
-}
-
 class Role private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Role>(::Role) {
         val System = Role.of("system")

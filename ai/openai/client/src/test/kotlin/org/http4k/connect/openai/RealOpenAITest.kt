@@ -16,7 +16,7 @@ class RealOpenAITest : OpenAIContract {
 
     override val openAi = OpenAI.Http(
         apiKey(ENV)!!,
-        JavaHttpClient().debug(debugStream = true),
+        JavaHttpClient().debug(),
         OpenAIOrg.of("org-Ydjc9eGanqJtCP70yPUwZsvs")
     )
 }

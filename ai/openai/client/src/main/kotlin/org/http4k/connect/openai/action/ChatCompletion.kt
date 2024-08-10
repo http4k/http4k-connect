@@ -8,12 +8,14 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.asRemoteFailure
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.openai.CompletionId
+import org.http4k.connect.openai.GPT3_5
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.OpenAIMoshi.autoBody
-import org.http4k.connect.openai.ResponseFormatType
 import org.http4k.connect.openai.Role
+import org.http4k.connect.openai.Role.Companion.System
+import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
@@ -28,6 +30,8 @@ import org.http4k.lens.Header.CONTENT_TYPE
 import se.ansman.kotshi.ExperimentalKotshiApi
 import se.ansman.kotshi.JsonProperty
 import se.ansman.kotshi.JsonSerializable
+import se.ansman.kotshi.Polymorphic
+import se.ansman.kotshi.PolymorphicLabel
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.text.Charsets.UTF_8
@@ -103,10 +107,23 @@ data class ChatCompletion(
     }
 }
 
+
 @JsonSerializable
-data class ResponseFormat(
-    val type: ResponseFormatType
-)
+@Polymorphic("type")
+sealed class ResponseFormat {
+    @JsonSerializable
+    @PolymorphicLabel("json_object")
+    data object Json : ResponseFormat()
+
+    @JsonSerializable
+    @PolymorphicLabel("url")
+    data object Url : ResponseFormat()
+
+    @JsonSerializable
+    @PolymorphicLabel("json_schema")
+    data class JsonSchema(val strict: Boolean, val json_schema: Map<String, Any>) : ResponseFormat()
+}
+
 
 @JsonSerializable
 data class Message(
