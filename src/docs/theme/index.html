@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    {% include "partials/meta.html" %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <meta property="og:url" content="https://http4k.org">
+    <meta property="twitter:url" content="https://http4k.org">
+    <title>http4k</title>
+</head>
+<body>
+<!-- header-->
+<header class="landing">
+    <div class="overlay"></div>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container"><a class="navbar-brand" href="#"> <img src="/img/logo-monochrome.png" width="185"
+                                                                      alt="logo"/></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <div class="navbar-icon"></div>
+                <div class="navbar-icon"></div>
+                <div class="navbar-icon"></div>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/documentation/">Documentation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/changelog">Changelog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://toolbox.http4k.org">Toolbox</a></li>
+                    <li class="nav-item"><a class="nav-link btn-github" href="https://github.com/http4k/http4k-connect"
+                                            title="GitHub Source"></a></li>
+                </ul>
+                <header class="landing">
+                    <div class="overlay"></div>
+                    <nav class="navbar navbar-expand-lg">
+                        <div class="container"><a class="navbar-brand" href="#"> <img src="/img/logo.png" width="185" alt="logo"/></a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <div class="navbar-icon"></div>
+                                <div class="navbar-icon"></div>
+                                <div class="navbar-icon"></div>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav ml-auto align-items-center">
+                                    <li class="nav-item"><a class="nav-link" href="/documentation/">Documentation</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/changelog">Changelog</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/support">Support/Training</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/faq">FAQ</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="https://toolbox.http4k.org">Toolbox</a></li>
+                                    <li class="nav-item"><a class="nav-link btn-github" href="https://github.com/http4k/http4k"
+                                                            title="GitHub Source"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                    <div class="container h-80">
+                        <div class="row align-items-center h-100">
+                            <div class="col-md-7 col-lg-5 col-xl-4">
+                                <h2 class="header mb-4">The Functional toolkit for Kotlin HTTP applications</h2>
+                                <p class="mb-5">http4k provides a simple and uniform way to serve, consume, and test HTTP services.</p>
+                                <a class="btn btn-warning" href="/quickstart">Quick Start</a>
+                            </div>
+                        </div>
+                    </div>
+                    <img class="mt-5  img-fluid d-lg-none" src="/img/pipes-hero.png"/>
+                    <!-- features-->
+                    <div class="developers-custom">
+                        <div class="container-fluid">
+                            <h2>HTTP as a Function</h2>
+                            <div class="row">
+                                <div class="col-md-6 text-center">
+                                    <img class="img-fluid" style="border-radius: 8px" src="/img/server.png" alt="Creating a server with http4k"/>
+                                    <p>An http4k server is just a regular function that gets invoked with a Request and returns a Response.
+                                        </br></br>
+                                        In a single line of code you can switch your server between Java (built-in), Apache, Jetty, Netty, Undertow,
+                                        Ktor, Ratpack or Helidon.
+                                    </p>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <img class="img-fluid" style="border-radius: 8px" src="/img/client.png" alt="Creating a client with http4k"/>
+                                    <p>An http4k client is just a regular function that you invoke with a Request and receives a Response.
+                                        </br></br>
+                                        In a single line of code you can switch your client implementation between Java (built-in), Apache, Fuel,
+                                        Jetty, and OkHttp.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <footer>
+                    <div class="container">
+                        <div class="row align-items-baseline">
+                            <div class="col-md-6 col-lg-3">
+                                <a class="p-0" href="https://http4k.org"><img class="logo-footer" src="/img/logo-monochrome.png"
+                                                                              width="200px" alt="logo"/></a>
+                                Copyright © 2024<br/><br/>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4>Developers</h4>
+                                <a href="https://connect.http4k.org/documentation">Documentation</a>
+                                <a href="https://github.com/http4k/http4k/blob/master/LICENSE">Licensing</a>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4>Community</h4>
+                                <a href="https://github.com/http4k-connect/http4k">GitHub</a>
+                                <a href="https://kotlinlang.slack.com/archives/C5AL3AKUY">Slack</a>
+                                <a href="https://twitter.com/http4k">Twitter</a>
+                                <a href="https://http4k.org/code-of-conduct">Code of Conduct</a>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <h4>Company</h4>
+                                <a href="https://http4k.org/guide/concepts/rationale">About Us</a>
+                                <a href="https://http4k.org/support">Support/Training</a>
+                                <a href="mailto:contact@http4k.org">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <script src="/js/jquery.min.js"></script>
+                <script src="/js/bootstrap.bundle.min.js"></script>
+                <script src="/js/index-min.js"></script>
+</body>
+</html>
