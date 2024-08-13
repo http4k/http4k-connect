@@ -1,4 +1,4 @@
-# Lambda
+# AppRunner
 
 The AppRunner connector provides the following Actions:
 

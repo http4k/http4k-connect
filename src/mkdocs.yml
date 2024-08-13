@@ -32,4 +32,38 @@ nav:
   - Changelog: changelog/index.md
   - Contribute/support http4k: contributing/index.md
   - Code of Conduct: code-of-conduct/index.md
-
+  - AI:
+    - LangChain: reference/ai/langchain/index.md
+    - LMStudio: reference/ai/lmstudio/index.md
+    - Ollama: reference/ai/ollama/index.md
+    - OpenAI: reference/ai/openai/index.md
+  - AWS:
+    - App Runner: reference/amazon/apprunner/index.md
+    - Cloudfront: reference/amazon/cloudfront/index.md
+    - Cloudwatch Logs: reference/amazon/cloudwatchlogs/index.md
+    - Cognito: reference/amazon/cognito/index.md
+    - Container Credentials: reference/amazon/containercredentials/index.md
+    - DynamoDB: reference/amazon/dynamodb/index.md
+    - EventBridge: reference/amazon/eventbridge/index.md
+    - Evidently: reference/amazon/evidently/index.md
+    - Firehose: reference/amazon/firehose/index.md
+    - IAM Identity Center: reference/amazon/iamidentitycenter/index.md
+    - Instance Metadata: reference/amazon/instancemetadata/index.md
+    - KMS: reference/amazon/kms/index.md
+    - Lambda: reference/amazon/lambda/index.md
+    - S3: reference/amazon/s3/index.md
+    - Secrets Manager: reference/amazon/secretsmanager/index.md
+    - SES: reference/amazon/ses/index.md
+    - SNS: reference/amazon/sns/index.md
+    - SQS: reference/amazon/sqs/index.md
+    - STS: reference/amazon/sts/index.md
+    - Systems Manager: reference/amazon/systemsmanager/index.md
+  - GitHub: reference/github/index.md
+  - GitLab: reference/gitlab/index.md
+  - Google:
+    - Analytics UA: reference/google/analytics-ua/index.md
+    - Analytics V4: reference/google/analytics-ga4/index.md
+  - Kafka:
+    - REST Gateway: reference/kafka/rest/index.md
+    - Schema Registry: reference/kafka/schemaregistry/index.md
+  - Mattermost: reference/mattermost/index.md

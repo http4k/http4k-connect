@@ -11,3 +11,6 @@ store/
 intellij-settings/
 local.properties
 **/scratch.kt
+
+src/docs/reference/index.md
+src/docs/reference/**/index.md
