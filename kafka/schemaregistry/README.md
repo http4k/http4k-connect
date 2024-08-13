@@ -9,7 +9,7 @@ The main `SchemaRegistry` connector provides the following Actions:
 - GetSubjectVersions
 - RegisterSchema
 
-## # Fake
+## Fake
 The Fake provides the above actions.
 
 ### Default Fake port: 41466
