@@ -28,10 +28,11 @@ extra:
 edit_uri: edit/master/src/docs/
 strict: false
 nav:
-  - Introduction: documentation/index.md
+  - Introduction: documentation/index.m
   - Changelog: changelog/index.md
   - Contribute/support http4k: contributing/index.md
   - Code of Conduct: code-of-conduct/index.md
+  - Gradle KSP Plugin: documentation/http4k-connect-ksp-generator/index.md
   - AI:
     - LangChain: documentation/ai/langchain/index.md
     - LMStudio: documentation/ai/lmstudio/index.md
