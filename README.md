@@ -1,9 +1,20 @@
+<div class="github">
+
 <hr/>
-<img src="logo.png" alt="http4k-connect"/>
+
+<picture>
+  <source 
+    srcset="https://connect.http4k.org/img/logo-intro.png" 
+    media="(prefers-color-scheme: dark)">
+  <img src="https://connect.http4k.org/img/logo-intro.png" alt="http4k connect logo">
+</picture>
+
 <hr/>
 
 <a href="https://github.com/http4k/http4k-connect/actions?query=workflow%3A.github%2Fworkflows%2Fbuild.yaml"><img alt="build" src="https://github.com/http4k/http4k-connect/workflows/.github/workflows/build.yaml/badge.svg"></a>
 <a href="https://mvnrepository.com/artifact/org.http4k"><img alt="download" src="https://img.shields.io/maven-central/v/org.http4k/http4k-connect-core"></a>
+
+</div>
 
 http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services and AI
 backends using [http4k](https://http4k.org) compatible APIs, along with Fake implementations for usage during local
