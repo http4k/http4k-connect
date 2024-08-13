@@ -135,8 +135,8 @@ dependencies {
 
 ## Supported Storage backends (named http4k-connect-storage-{technology}>)
 
-- [In-Memory](./core/fake) (included with all Fakes)
-- [File-Based](./core/fake) (included with all Fakes)
+- [In-Memory](./storage/core) (included with all Fakes)
+- [File-Based](./storage/core) (included with all Fakes)
 - [JDBC](./storage/jdbc) -> `org.http4k:http4k-connect-storage-jdbc`
 - [Redis](./storage/redis) -> `org.http4k:http4k-connect-storage-redis`
 - [S3](./storage/s3) -> `org.http4k:http4k-connect-storage-s3`

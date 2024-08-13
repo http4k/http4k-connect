@@ -67,3 +67,10 @@ nav:
     - REST Gateway: documentation/kafka/rest/index.md
     - Schema Registry: documentation/kafka/schemaregistry/index.md
   - Mattermost: documentation/mattermost/index.md
+  - Storage:
+    - File: documentation/storage/core/index.md
+    - HTTP: documentation/storage/http/index.md
+    - In-Memory: documentation/storage/core/index.md
+    - JDBC: documentation/storage/jdbc/index.md
+    - Redis: documentation/storage/redis/index.md
+    - S3: documentation/storage/s3/index.md
