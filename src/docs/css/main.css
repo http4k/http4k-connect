@@ -655,6 +655,7 @@ header p {
 }
 
 .developers-custom h2 {
+    margin-top: 40px;
     margin-bottom: 40px;
     text-align: center;
 }
