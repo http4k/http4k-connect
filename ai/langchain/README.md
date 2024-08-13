@@ -8,12 +8,10 @@ Current adapters support http4k client integrations for the following models, al
   - OpenAiChatLanguageModel
   - OpenAiChatImageModel
   - OpenAiChatEmbeddingModel
-- 
 - Ollama
   - OllamaChatLanguageModel
   - OllamaChatImageModel
   - OllamaChatEmbeddingModel
-- 
 - S3 Document Loaders
 
 Using these adapters is as simple as:
