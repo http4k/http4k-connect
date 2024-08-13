@@ -50,7 +50,7 @@ if __name__ == "__main__":
     shutil.rmtree(working_dir, ignore_errors=True)
     os.makedirs(working_dir, exist_ok=True)
 
-    copy_and_rename_readme_to_index(".", "src/docs/reference")
+    copy_and_rename_readme_to_index(".", "src/docs/documentation")
 
     shutil.copytree(project_root + '/src/docs', working_dir + '/docs')
     shutil.copy(project_root + '/CONTRIBUTING.md', working_dir + '/docs/contributing/index.md')
