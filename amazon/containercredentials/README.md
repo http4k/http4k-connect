@@ -1,5 +1,14 @@
 # Container Credentials
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-amazon-containercredentials")
+    implementation("org.http4k:http4k-connect-amazon-containercredentials-fake")
+}
+```
+
+
 The Container Credentials connector provides the following Actions:
 
      *  GetCredentials

@@ -1,5 +1,14 @@
 # Cloudwatch Evidently
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-amazon-evidently")
+    implementation("org.http4k:http4k-connect-amazon-evidently-fake")
+}
+```
+
+
 The Evidently connector provides the following Actions:
 
      *  CreateProject

@@ -1,5 +1,14 @@
 # Lambda
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-amazon-lambda")
+    implementation("org.http4k:http4k-connect-amazon-lambda-fake")
+}
+```
+
+
 The Lambda connector provides the following Actions:
 
      *  InvokeFunction

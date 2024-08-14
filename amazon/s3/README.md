@@ -1,5 +1,14 @@
 # S3
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-amazon-s3")
+    implementation("org.http4k:http4k-connect-amazon-s3-fake")
+}
+```
+
+
 The S3 connector consists of 2 interfaces:
 
 - `S3` for global operations, providing the following Actions:

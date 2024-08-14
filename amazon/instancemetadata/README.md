@@ -1,5 +1,14 @@
 # Instance Metadata Service
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-amazon-instancemetadata")
+    implementation("org.http4k:http4k-connect-amazon-instancemetadata-fake")
+}
+```
+
+
 The [Instance Metadata Service](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html) V1 connector provides the following Actions:
 
      *  GetAmiId

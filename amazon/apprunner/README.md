@@ -1,5 +1,13 @@
 # AppRunner
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-amazon-apprunner")
+    implementation("org.http4k:http4k-connect-amazon-apprunner-fake")
+}
+```
+
 The AppRunner connector provides the following Actions:
 
      *  CreateService
