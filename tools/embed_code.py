@@ -52,6 +52,8 @@ if __name__ == "__main__":
 
     copy_and_rename_readme_to_index(".", "src/docs/guide/reference")
 
+    print('Copying manual docs....')
+
     shutil.copytree(project_root + '/src/docs', working_dir + '/docs')
     shutil.copy(project_root + '/CONTRIBUTING.md', working_dir + '/docs/contributing/index.md')
     shutil.copy(project_root + '/CODE_OF_CONDUCT.md', working_dir + '/docs/code-of-conduct/index.md')
