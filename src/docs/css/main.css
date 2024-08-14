@@ -613,47 +613,16 @@ header p {
     text-align: center;
 }
 
-@media (max-width: 991.98px) {
-    .learn p {
-        margin-bottom: 20px;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .learn img {
-        margin-bottom: 50px;
-    }
-}
-
-
-
 @media (max-width: 1199.98px) {
-    .api {
-        margin-top: -230px;
-    }
-    .learn {
-        /*margin-top: -230px;*/
+    .api p {
+        max-width: 300px;
     }
 }
 
 @media (max-width: 991.98px) {
-    .api {
-        margin-top: -280px;
-        margin-bottom: 80px;
-    }
-    .learn {
-        /*margin-top: -280px;*/
-        /*margin-bottom: 80px;*/
-    }
 }
 
 @media (max-width: 767.98px) {
-    .api {
-        margin-top: -320px;
-    }
-    .learn {
-        /*margin-top: -320px;*/
-    }
 }
 
 .api h2 {
@@ -663,12 +632,6 @@ header p {
 .api p {
     font-size: 1.125rem;
     margin-bottom: 1.25rem;
-}
-
-@media (max-width: 1199.98px) {
-    .api p {
-        max-width: 300px;
-    }
 }
 
 .api img {
