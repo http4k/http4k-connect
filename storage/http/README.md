@@ -1,5 +1,13 @@
 # HTTP Storage
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-storage-http")
+}
+```
+
+
 This storage implementation provides the ability to mount another storage implementation remotely over HTTP inside an OpenAPI compatible server.
 
 You can mount the storage with: 

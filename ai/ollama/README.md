@@ -1,5 +1,13 @@
 # Ollama
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-ai-ollama")
+    implementation("org.http4k:http4k-connect-ai-ollama-fake")
+}
+```
+
 The http4k-connect Ollama integration provides:
 - Ollama API client
 - FakeOllama server which can be used as testing harness 

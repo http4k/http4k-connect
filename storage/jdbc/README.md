@@ -1,5 +1,13 @@
 # JDBC Storage
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-storage-jdbc")
+}
+```
+
+
 This implementation uses the Jetbrains Exposed library to store the data in the DB. All data is serialised to disk by
 passing it though an http4k AutoMarshalling adapter (see the `http4k-format-XXX` modules). In the example below we use a
 JSON adapter backed by Moshi (which is the default).

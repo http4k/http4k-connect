@@ -1,5 +1,13 @@
 # LmStudio
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-ai-lmstudio")
+    implementation("org.http4k:http4k-connect-ai-lmstudio-fake")
+}
+```
+
 The http4k-connect LmStudio integration provides:
 
 - LmStudio API client

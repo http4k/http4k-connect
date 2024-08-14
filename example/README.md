@@ -1,5 +1,13 @@
 # Example Service
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-example")
+    implementation("org.http4k:http4k-connect-example-fake")
+}
+```
+
 The Example connector provides the following Actions:
 
      *  Echo

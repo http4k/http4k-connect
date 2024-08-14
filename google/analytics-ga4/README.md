@@ -1,4 +1,14 @@
-# Google Analytics
+# Google Analytics GA4
+
+### Installation
+
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-google-analytics-ga4")
+    implementation("org.http4k:http4k-connect-google-analytics-ga4-fake")
+}
+```
 
 The GA connector provides the following Actions:
 

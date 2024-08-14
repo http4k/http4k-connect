@@ -1,5 +1,12 @@
 # Storage Core
 
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-storage-core")
+}
+```
+
 http4k-connect contains a simple lightweight pluggable Key-Value storage abstraction in the `http4k-connect-storage-core` module, which can be used to serialise objects to an underlying store.
 
 Standard Operations are:

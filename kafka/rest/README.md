@@ -1,5 +1,15 @@
 # Kafka Rest Proxy
 
+### Installation
+
+```kotlin
+dependencies {
+    implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
+    implementation("org.http4k:http4k-connect-kafka-rest")
+    implementation("org.http4k:http4k-connect-kafka-rest-fake")
+}
+```
+
 There are 2 distinct APIs in the Rest proxy:
 
 ## v2
