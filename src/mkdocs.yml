@@ -1,6 +1,6 @@
 site_name: http4k Connect
 site_url: https://connect.http4k.org/
-site_description: http4k-connect is a set of lightweight API libraries for connecting to popular third-party cloud services and AI backends
+site_description: http4k Connect is a lightweight API adapter toolkit which includes libraries for connecting to popular third-party cloud services and AI backends
 site_author: David Denton (@daviddenton), Ivan Sanchez (@s4nchez)
 copyright: 'Copyright &copy; 2024 - David Denton (@daviddenton), IvanSanchez (@s4nchez)'
 remote_branch: master
