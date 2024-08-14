@@ -103,3 +103,9 @@ h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink, h4:hover .head
     z-index: 10;
     top: 5px;
 }
+
+table, th, td {
+    padding: 10px;
+    margin-bottom: 40px;
+    border: 1px solid black;
+}
