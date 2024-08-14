@@ -5,7 +5,7 @@ those extensions manually and maintain the API of the adapter appears to contain
 
 ## Generating extension methods for your adapters
 
-1. Define your base Action (and interface) using the http4k base class and tag it with the Http4kConnectAction annotation:
+1 - Define your base Action (and interface) using the http4k base class and tag it with the Http4kConnectAction annotation:
 
 ```kotlin
 interface APIAction<R> : Action<Result<R, RemoteFailure>>
@@ -20,7 +20,7 @@ data class Reverse(val value: String) : APIAction<String> {
 
 ```
 
-2. Define your API adapter, tagging it with the Http4kConnectAdapter annotation:
+2 - Define your API adapter, tagging it with the Http4kConnectAdapter annotation:
 
 ```kotlin
 @Http4kConnectAdapter
@@ -33,7 +33,7 @@ class API(rawHttp: HttpHandler) {
 }
 ```
 
-3. Install KSP into Gradle, apply it, and create a KSP configuration using the http4k-connect KSP plugin in your module:
+3 - Install KSP into Gradle, apply it, and create a KSP configuration using the http4k-connect KSP plugin in your module:
 
 ```kotlin
 plugins {
@@ -49,7 +49,7 @@ dependencies {
 }
 ```
 
-4. And that's it! When Gradle runs, the following extension function will be generated:
+4 - And that's it! When Gradle runs, the following extension function will be generated:
 
 ```kotlin
 fun API.reverse(value: String) = this(Reverse(value))
