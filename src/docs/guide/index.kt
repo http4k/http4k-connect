@@ -1,4 +1,4 @@
-package documentation
+package guide
 
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success

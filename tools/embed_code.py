@@ -25,7 +25,7 @@ def copy_and_rename_readme_to_index(src_dir, docs_dir):
     # Walk through all directories and subdirectories in the source directory
     for root, _, files in os.walk(src_dir):
         for file in files:
-            if file == "README.md":
+            if file == "README.md" and root != ".":
                 # Construct full file paths
                 readme_path = os.path.join(root, file)
                 relative_path = os.path.relpath(root, src_dir)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     shutil.rmtree(working_dir, ignore_errors=True)
     os.makedirs(working_dir, exist_ok=True)
 
-    copy_and_rename_readme_to_index(".", "src/docs/documentation")
+    copy_and_rename_readme_to_index(".", "src/docs/guide/reference")
 
     shutil.copytree(project_root + '/src/docs', working_dir + '/docs')
     shutil.copy(project_root + '/CONTRIBUTING.md', working_dir + '/docs/contributing/index.md')

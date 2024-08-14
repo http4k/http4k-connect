@@ -32,46 +32,46 @@ nav:
   - Changelog: changelog/index.md
   - Contribute/support http4k: contributing/index.md
   - Code of Conduct: code-of-conduct/index.md
-  - Gradle KSP Plugin: documentation/http4k-connect-ksp-generator/index.md
+  - Gradle KSP Plugin: guide/reference/http4k-connect-ksp-generator/index.md
   - AI:
-    - LangChain: documentation/ai/langchain/index.md
-    - LMStudio: documentation/ai/lmstudio/index.md
-    - Ollama: documentation/ai/ollama/index.md
-    - OpenAI: documentation/ai/openai/index.md
+    - LangChain: guide/reference/ai/langchain/index.md
+    - LMStudio: guide/reference/ai/lmstudio/index.md
+    - Ollama: guide/reference/ai/ollama/index.md
+    - OpenAI: guide/reference/ai/openai/index.md
   - AWS:
-    - App Runner: documentation/amazon/apprunner/index.md
-    - Cloudfront: documentation/amazon/cloudfront/index.md
-    - Cloudwatch Logs: documentation/amazon/cloudwatchlogs/index.md
-    - Cognito: documentation/amazon/cognito/index.md
-    - Container Credentials: documentation/amazon/containercredentials/index.md
-    - DynamoDB: documentation/amazon/dynamodb/index.md
-    - EventBridge: documentation/amazon/eventbridge/index.md
-    - Evidently: documentation/amazon/evidently/index.md
-    - Firehose: documentation/amazon/firehose/index.md
-    - IAM Identity Center: documentation/amazon/iamidentitycenter/index.md
-    - Instance Metadata: documentation/amazon/instancemetadata/index.md
-    - KMS: documentation/amazon/kms/index.md
-    - Lambda: documentation/amazon/lambda/index.md
-    - S3: documentation/amazon/s3/index.md
-    - Secrets Manager: documentation/amazon/secretsmanager/index.md
-    - SES: documentation/amazon/ses/index.md
-    - SNS: documentation/amazon/sns/index.md
-    - SQS: documentation/amazon/sqs/index.md
-    - STS: documentation/amazon/sts/index.md
-    - Systems Manager: documentation/amazon/systemsmanager/index.md
-  - GitHub: documentation/github/index.md
-  - GitLab: documentation/gitlab/index.md
+    - App Runner: guide/reference/amazon/apprunner/index.md
+    - Cloudfront: guide/reference/amazon/cloudfront/index.md
+    - Cloudwatch Logs: guide/reference/amazon/cloudwatchlogs/index.md
+    - Cognito: guide/reference/amazon/cognito/index.md
+    - Container Credentials: guide/reference/amazon/containercredentials/index.md
+    - DynamoDB: guide/reference/amazon/dynamodb/index.md
+    - EventBridge: guide/reference/amazon/eventbridge/index.md
+    - Evidently: guide/reference/amazon/evidently/index.md
+    - Firehose: guide/reference/amazon/firehose/index.md
+    - IAM Identity Center: guide/reference/amazon/iamidentitycenter/index.md
+    - Instance Metadata: guide/reference/amazon/instancemetadata/index.md
+    - KMS: guide/reference/amazon/kms/index.md
+    - Lambda: guide/reference/amazon/lambda/index.md
+    - S3: guide/reference/amazon/s3/index.md
+    - Secrets Manager: guide/reference/amazon/secretsmanager/index.md
+    - SES: guide/reference/amazon/ses/index.md
+    - SNS: guide/reference/amazon/sns/index.md
+    - SQS: guide/reference/amazon/sqs/index.md
+    - STS: guide/reference/amazon/sts/index.md
+    - Systems Manager: guide/reference/amazon/systemsmanager/index.md
+  - GitHub: guide/reference/github/index.md
+  - GitLab: guide/reference/gitlab/index.md
   - Google:
-    - Analytics UA: documentation/google/analytics-ua/index.md
-    - Analytics V4: documentation/google/analytics-ga4/index.md
+    - Analytics UA: guide/reference/google/analytics-ua/index.md
+    - Analytics V4: guide/reference/google/analytics-ga4/index.md
   - Kafka:
-    - REST Gateway: documentation/kafka/rest/index.md
-    - Schema Registry: documentation/kafka/schemaregistry/index.md
-  - Mattermost: documentation/mattermost/index.md
+    - REST Gateway: guide/reference/kafka/rest/index.md
+    - Schema Registry: guide/reference/kafka/schemaregistry/index.md
+  - Mattermost: guide/reference/mattermost/index.md
   - Storage:
-    - File: documentation/storage/core/index.md
-    - HTTP: documentation/storage/http/index.md
-    - In-Memory: documentation/storage/core/index.md
-    - JDBC: documentation/storage/jdbc/index.md
-    - Redis: documentation/storage/redis/index.md
-    - S3: documentation/storage/s3/index.md
+    - File: guide/reference/storage/core/index.md
+    - HTTP: guide/reference/storage/http/index.md
+    - In-Memory: guide/reference/storage/core/index.md
+    - JDBC: guide/reference/storage/jdbc/index.md
+    - Redis: guide/reference/storage/redis/index.md
+    - S3: guide/reference/storage/s3/index.md
