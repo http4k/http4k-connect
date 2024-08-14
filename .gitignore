@@ -13,5 +13,4 @@ local.properties
 **/scratch.kt
 
 src/docs/documentation/index.md
-src/docs/guide/reference/index.md
 src/docs/guide/reference/**/index.md

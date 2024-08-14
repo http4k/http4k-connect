@@ -32,13 +32,19 @@ nav:
   - Changelog: changelog/index.md
   - Contribute/support http4k: contributing/index.md
   - Code of Conduct: code-of-conduct/index.md
+  - Rationale & Concepts: guide/concepts/index.md
+  - How To:
+    - Implement your own adapters: guide/howto/implement-your-own-adapters/index.md
+    - Pimp your adapters with KSP!: guide/howto/pimp-your-adapters-with-ksp/index.md
   - Gradle KSP Plugin: guide/reference/http4k-connect-ksp-generator/index.md
+  - Reference: guide/reference/index.md
   - AI:
     - LangChain: guide/reference/ai/langchain/index.md
     - LMStudio: guide/reference/ai/lmstudio/index.md
     - Ollama: guide/reference/ai/ollama/index.md
     - OpenAI: guide/reference/ai/openai/index.md
   - AWS:
+    - General: guide/reference/amazon/index.md
     - App Runner: guide/reference/amazon/apprunner/index.md
     - Cloudfront: guide/reference/amazon/cloudfront/index.md
     - Cloudwatch Logs: guide/reference/amazon/cloudwatchlogs/index.md

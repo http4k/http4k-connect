@@ -1,26 +1,6 @@
 # AWS Services
 
-http4k-connect provides a standardised mechanism to connect to the following AWS services:
-
-- CloudFront
-- Cloudwatch Logs
-- Cognito
-- Container Credentials
-- DynamoDB
-- EventBridge
-- Evidently
-- Firehose
-- IAM Identity Center
-- Instance Metadata Service
-- KMS
-- Lambda
-- S3
-- SecretsManager
-- SES
-- SNS
-- SQS
-- STS
-- SystemsManager
+http4k-connect provides a standardised mechanism to connect to several AWS services. They all use the same mechanisms for authentication, which is what this page is about.
 
 #### Auth
 
