@@ -35,6 +35,7 @@ nav:
   - How To:
     - Implement your own adapters: guide/howto/implement-your-own-adapters/index.md
     - Pimp your adapters with KSP!: guide/howto/pimp-your-adapters-with-ksp/index.md
+  - Module Overview: guide/reference/index.md
   - AI Reference:
     - LangChain: guide/reference/ai/langchain/index.md
     - LMStudio: guide/reference/ai/lmstudio/index.md
