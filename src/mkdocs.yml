@@ -28,7 +28,7 @@ extra:
 edit_uri: edit/master/src/docs/
 strict: false
 nav:
-  - Introduction: documentation/index.m
+  - Introduction: documentation/index.md
   - Changelog: changelog/index.md
   - Contribute/support http4k: contributing/index.md
   - Code of Conduct: code-of-conduct/index.md
