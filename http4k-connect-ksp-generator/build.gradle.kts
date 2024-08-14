@@ -11,3 +11,4 @@ dependencies {
 
     kspTestFixtures(project(":http4k-connect-ksp-generator"))
 }
+
