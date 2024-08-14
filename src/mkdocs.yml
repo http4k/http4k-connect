@@ -29,55 +29,51 @@ edit_uri: edit/master/src/docs/
 strict: false
 nav:
   - Introduction: documentation/index.md
-  - Changelog: changelog/index.md
-  - Contribute/support http4k: contributing/index.md
-  - Code of Conduct: code-of-conduct/index.md
   - Rationale & Concepts: guide/concepts/index.md
   - How To:
     - Implement your own adapters: guide/howto/implement-your-own-adapters/index.md
     - Pimp your adapters with KSP!: guide/howto/pimp-your-adapters-with-ksp/index.md
-  - Gradle KSP Plugin: guide/reference/http4k-connect-ksp-generator/index.md
-  - Reference: guide/reference/index.md
-  - AI:
+  - AI Reference:
     - LangChain: guide/reference/ai/langchain/index.md
     - LMStudio: guide/reference/ai/lmstudio/index.md
     - Ollama: guide/reference/ai/ollama/index.md
     - OpenAI: guide/reference/ai/openai/index.md
-  - AWS:
-    - General: guide/reference/amazon/index.md
-    - App Runner: guide/reference/amazon/apprunner/index.md
-    - Cloudfront: guide/reference/amazon/cloudfront/index.md
-    - Cloudwatch Logs: guide/reference/amazon/cloudwatchlogs/index.md
-    - Cognito: guide/reference/amazon/cognito/index.md
-    - Container Credentials: guide/reference/amazon/containercredentials/index.md
-    - DynamoDB: guide/reference/amazon/dynamodb/index.md
-    - EventBridge: guide/reference/amazon/eventbridge/index.md
-    - Evidently: guide/reference/amazon/evidently/index.md
-    - Firehose: guide/reference/amazon/firehose/index.md
-    - IAM Identity Center: guide/reference/amazon/iamidentitycenter/index.md
-    - Instance Metadata: guide/reference/amazon/instancemetadata/index.md
-    - KMS: guide/reference/amazon/kms/index.md
-    - Lambda: guide/reference/amazon/lambda/index.md
-    - S3: guide/reference/amazon/s3/index.md
-    - Secrets Manager: guide/reference/amazon/secretsmanager/index.md
-    - SES: guide/reference/amazon/ses/index.md
-    - SNS: guide/reference/amazon/sns/index.md
-    - SQS: guide/reference/amazon/sqs/index.md
-    - STS: guide/reference/amazon/sts/index.md
-    - Systems Manager: guide/reference/amazon/systemsmanager/index.md
-  - GitHub: guide/reference/github/index.md
-  - GitLab: guide/reference/gitlab/index.md
-  - Google:
-    - Analytics UA: guide/reference/google/analytics-ua/index.md
-    - Analytics V4: guide/reference/google/analytics-ga4/index.md
-  - Kafka:
-    - REST Gateway: guide/reference/kafka/rest/index.md
-    - Schema Registry: guide/reference/kafka/schemaregistry/index.md
-  - Mattermost: guide/reference/mattermost/index.md
-  - Storage:
-    - File: guide/reference/storage/core/index.md
+  - Cloud Reference:
+    - Connecting to AWS: guide/reference/amazon/index.md
+    - AWS App Runner: guide/reference/amazon/apprunner/index.md
+    - AWS Cloudfront: guide/reference/amazon/cloudfront/index.md
+    - AWS Cloudwatch Logs: guide/reference/amazon/cloudwatchlogs/index.md
+    - AWS Cognito: guide/reference/amazon/cognito/index.md
+    - AWS Container Credentials: guide/reference/amazon/containercredentials/index.md
+    - AWS DynamoDB: guide/reference/amazon/dynamodb/index.md
+    - AWS EventBridge: guide/reference/amazon/eventbridge/index.md
+    - AWS Evidently: guide/reference/amazon/evidently/index.md
+    - AWS Firehose: guide/reference/amazon/firehose/index.md
+    - AWS IAM Identity Center: guide/reference/amazon/iamidentitycenter/index.md
+    - AWS Instance Metadata: guide/reference/amazon/instancemetadata/index.md
+    - AWS KMS: guide/reference/amazon/kms/index.md
+    - AWS Lambda: guide/reference/amazon/lambda/index.md
+    - AWS S3: guide/reference/amazon/s3/index.md
+    - AWS Secrets Manager: guide/reference/amazon/secretsmanager/index.md
+    - AWS SES: guide/reference/amazon/ses/index.md
+    - AWS SNS: guide/reference/amazon/sns/index.md
+    - AWS SQS: guide/reference/amazon/sqs/index.md
+    - AWS STS: guide/reference/amazon/sts/index.md
+    - AWS Systems Manager: guide/reference/amazon/systemsmanager/index.md
+    - GitHub: guide/reference/github/index.md
+    - GitLab: guide/reference/gitlab/index.md
+    - Google Analytics UA: guide/reference/google/analytics-ua/index.md
+    - Google Analytics V4: guide/reference/google/analytics-ga4/index.md
+    - Kafka REST Gateway: guide/reference/kafka/rest/index.md
+    - Kafka Schema Registry: guide/reference/kafka/schemaregistry/index.md
+    - Mattermost: guide/reference/mattermost/index.md
+  - Storage Reference:
+    - File : guide/reference/storage/core/index.md
     - HTTP: guide/reference/storage/http/index.md
     - In-Memory: guide/reference/storage/core/index.md
     - JDBC: guide/reference/storage/jdbc/index.md
     - Redis: guide/reference/storage/redis/index.md
     - S3: guide/reference/storage/s3/index.md
+  - Changelog: changelog/index.md
+  - Contribute/support http4k: contributing/index.md
+  - Code of Conduct: code-of-conduct/index.md
