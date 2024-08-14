@@ -1,4 +1,4 @@
-# AWS Services
+# AWS Overview Guide
 
 http4k-connect provides a standardised mechanism to connect to several AWS services. They all use the same mechanisms for authentication, which is what this page is about.
 
