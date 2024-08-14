@@ -1,5 +1,7 @@
 # S3
 
+### Installation
+
 ```kotlin
 dependencies {
     implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))

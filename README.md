@@ -32,7 +32,7 @@ Although centered around usage in http4k-based projects, http4k-connect does not
 ## Rationale
 Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
 
-## Installation
+### Installation
 ```groovy
 dependencies {
     // install the platform...

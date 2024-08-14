@@ -1,6 +1,6 @@
 # Google Analytics UA
 
-### Installation
+#### Installation
 
 ```kotlin
 dependencies {

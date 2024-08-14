@@ -1,6 +1,6 @@
 # Kafka Rest Proxy
 
-### Installation
+#### Installation
 
 ```kotlin
 dependencies {
