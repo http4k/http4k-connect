@@ -52,18 +52,16 @@ if __name__ == "__main__":
 
     copy_and_rename_readme_to_index(".", "src/docs/guide/reference")
 
+    shutil.copytree(project_root + '/src/docs', working_dir + '/docs')
+
     print('Copying manual docs....')
 
-    shutil.copytree(project_root + '/src/docs', working_dir + '/docs')
     shutil.copy(project_root + '/CONTRIBUTING.md', working_dir + '/docs/contributing/index.md')
     shutil.copy(project_root + '/CODE_OF_CONDUCT.md', working_dir + '/docs/code-of-conduct/index.md')
     shutil.copy(project_root + '/CHANGELOG.md', working_dir + '/docs/changelog/index.md')
 
-    print('Doc1')
     shutil.copy(project_root + '/README.md', working_dir + '/docs/documentation/index.md')
-
-    print('Doc2')
-    shutil.copy(project_root + '/README.md', 'src/docs/documentation/index.md')
+    shutil.copy(project_root + '/README.md', project_root + 'src/docs/documentation/index.md')
 
     pages = [f for f in glob.glob(working_dir + "/**/*.md", recursive=True)]
     for page in pages:
