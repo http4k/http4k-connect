@@ -55,16 +55,15 @@
                         <div class="col-lg-5 col-xl-4">
                             <h2>More than 35 integrations</h2>
                             <p>http4k Connect integrates with many popular Cloud and AI HTTP APIs.</p>
-                            <a class="btn btn-primary" href="/documentation/">Check it out</a>
                         </div>
                         <div class="col-lg-7 offset-xl-1 col-lg-7 offset-xl-1">
                             <div class="row justify-content-center align-items-center">
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/aws.svg" alt="aws"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/openai.svg" alt="openai"/></div>
-                                <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/google-analytics.svg" alt="google analytics"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/kafka.svg" alt="kafka"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/langchain.svg" alt="langchain"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/github.svg" alt="github"/></div>
+                                <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/google-analytics.svg" alt="google analytics"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/ollama.svg" alt="ollama"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/gitlab.svg" alt="gitlab"/></div>
                                 <div class="col-6 col-md-4 col-lg-4 text-center integrationLogo"><img class="img-fluid" src="/img/mattermost.svg" alt="mattermost"/></div>
@@ -117,7 +116,7 @@
                         <img src="/img/support.svg" alt="icon"/>
                         <h4>First class<br/> testability</h4>
                         <div class="dash green-color"> </div>
-                        <p>Most adapters come with an in-memory cloud-service fake which can be used for lightning fast test suites or span up as a server.<br><br>
+                        <p>Most adapters come with an in-memory cloud-service fake which can be used for lightning fast test suites or spun up as a server.<br><br>
                             All fakes are chaos-enabled, so you can test what happens to your code in failure scenarios.</p>
                     </div>
                 </div>
@@ -160,7 +159,7 @@
             <div class="row">
                 <div class="col-lg-1"></div>
                 <div class="col-lg-5 text-center">
-                    <p>1. An <b>API Action</b> is just an interface with methods for marshalling HTTP messages</p>
+                    <p>1. An <b>API Action</b> is just an interface with methods for marshalling the contents of HTTP messages</p>
                     <img class="img-fluid" style="border-radius: 8px" src="/img/action.png" alt="Defining our Actions"/>
                 </div>
                 <div class="col-lg-5 text-center">
@@ -171,14 +170,13 @@
                 <div class="col-lg-1"></div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-5 text-center">
-                    <p>3. Implement any individual API Action with <b>a single class</b> and an <b>extension method</b>
+                    <p>3. Implement any individual Action for your API with <b>a single class</b> and a <b>extension method</b>. Compose multiple calls together without bloating your API adapter!
                     </p>
                     <img class="img-fluid" style="border-radius: 8px" src="/img/operation.png"
                          alt="Defining a custom Operation"/>
                 </div>
                 <div class="col-lg-5 text-center">
-                    <p>4. <b>Instantiate the API adapter</b> by passing in the HTTP client and other requirements, and
-                        call it as normal</p>
+                    <p>4. <b>Instantiate the API adapter</b> by passing in the HTTP client and other transport requirements, and call it as normal. Exceptions are trapped in the returned Result.</p>
                     <img class="img-fluid" style="border-radius: 8px" src="/img/usage.png"
                          alt="Defining an API action"/>
                 </div>
@@ -191,9 +189,8 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-8 text-center">
                         <h2>... or learn from our examples</h2>
-                        <p class="lead">See how to harness the Connect pattern in your projects</p>
-                        <a class="btn btn-primary" href="https://github.com/http4k/http4k-connect-examples">Check it
-                            out</a>
+                        <p class="lead">See how to harness the Connect toolkit in your projects</p>
+                        <a class="btn btn-primary" href="https://github.com/http4k/http4k-connect-examples">Check it out</a>
                     </div>
                 </div>
             </div>
