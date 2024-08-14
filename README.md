@@ -62,4 +62,5 @@ See the [Module Reference](https://connect.http4k.org/guide/reference/) for the 
 </div>
 
 
-## Want to add a new system or Storage backend? Read the [guide](https://connect.http4k.org/contributing/).
+### Want to add a new system or Storage backend?
+Read the [guide](https://connect.http4k.org/contributing/).
