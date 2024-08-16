@@ -3,6 +3,7 @@ on:
         types: [ labeled ]
 jobs:
     handle-pr-for-http4k-upgrade:
+        if: github.event.label.name == 'automerge'
         runs-on: ubuntu-latest
         steps:
             - name: Automatically Merge
