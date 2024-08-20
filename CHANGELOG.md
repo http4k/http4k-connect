@@ -5,6 +5,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.21.0.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 2.0.10
+- **http4k-connect-core** - Rename of `Http4kConnectAdapter` to `Http4kConnectClient`
   - **http4k-connect-ai-openai-**** - [Breaking] Model ResponseFormat as a sealed class hierarchy. Removed ResponseFormatType as now inherent in the JSON marshalling. Alpha support for `json_schema` response format, but it's just a map right now with no class structure.
 
 ### v5.20.0.0
@@ -31,7 +32,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-ai-**** - [Breaking] Repackaged `ModelName` to common location. Just update imports!
 - **http4k-connect-ai-langchain** -  [Breaking] Added support for LmStudio chat and embedding models. Break is
   renamed: `ChatModelOptions` to `OpenAiChatModelOptions`.
-- **http4k-connect-ai-lmstudio*** - [New module!] LmStudio adapter module and fake so you can connect to a locally
+- **http4k-connect-ai-lmstudio*** - [New module!] LmStudio client module and fake so you can connect to a locally
   running LLM server running any model.
 
 ### v5.17.1.1
@@ -53,24 +54,24 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-ai-*** - Migration of the various AI packages (OpenAI/Langchain) to `http4k-ai-` subpackage name. 
 - **http4k-connect-ai-openai** - [Breaking] Use FloatArray for embeddings instead of `List<Float>`
-- **http4k-connect-ai-ollama*** - [New module!] Ollama adapter module so you can use Http4k-connect adapters in
+- **http4k-connect-ai-ollama*** - [New module!] Ollama client module so you can use Http4k-connect clients in
   LangChain apps.
 - **http4k-connect-ai-langchain** - Added support for Ollama models
 
 ### v5.16.0.2
-- **http4k-connect-ai-langchain** - Properly support all message types in OpenAI Adapter.
+- **http4k-connect-ai-langchain** - Properly support all message types in OpenAI Client.
 
 ### v5.16.0.1
-- **http4k-connect-langchain** - Tools requests cannot be empty for chat completions in OpenAI Adapter.
+- **http4k-connect-langchain** - Tools requests cannot be empty for chat completions in OpenAI Client.
 
 ### v5.16.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-langchain** - [New module!] LangChain adapter module so you can use Http4k-connect adapters in LangChain apps. Currently only OpenAI is supported.
+- **http4k-connect-langchain** - [New module!] LangChain adapter module so you can use Http4k-connect clients in LangChain apps. Currently only OpenAI is supported.
 - **http4k-connect-openai-*** - [Breaking] Support tool calls and more modern API version for ChatCompletion.
 
 ### v5.15.0.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-amazon-sqs-** - [Possible break] Implement JSON version of SQS in both fake and adapter. Ensure you are using an up-to-date version of the AWS SDK (which will support the JSON message format). Massive H/T @oharaandrew314
+- **http4k-connect-amazon-sqs-** - [Possible break] Implement JSON version of SQS in both fake and client. Ensure you are using an up-to-date version of the AWS SDK (which will support the JSON message format). Massive H/T @oharaandrew314
 
 ### v5.14.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to V2!
@@ -91,7 +92,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.11.0.0
 - **http4k-connect-*** - Upgrade dependencies
-- **http4k-connect-*** - [Breaking] Reordering of the parameters in adapter constructors to put `overrideEndpoint` at the end of the list, since it is the least commonly used. To fix, just reorder your parameters.
+- **http4k-connect-*** - [Breaking] Reordering of the parameters in client constructors to put `overrideEndpoint` at the end of the list, since it is the least commonly used. To fix, just reorder your parameters.
 
 ### v5.10.1.0
 - **http4k-connect-*** - Upgrade dependencies
@@ -182,7 +183,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.5.1.0
 - **http4k-connect-*** - Upgrade dependencies
-- **http4k-connect-gitlab** - [New module] Basic adapter module
+- **http4k-connect-gitlab** - [New module] Basic client module
 
 ### v5.5.0.1
 - **http4k-connect-amazon-eventbridge** - Support newline characters inside JSON
@@ -197,7 +198,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v5.3.0.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-*** - [Breaking - dev] http4k-connect is now built with Java 21.
-- **http4k-connect-amazon-iamidentitycenter** - [New module] Adapter and fake implementation, plus interactive SSO login via a browser.
+- **http4k-connect-amazon-iamidentitycenter** - [New module] Client and fake implementation, plus interactive SSO login via a browser.
 
 ### v5.2.5.0
 - **http4k-connect-*** - Upgrade dependencies.
@@ -214,7 +215,7 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 ### v5.2.2.0
 - **http4k-connect-*** - Upgrade dependencies.
 - **http4k-connect-amazon-dynamodb** Present a more concise introduction to the DynamoDB table mapper. H/T @oharaandrew314
-- **http4k-connect-amazon-cloudwatchlogs** - [New module] Adapter and fake implementation.
+- **http4k-connect-amazon-cloudwatchlogs** - [New module] Client and fake implementation.
 
 ### v5.2.0.0
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 1.9.10.
@@ -254,10 +255,10 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 - **http4k-connect-amazon-containercredentials** - [Fix] Handle ARN NOT_SUPPLIED when getting aws credentials and running on AWS AppRunner
 
 ### v5.1.2.0
-- **http4k-connect-amazon-eventbridge** - [New module] Adapter and fake implementation.
+- **http4k-connect-amazon-eventbridge** - [New module] Client and fake implementation.
 
 ### v5.1.1.0
-- **http4k-connect-amazon-firehose** - [New module] Adapter and fake implementation.
+- **http4k-connect-amazon-firehose** - [New module] Client and fake implementation.
 
 ### v5.1.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.9.0.
@@ -408,7 +409,7 @@ are supported.
 
 ### v3.27.1.0
 - **http4k-connect-*** - Upgrade dependencies.
-- **http4k-connect-ksp-generator*** - Generation of adapters is now done via KSP instead of KAPT.
+- **http4k-connect-ksp-generator*** - Generation of clients is now done via KSP instead of KAPT.
 
 ### v3.27.0.2
 - **http4k-connect-ksp-generator*** - Support for Object action classes.
@@ -418,7 +419,7 @@ are supported.
 
 ### v3.27.0.0
 - **http4k-connect-*** - Upgrade dependencies, including Kotlin to 1.8.0
-- **http4k-connect-ksp-generator*** - [New module] A version of Action and Adapter code generator written using KSP.
+- **http4k-connect-ksp-generator*** - [New module] A version of Action and Client code generator written using KSP.
 - **http4k-connect-amazon-instancemetadata** - Add Amazon RegionProvider with environment, profile, and imds support. H/T @oharaandrew314
 
 ### v3.26.4.0
@@ -427,7 +428,7 @@ are supported.
 - **http4k-connect-amazon-ec2credentials** - Deprecated.  Use the **http4k-connect-amazon-instancemetadata** module
 
 ### v3.26.3.0
-- **http4k-connect-cognito** - We now generate action code using Kapt, as per the other adapters.
+- **http4k-connect-cognito** - We now generate action code using Kapt, as per the other clients.
 - **http4k-connect-cognito-fake** - Fixes to login page.
 
 ### v3.26.2.0
@@ -701,7 +702,7 @@ are supported.
 
 ### v3.4.0.0
 - **http4k-connect-amazon-*** - Region is now not reliant on default AWS format. This helps with on-prem installations with non-standard region format.
-- **http4k-connect-google-analytics** - [Breaking] Moved Tracking ID out of pageView and into adapter as is global.
+- **http4k-connect-google-analytics** - [Breaking] Moved Tracking ID out of pageView and into client as is global.
 
 ### v3.3.3.0
 - **http4k-connect-*** - Upgrade dependencies, including http4k to 4.9.5.0.
@@ -744,7 +745,7 @@ are supported.
 - **http4k-connect-*** : Add Moshi serializers for enums, making them compatible with GraalVM
 
 ### v3.0.0.0
-- **http4k-connect-*** : Major repackage of all model classes. Model package has been normalised to `org.http4k.connect.amazon.<system>.model`. All non-top level message objects have been moved from the `org.http4k.connect.amazon.<system>.action` package into `org.http4k.connect.amazon.<system>.model`. This is probably very annoying, and apologies in advance - hence the major version uptick. We are not proud of ourselves, but it needed to be done for our future plans... Also imports of generated adapter methods may need to be altered as some of them were in teh wrong place.
+- **http4k-connect-*** : Major repackage of all model classes. Model package has been normalised to `org.http4k.connect.amazon.<system>.model`. All non-top level message objects have been moved from the `org.http4k.connect.amazon.<system>.action` package into `org.http4k.connect.amazon.<system>.model`. This is probably very annoying, and apologies in advance - hence the major version uptick. We are not proud of ourselves, but it needed to be done for our future plans... Also imports of generated client methods may need to be altered as some of them were in teh wrong place.
 
 ### v2.23.0.0
 - **http4k-connect-amazon-dynamodb** : [Slight break] Repackaging work of item types to reuse them for Dynamo event marshalling.
@@ -796,7 +797,7 @@ are supported.
 - **http4k-connect-amazon-*** : [Break] Rename `Base64Blob.encoded()` -> `Base64Blob.encode()` for clarity.
 
 ### v2.15.4.0
-- **http4k-connect-github** : Add infra for main GitHub adapter. No custom actions implemented yet.
+- **http4k-connect-github** : Add infra for main GitHub client. No custom actions implemented yet.
 
 ### v2.15.3.0
 - **http4k-connect-github** : [New module] Containing only basic callback infrastructure and Filters for checking requests.
@@ -811,7 +812,7 @@ are supported.
 - Switch to Maven Central publishing as first options
 
 ### v2.15.0.0
-- **http4k-connect-google-analytics** : [Break] Harmonised interface with other adapters. TrackingId now moved 
+- **http4k-connect-google-analytics** : [Break] Harmonised interface with other clients. TrackingId now moved 
 to individual requests
 
 ### v2.14.2.0
@@ -822,11 +823,11 @@ to individual requests
 - **http4k-connect-kapt-generator** : Un-hardcode result type as per Action interface. 
 
 ### v2.14.0.0
-- **http4k-connect-*** : [Breaking] Changed Result type on Action to be generic to support other programming models. This will only affect users who are implementing their own adapters. To fix, change: 
+- **http4k-connect-*** : [Breaking] Changed Result type on Action to be generic to support other programming models. This will only affect users who are implementing their own clients. To fix, change: 
 ```kotlin
-interface MyAdapter<R> : Action<R>
+interface MyClient<R> : Action<R>
 // to 
-interface MyAdapter<R> : Action<Result<R, RemoteFailure>>
+interface MyClient<R> : Action<Result<R, RemoteFailure>>
 ```
 
 ### v2.13.0.1

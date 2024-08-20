@@ -1,9 +1,9 @@
-# Pimp your API adapters with KSP!
+# Pimp your API clients with KSP!
 
-http4k-connect ships with a KSP plugin to automate the generation of the adapter extension-methods that accompany each Connect adapter. This allows you to skip creating
-those extensions manually and maintain the API of the adapter appears to contain methods for each Action.
+http4k-connect ships with a KSP plugin to automate the generation of the client extension-methods that accompany each Connect client. This allows you to skip creating
+those extensions manually and maintain the API of the client appears to contain methods for each Action.
 
-## Generating extension methods for your adapters
+## Generating extension methods for your clients
 
 1 - Define your base Action (and interface) using the http4k base class and tag it with the Http4kConnectAction annotation:
 
@@ -20,10 +20,10 @@ data class Reverse(val value: String) : APIAction<String> {
 
 ```
 
-2 - Define your API adapter, tagging it with the Http4kConnectAdapter annotation:
+2 - Define your API client, tagging it with the Http4kConnectClient annotation:
 
 ```kotlin
-@Http4kConnectAdapter
+@Http4kConnectClient
 class API(rawHttp: HttpHandler) {
     private val transport = SetBaseUriFrom(Uri.of("https://api.com"))
         .then(rawHttp)

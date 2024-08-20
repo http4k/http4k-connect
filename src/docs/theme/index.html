@@ -37,8 +37,8 @@
     <div class="container h-80">
         <div class="row align-items-center h-100">
             <div class="col-md-7 col-lg-5 col-xl-4">
-                <h2 class="header mb-4">Functional, modular and testable API adapters</h2>
-                <p class="mb-5">http4k Connect is a lightweight API adapter toolkit which includes libraries for connecting to popular third-party cloud services and AI
+                <h2 class="header mb-4">Functional, modular and testable API clients</h2>
+                <p class="mb-5">http4k Connect is a lightweight API client toolkit which includes libraries for connecting to popular third-party cloud services and AI
                     backends</p>
                 <a class="btn btn-warning" href="/documentation">See the docs</a>
             </div>
@@ -91,7 +91,7 @@
                         <img src="/img/supportive.svg" alt="icon"/>
                         <h4>Tiny <br/> footprint</h4>
                         <div class="dash pink-color"> </div>
-                        <p>In true http4k-style, Connect adapters rely on minimal dependencies and zero reflection, perfect for lightweight and security-conscious applications.</p>
+                        <p>In true http4k-style, Connect clients rely on minimal dependencies and zero reflection, perfect for lightweight and security-conscious applications.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
@@ -99,7 +99,7 @@
                         <img src="/img/footprint.svg" alt="icon"/>
                         <h4>Total <br/> modularisation</h4>
                         <div class="dash violet-color"> </div>
-                        <p>Extension of the adapters is as simple as combining function calls or implementing a single data class with just 2 simple methods.</p>
+                        <p>Extension of the clients is as simple as combining function calls or implementing a single data class with just 2 simple methods.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
@@ -107,7 +107,7 @@
                         <img src="/img/support.svg" alt="icon"/>
                         <h4>Kotlin-<br/> centric</h4>
                         <div class="dash indigo-color"> </div>
-                        <p>Every adapter leverages Result types and is exception-safe, so you can finally code like it's Kotlin that you're writing!</p>
+                        <p>Every client leverages Result types and is exception-safe, so you can finally code like it's Kotlin that you're writing!</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
@@ -115,7 +115,7 @@
                         <img src="/img/testability.svg" alt="icon"/>
                         <h4>Battle-tested <br/> in the wild</h4>
                         <div class="dash blue-color"> </div>
-                        <p>Connect adapters have been used to build high volume applications in Banking, Publishing, eCommerce & Government projects.</p>
+                        <p>Connect clients have been used to build high volume applications in Banking, Publishing, eCommerce & Government projects.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
@@ -123,7 +123,7 @@
                         <img src="/img/support.svg" alt="icon"/>
                         <h4>First class<br/> testability</h4>
                         <div class="dash green-color"> </div>
-                        <p>Most adapters come with an in-memory cloud-service fake which can be used for lightning fast test suites or spun up as a server.<br><br>
+                        <p>Most clients come with an in-memory cloud-service fake which can be used for lightning fast test suites or spun up as a server.<br><br>
                             All fakes are chaos-enabled, so you can test what happens to your code in failure scenarios.</p>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                         <img src="/img/supportive.svg" alt="icon"/>
                         <h4>Ultimate<br/> type safety</h4>
                         <div class="dash orange-color"> </div>
-                        <p>Adapters leverage TinyTypes to provide typesafe coding and automatic serialisation.<br/><br/>
+                        <p>clients leverage TinyTypes to provide typesafe coding and automatic serialisation.<br/><br/>
                             Stop relying on unsafe, stringly-typed APIs.</p>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                         <img src="/img/footprint.svg" alt="icon"/>
                         <h4>Simple Key/value<br/> storage</h4>
                         <div class="dash red-color"> </div>
-                        <p>Ships with a storage abstraction for simple key-value storage, and adapters for popular backends.<br/><br/>
+                        <p>Ships with a storage abstraction for simple key-value storage, and clients for popular backends.<br/><br/>
                             Plugin in-memory, S3, JDBC or Redis with a single line of code!</p>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
 <div class="our-document">
     <div class="developers-custom">
         <div class="container-fluid">
-            <h2>Modularise your own API Adapters in 4 easy steps ...</h2>
+            <h2>Modularise your own API clients in 4 easy steps ...</h2>
             <div class="row">
                 <div class="col-lg-1"></div>
                 <div class="col-lg-5 text-center">
@@ -170,20 +170,20 @@
                     <img class="img-fluid" style="border-radius: 8px" src="/img/action.png" alt="Defining our Actions"/>
                 </div>
                 <div class="col-lg-5 text-center">
-                    <p>2. An API adapter is just a <b>class with a single function</b> and handles with the transport
+                    <p>2. An API client is just a <b>class with a single function</b> and handles with the transport
                         for the remote API.</p>
                     <img class="img-fluid" style="border-radius: 8px" src="/img/api.png" alt="Defining an API action"/>
                 </div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-5 text-center">
-                    <p>3. Implement any individual Action for your API with <b>a single class</b> and a <b>extension method</b>. Compose multiple calls together without bloating your API adapter!
+                    <p>3. Implement any individual Action for your API with <b>a single class</b> and a <b>extension method</b>. Compose multiple calls together without bloating your API client!
                     </p>
                     <img class="img-fluid" style="border-radius: 8px" src="/img/operation.png"
                          alt="Defining a custom Operation"/>
                 </div>
                 <div class="col-lg-5 text-center">
-                    <p>4. <b>Instantiate the API adapter</b> by passing in the HTTP client and other transport requirements, and call it as normal. Exceptions are trapped in the returned Result.</p>
+                    <p>4. <b>Instantiate the API client</b> by passing in the HTTP client and other transport requirements, and call it as normal. Exceptions are trapped in the returned Result.</p>
                     <img class="img-fluid" style="border-radius: 8px" src="/img/usage.png"
                          alt="Defining an API action"/>
                 </div>

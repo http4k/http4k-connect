@@ -13,14 +13,14 @@ class CodeGenerationTest {
 
     @Test
     fun `correct code is generated for adapter`() {
-        assertThat(TestAdapter.Impl().testFooAction("hello", one), equalTo(Success("hello")))
-        assertThat(TestAdapter.Impl().testBarAction("hello"), equalTo(Success("hello")))
+        assertThat(TestClient.Impl().testFooAction("hello", one), equalTo(Success("hello")))
+        assertThat(TestClient.Impl().testBarAction("hello"), equalTo(Success("hello")))
     }
 
     @Test
     fun `correct code is generated for adapter with paged action`() {
         assertThat(
-            TestAdapter.Impl().testFooPagedActionPaginated("hello", one).toList(),
+            TestClient.Impl().testFooPagedActionPaginated("hello", one).toList(),
             equalTo(listOf(Success(listOf())))
         )
     }

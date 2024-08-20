@@ -1,6 +1,6 @@
 site_name: http4k Connect
 site_url: https://connect.http4k.org/
-site_description: http4k Connect is a lightweight API adapter toolkit which includes libraries for connecting to popular third-party cloud services and AI backends
+site_description: http4k Connect is a lightweight API client toolkit which includes libraries for connecting to popular third-party cloud services and AI backends
 site_author: David Denton (@daviddenton), Ivan Sanchez (@s4nchez)
 copyright: 'Copyright &copy; 2024 - David Denton (@daviddenton), IvanSanchez (@s4nchez)'
 remote_branch: master
@@ -30,11 +30,11 @@ strict: false
 nav:
   - Introduction: documentation/index.md
   - Concepts:
-    - API Adapters: guide/concepts/api-adapters.md
+    - API Clients: guide/concepts/api-clients.md
     - System Fakes: guide/concepts/system-fakes.md
   - How To:
-    - Implement your own adapters: guide/howto/implement-your-own-adapters/index.md
-    - Pimp your adapters with KSP!: guide/howto/pimp-your-adapters-with-ksp/index.md
+    - Implement your own API clients: guide/howto/implement-your-own-clients/index.md
+    - Pimp your API clients with KSP!: guide/howto/pimp-your-clients-with-ksp/index.md
   - Module Overview: guide/reference/index.md
   - AI Reference:
     - LangChain: guide/reference/ai/langchain/index.md

@@ -7,9 +7,9 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.squareup.kotlinpoet.ksp.writeTo
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.Http4kConnectAdapter
+import org.http4k.connect.Http4kConnectApiClient
 
-class Http4kConnectAdapterKspProcessor(
+class Http4kConnectApiClientKspProcessor(
     private val logger: KSPLogger,
     private val codeGenerator: CodeGenerator
 ) : SymbolProcessor {
@@ -19,9 +19,9 @@ class Http4kConnectAdapterKspProcessor(
             .toList()
 
         resolver
-            .getSymbolsWithAnnotation(Http4kConnectAdapter::class.qualifiedName!!)
+            .getSymbolsWithAnnotation(Http4kConnectApiClient::class.qualifiedName!!)
             .forEach {
-                it.accept(Http4kConnectAdapterVisitor { logger.info(it.toString()) }, allActions)
+                it.accept(Http4kConnectApiClientVisitor { logger.info(it.toString()) }, allActions)
                     .forEach { it.writeTo(codeGenerator = codeGenerator, aggregating = false) }
             }
         return emptyList()

@@ -3,7 +3,7 @@ package org.http4k.connect.plugin
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import dev.forkhandles.result4k.Result
-import org.http4k.connect.Http4kConnectAdapter
+import org.http4k.connect.Http4kConnectApiClient
 import org.http4k.connect.Paged
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.plugin.bar.BarAction
@@ -16,15 +16,15 @@ import org.http4k.format.asConfigurable
 import se.ansman.kotshi.JsonSerializable
 import se.ansman.kotshi.KotshiJsonAdapterFactory
 
-@Http4kConnectAdapter
-interface TestAdapter {
+@Http4kConnectApiClient
+interface TestClient {
     operator fun <R> invoke(action: FooAction<R>): Result<R, RemoteFailure>
     operator fun <R> invoke(action: BarAction<R>): Result<R, RemoteFailure>
 
     companion object
 }
 
-fun TestAdapter.Companion.Impl() = object : TestAdapter {
+fun TestClient.Companion.Impl() = object : TestClient {
     override fun <R> invoke(action: FooAction<R>) = action.toResult(Response(OK).body("[]"))
     override fun <R> invoke(action: BarAction<R>) = action.toResult(Response(OK))
 }

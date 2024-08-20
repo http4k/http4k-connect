@@ -1,10 +1,10 @@
 package org.http4k.connect.github.app
 
 import dev.forkhandles.result4k.Result
-import org.http4k.connect.Http4kConnectAdapter
+import org.http4k.connect.Http4kConnectApiClient
 import org.http4k.connect.RemoteFailure
 
-@Http4kConnectAdapter
+@Http4kConnectApiClient
 interface GitHubApp {
     operator fun <R> invoke(action: GitHubAppAction<R>): Result<R, RemoteFailure>
 

@@ -23,7 +23,7 @@ val sqs = SQS.Http()
 - AWS_SECRET_ACCESS_KEY
 - AWS_SESSION_TOKEN
 
-This auth method uses the STS `AssumeRole` action to retrieve the rotating credentials from STS using auth from the environmental variables. This requires overriding the credentials provider used when constructing the adapter:
+This auth method uses the STS `AssumeRole` action to retrieve the rotating credentials from STS using auth from the environmental variables. This requires overriding the credentials provider used when constructing the client:
 ```kotlin
 val sqs = SQS.Http(credentialsProvider = CredentialsProvider.STS())
 ```
@@ -32,7 +32,7 @@ val sqs = SQS.Http(credentialsProvider = CredentialsProvider.STS())
 - AWS_ROLE_ARN
 - AWS_WEB_IDENTITY_TOKEN_FILE
 
-This auth method uses the STS `AssumeRoleWithWebIdentity` action to retrieve the rotating credentials from STS using the Web Identity JWT from the file path contained in the env variable. This requires overriding the credentials provider used when constructing the adapter:
+This auth method uses the STS `AssumeRoleWithWebIdentity` action to retrieve the rotating credentials from STS using the Web Identity JWT from the file path contained in the env variable. This requires overriding the credentials provider used when constructing the client:
 
 ```kotlin
 val sqs = SQS.Http(credentialsProvider = CredentialsProvider.STSWebIdentity())

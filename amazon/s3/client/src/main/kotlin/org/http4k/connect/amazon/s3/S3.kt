@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.s3
 
 import dev.forkhandles.result4k.Result
-import org.http4k.connect.Http4kConnectAdapter
+import org.http4k.connect.Http4kConnectApiClient
 import org.http4k.connect.RemoteFailure
 import org.http4k.connect.amazon.AwsServiceCompanion
 import org.http4k.connect.amazon.s3.action.GetObject
@@ -12,7 +12,7 @@ import java.io.InputStream
 /**
  * Docs: https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
  */
-@Http4kConnectAdapter
+@Http4kConnectApiClient
 interface S3 {
     operator fun <R> invoke(action: S3Action<R>): Result<R, RemoteFailure>
 
@@ -22,7 +22,7 @@ interface S3 {
 /**
  * Interface for bucket-specific S3 operations
  */
-@Http4kConnectAdapter
+@Http4kConnectApiClient
 interface S3Bucket {
     operator fun <R> invoke(action: S3BucketAction<R>): Result<R, RemoteFailure>
 

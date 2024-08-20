@@ -22,8 +22,8 @@
 | AWS        | [SQS](./amazon/sqs)                               | ✅              |                                        |
 | AWS        | [STS](./amazon/sts)                               | ✅              |                                        |
 | AWS        | [Systems Manager](./amazon/systemsmanager)        | ✅              |                                        |
-| GitHub     | [V3 API](./github)                                | ❌              | Adapter Shell and WebHook Signing only |
-| GitLab     | [API](./gitlab)                                   | ❌              | Adapter Shell and WebHook Signing only |
+| GitHub     | [V3 API](./github)                                | ❌              | Client Shell and WebHook Signing only |
+| GitLab     | [API](./gitlab)                                   | ❌              | Client Shell and WebHook Signing only |
 | Google     | [Analytics GA4](./google/analytics-ga4)           | ✅              |                                        |
 | Google     | [Analytics UA](./google/analytics-ua)             | ✅              |                                        |
 | Kafka      | [Rest Proxy](./kafka/rest)                        | ✅              |                                        |

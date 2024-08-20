@@ -46,10 +46,10 @@ class Http4kConnectActionVisitor(private val log: (Any?) -> Unit) :
 
 private fun generateActionPagination(
     actionClass: KSClassDeclaration,
-    adapterClazz: KSClassDeclaration,
+    clientClazz: KSClassDeclaration,
     ctr: KSFunctionDeclaration
 ) = generateExtensionFunction(
-    actionClass, adapterClazz, ctr, "Paginated",
+    actionClass, clientClazz, ctr, "Paginated",
     CodeBlock.of(
         "return org.http4k.connect.paginated(::invoke, %T(${ctr.parameters.joinToString(", ") { it.name!!.asString() }}))",
         actionClass.asType(emptyList()).toTypeName()
@@ -67,10 +67,10 @@ private fun generateActionPagination(
 
 private fun generateActionExtension(
     actionClass: KSClassDeclaration,
-    adapterClazz: KSClassDeclaration,
+    clientClazz: KSClassDeclaration,
     ctr: KSFunctionDeclaration
 ) = generateExtensionFunction(
-    actionClass, adapterClazz, ctr, "",
+    actionClass, clientClazz, ctr, "",
     CodeBlock.of(
         when (actionClass.classKind) {
             OBJECT -> "return invoke(%T)"

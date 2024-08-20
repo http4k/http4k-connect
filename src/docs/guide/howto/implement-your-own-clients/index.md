@@ -1,4 +1,4 @@
-It is very easy to implement your own adapters to follow the pattern. For the system `MySystem`, you would need to:
+It is very easy to implement your own clients to follow the pattern. For the system `MySystem`, you would need to:
 
 1. Depend on the `http4k-connect-core` artifact
 2. Add an Action interface and implementation:
@@ -12,7 +12,7 @@ data class Echo(val value: String) : MySystemAction<Echoed> {
 
 data class Echoed(val value: String)
 ```
-3. Add your adapter interface and HTTP implementation:
+3. Add your client interface and HTTP implementation:
 ```kotlin
 interface MySystem {
     operator fun <R : Any> invoke(action: MySystemAction<R>): R
@@ -25,4 +25,4 @@ fun MySystem.Companion.Http(http: HttpHandler) = object : MySystem {
 }
 ```
 
-See also the [guide]() on using KSP to generate extension functions for your adapters!
+See also the [guide]() on using KSP to generate extension functions for your clients!
