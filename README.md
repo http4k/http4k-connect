@@ -30,7 +30,7 @@ exposed by [http4k](https://http4k.org), so you can:
 Although centered around usage in http4k-based projects, http4k-connect does not require this and the libraries are usable from any JVM application.
 
 ## Rationale
-Although convenient, many client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
+Although convenient, many API client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
 
 ### Installation
 ```kotlin
@@ -38,7 +38,7 @@ dependencies {
     // install the platform...
     implementation(platform("org.http4k:http4k-connect-bom:5.20.0.0"))
 
-    // ...then choose a client
+    // ...then choose an API client
     implementation("org.http4k:http4k-connect-amazon-s3")
 
     // ...a fake for testing
