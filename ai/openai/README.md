@@ -11,9 +11,9 @@ dependencies {
 ```
 
 The http4k-connect OpenAI integration provides:
-- OpenAI API client
+- OpenAI API Client
 - Plugin SDK for developing [OpenAI plugins](https://platform.openai.com/docs/plugins)
-- FakeOpenAI server which can be used as testing harness for either API client or OpenAI plugins
+- FakeOpenAI server which can be used as testing harness for either API Client or OpenAI plugins
 
 ## OpenAI API connector
 

@@ -1,4 +1,4 @@
-# Pimp your API clients with KSP!
+# Pimp your API Clients with KSP!
 
 http4k-connect ships with a KSP plugin to automate the generation of the client extension-methods that accompany each Connect client. This allows you to skip creating
 those extensions manually and maintain the API of the client appears to contain methods for each Action.
@@ -20,7 +20,7 @@ data class Reverse(val value: String) : APIAction<String> {
 
 ```
 
-2 - Define your API client, tagging it with the Http4kConnectClient annotation:
+2 - Define your API Client, tagging it with the Http4kConnectClient annotation:
 
 ```kotlin
 @Http4kConnectClient

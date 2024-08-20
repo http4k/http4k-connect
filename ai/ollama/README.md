@@ -11,7 +11,7 @@ dependencies {
 ```
 
 The http4k-connect Ollama integration provides:
-- Ollama API client
+- Ollama API Client
 - FakeOllama server which can be used as testing harness 
 
 ## Ollama API connector

@@ -12,8 +12,8 @@ dependencies {
 
 The http4k-connect LmStudio integration provides:
 
-- LmStudio API client
-- FakeLmStudio server which can be used as testing harness for either API client
+- LmStudio API Client
+- FakeLmStudio server which can be used as testing harness for either API Client
 
 ## LmStudio API connector
 

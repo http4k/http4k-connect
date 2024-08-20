@@ -229,7 +229,7 @@ filterExpression {
 }
 ``` 
 
-### General example usage of API client
+### General example usage of API Client
 
 ```kotlin
 // we can connect to the real service
