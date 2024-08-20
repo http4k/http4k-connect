@@ -1,10 +1,19 @@
 package guide
 
+import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.map
 import org.http4k.client.JavaHttpClient
 import org.http4k.connect.RemoteFailure
+import org.http4k.connect.amazon.s3.Http
+import org.http4k.connect.amazon.s3.S3
+import org.http4k.connect.amazon.s3.S3Action
+import org.http4k.connect.amazon.s3.action.BucketList
+import org.http4k.connect.amazon.s3.listBuckets
+import org.http4k.connect.amazon.s3.model.BucketName
+import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.orThrow
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -16,7 +25,36 @@ import org.http4k.filter.ClientFilters.SetBaseUriFrom
 
 
 
-    interface APIAction<R> {
+
+    val s3 = S3.Http(http = JavaHttpClient())
+
+    val buckets: Result<BucketList, RemoteFailure> = s3.listBuckets()
+
+    val bucketNames: List<BucketName> = buckets.map { it.items }.orThrow()
+
+
+
+
+
+    data class InvertBucket(val bucketName: BucketName) : S3Action<BucketName> {
+        override fun toRequest() = Request(POST, Uri.of("/${bucketName}/invert"))
+
+        override fun toResult(response: Response) =
+            if(response.status.successful) Success(BucketName.of(response.bodyString()))
+            else Failure(asRemoteFailure(response))
+    }
+
+    fun S3.invertBucket(bucketName: BucketName) = invoke(InvertBucket(bucketName))
+
+
+
+    val a = bucketNames.forEach { println(it) }
+    val inverted = s3.invertBucket(BucketName.of("my-bucket")).orThrow()
+
+
+
+
+interface APIAction<R> {
         fun toRequest(): Request
         fun toResult(response: Response): Result<R, RemoteFailure>
     }
