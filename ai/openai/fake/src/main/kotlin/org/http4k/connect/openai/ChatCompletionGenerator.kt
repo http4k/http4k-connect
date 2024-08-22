@@ -1,10 +1,11 @@
 package org.http4k.connect.openai
 
+import org.http4k.connect.model.FinishReason
+import org.http4k.connect.model.FinishReason.*
 import org.http4k.connect.model.Role
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
-import org.http4k.connect.openai.action.FinishReason
 import java.util.Random
 
 /**
@@ -21,7 +22,7 @@ val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
         req.messages.flatMap { m ->
             m.content.mapIndexed { i, content ->
-                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, FinishReason.stop)
+                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, stop)
             }
         }
     }

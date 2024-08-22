@@ -23,10 +23,6 @@ import org.http4k.connect.lmstudio.action.ContentType
 import org.http4k.connect.lmstudio.action.Detail.auto
 import org.http4k.connect.lmstudio.action.Detail.high
 import org.http4k.connect.lmstudio.action.Detail.low
-import org.http4k.connect.lmstudio.action.FinishReason.content_filter
-import org.http4k.connect.lmstudio.action.FinishReason.length
-import org.http4k.connect.lmstudio.action.FinishReason.stop
-import org.http4k.connect.lmstudio.action.FinishReason.tool_calls
 import org.http4k.connect.lmstudio.action.FunctionCall
 import org.http4k.connect.lmstudio.action.FunctionSpec
 import org.http4k.connect.lmstudio.action.ImageUrl
@@ -36,6 +32,10 @@ import org.http4k.connect.lmstudio.action.ResponseFormat
 import org.http4k.connect.lmstudio.action.Tool
 import org.http4k.connect.lmstudio.action.ToolCall
 import org.http4k.connect.lmstudio.chatCompletion
+import org.http4k.connect.model.FinishReason.stop
+import org.http4k.connect.model.FinishReason.content_filter
+import org.http4k.connect.model.FinishReason.length
+import org.http4k.connect.model.FinishReason.tool_calls
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
 import org.http4k.connect.orThrow

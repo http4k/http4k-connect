@@ -15,6 +15,11 @@ import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.output.FinishReason
 import dev.langchain4j.model.output.Response
+import org.http4k.connect.model.FinishReason.stop
+import org.http4k.connect.model.FinishReason.tool_calls
+import org.http4k.connect.model.FinishReason.length
+import org.http4k.connect.model.FinishReason.content_filter
+
 import dev.langchain4j.model.output.TokenUsage
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
@@ -26,10 +31,6 @@ import org.http4k.connect.openai.action.ContentType
 import org.http4k.connect.openai.action.Detail.auto
 import org.http4k.connect.openai.action.Detail.high
 import org.http4k.connect.openai.action.Detail.low
-import org.http4k.connect.openai.action.FinishReason.content_filter
-import org.http4k.connect.openai.action.FinishReason.length
-import org.http4k.connect.openai.action.FinishReason.stop
-import org.http4k.connect.openai.action.FinishReason.tool_calls
 import org.http4k.connect.openai.action.FunctionCall
 import org.http4k.connect.openai.action.FunctionSpec
 import org.http4k.connect.openai.action.ImageUrl

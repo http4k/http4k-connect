@@ -15,6 +15,7 @@ import org.http4k.connect.lmstudio.ResponseFormatType
 import org.http4k.connect.lmstudio.TokenId
 import org.http4k.connect.lmstudio.User
 import org.http4k.connect.lmstudio.action.Detail.auto
+import org.http4k.connect.model.FinishReason
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
@@ -159,10 +160,6 @@ data class Choice(
     val finish_reason: FinishReason?
 ) {
     val message get() = msg ?: delta
-}
-
-enum class FinishReason {
-    stop, length, content_filter, tool_calls
 }
 
 @JsonSerializable

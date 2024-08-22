@@ -15,6 +15,7 @@ import org.http4k.connect.azure.AzureAIMoshi.autoBody
 import org.http4k.connect.azure.TokenId
 import org.http4k.connect.azure.User
 import org.http4k.connect.azure.action.Detail.auto
+import org.http4k.connect.model.FinishReason
 import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
 import org.http4k.core.ContentType.Companion.APPLICATION_JSON
@@ -173,10 +174,6 @@ data class Choice(
     val finish_reason: FinishReason?
 ) {
     val message get() = msg ?: delta
-}
-
-enum class FinishReason {
-    stop, length, content_filter, tool_calls
 }
 
 @JsonSerializable

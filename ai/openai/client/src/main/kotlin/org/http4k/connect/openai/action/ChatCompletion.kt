@@ -6,6 +6,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.model.FinishReason
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
@@ -173,10 +174,6 @@ data class Choice(
     val finish_reason: FinishReason?
 ) {
     val message get() = msg ?: delta
-}
-
-enum class FinishReason {
-    stop, length, content_filter, tool_calls
 }
 
 @JsonSerializable
