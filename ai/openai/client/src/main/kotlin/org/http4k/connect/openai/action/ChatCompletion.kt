@@ -8,14 +8,11 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.asRemoteFailure
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.openai.CompletionId
-import org.http4k.connect.openai.GPT3_5
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.OpenAIMoshi.autoBody
 import org.http4k.connect.openai.Role
-import org.http4k.connect.openai.Role.Companion.System
-import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User

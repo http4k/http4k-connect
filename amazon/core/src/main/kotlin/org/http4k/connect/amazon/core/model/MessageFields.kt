@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.core.model
 
-import se.ansman.kotshi.JsonSerializable
 import com.squareup.moshi.Json
+import se.ansman.kotshi.JsonSerializable
 
 interface MessageFields {
     fun toFields(index: Int): Map<String, String>
