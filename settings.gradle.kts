@@ -26,6 +26,8 @@ includeStorage("redis")
 includeStorage("s3")
 includeStorage("http")
 
+includeCommon("ai-core", "ai/core")
+includeVendorSystem("ai", "azure")
 includeVendorSystem("ai", "lmstudio")
 includeVendorSystem("ai", "openai")
 includeVendorSystem("ai", "ollama")

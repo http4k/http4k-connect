@@ -2,6 +2,9 @@ package org.http4k.connect.ollama
 
 
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
+import org.http4k.connect.model.Role.Companion.Assistant
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.ollama.OllamaMoshi.asFormatString
 import org.http4k.connect.ollama.OllamaMoshi.autoBody
 import org.http4k.connect.ollama.action.ChatCompletion
@@ -69,14 +72,14 @@ fun chatCompletion(clock: Clock, completionGenerators: Map<ModelName, ChatComple
             val parts = choices.map {
                 chatCompletionResponse(
                     completionRequest.model,
-                    Message(Role.assistant, it, null),
+                    Message(Assistant, it, null),
                     clock.instant(),
                     false
                 )
             }.plus(
                 chatCompletionResponse(
                     completionRequest.model,
-                    Message(Role.assistant, choices.last(), null),
+                    Message(Assistant, choices.last(), null),
                     clock.instant(),
                     true
                 )
@@ -93,7 +96,7 @@ fun chatCompletion(clock: Clock, completionGenerators: Map<ModelName, ChatComple
                     autoBody<ChatCompletionResponse>().toLens() of
                         chatCompletionResponse(
                             completionRequest.model,
-                            Message(Role.assistant, parts.last().message?.content ?: "", null),
+                            Message(Assistant, parts.last().message?.content ?: "", null),
                             clock.instant(),
                             true
                         )
@@ -107,7 +110,7 @@ fun completion(clock: Clock, completionGenerators: Map<ModelName, ChatCompletion
         { request ->
             val completionRequest = autoBody<Completion>().toLens()(request)
             val choices = (completionGenerators[completionRequest.model] ?: ChatCompletionGenerator.LoremIpsum())
-                .invoke(listOf(Message(Role.user, completionRequest.prompt.value, null)), completionRequest.format)
+                .invoke(listOf(Message(User, completionRequest.prompt.value, null)), completionRequest.format)
 
             val parts = choices.map {
                 completionResponse(completionRequest.model, it, clock.instant(), false)

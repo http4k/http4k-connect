@@ -37,6 +37,7 @@ nav:
     - Pimp your API clients with KSP!: guide/howto/pimp-your-clients-with-ksp/index.md
   - Module Overview: guide/reference/index.md
   - AI Reference:
+    - Azure AI Inference: guide/reference/ai/azure/index.md
     - LangChain: guide/reference/ai/langchain/index.md
     - LMStudio: guide/reference/ai/lmstudio/index.md
     - Ollama: guide/reference/ai/ollama/index.md

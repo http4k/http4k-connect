@@ -60,7 +60,7 @@ class FakeOpenAI(
         )
 
     /**
-     * Convenience function to get Ollama client
+     * Convenience function to get OpenAI client
      */
     fun client() = OpenAI.Http(OpenAIToken.of("openai-key"), this)
 }

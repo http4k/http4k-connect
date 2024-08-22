@@ -2,13 +2,14 @@ package org.http4k.connect.openai
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.http4k.connect.model.FinishReason
+import org.http4k.connect.model.FinishReason.*
 import org.http4k.connect.model.ModelName
-import org.http4k.connect.openai.Role.Companion.System
-import org.http4k.connect.openai.Role.Companion.User
+import org.http4k.connect.model.Role.Companion.User
+import org.http4k.connect.model.Role.Companion.System
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
-import org.http4k.connect.openai.action.FinishReason.stop
 import org.http4k.connect.openai.action.Message
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver

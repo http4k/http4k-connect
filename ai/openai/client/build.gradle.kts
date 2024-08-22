@@ -1,7 +1,5 @@
 dependencies {
-    api(Libs.http4k_format_moshi) {
-        exclude("org.jetbrains.kotlin", "kotlin-reflect")
-    }
+    api(project(":http4k-connect-ai-core"))
     implementation(Libs.api)
 
     testApi(Libs.http4k_cloudnative)

@@ -1,10 +1,11 @@
 package org.http4k.connect.openai
 
-import org.http4k.connect.openai.Role.Companion.User
+import org.http4k.connect.model.FinishReason
+import org.http4k.connect.model.FinishReason.*
+import org.http4k.connect.model.Role
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
-import org.http4k.connect.openai.action.FinishReason
 import java.util.Random
 
 /**
@@ -21,7 +22,7 @@ val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
         req.messages.flatMap { m ->
             m.content.mapIndexed { i, content ->
-                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, FinishReason.stop)
+                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, stop)
             }
         }
     }
@@ -38,7 +39,7 @@ fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = C
  */
 val ChatCompletionGenerator.Companion.Echo
     get() = ChatCompletionGenerator { req ->
-        req.choices(req.messages.first { it.role == User }.content.first().text ?: "")
+        req.choices(req.messages.first { it.role == Role.User }.content.first().text ?: "")
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))

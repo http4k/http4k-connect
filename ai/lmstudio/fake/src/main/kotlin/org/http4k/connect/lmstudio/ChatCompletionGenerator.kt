@@ -1,10 +1,12 @@
 package org.http4k.connect.lmstudio
 
-import org.http4k.connect.lmstudio.Role.Companion.User
 import org.http4k.connect.lmstudio.action.ChatCompletion
 import org.http4k.connect.lmstudio.action.Choice
 import org.http4k.connect.lmstudio.action.ChoiceDetail
-import org.http4k.connect.lmstudio.action.FinishReason
+import org.http4k.connect.model.FinishReason
+import org.http4k.connect.model.FinishReason.stop
+import org.http4k.connect.model.Role.Companion.System
+import org.http4k.connect.model.Role.Companion.User
 import java.util.Random
 
 /**
@@ -21,7 +23,7 @@ val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
         req.messages.flatMap { m ->
             m.content.mapIndexed { i, content ->
-                Choice(i, ChoiceDetail(Role.System, content.text?.reversed() ?: "", null), null, FinishReason.stop)
+                Choice(i, ChoiceDetail(System, content.text?.reversed() ?: "", null), null, stop)
             }
         }
     }
@@ -42,4 +44,4 @@ val ChatCompletionGenerator.Companion.Echo
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))
-    .map { Choice(0, ChoiceDetail(Role.System, it, null), null, FinishReason.stop) }
+    .map { Choice(0, ChoiceDetail(System, it, null), null, FinishReason.stop) }
