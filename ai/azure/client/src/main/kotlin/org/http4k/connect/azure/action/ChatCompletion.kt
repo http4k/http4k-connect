@@ -72,7 +72,7 @@ data class ChatCompletion(
         require(tools == null || tools.isNotEmpty()) { "Tools cannot be empty" }
     }
 
-    override fun toRequest() = Request(POST, "/v1/chat/completions")
+    override fun toRequest() = Request(POST, "/chat/completions")
         .with(autoBody<ChatCompletion>().toLens() of this)
 
     override fun toResult(response: Response) = with(response) {

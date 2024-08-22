@@ -6,16 +6,14 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.startsWith
-import org.http4k.connect.model.ModelName
 import org.http4k.connect.azure.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.azure.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.azure.Role.Companion.System
 import org.http4k.connect.azure.Role.Companion.User
 import org.http4k.connect.azure.action.Message
-import org.http4k.connect.azure.action.Size
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.successValue
 import org.http4k.testing.ApprovalTest
-import org.http4k.testing.Approver
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -65,10 +63,5 @@ interface AzureAIContract {
             ).successValue().model.value,
             startsWith("text-embedding-ada-002")
         )
-    }
-
-    @Test
-    fun `can generate image`(approver: Approver) {
-        azureAi.generateImage("An excellent library", Size.`256x256`).successValue()
     }
 }

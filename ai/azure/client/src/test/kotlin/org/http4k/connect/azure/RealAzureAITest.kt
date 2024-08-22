@@ -23,3 +23,4 @@ class RealAzureAITest : AzureAIContract {
         JavaHttpClient().debug()
     )
 }
+

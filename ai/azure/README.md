@@ -11,6 +11,7 @@ dependencies {
 ```
 
 The http4k-connect AzureAI integration provides:
+
 - AzureAI API Client
 - FakeAzureAI server which can be used as testing harness for either API Client or AzureAI plugins
 
@@ -20,7 +21,6 @@ The AzureAI connector provides the following Actions:
 
 * ChatCompletion
 * CreateEmbeddings
-* GenerateImage
 
 New actions can be created easily using the same transport.
 
@@ -31,9 +31,11 @@ this is perfect for deploying to a Serverless function.
 
 ```kotlin
     // create a client
-val client = AzureAI.Http(AzureAIApiKey.of("foobar"),
+val client = AzureAI.Http(
+    AzureAIApiKey.of("foobar"),
     AzureHost.of("foobar"), Region.of("foobar"),
-    http.debug())
+    http.debug()
+)
 
 // all operations return a Result monad of the API type
 val result: Result<Sequence<CompletionResponse>, RemoteFailure> = client

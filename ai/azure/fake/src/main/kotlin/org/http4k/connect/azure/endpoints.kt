@@ -1,61 +1,32 @@
 package org.http4k.connect.azure
 
-import org.http4k.connect.model.Base64Blob
-import org.http4k.connect.model.ModelName
-import org.http4k.connect.azure.ObjectType.Companion.ChatCompletion
-import org.http4k.connect.azure.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.azure.AzureAIMoshi.asFormatString
 import org.http4k.connect.azure.AzureAIMoshi.autoBody
+import org.http4k.connect.azure.ObjectType.Companion.ChatCompletion
+import org.http4k.connect.azure.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.azure.action.ChatCompletion
 import org.http4k.connect.azure.action.Choice
 import org.http4k.connect.azure.action.CompletionResponse
 import org.http4k.connect.azure.action.CreateEmbeddings
 import org.http4k.connect.azure.action.Embedding
 import org.http4k.connect.azure.action.Embeddings
-import org.http4k.connect.azure.action.GenerateImage
-import org.http4k.connect.azure.action.GeneratedImage
-import org.http4k.connect.azure.action.ImageData
-import org.http4k.connect.azure.action.ImageResponseFormat.b64_json
-import org.http4k.connect.azure.action.ImageResponseFormat.url
 import org.http4k.connect.azure.action.Usage
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Timestamp
 import org.http4k.core.ContentType.Companion.TEXT_EVENT_STREAM
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
-import org.http4k.core.Uri
-import org.http4k.core.extend
 import org.http4k.core.with
 import org.http4k.lens.Header.CONTENT_TYPE
-import org.http4k.routing.ResourceLoader.Companion.Classpath
 import org.http4k.routing.bind
-import org.http4k.routing.static
 import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import kotlin.math.absoluteValue
 
-fun generateImage(clock: Clock, baseUri: Uri) = "/v1/images/generations" bind POST to
-    {
-        val request = autoBody<GenerateImage>().toLens()(it)
-
-        val logo = request.size.name + ".png"
-
-        Response(OK).with(
-            autoBody<GeneratedImage>().toLens() of GeneratedImage(
-                Timestamp.of(clock.instant()),
-                listOf(
-                    when (request.response_format) {
-                        url -> ImageData(url = baseUri.extend(Uri.of("/$logo")))
-                        b64_json -> ImageData(b64_json = Base64Blob.encode(FakeAzureAI::class.java.getResourceAsStream("/public/$logo")!!))
-                    }
-                )
-            )
-        )
-    }
-
-fun createEmbeddings() = "/v1/embeddings" bind POST to
+fun createEmbeddings() = "/embeddings" bind POST to
     {
         val request = autoBody<CreateEmbeddings>().toLens()(it)
 
@@ -72,7 +43,7 @@ fun createEmbeddings() = "/v1/embeddings" bind POST to
     }
 
 fun chatCompletion(clock: Clock, completionGenerators: Map<ModelName, ChatCompletionGenerator>) =
-    "/v1/chat/completions" bind POST to
+    "/chat/completions" bind POST to
         { request ->
             val chatRequest = autoBody<ChatCompletion>().toLens()(request)
             val choices = (completionGenerators[chatRequest.model] ?: ChatCompletionGenerator.LoremIpsum())(chatRequest)
@@ -130,5 +101,3 @@ private fun completionResponse(
     objectType,
     usage
 )
-
-fun serveGeneratedContent() = static(Classpath("public"))

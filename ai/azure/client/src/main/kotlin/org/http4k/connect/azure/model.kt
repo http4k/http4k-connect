@@ -3,12 +3,15 @@ package org.http4k.connect.azure
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import org.http4k.connect.model.ModelName
-import org.http4k.connect.model.Timestamp
-import se.ansman.kotshi.JsonProperty
-import se.ansman.kotshi.JsonSerializable
 
 class Region private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Region>(::Region)
+}
+
+class ApiVersion private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ApiVersion>(::ApiVersion) {
+        val PREVIEW = ApiVersion.of("2024-04-01-preview")
+    }
 }
 
 class AzureHost private constructor(value: String) : StringValue(value) {
@@ -17,6 +20,18 @@ class AzureHost private constructor(value: String) : StringValue(value) {
 
 class AzureAIApiKey private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<AzureAIApiKey>(::AzureAIApiKey)
+}
+
+class GitHubToken private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<GitHubToken>(::GitHubToken)
+}
+
+class Deployment private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<Deployment>(::Deployment)
+}
+
+enum class ExtraParameters {
+    `pass-through` , error, `ignore`
 }
 
 class ObjectType private constructor(value: String) : StringValue(value) {
@@ -32,14 +47,6 @@ class ObjectType private constructor(value: String) : StringValue(value) {
 
 class ObjectId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ObjectId>(::ObjectId)
-}
-
-enum class Quality {
-    standard, hd
-}
-
-enum class Style {
-    vivid, natural
 }
 
 val ModelName.Companion.GPT4 get() = ModelName.of("gpt-4")

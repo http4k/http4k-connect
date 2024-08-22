@@ -23,7 +23,7 @@ import se.ansman.kotshi.JsonSerializable
 data class CreateEmbeddings(val model: ModelName, val input: List<String>) :
     NonNullAutoMarshalledAction<Embeddings>(kClass(), AzureAIMoshi),
     AzureAIAction<Embeddings> {
-    override fun toRequest() = Request(POST, "/v1/embeddings")
+    override fun toRequest() = Request(POST, "/embeddings")
         .with(AzureAIMoshi.autoBody<CreateEmbeddings>().toLens() of this)
 }
 
