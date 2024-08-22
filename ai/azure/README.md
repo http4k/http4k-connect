@@ -14,7 +14,7 @@ The http4k-connect AzureAI integration provides:
 
 - AzureAI API Client
 - Compatibility with GitHub Models for testing, so you can use a GitHubToken instead of a deployed Azure model
-- FakeAzureAI server which can be used as testing harness for either API Client or AzureAI plugins
+- FakeAzureAI server which can be used as testing harness for the API Client 
 
 ## AzureAI API connector
 
