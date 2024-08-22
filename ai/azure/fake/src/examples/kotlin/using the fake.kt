@@ -5,7 +5,6 @@ import org.http4k.connect.azure.AzureAI
 import org.http4k.connect.azure.AzureAIApiKey
 import org.http4k.connect.azure.AzureHost
 import org.http4k.connect.azure.FakeAzureAI
-import org.http4k.connect.azure.GPT3_5
 import org.http4k.connect.azure.Http
 import org.http4k.connect.azure.Region
 import org.http4k.connect.azure.Role.Companion.User
@@ -32,7 +31,10 @@ fun main() {
 
     // get a chat completion
     azureAi
-        .chatCompletion(ModelName.GPT3_5, listOf(Message(User, "good afternoon")), 1000, true)
+        .chatCompletion(
+            ModelName.of("Meta-Llama-3.1-70B-Instruct"),
+            listOf(Message(User, "good afternoon")), 1000, true
+        )
         .onFailure { error(it) }
         .toList()
         .first()

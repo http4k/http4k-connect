@@ -13,6 +13,7 @@ dependencies {
 The http4k-connect AzureAI integration provides:
 
 - AzureAI API Client
+- Compatibility with GitHub Models for testing, so you can use a GitHubToken instead of a deployed Azure model
 - FakeAzureAI server which can be used as testing harness for either API Client or AzureAI plugins
 
 ## AzureAI API connector
@@ -33,13 +34,13 @@ this is perfect for deploying to a Serverless function.
     // create a client
 val client = AzureAI.Http(
     AzureAIApiKey.of("foobar"),
-    AzureHost.of("foobar"), Region.of("foobar"),
+    AzureHost.of("myHost"), Region.of("us-east-1"),
     http.debug()
 )
 
 // all operations return a Result monad of the API type
 val result: Result<Sequence<CompletionResponse>, RemoteFailure> = client
-    .chatCompletion(ModelName.GPT3_5, listOf(Message(User, "good afternoon")), 1000, true)
+    .chatCompletion(ModelName.of("Meta-Llama-3.1-70B-Instruct"), listOf(Message(User, "good afternoon")), 1000, true)
 
 println(result.orThrow().toList())
 }
@@ -52,20 +53,12 @@ Other examples can be found [here](https://github.com/http4k/http4k-connect/tree
 The Fake AzureAI provides the below actions and can be spun up as a server, meaning it is perfect for using in test
 environments without using up valuable request tokens!
 
-* GetModels
 * ChatCompletion
-* GenerateImage
-
+* CreateEmbeddings
+* 
 ### Security
 
-The Fake server endpoints are secured with a BearerToken header, but the value is not checked for anything other than
-presence.
-
-### Image generation
-
-Image generation also can be set to either URL or base-64 data return. In the case of URLs, the Fake also doubles as a
-webserver for serving the images (so you can request an image and then load it from the server). Resolution PNG images
-of 256x/512x/1024x are supported.
+The Fake server endpoints are secured with a BearerToken header, but the value is not checked for anything other than presence.
 
 ### Generation of responses
 

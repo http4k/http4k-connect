@@ -25,7 +25,7 @@ interface AzureAIContract {
     @Test
     fun `get chat response non-stream`() {
         val responses = azureAi.chatCompletion(
-            ModelName.GPT3_5,
+            ModelName.of("Meta-Llama-3.1-70B-Instruct"),
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
                 Message(User, "What is your favourite colour?")
@@ -41,7 +41,7 @@ interface AzureAIContract {
     @Test
     fun `get chat response streaming`() {
         val responses = azureAi.chatCompletion(
-            ModelName.GPT3_5,
+            ModelName.of("Meta-Llama-3.1-70B-Instruct"),
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
                 Message(User, "What is your favourite colour?")
@@ -58,10 +58,10 @@ interface AzureAIContract {
     fun `get embeddings`() {
         assertThat(
             azureAi.createEmbeddings(
-                ModelName.TEXT_EMBEDDING_ADA_002,
+                ModelName.of("text-embedding-3-small"),
                 listOf("What is your favourite colour?")
             ).successValue().model.value,
-            startsWith("text-embedding-ada-002")
+            startsWith("text-embedding-3-small")
         )
     }
 }

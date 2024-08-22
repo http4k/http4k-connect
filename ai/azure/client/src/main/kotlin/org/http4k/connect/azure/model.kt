@@ -49,12 +49,6 @@ class ObjectId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ObjectId>(::ObjectId)
 }
 
-val ModelName.Companion.GPT4 get() = ModelName.of("gpt-4")
-val ModelName.Companion.DALL_E_2 get() = ModelName.of("dall-e-2")
-val ModelName.Companion.GPT4_TURBO_PREVIEW get() = ModelName.of("gpt-4-turbo-preview")
-val ModelName.Companion.GPT3_5 get() = ModelName.of("gpt-3.5-turbo")
-val ModelName.Companion.TEXT_EMBEDDING_ADA_002 get() = ModelName.of("text-embedding-ada-002")
-
 class Role private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Role>(::Role) {
         val System = Role.of("system")

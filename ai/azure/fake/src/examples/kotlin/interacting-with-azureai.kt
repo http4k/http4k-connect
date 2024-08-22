@@ -1,7 +1,6 @@
 import org.http4k.config.Environment.Companion.ENV
 import org.http4k.config.EnvironmentKey
 import org.http4k.connect.model.ModelName
-import org.http4k.connect.azure.GPT3_5
 import org.http4k.connect.azure.Http
 import org.http4k.connect.azure.AzureAI
 import org.http4k.connect.azure.AzureAIApiKey
@@ -23,7 +22,7 @@ fun main() {
     // get a chat completion
     println(
         azureAi.chatCompletion(
-            ModelName.GPT3_5,
+            ModelName.of("Meta-Llama-3.1-70B-Instruct"),
             listOf(
                 Message(User, "Explain pythagoras's theorem to a 5 year old child"),
             ),

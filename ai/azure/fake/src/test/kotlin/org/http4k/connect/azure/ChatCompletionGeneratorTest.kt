@@ -3,7 +3,6 @@ package org.http4k.connect.azure
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.connect.model.ModelName
-import org.http4k.connect.azure.GPT3_5
 import org.http4k.connect.azure.Role.Companion.System
 import org.http4k.connect.azure.Role.Companion.User
 import org.http4k.connect.azure.action.ChatCompletion
@@ -21,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class ChatCompletionGeneratorTest {
 
     private val input = ChatCompletion(
-        ModelName.GPT3_5, listOf(Message(User, "foobar"))
+        ModelName.of("Meta-Llama-3.1-70B-Instruct"), listOf(Message(User, "foobar"))
     )
 
     @Test
