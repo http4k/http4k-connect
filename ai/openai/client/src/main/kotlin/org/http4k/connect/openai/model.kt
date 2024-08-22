@@ -35,14 +35,6 @@ class ObjectId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ObjectId>(::ObjectId)
 }
 
-class Timestamp private constructor(value: Long) : LongValue(value) {
-    fun toInstant(): Instant = ofEpochSecond(value)
-
-    companion object : LongValueFactory<Timestamp>(::Timestamp, 0L.minValue) {
-        fun of(value: Instant) = of(value.epochSecond)
-    }
-}
-
 enum class Quality {
     standard, hd
 }

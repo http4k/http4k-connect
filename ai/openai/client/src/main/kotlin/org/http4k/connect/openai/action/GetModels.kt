@@ -5,12 +5,12 @@ package org.http4k.connect.openai.action
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.openai.ObjectId
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.OpenAIOrg
-import org.http4k.connect.openai.Timestamp
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import se.ansman.kotshi.ExperimentalKotshiApi

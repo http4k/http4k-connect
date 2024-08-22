@@ -1,5 +1,6 @@
 package org.http4k.connect.openai
 
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
 import org.http4k.connect.openai.action.Model
 import org.http4k.connect.openai.action.Permission

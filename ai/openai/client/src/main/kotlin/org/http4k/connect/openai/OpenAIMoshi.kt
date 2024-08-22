@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Timestamp
 import org.http4k.format.ConfigurableMoshi
 import org.http4k.format.ListAdapter
 import org.http4k.format.MapAdapter

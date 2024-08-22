@@ -4,11 +4,11 @@ import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.NonNullAutoMarshalledAction
 import org.http4k.connect.kClass
 import org.http4k.connect.model.Base64Blob
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.Quality
 import org.http4k.connect.openai.Style
-import org.http4k.connect.openai.Timestamp
 import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.ImageResponseFormat.url
 import org.http4k.core.Method.POST
