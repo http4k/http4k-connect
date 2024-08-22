@@ -6,9 +6,9 @@ import org.http4k.chaos.start
 import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.secretsmanager.model.VersionId
 import org.http4k.connect.model.Base64Blob
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.storage.InMemory
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Method.POST

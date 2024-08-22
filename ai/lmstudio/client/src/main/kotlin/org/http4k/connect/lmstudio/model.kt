@@ -1,14 +1,8 @@
 package org.http4k.connect.lmstudio
 
-import dev.forkhandles.values.LongValue
-import dev.forkhandles.values.LongValueFactory
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
-import dev.forkhandles.values.minValue
 import org.http4k.connect.model.ModelName
-import java.time.Instant
-import java.time.Instant.ofEpochSecond
-
 
 class Org private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<Org>(::Org) {
@@ -30,14 +24,6 @@ class ObjectType private constructor(value: String) : StringValue(value) {
 
 class ObjectId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ObjectId>(::ObjectId)
-}
-
-class Timestamp private constructor(value: Long) : LongValue(value) {
-    fun toInstant(): Instant = ofEpochSecond(value)
-
-    companion object : LongValueFactory<Timestamp>(::Timestamp, 0L.minValue) {
-        fun of(value: Instant) = of(value.epochSecond)
-    }
 }
 
 val ModelName.Companion.CHAT_MODEL get() = ModelName.of("chat-model")

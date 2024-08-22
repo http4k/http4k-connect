@@ -4,7 +4,6 @@ import org.http4k.connect.amazon.AmazonJsonFake
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.secretsmanager.action.CreateSecret
 import org.http4k.connect.amazon.secretsmanager.action.CreatedSecret
 import org.http4k.connect.amazon.secretsmanager.action.DeleteSecret
@@ -23,6 +22,7 @@ import org.http4k.connect.amazon.secretsmanager.model.VersionId
 import org.http4k.connect.storage.Storage
 import java.time.Clock
 import java.util.UUID
+import org.http4k.connect.model.Timestamp
 
 
 fun AmazonJsonFake.createSecret(

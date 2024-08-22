@@ -2,12 +2,12 @@ package org.http4k.connect.amazon.eventbridge.model
 
 import com.amazonaws.services.lambda.runtime.events.EventBridgeEvent
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.eventbridge.EventBridgeMoshi
 import org.http4k.connect.amazon.model.EventBusName
 import org.http4k.connect.amazon.model.EventDetail
 import org.http4k.connect.amazon.model.EventDetailType
 import org.http4k.connect.amazon.model.EventSource
+import org.http4k.connect.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable

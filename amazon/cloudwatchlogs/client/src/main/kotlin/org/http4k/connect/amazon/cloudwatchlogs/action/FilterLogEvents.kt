@@ -8,7 +8,7 @@ import org.http4k.connect.amazon.cloudwatchlogs.model.LogGroupName
 import org.http4k.connect.amazon.cloudwatchlogs.model.LogStreamName
 import org.http4k.connect.amazon.cloudwatchlogs.model.NextToken
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.TimestampMillis
+import org.http4k.connect.model.TimestampMillis
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

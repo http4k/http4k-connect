@@ -6,7 +6,6 @@ import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.kms.KMSSigningAlgorithm.Companion.KMS_ALGORITHMS
 import org.http4k.connect.amazon.kms.action.CreateKey
 import org.http4k.connect.amazon.kms.action.Decrypt
@@ -33,6 +32,7 @@ import org.http4k.connect.amazon.kms.model.KeyEntry
 import org.http4k.connect.amazon.kms.model.KeyMetadata
 import org.http4k.connect.amazon.kms.model.KeyUsage
 import org.http4k.connect.model.Base64Blob
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
@@ -47,7 +47,7 @@ fun AmazonJsonFake.createKey(keys: Storage<StoredCMK>, crypto: Provider) = route
     val keyId = KMSKeyId.of(UUID.randomUUID().toString())
     val keySpec = it.KeySpec ?: it.CustomerMasterKeySpec ?: SYMMETRIC_DEFAULT
 
-    val keyPair = when(keySpec) {
+    val keyPair = when (keySpec) {
         CustomerMasterKeySpec.RSA_2048 -> KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }
         CustomerMasterKeySpec.RSA_3072 -> KeyPairGenerator.getInstance("RSA").apply { initialize(3072) }
         CustomerMasterKeySpec.RSA_4096 -> KeyPairGenerator.getInstance("RSA").apply { initialize(4096) }

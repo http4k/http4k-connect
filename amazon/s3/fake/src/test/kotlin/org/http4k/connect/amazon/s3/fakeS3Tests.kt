@@ -4,10 +4,10 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.recover
 import org.http4k.connect.amazon.FakeAwsContract
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.s3.TestingHeaders.X_HTTP4K_LAST_MODIFIED
 import org.http4k.connect.amazon.s3.model.BucketKey
 import org.http4k.connect.amazon.s3.model.BucketName
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.successValue
 import org.http4k.core.Method.GET
 import org.http4k.core.Request

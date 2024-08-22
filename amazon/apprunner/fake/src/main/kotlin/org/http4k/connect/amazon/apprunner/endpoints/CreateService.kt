@@ -7,7 +7,7 @@ import org.http4k.connect.amazon.apprunner.action.CreateService
 import org.http4k.connect.amazon.apprunner.action.Service
 import org.http4k.connect.amazon.apprunner.model.AppRunnerService
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.storage.Storage
 import org.http4k.core.Uri
 import java.util.UUID

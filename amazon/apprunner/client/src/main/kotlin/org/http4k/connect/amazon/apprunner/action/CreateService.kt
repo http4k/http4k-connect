@@ -8,8 +8,8 @@ import org.http4k.connect.amazon.apprunner.model.ServiceName
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
 import org.http4k.connect.amazon.core.model.Tag
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.kClass
+import org.http4k.connect.model.Timestamp
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 

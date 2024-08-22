@@ -3,9 +3,9 @@ package org.http4k.connect.amazon.evidently
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.evidently.actions.Project
 import org.http4k.connect.amazon.evidently.model.ProjectName
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.storage.Storage
 import java.time.Instant
 

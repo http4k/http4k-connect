@@ -2,9 +2,9 @@ package org.http4k.connect.amazon.evidently.actions
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.evidently.EvidentlyAction
 import org.http4k.connect.amazon.evidently.model.ProjectName
+import org.http4k.connect.model.Timestamp
 import org.http4k.core.Uri
 import se.ansman.kotshi.JsonSerializable
 

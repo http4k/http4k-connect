@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.s3.model
 
 import org.http4k.connect.amazon.core.model.RfcTimestamp
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.core.ContentType
 
 data class ObjectDetails(

@@ -1,7 +1,7 @@
 package org.http4k.connect.amazon.evidently.model
 
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable

@@ -6,7 +6,7 @@ import org.http4k.connect.amazon.cognito.model.PoolName
 import org.http4k.connect.amazon.cognito.model.UserPoolId
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
-import org.http4k.connect.amazon.core.model.Timestamp
+import org.http4k.connect.model.Timestamp
 import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction

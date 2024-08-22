@@ -1,6 +1,5 @@
 package org.http4k.connect.amazon.iamidentitycenter.endpoints
 
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.iamidentitycenter.IAMIdentityCenterMoshi
 import org.http4k.connect.amazon.iamidentitycenter.IAMIdentityCenterMoshi.auto
 import org.http4k.connect.amazon.iamidentitycenter.model.ClientId
@@ -15,6 +14,7 @@ import org.http4k.core.Status
 import org.http4k.core.with
 import org.http4k.routing.bind
 import java.time.Clock
+import org.http4k.connect.model.Timestamp
 
 fun registerClient(clock: Clock) = "/client/register" bind Method.POST to { req: Request ->
     val request = Body.auto<RegisterClient>().toLens()(req)

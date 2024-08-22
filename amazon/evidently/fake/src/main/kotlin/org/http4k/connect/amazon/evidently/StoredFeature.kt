@@ -1,7 +1,6 @@
 package org.http4k.connect.amazon.evidently
 
 import org.http4k.connect.amazon.core.model.ARN
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.evidently.actions.EvaluatedFeature
 import org.http4k.connect.amazon.evidently.model.EntityId
 import org.http4k.connect.amazon.evidently.model.EvaluationStrategy
@@ -12,6 +11,7 @@ import org.http4k.connect.amazon.evidently.model.ValueType
 import org.http4k.connect.amazon.evidently.model.VariableValue
 import org.http4k.connect.amazon.evidently.model.VariationConfig
 import org.http4k.connect.amazon.evidently.model.VariationName
+import org.http4k.connect.model.Timestamp
 import java.time.Instant
 
 data class StoredFeature(

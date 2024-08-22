@@ -7,7 +7,6 @@ import org.http4k.connect.Paged
 import org.http4k.connect.PagedAction
 import org.http4k.connect.amazon.core.firstChild
 import org.http4k.connect.amazon.core.firstChildText
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.core.text
 import org.http4k.connect.amazon.core.xmlDoc
 import org.http4k.connect.amazon.s3.S3BucketAction
@@ -16,6 +15,7 @@ import org.http4k.connect.amazon.s3.model.ObjectSummary
 import org.http4k.connect.amazon.s3.model.Owner
 import org.http4k.connect.amazon.s3.model.StorageClass
 import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.model.Timestamp
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response

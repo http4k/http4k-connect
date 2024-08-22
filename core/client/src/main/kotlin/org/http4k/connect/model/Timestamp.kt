@@ -1,4 +1,4 @@
-package org.http4k.connect.amazon.core.model
+package org.http4k.connect.model
 
 import dev.forkhandles.values.LongValue
 import dev.forkhandles.values.LongValueFactory

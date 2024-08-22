@@ -2,11 +2,11 @@ package org.http4k.connect.amazon.kms
 
 import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.KMSKeyId
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.kms.model.CustomerMasterKeySpec
 import org.http4k.connect.amazon.kms.model.KeyUsage
 import org.http4k.connect.amazon.kms.model.SigningAlgorithm
 import org.http4k.connect.model.Base64Blob
+import org.http4k.connect.model.Timestamp
 import java.security.KeyFactory
 import java.security.Provider
 import java.security.spec.PKCS8EncodedKeySpec

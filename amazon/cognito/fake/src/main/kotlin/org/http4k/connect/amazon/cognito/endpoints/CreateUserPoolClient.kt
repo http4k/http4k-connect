@@ -9,8 +9,8 @@ import org.http4k.connect.amazon.cognito.model.ClientId
 import org.http4k.connect.amazon.cognito.model.ClientSecret
 import org.http4k.connect.amazon.cognito.model.TokenValidityUnits
 import org.http4k.connect.amazon.cognito.model.UserPoolClient
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.storage.Storage
+import org.http4k.connect.model.Timestamp
 
 fun AmazonJsonFake.createUserPoolClient(pools: Storage<CognitoPool>) = route<CreateUserPoolClient> { client ->
     pools[client.UserPoolId.value]?.let { pool ->

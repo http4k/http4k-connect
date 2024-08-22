@@ -1,13 +1,13 @@
 package org.http4k.connect.amazon.iamidentitycenter.oidc.action
 
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.iamidentitycenter.IAMIdentityCenterMoshi
 import org.http4k.connect.amazon.iamidentitycenter.OIDCAction
 import org.http4k.connect.amazon.iamidentitycenter.model.ClientId
 import org.http4k.connect.amazon.iamidentitycenter.model.ClientName
 import org.http4k.connect.amazon.iamidentitycenter.model.ClientSecret
 import org.http4k.connect.kClass
+import org.http4k.connect.model.Timestamp
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri

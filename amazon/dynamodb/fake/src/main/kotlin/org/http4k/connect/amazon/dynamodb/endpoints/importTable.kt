@@ -5,7 +5,6 @@ import org.http4k.connect.amazon.core.model.ARN
 import org.http4k.connect.amazon.core.model.AwsAccount
 import org.http4k.connect.amazon.core.model.AwsService
 import org.http4k.connect.amazon.core.model.Region
-import org.http4k.connect.amazon.core.model.Timestamp
 import org.http4k.connect.amazon.dynamodb.DynamoTable
 import org.http4k.connect.amazon.dynamodb.action.ImportTable
 import org.http4k.connect.amazon.dynamodb.action.ImportTableResponse
@@ -16,6 +15,7 @@ import org.http4k.connect.amazon.dynamodb.model.ImportTableDescription
 import org.http4k.connect.amazon.dynamodb.model.Item
 import org.http4k.connect.amazon.dynamodb.model.TableDescription
 import org.http4k.connect.amazon.dynamodb.model.TableName
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.storage.Storage
 import java.time.Clock
 
