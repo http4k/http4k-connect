@@ -1,14 +1,14 @@
 import org.http4k.config.Environment.Companion.ENV
 import org.http4k.config.EnvironmentKey
-import org.http4k.connect.model.ModelName
-import org.http4k.connect.azure.Http
 import org.http4k.connect.azure.AzureAI
 import org.http4k.connect.azure.AzureAIApiKey
 import org.http4k.connect.azure.AzureHost
+import org.http4k.connect.azure.Http
 import org.http4k.connect.azure.Region
-import org.http4k.connect.azure.Role.Companion.User
 import org.http4k.connect.azure.action.Message
 import org.http4k.connect.azure.chatCompletion
+import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.lens.value
 
 fun main() {

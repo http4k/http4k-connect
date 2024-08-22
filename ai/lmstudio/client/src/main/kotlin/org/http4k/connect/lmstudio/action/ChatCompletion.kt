@@ -12,11 +12,11 @@ import org.http4k.connect.lmstudio.LmStudioMoshi
 import org.http4k.connect.lmstudio.LmStudioMoshi.autoBody
 import org.http4k.connect.lmstudio.ObjectType
 import org.http4k.connect.lmstudio.ResponseFormatType
-import org.http4k.connect.lmstudio.Role
 import org.http4k.connect.lmstudio.TokenId
 import org.http4k.connect.lmstudio.User
 import org.http4k.connect.lmstudio.action.Detail.auto
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
 import org.http4k.core.ContentType.Companion.APPLICATION_JSON
 import org.http4k.core.Method.POST
@@ -115,7 +115,12 @@ data class Message(
     val name: User? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
-    constructor(role: Role, text: String, name: User? = null, tool_calls: List<ToolCall>? = null) :
+    constructor(
+        role: Role,
+        text: String,
+        name: User? = null,
+        tool_calls: List<ToolCall>? = null
+    ) :
         this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
 }
 

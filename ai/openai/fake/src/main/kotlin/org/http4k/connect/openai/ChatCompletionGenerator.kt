@@ -1,6 +1,6 @@
 package org.http4k.connect.openai
 
-import org.http4k.connect.openai.Role.Companion.User
+import org.http4k.connect.model.Role
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
@@ -38,7 +38,7 @@ fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = C
  */
 val ChatCompletionGenerator.Companion.Echo
     get() = ChatCompletionGenerator { req ->
-        req.choices(req.messages.first { it.role == User }.content.first().text ?: "")
+        req.choices(req.messages.first { it.role == Role.User }.content.first().text ?: "")
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))

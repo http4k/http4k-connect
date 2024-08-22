@@ -13,10 +13,13 @@ import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.output.Response
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
+import org.http4k.connect.model.Role.Companion.Assistant
+import org.http4k.connect.model.Role.Companion.System
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.ollama.Message
 import org.http4k.connect.ollama.Ollama
 import org.http4k.connect.ollama.ResponseFormat
-import org.http4k.connect.ollama.Role
 import org.http4k.connect.ollama.action.ModelOptions
 import org.http4k.connect.ollama.chatCompletion
 import org.http4k.connect.orThrow
@@ -60,8 +63,8 @@ private fun UserMessage.toHttp4k(): Message {
 
     val images = contents().filter { it.type() == ContentType.IMAGE }
         .map { Base64Blob.of((it as ImageContent).image().base64Data()) }
-    return Message(Role.user, text, images)
+    return Message(User, text, images)
 }
 
-private fun AiMessage.toHttp4k() = Message(Role.assistant, text())
-private fun SystemMessage.toHttp4k() = Message(Role.system, text())
+private fun AiMessage.toHttp4k() = Message(Assistant, text())
+private fun SystemMessage.toHttp4k() = Message(System, text())

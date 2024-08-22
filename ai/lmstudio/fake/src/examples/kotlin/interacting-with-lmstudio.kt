@@ -1,7 +1,7 @@
 import org.http4k.connect.lmstudio.CHAT_MODEL
 import org.http4k.connect.lmstudio.Http
 import org.http4k.connect.lmstudio.LmStudio
-import org.http4k.connect.lmstudio.Role.Companion.User
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.lmstudio.action.Message
 import org.http4k.connect.lmstudio.chatCompletion
 import org.http4k.connect.model.ModelName

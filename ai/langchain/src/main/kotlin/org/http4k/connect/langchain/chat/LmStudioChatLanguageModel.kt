@@ -17,7 +17,6 @@ import dev.langchain4j.model.output.FinishReason
 import dev.langchain4j.model.output.Response
 import dev.langchain4j.model.output.TokenUsage
 import org.http4k.connect.lmstudio.LmStudio
-import org.http4k.connect.lmstudio.Role
 import org.http4k.connect.lmstudio.TokenId
 import org.http4k.connect.lmstudio.User
 import org.http4k.connect.lmstudio.action.ContentType
@@ -38,6 +37,7 @@ import org.http4k.connect.lmstudio.action.Tool
 import org.http4k.connect.lmstudio.action.ToolCall
 import org.http4k.connect.lmstudio.chatCompletion
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
 

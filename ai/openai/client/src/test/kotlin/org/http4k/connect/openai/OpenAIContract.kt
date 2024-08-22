@@ -7,11 +7,11 @@ import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.startsWith
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role.Companion.System
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.openai.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.openai.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.openai.OpenAIOrg.Companion.OPENAI
-import org.http4k.connect.openai.Role.Companion.System
-import org.http4k.connect.openai.Role.Companion.User
 import org.http4k.connect.openai.action.Message
 import org.http4k.connect.openai.action.Size
 import org.http4k.connect.successValue

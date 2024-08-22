@@ -1,11 +1,11 @@
 package org.http4k.connect.azure
 
-import org.http4k.connect.azure.Role
-import org.http4k.connect.azure.Role.Companion.User
 import org.http4k.connect.azure.action.ChatCompletion
 import org.http4k.connect.azure.action.Choice
 import org.http4k.connect.azure.action.ChoiceDetail
 import org.http4k.connect.azure.action.FinishReason
+import org.http4k.connect.model.Role
+import org.http4k.connect.model.Role.Companion.User
 import java.util.Random
 
 /**
@@ -39,6 +39,7 @@ fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = C
  */
 val ChatCompletionGenerator.Companion.Echo
     get() = ChatCompletionGenerator { req ->
+        println(req.messages)
         req.choices(req.messages.first { it.role == User }.content.first().text ?: "")
     }
 

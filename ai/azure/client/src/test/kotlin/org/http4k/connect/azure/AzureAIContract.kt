@@ -8,10 +8,11 @@ import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.startsWith
 import org.http4k.connect.azure.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.azure.ObjectType.Companion.ChatCompletionChunk
-import org.http4k.connect.azure.Role.Companion.System
-import org.http4k.connect.azure.Role.Companion.User
 import org.http4k.connect.azure.action.Message
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
+import org.http4k.connect.model.Role.Companion.System
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.successValue
 import org.http4k.testing.ApprovalTest
 import org.junit.jupiter.api.Test
@@ -44,7 +45,10 @@ interface AzureAIContract {
             ModelName.of("Meta-Llama-3.1-70B-Instruct"),
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
-                Message(User, "What is your favourite colour?")
+                Message(
+                    User,
+                    "What is your favourite colour?"
+                )
             ),
             1000,
             stream = true

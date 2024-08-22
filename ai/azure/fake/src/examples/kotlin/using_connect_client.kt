@@ -7,7 +7,7 @@ import org.http4k.connect.azure.AzureAIApiKey
 import org.http4k.connect.azure.AzureHost
 import org.http4k.connect.azure.FakeAzureAI
 import org.http4k.connect.azure.Region
-import org.http4k.connect.azure.Role.Companion.User
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.azure.action.CompletionResponse
 import org.http4k.connect.azure.action.Message
 import org.http4k.connect.azure.chatCompletion

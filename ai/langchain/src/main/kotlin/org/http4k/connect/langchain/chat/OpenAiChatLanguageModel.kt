@@ -17,9 +17,9 @@ import dev.langchain4j.model.output.FinishReason
 import dev.langchain4j.model.output.Response
 import dev.langchain4j.model.output.TokenUsage
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
 import org.http4k.connect.openai.GPT3_5
 import org.http4k.connect.openai.OpenAI
-import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.ContentType

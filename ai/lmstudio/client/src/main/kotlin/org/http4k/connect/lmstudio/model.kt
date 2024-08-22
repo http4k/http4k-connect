@@ -36,14 +36,6 @@ class ResponseFormatType private constructor(value: String) : StringValue(value)
     }
 }
 
-class Role private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<Role>(::Role) {
-        val System = Role.of("system")
-        val User = Role.of("user")
-        val Assistant = Role.of("assistant")
-    }
-}
-
 class TokenId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<TokenId>(::TokenId)
 }

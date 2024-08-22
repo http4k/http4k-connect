@@ -49,14 +49,6 @@ class ObjectId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<ObjectId>(::ObjectId)
 }
 
-class Role private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<Role>(::Role) {
-        val System = Role.of("system")
-        val User = Role.of("user")
-        val Assistant = Role.of("assistant")
-    }
-}
-
 class TokenId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<TokenId>(::TokenId)
 }

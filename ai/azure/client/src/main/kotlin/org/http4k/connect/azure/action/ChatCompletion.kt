@@ -12,10 +12,10 @@ import org.http4k.connect.azure.ObjectType
 import org.http4k.connect.azure.AzureAIAction
 import org.http4k.connect.azure.AzureAIMoshi
 import org.http4k.connect.azure.AzureAIMoshi.autoBody
-import org.http4k.connect.azure.Role
 import org.http4k.connect.azure.TokenId
 import org.http4k.connect.azure.User
 import org.http4k.connect.azure.action.Detail.auto
+import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
 import org.http4k.core.ContentType.Companion.APPLICATION_JSON
 import org.http4k.core.Method.POST
@@ -129,7 +129,12 @@ data class Message(
     val name: User? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
-    constructor(role: Role, text: String, name: User? = null, tool_calls: List<ToolCall>? = null) :
+    constructor(
+        role: Role,
+        text: String,
+        name: User? = null,
+        tool_calls: List<ToolCall>? = null
+    ) :
         this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
 }
 

@@ -7,10 +7,11 @@ import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
 import org.http4k.connect.lmstudio.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.lmstudio.ObjectType.Companion.ChatCompletionChunk
-import org.http4k.connect.lmstudio.Role.Companion.System
-import org.http4k.connect.lmstudio.Role.Companion.User
 import org.http4k.connect.lmstudio.action.Message
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
+import org.http4k.connect.model.Role.Companion
+import org.http4k.connect.model.Role.Companion.System
 import org.http4k.connect.successValue
 import org.http4k.testing.ApprovalTest
 import org.junit.jupiter.api.Test
@@ -36,7 +37,7 @@ interface LmStudioContract {
             ModelName.CHAT_MODEL,
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
-                Message(User, "What is your favourite colour?")
+                Message(Companion.User, "What is your favourite colour?")
             ),
             1000,
             stream = false
@@ -52,7 +53,10 @@ interface LmStudioContract {
             ModelName.CHAT_MODEL,
             listOf(
                 Message(System, "You are Leonardo Da Vinci"),
-                Message(User, "What is your favourite colour?")
+                Message(
+                    Role.User,
+                    "What is your favourite colour?"
+                )
             ),
             1000,
             stream = true

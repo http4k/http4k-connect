@@ -2,14 +2,14 @@ package org.http4k.connect.lmstudio
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.connect.lmstudio.Role.Companion.System
-import org.http4k.connect.lmstudio.Role.Companion.User
 import org.http4k.connect.lmstudio.action.ChatCompletion
 import org.http4k.connect.lmstudio.action.Choice
 import org.http4k.connect.lmstudio.action.ChoiceDetail
 import org.http4k.connect.lmstudio.action.FinishReason.stop
 import org.http4k.connect.lmstudio.action.Message
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role.Companion.User
+import org.http4k.connect.model.Role.Companion.System
 import org.http4k.testing.ApprovalTest
 import org.http4k.testing.Approver
 import org.http4k.testing.assertApproved

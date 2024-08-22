@@ -5,6 +5,9 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
+import org.http4k.connect.model.Role.Companion.Assistant
+import org.http4k.connect.model.Role.Companion.User
 import org.http4k.connect.ollama.action.ModelOptions
 import org.http4k.connect.successValue
 import org.http4k.testing.ApprovalTest
@@ -72,28 +75,28 @@ interface OllamaContract {
     fun `get chat response non-stream`() {
         val responses = ollama.chatCompletion(
             modelName,
-            listOf(Message(Role.user, "count to five", null)),
+            listOf(Message(User, "count to five", null)),
             false,
             null,
             null,
             ModelOptions(temperature = 0.0)
         ).successValue().toList()
         assertThat(responses.size, equalTo(1))
-        assertThat(responses.first().message?.role, equalTo(Role.assistant))
+        assertThat(responses.first().message?.role, equalTo(Assistant))
     }
 
     @Test
     fun `get chat response stream`() {
         val responses = ollama.chatCompletion(
             modelName,
-            listOf(Message(Role.user, "count to five", null)),
+            listOf(Message(User, "count to five", null)),
             true,
             null,
             null,
             ModelOptions(temperature = 0.0)
         ).successValue().toList()
         assertThat(responses.size, greaterThan(1))
-        assertThat(responses.first().message?.role, equalTo(Role.assistant))
+        assertThat(responses.first().message?.role, equalTo(Assistant))
     }
 
     @Test

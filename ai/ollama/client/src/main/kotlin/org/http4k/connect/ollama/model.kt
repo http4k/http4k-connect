@@ -3,6 +3,7 @@ package org.http4k.connect.ollama
 import dev.forkhandles.values.NonBlankStringValueFactory
 import dev.forkhandles.values.StringValue
 import org.http4k.connect.model.Base64Blob
+import org.http4k.connect.model.Role
 import se.ansman.kotshi.JsonSerializable
 
 class Prompt private constructor(value: String) : StringValue(value) {
@@ -19,10 +20,6 @@ class Template private constructor(value: String) : StringValue(value) {
 
 enum class ResponseFormat {
     json
-}
-
-enum class Role {
-    system, user, assistant
 }
 
 @JsonSerializable

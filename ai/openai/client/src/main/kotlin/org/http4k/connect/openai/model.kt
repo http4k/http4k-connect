@@ -49,14 +49,6 @@ val ModelName.Companion.GPT4_TURBO_PREVIEW get() = ModelName.of("gpt-4-turbo-pre
 val ModelName.Companion.GPT3_5 get() = ModelName.of("gpt-3.5-turbo")
 val ModelName.Companion.TEXT_EMBEDDING_ADA_002 get() = ModelName.of("text-embedding-ada-002")
 
-class Role private constructor(value: String) : StringValue(value) {
-    companion object : NonBlankStringValueFactory<Role>(::Role) {
-        val System = Role.of("system")
-        val User = Role.of("user")
-        val Assistant = Role.of("assistant")
-    }
-}
-
 class TokenId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<TokenId>(::TokenId)
 }

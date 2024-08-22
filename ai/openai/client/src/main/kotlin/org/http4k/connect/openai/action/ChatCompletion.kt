@@ -7,13 +7,13 @@ import dev.forkhandles.result4k.Success
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.asRemoteFailure
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
 import org.http4k.connect.openai.CompletionId
 import org.http4k.connect.openai.ObjectType
 import org.http4k.connect.openai.OpenAIAction
 import org.http4k.connect.openai.OpenAIMoshi
 import org.http4k.connect.openai.OpenAIMoshi.autoBody
-import org.http4k.connect.openai.Role
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.Detail.auto
@@ -129,7 +129,12 @@ data class Message(
     val name: User? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
-    constructor(role: Role, text: String, name: User? = null, tool_calls: List<ToolCall>? = null) :
+    constructor(
+        role: Role,
+        text: String,
+        name: User? = null,
+        tool_calls: List<ToolCall>? = null
+    ) :
         this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
 }
 
