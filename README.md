@@ -36,7 +36,7 @@ Although convenient, many API Client libraries introduce many heavyweight depend
 ```kotlin
 dependencies {
     // install the platform...
-    implementation(platform("org.http4k:http4k-connect-bom:5.22.0.00"))
+    implementation(platform("org.http4k:http4k-connect-bom:5.22.1.0"))
 
     // ...then choose an API Client
     implementation("org.http4k:http4k-connect-amazon-s3")
