@@ -23,7 +23,7 @@ fun AzureAI.Companion.Http(
     extraParameters: ExtraParameters? = null,
     deployment: Deployment? = null
 ) = AzureAI(
-    Uri.of("https://${host}.${region}.inference.ai.azure.com")
+    Uri.of("https://$host.$region.inference.ai.azure.com")
         .query("api-version", apiVersion.value),
     token, http,
     extraParameters, deployment
@@ -32,8 +32,14 @@ fun AzureAI.Companion.Http(
 /**
  * Use this API with GitHubModels
  */
-fun AzureAI.Companion.Http(token: GitHubToken, http: HttpHandler) =
+fun AzureAI.Companion.Http(token: GitHubToken, http: HttpHandler = JavaHttpClient()) =
     AzureAI(Uri.of("https://models.inference.ai.azure.com"), token, http)
+
+/**
+ * Use this API with Azure resources
+ */
+fun AzureAI.Companion.Http(resource: AzureResource, region: Region, token: AzureAIApiKey, http: HttpHandler = JavaHttpClient()) =
+    AzureAI(Uri.of("https://$resource.$region.models.ai.azure.com"), token, http)
 
 private fun AzureAI(
     baseUri: Uri,
@@ -49,7 +55,9 @@ private fun AzureAI(
     private val extra = Header.enum<ExtraParameters>().optional("extra-parameters")
     private val modelDeployment = Header.value(Deployment).optional("azureml-model-deployment")
 
-    override fun <R> invoke(action: AzureAIAction<R>) = action.toResult(routedHttp(
-        action.toRequest().with(modelDeployment of deployment, extra of extraParameters)
-    ))
+    override fun <R> invoke(action: AzureAIAction<R>) = action.toResult(
+        routedHttp(
+            action.toRequest().with(modelDeployment of deployment, extra of extraParameters)
+        )
+    )
 }

@@ -6,6 +6,7 @@ import org.http4k.config.EnvironmentKey
 import org.http4k.filter.debug
 import org.http4k.lens.value
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Disabled
 
 class RealGitHubModelsTest : AzureAIContract {
     val token = EnvironmentKey.value(GitHubToken).optional("GITHUB_TOKEN")
@@ -18,4 +19,12 @@ class RealGitHubModelsTest : AzureAIContract {
         token(Environment.ENV)!!,
         JavaHttpClient().debug()
     )
+
+    @Disabled("not in github")
+    override fun `get completion response streaming`() {
+    }
+
+    @Disabled("not in github")
+    override fun `get completion response non-stream`() {
+    }
 }

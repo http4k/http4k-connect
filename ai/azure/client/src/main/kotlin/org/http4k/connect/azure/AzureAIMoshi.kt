@@ -28,6 +28,7 @@ object AzureAIMoshi : ConfigurableMoshi(
         .value(ModelType)
         .value(ObjectType)
         .value(ObjectId)
+        .value(Prompt)
         .value(Role)
         .value(Timestamp)
         .value(TokenId)

@@ -6,6 +6,7 @@ import org.http4k.connect.azure.ObjectType.Companion.ChatCompletion
 import org.http4k.connect.azure.ObjectType.Companion.ChatCompletionChunk
 import org.http4k.connect.azure.action.ChatCompletion
 import org.http4k.connect.azure.action.Choice
+import org.http4k.connect.azure.action.Completion
 import org.http4k.connect.azure.action.CompletionResponse
 import org.http4k.connect.azure.action.CreateEmbeddings
 import org.http4k.connect.azure.action.Embedding
@@ -63,41 +64,57 @@ fun chatCompletion(clock: Clock, completionGenerators: Map<ModelName, ChatComple
         { request ->
             val chatRequest = autoBody<ChatCompletion>().toLens()(request)
             val choices = (completionGenerators[chatRequest.model] ?: ChatCompletionGenerator.LoremIpsum())(chatRequest)
-
-            when {
-                chatRequest.stream -> {
-                    val parts = choices.mapIndexed { it, choice ->
-                        asFormatString(
-                            completionResponse(
-                                request,
-                                it,
-                                null,
-                                ChatCompletionChunk,
-                                chatRequest.model,
-                                clock.instant(),
-                                listOf(choice)
-                            )
-                        )
-                    } + "[DONE]"
-                    Response(OK)
-                        .with(CONTENT_TYPE of TEXT_EVENT_STREAM.withNoDirectives())
-                        .body(parts.joinToString("\n\n") { "data: $it" }.byteInputStream())
-                }
-
-                else -> Response(OK).with(
-                    autoBody<CompletionResponse>().toLens() of
-                        completionResponse(
-                            request,
-                            0,
-                            Usage(0, 0, 0),
-                            ChatCompletion,
-                            chatRequest.model,
-                            clock.instant(),
-                            choices
-                        )
-                )
-            }
+            complete(chatRequest.model, chatRequest.stream, choices, request, clock)
         }
+
+
+fun completion(clock: Clock, completionGenerators: Map<ModelName, ChatCompletionGenerator>) =
+    "/completions" bind POST to
+        { request ->
+            val chatRequest = autoBody<Completion>().toLens()(request)
+            val choices = (completionGenerators[ModelName.of("gpt-3.5-turbo")] ?: ChatCompletionGenerator.LoremIpsum())(chatRequest)
+            complete(ModelName.of("gpt-3.5-turbo"), chatRequest.stream, choices, request, clock)
+        }
+
+private fun complete(
+    model: ModelName,
+    stream: Boolean,
+    choices: List<Choice>,
+    request: Request,
+    clock: Clock
+) = when {
+    stream -> {
+        val parts = choices.mapIndexed { it, choice ->
+            asFormatString(
+                completionResponse(
+                    request,
+                    it,
+                    null,
+                    ChatCompletionChunk,
+                    model,
+                    clock.instant(),
+                    listOf(choice)
+                )
+            )
+        } + "[DONE]"
+        Response(OK)
+            .with(CONTENT_TYPE of TEXT_EVENT_STREAM.withNoDirectives())
+            .body(parts.joinToString("\n\n") { "data: $it" }.byteInputStream())
+    }
+
+    else -> Response(OK).with(
+        autoBody<CompletionResponse>().toLens() of
+            completionResponse(
+                request,
+                0,
+                Usage(0, 0, 0),
+                ChatCompletion,
+                model,
+                clock.instant(),
+                choices
+            )
+    )
+}
 
 private fun completionResponse(
     request: Request,

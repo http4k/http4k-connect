@@ -9,17 +9,17 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 
 class RealAzureAITest : AzureAIContract {
     val apiKey = EnvironmentKey.value(AzureAIApiKey).optional("AZURE_AI_API_KEY")
-    val azureHost = EnvironmentKey.value(AzureHost).optional("AZURE_AI_HOST")
-    val region = EnvironmentKey.value(Region).optional("AZURE_AI_REGION")
+    val resource = EnvironmentKey.value(AzureResource).required("AZURE_AI_RESOURCE")
+    val region = EnvironmentKey.value(Region).required("AZURE_AI_REGION")
 
     init {
         assumeTrue(apiKey(ENV) != null, "No API Key set - skipping")
     }
 
-    override val azureAi = AzureAI.Http(
+    override val azureAi: AzureAI = AzureAI.Http(
+        resource(ENV),
+        region(ENV),
         apiKey(ENV)!!,
-        azureHost(ENV)!!,
-        region(ENV)!!,
         JavaHttpClient().debug()
     )
 }

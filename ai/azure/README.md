@@ -13,7 +13,7 @@ dependencies {
 The http4k-connect AzureAI integration provides:
 
 - AzureAI API Client
-- Compatibility with GitHub Models for testing, so you can use a GitHubToken instead of a deployed Azure model
+- Compatibility with GitHub Models for testing, so you can use a GitHubToken instead of a deployed Azure model. Note that some endpoints are not available in GitHubModels APIs.
 - FakeAzureAI server which can be used as testing harness for the API Client 
 
 ## AzureAI API connector
@@ -21,7 +21,8 @@ The http4k-connect AzureAI integration provides:
 The AzureAI connector provides the following Actions:
 
 * GetInfo
-* ChatCompletion
+* ChatCompletions
+* Completions
 * CreateEmbeddings
 
 New actions can be created easily using the same transport.
@@ -55,7 +56,8 @@ The Fake AzureAI provides the below actions and can be spun up as a server, mean
 environments without using up valuable request tokens!
 
 * GetInfo
-* ChatCompletion
+* ChatCompletions
+* Completions
 * CreateEmbeddings
 
 ### Security
