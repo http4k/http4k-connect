@@ -61,3 +61,10 @@ class CompletionId private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<CompletionId>(::CompletionId)
 }
 
+class ModelProvider private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ModelProvider>(::ModelProvider)
+}
+
+class ModelType private constructor(value: String) : StringValue(value) {
+    companion object : NonBlankStringValueFactory<ModelType>(::ModelType)
+}

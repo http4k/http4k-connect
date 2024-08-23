@@ -20,6 +20,7 @@ The http4k-connect AzureAI integration provides:
 
 The AzureAI connector provides the following Actions:
 
+* GetInfo
 * ChatCompletion
 * CreateEmbeddings
 
@@ -53,9 +54,10 @@ Other examples can be found [here](https://github.com/http4k/http4k-connect/tree
 The Fake AzureAI provides the below actions and can be spun up as a server, meaning it is perfect for using in test
 environments without using up valuable request tokens!
 
+* GetInfo
 * ChatCompletion
 * CreateEmbeddings
-* 
+
 ### Security
 
 The Fake server endpoints are secured with a BearerToken header, but the value is not checked for anything other than presence.

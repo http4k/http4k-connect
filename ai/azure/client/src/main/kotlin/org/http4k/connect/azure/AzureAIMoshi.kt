@@ -24,6 +24,8 @@ object AzureAIMoshi : ConfigurableMoshi(
         .value(Base64Blob)
         .value(CompletionId)
         .value(ModelName)
+        .value(ModelProvider)
+        .value(ModelType)
         .value(ObjectType)
         .value(ObjectId)
         .value(Role)

@@ -24,6 +24,13 @@ interface AzureAIContract {
     val azureAi: AzureAI
 
     @Test
+    fun `get info`() {
+        val modelName = ModelName.of("Meta-Llama-3.1-70B-Instruct")
+        val model = azureAi.getInfo(modelName).successValue()
+        assertThat(model.model_name, equalTo(modelName))
+    }
+
+    @Test
     fun `get chat response non-stream`() {
         val responses = azureAi.chatCompletion(
             ModelName.of("Meta-Llama-3.1-70B-Instruct"),
@@ -41,6 +48,25 @@ interface AzureAIContract {
 
     @Test
     fun `get chat response streaming`() {
+        val responses = azureAi.chatCompletion(
+            ModelName.of("Meta-Llama-3.1-70B-Instruct"),
+            listOf(
+                Message(System, "You are Leonardo Da Vinci"),
+                Message(
+                    User,
+                    "What is your favourite colour?"
+                )
+            ),
+            1000,
+            stream = true
+        ).successValue().toList()
+        assertThat(responses.size, greaterThan(0))
+        assertThat(responses.first().usage, absent())
+        assertThat(responses.first().objectType, equalTo(ChatCompletionChunk))
+    }
+
+    @Test
+    fun `get completion response streaming`() {
         val responses = azureAi.chatCompletion(
             ModelName.of("Meta-Llama-3.1-70B-Instruct"),
             listOf(

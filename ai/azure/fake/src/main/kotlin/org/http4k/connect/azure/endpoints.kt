@@ -10,16 +10,20 @@ import org.http4k.connect.azure.action.CompletionResponse
 import org.http4k.connect.azure.action.CreateEmbeddings
 import org.http4k.connect.azure.action.Embedding
 import org.http4k.connect.azure.action.Embeddings
+import org.http4k.connect.azure.action.ModelInfo
 import org.http4k.connect.azure.action.Usage
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Timestamp
 import org.http4k.core.ContentType.Companion.TEXT_EVENT_STREAM
+import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.with
+import org.http4k.lens.Header
 import org.http4k.lens.Header.CONTENT_TYPE
+import org.http4k.lens.value
 import org.http4k.routing.bind
 import java.time.Clock
 import java.time.Instant
@@ -39,6 +43,18 @@ fun createEmbeddings() = "/embeddings" bind POST to
                     )
                 }, request.model, Usage(0, 0, 0))
 
+        )
+    }
+
+fun getInfo() = "/info" bind GET to
+    {
+        Response(OK).with(
+            autoBody<ModelInfo>().toLens() of
+                ModelInfo(
+                    Header.value(ModelName).defaulted("x-ms-model-mesh-model-name", ModelName.of("gpt-3.5-turbo"))(it),
+                    ModelType.of("chat_completion"),
+                    ModelProvider.of("azure")
+                )
         )
     }
 

@@ -21,6 +21,7 @@ class FakeAzureAI(
                     routes(
                         chatCompletion(clock, completionGenerators),
                         createEmbeddings(),
+                        getInfo(),
                     )
                 )
         )
