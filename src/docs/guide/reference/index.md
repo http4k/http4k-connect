@@ -34,6 +34,7 @@
 
 | Vendor      | System                  | In-Memory Fake | Notes                                                      |
 |-------------|-------------------------|----------------|------------------------------------------------------------|
+| AnthropicAI | [API](./anthropic)      | ✅              | Includes content generators                                |
 | AzureAI     | [API](./azure)          | ✅              | Includes content generators and GitHubModels compatability |
 | LangChain4J | [Adapters](./langchain) | ❌              | Adapters to be plugged into LangChains                     |
 | LM Studio   | [API](./lmstudio)       | ✅              |                                                            |

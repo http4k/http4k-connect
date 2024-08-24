@@ -1,0 +1,60 @@
+package org.http4k.connect.anthropic.action
+
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Success
+import org.http4k.connect.Http4kConnectAction
+import org.http4k.connect.anthropic.AnthropicAIAction
+import org.http4k.connect.anthropic.AnthropicAIMoshi
+import org.http4k.connect.anthropic.Prompt
+import org.http4k.connect.anthropic.ResponseId
+import org.http4k.connect.anthropic.StopReason
+import org.http4k.connect.anthropic.ToolChoice
+import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
+import org.http4k.core.Method.POST
+import org.http4k.core.Request
+import org.http4k.core.Response
+import org.http4k.core.with
+import se.ansman.kotshi.JsonSerializable
+
+@Http4kConnectAction
+@JsonSerializable
+data class CreateMessage(
+    override val model: ModelName,
+    override val messages: List<Message>,
+    override val max_tokens: Int,
+    override val metadata: Metadata? = null,
+    override val stop_sequences: List<String> = emptyList(),
+    override val system: Prompt? = null,
+    override val temperature: Double? = 0.0,
+    override val tool_choice: ToolChoice? = null,
+    override val tools: List<Tool> = emptyList(),
+    override val top_k: Int? = 0,
+    override val top_p: Double? = 0.0
+) : AbstractCreateMessage, AnthropicAIAction<GeneratedMessage> {
+
+    override fun toRequest() =
+        Request(POST, "/v1/messages").with(AnthropicAIMoshi.autoBody<CreateMessage>().toLens() of this)
+
+    override fun toResult(response: Response) = when {
+        response.status.successful -> Success(
+            AnthropicAIMoshi.autoBody<GeneratedMessage>().toLens()(response)
+        )
+
+        else -> Failure(asRemoteFailure(response))
+    }
+
+    override val stream = false
+}
+
+@JsonSerializable
+data class GeneratedMessage(
+    val id: ResponseId,
+    val role: Role,
+    val content: List<Content>,
+    val model: ModelName,
+    val stop_reason: StopReason?,
+    val stop_sequence: String?,
+    val usage: Usage
+) : GeneratedContent

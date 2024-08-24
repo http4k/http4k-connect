@@ -2,10 +2,9 @@
 
 package org.http4k.connect.openai.action
 
-import dev.forkhandles.result4k.Failure
-import dev.forkhandles.result4k.Success
+import dev.forkhandles.result4k.Result
 import org.http4k.connect.Http4kConnectAction
-import org.http4k.connect.asRemoteFailure
+import org.http4k.connect.RemoteFailure
 import org.http4k.connect.model.FinishReason
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
@@ -18,21 +17,17 @@ import org.http4k.connect.openai.OpenAIMoshi.autoBody
 import org.http4k.connect.openai.TokenId
 import org.http4k.connect.openai.User
 import org.http4k.connect.openai.action.Detail.auto
-import org.http4k.core.ContentType.Companion.APPLICATION_JSON
+import org.http4k.connect.util.toCompletionSequence
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Uri
 import org.http4k.core.with
-import org.http4k.lens.Header.CONTENT_TYPE
 import se.ansman.kotshi.ExperimentalKotshiApi
 import se.ansman.kotshi.JsonProperty
 import se.ansman.kotshi.JsonSerializable
 import se.ansman.kotshi.Polymorphic
 import se.ansman.kotshi.PolymorphicLabel
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import kotlin.text.Charsets.UTF_8
 
 @Http4kConnectAction
 @JsonSerializable
@@ -76,33 +71,8 @@ data class ChatCompletion(
     override fun toRequest() = Request(POST, "/v1/chat/completions")
         .with(autoBody<ChatCompletion>().toLens() of this)
 
-    override fun toResult(response: Response) = with(response) {
-        when {
-            status.successful -> when {
-                CONTENT_TYPE(response)?.equalsIgnoringDirectives(APPLICATION_JSON) == true ->
-                    Success(listOf(autoBody<CompletionResponse>().toLens()(response)).asSequence())
-
-                else -> Success(response.toSequence())
-            }
-
-            else -> Failure(asRemoteFailure(this))
-        }
-    }
-
-    private fun Response.toSequence(): Sequence<CompletionResponse> {
-        val reader = BufferedReader(InputStreamReader(body.stream, UTF_8))
-        return sequence {
-            while (true) {
-                val line = reader.readLine() ?: break
-                if (line.startsWith("data: ")) {
-                    when (val chunk = line.removePrefix("data: ").trim()) {
-                        "[DONE]" -> break
-                        else -> yield(OpenAIMoshi.asA<CompletionResponse>(chunk))
-                    }
-                }
-            }
-        }
-    }
+    override fun toResult(response: Response): Result<Sequence<CompletionResponse>, RemoteFailure> =
+        toCompletionSequence(response, OpenAIMoshi, "data: ", "[DONE]")
 }
 
 

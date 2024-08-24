@@ -16,6 +16,6 @@ class RealLmStudioTest : LmStudioContract {
     }
 
     override val lmStudio = LmStudio.Http(
-        JavaHttpClient().debug(debugStream = true),
+        JavaHttpClient().debug(),
     )
 }
