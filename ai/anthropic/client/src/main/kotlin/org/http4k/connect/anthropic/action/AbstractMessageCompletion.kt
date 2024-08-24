@@ -4,7 +4,7 @@ import org.http4k.connect.anthropic.Prompt
 import org.http4k.connect.anthropic.ToolChoice
 import org.http4k.connect.model.ModelName
 
-sealed interface AbstractCreateMessage {
+sealed interface AbstractMessageCompletion {
     val model: ModelName
     val messages: List<Message>
     val max_tokens: Int

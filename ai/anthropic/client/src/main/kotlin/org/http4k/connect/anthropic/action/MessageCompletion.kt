@@ -20,7 +20,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class CreateMessage(
+data class MessageCompletion(
     override val model: ModelName,
     override val messages: List<Message>,
     override val max_tokens: Int,
@@ -32,14 +32,14 @@ data class CreateMessage(
     override val tools: List<Tool> = emptyList(),
     override val top_k: Int? = 0,
     override val top_p: Double? = 0.0
-) : AbstractCreateMessage, AnthropicAIAction<GeneratedMessage> {
+) : AbstractMessageCompletion, AnthropicAIAction<MessageCompletionResponse> {
 
     override fun toRequest() =
-        Request(POST, "/v1/messages").with(AnthropicAIMoshi.autoBody<CreateMessage>().toLens() of this)
+        Request(POST, "/v1/messages").with(AnthropicAIMoshi.autoBody<MessageCompletion>().toLens() of this)
 
     override fun toResult(response: Response) = when {
         response.status.successful -> Success(
-            AnthropicAIMoshi.autoBody<GeneratedMessage>().toLens()(response)
+            AnthropicAIMoshi.autoBody<MessageCompletionResponse>().toLens()(response)
         )
 
         else -> Failure(asRemoteFailure(response))
@@ -49,7 +49,7 @@ data class CreateMessage(
 }
 
 @JsonSerializable
-data class GeneratedMessage(
+data class MessageCompletionResponse(
     val id: ResponseId,
     val role: Role,
     val content: List<Content>,

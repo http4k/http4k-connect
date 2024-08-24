@@ -1,11 +1,11 @@
 package org.http4k.connect.anthropic
 
-import org.http4k.connect.anthropic.action.AbstractCreateMessage
+import org.http4k.connect.anthropic.action.AbstractMessageCompletion
 import org.http4k.connect.anthropic.action.Content
-import org.http4k.connect.anthropic.action.CreateMessage
-import org.http4k.connect.anthropic.action.CreateMessageStream
+import org.http4k.connect.anthropic.action.MessageCompletion
+import org.http4k.connect.anthropic.action.MessageCompletionStream
 import org.http4k.connect.anthropic.action.GeneratedContent
-import org.http4k.connect.anthropic.action.GeneratedMessage
+import org.http4k.connect.anthropic.action.MessageCompletionResponse
 import org.http4k.connect.anthropic.action.Usage
 import org.http4k.connect.model.Role
 import java.util.Random
@@ -13,7 +13,7 @@ import java.util.Random
 /**
  * Helps to control the generation of responses in a particular format for a model.
  */
-fun interface ChatCompletionGenerator : (AbstractCreateMessage) -> List<GeneratedContent> {
+fun interface ChatCompletionGenerator : (AbstractMessageCompletion) -> List<GeneratedContent> {
     companion object
 }
 
@@ -23,9 +23,9 @@ fun interface ChatCompletionGenerator : (AbstractCreateMessage) -> List<Generate
 val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
         when (req) {
-            is CreateMessage -> req.messages.flatMapIndexed { i, m ->
+            is MessageCompletion -> req.messages.flatMapIndexed { i, m ->
                 listOf(
-                    GeneratedMessage(
+                    MessageCompletionResponse(
                         ResponseId.of(i.toString()), Role.Assistant,
                         m.content.mapIndexed { i, m ->
                             Content(Type.text, m.text?.reversed() ?: "")
@@ -35,9 +35,9 @@ val ChatCompletionGenerator.Companion.ReverseInput
                 )
             }
 
-            is CreateMessageStream -> req.messages.flatMapIndexed { i, m ->
+            is MessageCompletionStream -> req.messages.flatMapIndexed { i, m ->
                 listOf(
-                    GeneratedMessage(
+                    MessageCompletionResponse(
                         ResponseId.of(i.toString()), Role.Assistant,
                         m.content.mapIndexed { i, m ->
                             Content(Type.text, m.text?.reversed() ?: "")
@@ -55,7 +55,7 @@ val ChatCompletionGenerator.Companion.ReverseInput
 fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = ChatCompletionGenerator { req ->
     req.messages.flatMap {
         List(it.content.size) { i ->
-            GeneratedMessage(
+            MessageCompletionResponse(
                 ResponseId.of(i.toString()), Role.Assistant,
                 listOf(Content(Type.text, de.svenjacobs.loremipsum.LoremIpsum().getParagraphs(random.nextInt(3, 15)))),
                 req.model, StopReason.end_turn, null, Usage(0, 0, 0, 0)
@@ -72,7 +72,7 @@ val ChatCompletionGenerator.Companion.Echo
         req.messages.flatMap {
             it.content.flatMapIndexed { j, c ->
                 List(it.content.size) { i ->
-                    GeneratedMessage(
+                    MessageCompletionResponse(
                         ResponseId.of(i.toString()), Role.Assistant,
                         it.content,
                         req.model, StopReason.end_turn, null, Usage(0, 0, 0, 0)

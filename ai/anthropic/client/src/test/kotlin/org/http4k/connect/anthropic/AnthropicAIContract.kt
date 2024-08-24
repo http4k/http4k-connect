@@ -1,11 +1,10 @@
 package org.http4k.connect.anthropic
 
 import com.natpryce.hamkrest.greaterThan
-import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.isA
 import org.http4k.connect.anthropic.action.Content
-import org.http4k.connect.anthropic.action.GenerationEvent
+import org.http4k.connect.anthropic.action.MessageGenerationEvent
 import org.http4k.connect.anthropic.action.Message
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
@@ -21,7 +20,7 @@ interface AnthropicAIContract {
 
     @Test
     fun `generate message response non-stream`() {
-        val responses = anthropicAi.createMessage(
+        val responses = anthropicAi.messageCompletion(
             ModelName.of("claude-3-5-sonnet-20240620"),
             listOf(
                 Message(
@@ -38,7 +37,7 @@ interface AnthropicAIContract {
 
     @Test
     fun `generate message response stream`() {
-        val responses = anthropicAi.createMessageStream(
+        val responses = anthropicAi.messageCompletionStream(
             ModelName.of("claude-3-5-sonnet-20240620"),
             listOf(
                 Message(
@@ -49,6 +48,6 @@ interface AnthropicAIContract {
             stream = true
         ).successValue().toList()
 
-        assertThat(responses.first(), isA<GenerationEvent.StartMessage>())
+        assertThat(responses.first(), isA<MessageGenerationEvent.StartMessage>())
     }
 }

@@ -7,7 +7,7 @@ import org.http4k.connect.anthropic.AnthropicAIMoshi
 import org.http4k.connect.anthropic.Prompt
 import org.http4k.connect.anthropic.StopReason
 import org.http4k.connect.anthropic.ToolChoice
-import org.http4k.connect.anthropic.action.GenerationEvent.Ping
+import org.http4k.connect.anthropic.action.MessageGenerationEvent.Ping
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.util.toCompletionSequence
 import org.http4k.core.Method.POST
@@ -20,7 +20,7 @@ import se.ansman.kotshi.PolymorphicLabel
 
 @Http4kConnectAction
 @JsonSerializable
-data class CreateMessageStream internal constructor(
+data class MessageCompletionStream internal constructor(
     override val model: ModelName,
     override val messages: List<Message>,
     override val max_tokens: Int,
@@ -33,7 +33,7 @@ data class CreateMessageStream internal constructor(
     override val top_k: Int? = 0,
     override val top_p: Double? = 0.0,
     override val stream: Boolean,
-) : AbstractCreateMessage, AnthropicAIAction<Sequence<GenerationEvent>> {
+) : AbstractMessageCompletion, AnthropicAIAction<Sequence<MessageGenerationEvent>> {
     constructor(
         model: ModelName,
         messages: List<Message>,
@@ -62,7 +62,7 @@ data class CreateMessageStream internal constructor(
     )
 
     override fun toRequest() =
-        Request(POST, "/v1/messages").with(AnthropicAIMoshi.autoBody<CreateMessageStream>().toLens() of this)
+        Request(POST, "/v1/messages").with(AnthropicAIMoshi.autoBody<MessageCompletionStream>().toLens() of this)
 
     override fun toResult(response: Response) =
         toCompletionSequence(response, AnthropicAIMoshi, "data: ", "event: message_stop")
@@ -71,35 +71,35 @@ data class CreateMessageStream internal constructor(
 
 @JsonSerializable
 @Polymorphic("type")
-sealed class GenerationEvent : GeneratedContent {
+sealed class MessageGenerationEvent : GeneratedContent {
 
     @JsonSerializable
     @PolymorphicLabel("message_start")
-    data class StartMessage(val message: GeneratedMessage) : GenerationEvent()
+    data class StartMessage(val message: MessageCompletionResponse) : MessageGenerationEvent()
 
     @JsonSerializable
     @PolymorphicLabel("content_block_start")
-    data class StartBlock(val index: Long, val content_block: DeltaContent) : GenerationEvent()
+    data class StartBlock(val index: Long, val content_block: DeltaContent) : MessageGenerationEvent()
 
     @JsonSerializable
     @PolymorphicLabel("content_block_delta")
-    data class Delta(val index: Long, val delta: DeltaContent) : GenerationEvent()
+    data class Delta(val index: Long, val delta: DeltaContent) : MessageGenerationEvent()
 
     @JsonSerializable
     @PolymorphicLabel("content_block_stop")
-    data class Stop(val index: Long) : GenerationEvent()
+    data class Stop(val index: Long) : MessageGenerationEvent()
 
     @JsonSerializable
     @PolymorphicLabel("error")
-    data class Error(val index: Long) : GenerationEvent()
+    data class Error(val index: Long) : MessageGenerationEvent()
 
     @JsonSerializable
     @PolymorphicLabel("ping")
-    data object Ping : GenerationEvent()
+    data object Ping : MessageGenerationEvent()
 
     @JsonSerializable
     @PolymorphicLabel("message_delta")
-    data class MessageDelta(val delta: MessageDeltaContent) : GenerationEvent()
+    data class MessageDelta(val delta: MessageDeltaContent) : MessageGenerationEvent()
 
 }
 
