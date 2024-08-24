@@ -3,7 +3,9 @@ package org.http4k.connect.anthropic
 import com.natpryce.hamkrest.greaterThan
 import com.natpryce.hamkrest.present
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.isA
 import org.http4k.connect.anthropic.action.Content
+import org.http4k.connect.anthropic.action.GenerationEvent
 import org.http4k.connect.anthropic.action.Message
 import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
@@ -40,15 +42,13 @@ interface AnthropicAIContract {
             ModelName.of("claude-3-5-sonnet-20240620"),
             listOf(
                 Message(
-                    Role.User, listOf(
-                        Content(Type.text, "You are Leonardo Da Vinci"),
-                    )
+                    Role.User, listOf(Content(Type.text, "You are Leonardo Da Vinci"))
                 )
             ),
             100,
             stream = true
         ).successValue().toList()
 
-        println(responses)
+        assertThat(responses.first(), isA<GenerationEvent.StartMessage>())
     }
 }
