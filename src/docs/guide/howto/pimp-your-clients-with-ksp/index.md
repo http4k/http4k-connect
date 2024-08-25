@@ -44,7 +44,7 @@ plugins {
 apply(plugin = "com.google.devtools.ksp")
 
 dependencies {
-    implementation platform("org.http4k:http4k-connect-bom:5.20.0.0")
+    implementation platform("org.http4k:http4k-connect-bom:5.22.1.0")
     ksp("org.http4k:http4k-connect-ksp-generator")
 }
 ```
