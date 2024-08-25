@@ -56,7 +56,6 @@ interface AnthropicAIContract {
                 )
             ),
             100,
-            stream = true
         ).successValue().toList()
 
         assertThat(responses.first(), isA<MessageGenerationEvent.StartMessage>())

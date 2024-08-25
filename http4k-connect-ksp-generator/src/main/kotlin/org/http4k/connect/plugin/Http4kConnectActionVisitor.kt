@@ -2,6 +2,9 @@ package org.http4k.connect.plugin
 
 import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.getConstructors
+import com.google.devtools.ksp.getVisibility
+import com.google.devtools.ksp.isPrivate
+import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.symbol.ClassKind.OBJECT
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
@@ -29,7 +32,9 @@ class Http4kConnectActionVisitor(private val log: (Any?) -> Unit) :
     ): Sequence<FunSpec> {
         log("Processing " + classDeclaration.asStarProjectedType().declaration.qualifiedName!!.asString())
 
-        return classDeclaration.getConstructors().flatMap { ctr ->
+        return classDeclaration.getConstructors()
+            .filter { it.isPublic() }
+            .flatMap { ctr ->
             listOfNotNull(
                 generateActionExtension(classDeclaration, data, ctr),
                 classDeclaration.takeIf {

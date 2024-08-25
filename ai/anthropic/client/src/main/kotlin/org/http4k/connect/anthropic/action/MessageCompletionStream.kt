@@ -9,6 +9,7 @@ import org.http4k.connect.anthropic.StopReason
 import org.http4k.connect.anthropic.ToolChoice
 import org.http4k.connect.anthropic.action.MessageGenerationEvent.Ping
 import org.http4k.connect.model.ModelName
+import org.http4k.connect.model.Role
 import org.http4k.connect.util.toCompletionSequence
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
@@ -34,6 +35,33 @@ data class MessageCompletionStream internal constructor(
     override val top_p: Double? = 0.0,
     override val stream: Boolean,
 ) : AbstractMessageCompletion, AnthropicAIAction<Sequence<MessageGenerationEvent>> {
+    constructor(
+        model: ModelName,
+        prompt: Prompt,
+        max_tokens: Int,
+        metadata: Metadata? = null,
+        stop_sequences: List<String> = emptyList(),
+        system: Prompt? = null,
+        temperature: Double? = 0.0,
+        tool_choice: ToolChoice? = null,
+        tools: List<Tool> = emptyList(),
+        top_k: Int? = 0,
+        top_p: Double? = 0.0,
+    ) : this(
+        model,
+        listOf(Message(Role.User, listOf(Content.Text(prompt.value))),),
+        max_tokens,
+        metadata,
+        stop_sequences,
+        system,
+        temperature,
+        tool_choice,
+        tools,
+        top_k,
+        top_p,
+        true
+    )
+
     constructor(
         model: ModelName,
         messages: List<Message>,

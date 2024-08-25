@@ -33,6 +33,23 @@ data class MessageCompletion(
     override val top_k: Int? = 0,
     override val top_p: Double? = 0.0
 ) : AbstractMessageCompletion, AnthropicAIAction<MessageCompletionResponse> {
+    constructor(
+        model: ModelName,
+        prompt: Prompt,
+        max_tokens: Int,
+        metadata: Metadata? = null,
+        stop_sequences: List<String> = emptyList(),
+        system: Prompt? = null,
+        temperature: Double? = 0.0,
+        tool_choice: ToolChoice? = null,
+        tools: List<Tool> = emptyList(),
+        top_k: Int? = 0,
+        top_p: Double? = 0.0
+    ) : this(
+        model,
+        listOf(Message(Role.User, listOf(Content.Text(prompt.value)))),
+        max_tokens, metadata, stop_sequences, system, temperature, tool_choice, tools, top_k, top_p
+    )
 
     override fun toRequest() =
         Request(POST, "/v1/messages").with(AnthropicAIMoshi.autoBody<MessageCompletion>().toLens() of this)
