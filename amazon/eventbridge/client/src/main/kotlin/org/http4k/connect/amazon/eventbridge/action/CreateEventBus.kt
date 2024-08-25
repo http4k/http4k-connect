@@ -10,7 +10,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class CreateEventBus internal constructor(
+data class CreateEventBus(
     val Name: EventBusName,
     val EventSourceName: EventSourceName? = null,
     val Tags: List<Tag>? = null

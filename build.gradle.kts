@@ -353,6 +353,7 @@ tasks.named<KotlinJvmCompile>("compileTestKotlin") {
     compilerOptions {
         jvmTarget.set(JVM_1_8)
         freeCompilerArgs.add("-Xjvm-default=all")
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
     }
 }
 
