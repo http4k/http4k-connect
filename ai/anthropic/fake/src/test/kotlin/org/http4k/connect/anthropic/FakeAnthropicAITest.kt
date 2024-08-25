@@ -1,9 +1,10 @@
 package org.http4k.connect.anthropic
 
+import org.http4k.filter.debug
+
 class FakeAnthropicAITest : AnthropicAIContract {
-    private val fakeOpenAI = FakeAnthropicAI()
     override val anthropicAi = AnthropicAI.Http(
         AnthropicIApiKey.of("hello"),
         ApiVersion._2023_06_01,
-        fakeOpenAI)
+        FakeAnthropicAI().debug())
 }

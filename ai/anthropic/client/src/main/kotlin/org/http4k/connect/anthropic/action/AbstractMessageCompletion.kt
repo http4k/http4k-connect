@@ -16,7 +16,7 @@ sealed interface AbstractMessageCompletion {
     val tools: List<Tool>
     val top_k: Int?
     val top_p: Double?
-    val stream: Boolean?
+    val stream: Boolean
 }
 
 sealed interface GeneratedContent

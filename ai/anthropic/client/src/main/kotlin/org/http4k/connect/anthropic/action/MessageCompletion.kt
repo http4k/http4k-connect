@@ -20,7 +20,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
-data class MessageCompletion(
+data class MessageCompletion internal constructor(
     override val model: ModelName,
     override val messages: List<Message>,
     override val max_tokens: Int,
@@ -31,7 +31,8 @@ data class MessageCompletion(
     override val tool_choice: ToolChoice? = null,
     override val tools: List<Tool> = emptyList(),
     override val top_k: Int? = 0,
-    override val top_p: Double? = 0.0
+    override val top_p: Double? = 0.0,
+    override val stream: Boolean
 ) : AbstractMessageCompletion, AnthropicAIAction<MessageCompletionResponse> {
     constructor(
         model: ModelName,
@@ -44,11 +45,29 @@ data class MessageCompletion(
         tool_choice: ToolChoice? = null,
         tools: List<Tool> = emptyList(),
         top_k: Int? = 0,
-        top_p: Double? = 0.0
+        top_p: Double? = 0.0,
     ) : this(
         model,
         listOf(Message(Role.User, listOf(Content.Text(prompt.value)))),
-        max_tokens, metadata, stop_sequences, system, temperature, tool_choice, tools, top_k, top_p
+        max_tokens, metadata, stop_sequences, system, temperature, tool_choice, tools, top_k, top_p, false
+    )
+
+    constructor(
+        model: ModelName,
+        messages: List<Message>,
+        max_tokens: Int,
+        metadata: Metadata? = null,
+        stop_sequences: List<String> = emptyList(),
+        system: Prompt? = null,
+        temperature: Double? = 0.0,
+        tool_choice: ToolChoice? = null,
+        tools: List<Tool> = emptyList(),
+        top_k: Int? = 0,
+        top_p: Double? = 0.0,
+    ) : this(
+        model,
+        messages,
+        max_tokens, metadata, stop_sequences, system, temperature, tool_choice, tools, top_k, top_p, false
     )
 
     override fun toRequest() =
@@ -62,7 +81,6 @@ data class MessageCompletion(
         else -> Failure(asRemoteFailure(response))
     }
 
-    override val stream = false
 }
 
 @JsonSerializable
