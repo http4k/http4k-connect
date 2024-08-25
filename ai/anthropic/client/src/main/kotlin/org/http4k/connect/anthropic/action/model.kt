@@ -3,20 +3,31 @@ package org.http4k.connect.anthropic.action
 import org.http4k.connect.anthropic.MediaType
 import org.http4k.connect.anthropic.SourceType
 import org.http4k.connect.anthropic.ToolName
-import org.http4k.connect.anthropic.Type
 import org.http4k.connect.anthropic.UserId
+import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.model.Role
 import se.ansman.kotshi.JsonSerializable
+import se.ansman.kotshi.Polymorphic
+import se.ansman.kotshi.PolymorphicLabel
 
 @JsonSerializable
 data class Source(
-    val type: SourceType,
+    val data: Base64Blob,
     val media_type: MediaType,
-    val data: String
+    val type: SourceType = SourceType.base64
 )
 
 @JsonSerializable
-data class Content(val type: Type, val text: String? = null, val source: Source? = null, val index: Int? = null)
+@Polymorphic("type")
+sealed class Content {
+    @JsonSerializable
+    @PolymorphicLabel("text")
+    data class Text(val text: String) : Content()
+
+    @JsonSerializable
+    @PolymorphicLabel("image")
+    data class Image(val source: Source) : Content()
+}
 
 @JsonSerializable
 data class Message(val role: Role, val content: List<Content>)

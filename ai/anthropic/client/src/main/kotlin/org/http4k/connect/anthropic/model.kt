@@ -48,7 +48,7 @@ enum class SourceType {
 }
 
 enum class Type {
-    text, image, `object`
+    text, image
 }
 
 enum class ToolType {

@@ -2,8 +2,6 @@ package org.http4k.connect.anthropic
 
 import org.http4k.connect.anthropic.action.AbstractMessageCompletion
 import org.http4k.connect.anthropic.action.Content
-import org.http4k.connect.anthropic.action.MessageCompletion
-import org.http4k.connect.anthropic.action.MessageCompletionStream
 import org.http4k.connect.anthropic.action.GeneratedContent
 import org.http4k.connect.anthropic.action.MessageCompletionResponse
 import org.http4k.connect.anthropic.action.Usage
@@ -22,30 +20,19 @@ fun interface ChatCompletionGenerator : (AbstractMessageCompletion) -> List<Gene
  */
 val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
-        when (req) {
-            is MessageCompletion -> req.messages.flatMapIndexed { i, m ->
-                listOf(
-                    MessageCompletionResponse(
-                        ResponseId.of(i.toString()), Role.Assistant,
-                        m.content.mapIndexed { i, m ->
-                            Content(Type.text, m.text?.reversed() ?: "")
-                        },
-                        req.model, StopReason.end_turn, null, Usage(0, 0, 0, 0)
-                    )
+        req.messages.flatMapIndexed { i, m ->
+            listOf(
+                MessageCompletionResponse(
+                    ResponseId.of(i.toString()), Role.Assistant,
+                    m.content.mapIndexed { i, m ->
+                        when (m) {
+                            is Content.Text -> Content.Text(m.text.reversed())
+                            else -> Content.Text("Something about the imager")
+                        }
+                    },
+                    req.model, StopReason.end_turn, null, Usage(0, 0, 0, 0)
                 )
-            }
-
-            is MessageCompletionStream -> req.messages.flatMapIndexed { i, m ->
-                listOf(
-                    MessageCompletionResponse(
-                        ResponseId.of(i.toString()), Role.Assistant,
-                        m.content.mapIndexed { i, m ->
-                            Content(Type.text, m.text?.reversed() ?: "")
-                        },
-                        req.model, StopReason.end_turn, null, Usage(0, 0, 0, 0)
-                    )
-                )
-            }
+            )
         }
     }
 
@@ -57,7 +44,7 @@ fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = C
         List(it.content.size) { i ->
             MessageCompletionResponse(
                 ResponseId.of(i.toString()), Role.Assistant,
-                listOf(Content(Type.text, de.svenjacobs.loremipsum.LoremIpsum().getParagraphs(random.nextInt(3, 15)))),
+                listOf(Content.Text(de.svenjacobs.loremipsum.LoremIpsum().getParagraphs(random.nextInt(3, 15)))),
                 req.model, StopReason.end_turn, null, Usage(0, 0, 0, 0)
             )
         }

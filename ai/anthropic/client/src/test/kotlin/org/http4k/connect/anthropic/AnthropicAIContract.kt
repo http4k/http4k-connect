@@ -25,7 +25,7 @@ interface AnthropicAIContract {
             listOf(
                 Message(
                     Role.User, listOf(
-                        Content(Type.text, "You are Leonardo Da Vinci"),
+                        Content.Text("You are Leonardo Da Vinci"),
                     )
                 )
             ),
@@ -41,7 +41,7 @@ interface AnthropicAIContract {
             ModelName.of("claude-3-5-sonnet-20240620"),
             listOf(
                 Message(
-                    Role.User, listOf(Content(Type.text, "You are Leonardo Da Vinci"))
+                    Role.User, listOf(Content.Text("You are Leonardo Da Vinci"))
                 )
             ),
             100,
