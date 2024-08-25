@@ -22,10 +22,10 @@ class ModelType private constructor(value: String) : StringValue(value) {
 
 class MediaType private constructor(value: String) : StringValue(value) {
     companion object : NonBlankStringValueFactory<MediaType>(::MediaType) {
-        val jpeg = MediaType.of("image/jpeg")
-        val png = MediaType.of("image/png")
-        val gif = MediaType.of("image/gif")
-        val webp = MediaType.of("image/webp")
+        val IMAGE_JPG = MediaType.of("image/jpeg")
+        val IMAGE_PNG = MediaType.of("image/png")
+        val IMAGE_GIF = MediaType.of("image/gif")
+        val IMAGE_WEBP = MediaType.of("image/webp")
     }
 }
 
