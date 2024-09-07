@@ -4,12 +4,12 @@ package org.http4k.connect.azure.action
 
 import org.http4k.connect.Http4kConnectAction
 import org.http4k.connect.azure.AzureAIMoshi.autoBody
-import org.http4k.connect.model.ModelName
 import org.http4k.connect.azure.CompletionId
 import org.http4k.connect.azure.ObjectType
 import org.http4k.connect.azure.User
 import org.http4k.connect.azure.action.Detail.auto
 import org.http4k.connect.model.FinishReason
+import org.http4k.connect.model.ModelName
 import org.http4k.connect.model.Role
 import org.http4k.connect.model.Timestamp
 import org.http4k.core.Method
@@ -52,6 +52,14 @@ data class ChatCompletion(
         tool_choice = null
     )
 
+    constructor(model: ModelName, message: Message, max_tokens: Int = 16, stream: Boolean = true) : this(
+        model,
+        listOf(message),
+        max_tokens,
+        stream = stream,
+        tool_choice = null
+    )
+
     init {
         require(tools == null || tools.isNotEmpty()) { "Tools cannot be empty" }
     }
@@ -79,11 +87,12 @@ sealed class ResponseFormat {
 
 @JsonSerializable
 data class Message(
-    val role: Role?,
-    val content: List<MessageContent>,
+    val role: Role,
+    val content: List<MessageContent>?,
     val name: User? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
+    @Deprecated("Use companion functions")
     constructor(
         role: Role,
         text: String,
@@ -91,6 +100,27 @@ data class Message(
         tool_calls: List<ToolCall>? = null
     ) :
         this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
+
+    companion object {
+        fun User(content: String, name: User? = null) = User(listOf(MessageContent(ContentType.text, content)), name)
+        fun User(content: List<MessageContent>, name: User? = null) = Message(Role.User, content, name, null)
+
+        fun System(content: String, name: User? = null) =
+            System(listOf(MessageContent(ContentType.text, content)), name)
+
+        fun System(content: List<MessageContent>, name: User? = null) = Message(Role.System, content, name)
+
+        fun Assistant(content: String, name: User? = null) =
+            Assistant(listOf(MessageContent(ContentType.text, content)), name)
+
+        fun Assistant(content: List<MessageContent>, name: User? = null) =
+            Message(Role.Assistant, content, name)
+
+        @JvmName("AssistantToolCalls")
+        fun Assistant(tool_calls: List<ToolCall>, name: User? = null) =
+            Message(Role.Assistant, null, name, tool_calls)
+    }
+
 }
 
 @JsonSerializable

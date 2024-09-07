@@ -42,7 +42,7 @@ val client = AzureAI.Http(
 
 // all operations return a Result monad of the API type
 val result: Result<Sequence<CompletionResponse>, RemoteFailure> = client
-    .chatCompletion(ModelName.of("Meta-Llama-3.1-70B-Instruct"), listOf(Message(User, "good afternoon")), 1000, true)
+    .chatCompletion(ModelName.of("Meta-Llama-3.1-70B-Instruct"), listOf(Message.User("good afternoon"))), 1000, true)
 
 println(result.orThrow().toList())
 }

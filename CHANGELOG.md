@@ -5,7 +5,8 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.24.0.0
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 2.0.20
-- **http4k-connect-ai-openai*** - [Breaking] tightened up types for completion requests. 
+- **http4k-connect-ai-openai*** - [Breaking] Tightened up types for completion requests. 
+- **http4k-connect-ai-azure*** - [Breaking] Tightened up types for completion requests. 
 
 ### v5.23.0.0
 - **http4k-connect-*** - Upgrade dependencies including Kotlin to 2.0.20

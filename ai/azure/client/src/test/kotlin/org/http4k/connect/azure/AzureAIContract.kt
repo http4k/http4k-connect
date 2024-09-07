@@ -35,8 +35,8 @@ interface AzureAIContract {
         val responses = azureAi.chatCompletion(
             ModelName.of("Meta-Llama-3-8B-Instruct"),
             listOf(
-                Message(System, "You are Leonardo Da Vinci"),
-                Message(User, "What is your favourite colour?")
+                Message.System("You are Leonardo Da Vinci"),
+                Message.User("What is your favourite colour?")
             ),
             1000,
             stream = false
@@ -63,11 +63,8 @@ interface AzureAIContract {
         val responses = azureAi.chatCompletion(
             ModelName.of("Meta-Llama-3-8B-Instruct"),
             listOf(
-                Message(System, "You are Leonardo Da Vinci"),
-                Message(
-                    User,
-                    "What is your favourite colour?"
-                )
+                Message.System("You are Leonardo Da Vinci"),
+                Message.User("What is your favourite colour?")
             ),
             1000,
             stream = true

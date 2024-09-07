@@ -33,7 +33,7 @@ fun main() {
     azureAi
         .chatCompletion(
             ModelName.of("Meta-Llama-3.1-70B-Instruct"),
-            listOf(Message(User, "good afternoon")), 1000, true
+            listOf(Message.User("good afternoon")), 1000, true
         )
         .onFailure { error(it) }
         .toList()

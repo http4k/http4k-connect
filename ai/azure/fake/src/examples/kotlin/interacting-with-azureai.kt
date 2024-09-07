@@ -23,9 +23,7 @@ fun main() {
     println(
         azureAi.chatCompletion(
             ModelName.of("Meta-Llama-3.1-70B-Instruct"),
-            listOf(
-                Message(User, "Explain pythagoras's theorem to a 5 year old child"),
-            ),
+            Message.User("Explain pythagoras's theorem to a 5 year old child"),
             1000,
             false
         )
