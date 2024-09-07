@@ -4,7 +4,7 @@ This list is not intended to be all-encompassing - it will document major and br
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
 ### v5.24.1.0
-- **http4k-connect-ai-** - Chat complection
+- **http4k-connect-ai-** - Chat completion API tightening
 
 ### v5.24.0.0
 - **http4k-connect-*** - Upgrade dependencies including
