@@ -22,9 +22,9 @@ fun interface ChatCompletionGenerator : (ChatCompletion) -> List<Choice> {
 val ChatCompletionGenerator.Companion.ReverseInput
     get() = ChatCompletionGenerator { req ->
         req.messages.flatMap { m ->
-            m.content.mapIndexed { i, content ->
+            m.content?.mapIndexed { i, content ->
                 Choice(i, ChoiceDetail(System, content.text?.reversed() ?: "", null), null, stop)
-            }
+            } ?: emptyList()
         }
     }
 
@@ -40,7 +40,7 @@ fun ChatCompletionGenerator.Companion.LoremIpsum(random: Random = Random(0)) = C
  */
 val ChatCompletionGenerator.Companion.Echo
     get() = ChatCompletionGenerator { req ->
-        req.choices(req.messages.first { it.role == User }.content.first().text ?: "")
+        req.choices(req.messages.first { it.role == User }.content?.first()?.text ?: "")
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))

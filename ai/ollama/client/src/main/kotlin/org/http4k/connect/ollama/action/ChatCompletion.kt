@@ -25,11 +25,20 @@ data class ChatCompletion(
     val keep_alive: String? = null,
     val options: ModelOptions? = null
 ) : OllamaAction<Sequence<ChatCompletionResponse>> {
+    constructor(
+        model: ModelName,
+        messages: Message,
+        stream: Boolean? = false,
+        format: ResponseFormat? = null,
+        keep_alive: String? = null,
+        options: ModelOptions? = null
+    ) : this(model, listOf(messages), stream, format, keep_alive, options)
 
     override fun toRequest() = Request(POST, "/api/chat")
         .with(autoBody<ChatCompletion>().toLens() of this)
 
-    override fun toResult(response: Response) = toCompletionSequence(response, OllamaMoshi, "", "__FAKE_HTTP4k_STOP_SIGNAL__")
+    override fun toResult(response: Response) =
+        toCompletionSequence(response, OllamaMoshi, "", "__FAKE_HTTP4k_STOP_SIGNAL__")
 }
 
 @JsonSerializable

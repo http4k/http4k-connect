@@ -11,7 +11,6 @@ import org.http4k.connect.anthropic.action.MessageGenerationEvent
 import org.http4k.connect.anthropic.action.Source
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.model.ModelName
-import org.http4k.connect.model.Role
 import org.http4k.connect.successValue
 import org.http4k.testing.ApprovalTest
 import org.junit.jupiter.api.Test
@@ -28,8 +27,8 @@ interface AnthropicAIContract {
         val responses = anthropicAi.messageCompletion(
             ModelName.of("claude-3-5-sonnet-20240620"),
             listOf(
-                Message(
-                    Role.User, listOf(
+                Message.User(
+                    listOf(
                         Content.Image(
                             Source(
                                 Base64Blob.encode(resourceLoader.stream("dog.png")),
@@ -51,9 +50,7 @@ interface AnthropicAIContract {
         val responses = anthropicAi.messageCompletionStream(
             ModelName.of("claude-3-5-sonnet-20240620"),
             listOf(
-                Message(
-                    Role.User, listOf(Content.Text("You are Leonardo Da Vinci"))
-                )
+                Message.User(listOf(Content.Text("You are Leonardo Da Vinci")))
             ),
             100,
         ).successValue().toList()

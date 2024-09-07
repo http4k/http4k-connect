@@ -46,6 +46,9 @@ data class ChatCompletion(
     val tool_choice: Any? = null,
     val parallel_tool_calls: Boolean? = null,
 ) : LmStudioAction<Sequence<CompletionResponse>> {
+    constructor(model: ModelName, message: Message, max_tokens: Int = 16, stream: Boolean = true)
+        : this(model, listOf(message), max_tokens, stream)
+
     constructor(model: ModelName, messages: List<Message>, max_tokens: Int = 16, stream: Boolean = true) : this(
         model,
         messages,
@@ -79,17 +82,39 @@ data class ResponseFormat(
 @JsonSerializable
 data class Message(
     val role: Role?,
-    val content: List<MessageContent>,
+    val content: List<MessageContent>? = null,
     val name: User? = null,
+    val refusal: String? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
+    @Deprecated("Use relevant companion constructor instead")
     constructor(
         role: Role,
         text: String,
         name: User? = null,
         tool_calls: List<ToolCall>? = null
     ) :
-        this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
+        this(role, listOf(MessageContent(ContentType.text, text)), name, null, tool_calls)
+
+    companion object {
+        fun User(content: String, name: User? = null) = User(listOf(MessageContent(ContentType.text, content)), name)
+        fun User(content: List<MessageContent>, name: User? = null) = Message(Role.User, content, name, null)
+
+        fun System(content: String, name: User? = null) =
+            System(listOf(MessageContent(ContentType.text, content)), name)
+
+        fun System(content: List<MessageContent>, name: User? = null) = Message(Role.System, content, name)
+
+        fun Assistant(content: String, name: User? = null, refusal: String? = null) =
+            Assistant(listOf(MessageContent(ContentType.text, content)), name, refusal)
+
+        fun Assistant(content: List<MessageContent>, name: User? = null, refusal: String? = null) =
+            Message(Role.Assistant, content, name, refusal)
+
+        @JvmName("AssistantToolCalls")
+        fun Assistant(tool_calls: List<ToolCall>, name: User? = null, refusal: String? = null) =
+            Message(Role.Assistant, null, name, refusal, tool_calls)
+    }
 }
 
 @JsonSerializable

@@ -75,7 +75,7 @@ interface OllamaContract {
     fun `get chat response non-stream`() {
         val responses = ollama.chatCompletion(
             modelName,
-            listOf(Message(User, "count to five", null)),
+            listOf(Message.User("count to five")),
             false,
             null,
             null,
@@ -89,7 +89,7 @@ interface OllamaContract {
     fun `get chat response stream`() {
         val responses = ollama.chatCompletion(
             modelName,
-            listOf(Message(User, "count to five", null)),
+            listOf(Message.User("count to five")),
             true,
             null,
             null,

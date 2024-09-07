@@ -30,7 +30,18 @@ sealed class Content {
 }
 
 @JsonSerializable
-data class Message(val role: Role, val content: List<Content>)
+data class Message(val role: Role, val content: List<Content>) {
+    companion object {
+        fun User(content: Content) = Message(Role.User, listOf(content))
+        fun User(content: List<Content>) = Message(Role.User, content)
+        fun System(content: Content) = Message(Role.System, listOf(content))
+        fun System(content: List<Content>) = Message(Role.System, content)
+        fun Assistant(content: Content) = Message(Role.Assistant, listOf(content))
+        fun Assistant(content: List<Content>) = Message(Role.Assistant, content)
+        fun Tool(content: Content) = Message(Role.Tool, listOf(content))
+        fun Tool(content: List<Content>) = Message(Role.Tool, content)
+    }
+}
 
 @JsonSerializable
 data class Tool(val name: ToolName, val description: String, val inputSchema: Schema)

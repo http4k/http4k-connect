@@ -36,8 +36,8 @@ interface LmStudioContract {
         val responses = lmStudio.chatCompletion(
             ModelName.CHAT_MODEL,
             listOf(
-                Message(System, "You are Leonardo Da Vinci"),
-                Message(Companion.User, "What is your favourite colour?")
+                Message.System("You are Leonardo Da Vinci"),
+                Message.User("What is your favourite colour?")
             ),
             1000,
             stream = false
@@ -52,11 +52,8 @@ interface LmStudioContract {
         val responses = lmStudio.chatCompletion(
             ModelName.CHAT_MODEL,
             listOf(
-                Message(System, "You are Leonardo Da Vinci"),
-                Message(
-                    Role.User,
-                    "What is your favourite colour?"
-                )
+                Message.System("You are Leonardo Da Vinci"),
+                Message.User("What is your favourite colour?")
             ),
             1000,
             stream = true
