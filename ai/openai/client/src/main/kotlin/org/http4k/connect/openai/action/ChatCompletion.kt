@@ -64,6 +64,21 @@ data class ChatCompletion(
         stream = stream
     )
 
+    constructor(model: ModelName, message: Message, max_tokens: Int = 16, stream: Boolean = true) : this(
+        model,
+        listOf(message),
+        max_tokens = max_tokens,
+        temperature = 1.0,
+        top_p = 1.0,
+        n = 1,
+        stop = null,
+        presence_penalty = 0.0,
+        frequency_penalty = 0.0,
+        logit_bias = null,
+        user = null,
+        stream = stream
+    )
+
     init {
         require(tools == null || tools.isNotEmpty()) { "Tools cannot be empty" }
     }
@@ -92,21 +107,42 @@ sealed class ResponseFormat {
     data class JsonSchema(val strict: Boolean, val json_schema: Map<String, Any>) : ResponseFormat()
 }
 
-
 @JsonSerializable
 data class Message(
     val role: Role?,
-    val content: List<MessageContent>,
+    val content: List<MessageContent>? = null,
     val name: User? = null,
+    val refusal: String? = null,
     val tool_calls: List<ToolCall>? = null
 ) {
+    @Deprecated("Use relevant companion constructor instead")
     constructor(
         role: Role,
         text: String,
         name: User? = null,
         tool_calls: List<ToolCall>? = null
     ) :
-        this(role, listOf(MessageContent(ContentType.text, text)), name, tool_calls)
+        this(role, listOf(MessageContent(ContentType.text, text)), name, null, tool_calls)
+
+    companion object {
+        fun User(content: String, name: User? = null) = User(listOf(MessageContent(ContentType.text, content)), name)
+        fun User(content: List<MessageContent>, name: User? = null) = Message(Role.User, content, name, null)
+
+        fun System(content: String, name: User? = null) =
+            System(listOf(MessageContent(ContentType.text, content)), name)
+
+        fun System(content: List<MessageContent>, name: User? = null) = Message(Role.System, content, name)
+
+        fun Assistant(content: String, name: User? = null, refusal: String? = null) =
+            Assistant(listOf(MessageContent(ContentType.text, content)), name, refusal)
+
+        fun Assistant(content: List<MessageContent>, name: User? = null, refusal: String? = null) =
+            Message(Role.Assistant, content, name, refusal)
+
+        @JvmName("AssistantToolCalls")
+        fun Assistant(tool_calls: List<ToolCall>, name: User? = null, refusal: String? = null) =
+            Message(Role.Assistant, null, name, refusal, tool_calls)
+    }
 }
 
 @JsonSerializable

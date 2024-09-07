@@ -39,8 +39,8 @@ interface OpenAIContract {
         val responses = openAi.chatCompletion(
             ModelName.GPT3_5,
             listOf(
-                Message(System, "You are Leonardo Da Vinci"),
-                Message(User, "What is your favourite colour?")
+                Message.System("You are Leonardo Da Vinci"),
+                Message.User("What is your favourite colour?")
             ),
             1000,
             stream = false
@@ -55,8 +55,8 @@ interface OpenAIContract {
         val responses = openAi.chatCompletion(
             ModelName.GPT3_5,
             listOf(
-                Message(System, "You are Leonardo Da Vinci"),
-                Message(User, "What is your favourite colour?")
+                Message.System("You are Leonardo Da Vinci"),
+                Message.User("What is your favourite colour?")
             ),
             1000,
             stream = true

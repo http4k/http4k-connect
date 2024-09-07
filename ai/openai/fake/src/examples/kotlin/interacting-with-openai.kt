@@ -18,7 +18,7 @@ fun main() {
         openai.chatCompletion(
             ModelName.GPT3_5,
             listOf(
-                Message(User, "Explain pythagoras's theorem to a 5 year old child"),
+                Message.User("Explain pythagoras's theorem to a 5 year old child")
             ),
             1000,
             false

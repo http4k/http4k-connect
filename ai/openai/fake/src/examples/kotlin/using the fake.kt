@@ -30,7 +30,7 @@ fun main() {
 
     // get a chat completion
     openai
-        .chatCompletion(ModelName.GPT3_5, listOf(Message(User, "good afternoon")), 1000, true)
+        .chatCompletion(ModelName.GPT3_5, listOf(Message.User("good afternoon")), 1000, true)
         .onFailure { error(it) }
         .toList()
         .first()
