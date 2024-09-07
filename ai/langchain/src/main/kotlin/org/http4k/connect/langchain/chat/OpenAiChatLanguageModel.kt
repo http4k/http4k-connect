@@ -51,7 +51,7 @@ data class OpenAiChatModelOptions(
     val temperature: Double = 1.0,
     val top_p: Double = 1.0,
     val n: Int = 1,
-    val stop: Any? = null,
+    val stop: List<String>? = null,
     val presencePenalty: Double = 0.0,
     val frequencyPenalty: Double = 0.0,
     val logitBias: Map<TokenId, Double>? = null,

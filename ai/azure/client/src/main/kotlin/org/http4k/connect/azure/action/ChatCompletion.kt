@@ -31,7 +31,7 @@ data class ChatCompletion(
     val temperature: Double = 1.0,
     val top_p: Double = 1.0,
     val seed: Int = 1,
-    val stop: Any? = null,
+    val stop: List<String>? = null,
     val presence_penalty: Double = 0.0,
     val frequency_penalty: Double = 0.0,
     val user: User? = null,
@@ -155,17 +155,20 @@ data class Choice(
     @JsonProperty(name = "message")
     internal val msg: ChoiceDetail?,
     internal val delta: ChoiceDetail?,
-    val finish_reason: FinishReason?
+    val finish_reason: FinishReason?,
 ) {
     val message get() = msg ?: delta
 }
 
 @JsonSerializable
 data class ChoiceDetail(
-    val role: Role? = null,
+    @JsonProperty(name = "role")
+    internal val r: Role?,
     val content: String? = null,
     val tool_calls: List<ToolCall>? = null,
-)
+) {
+    val role = r ?: Role.Assistant
+}
 
 @JsonSerializable
 data class ToolCall(
@@ -200,7 +203,7 @@ data class CompletionResponse(
     val id: CompletionId,
     val created: Timestamp,
     val model: ModelName,
-    val choices: List<Choice>? = null,
+    val choices: List<Choice>,
     @JsonProperty(name = "object")
     val objectType: ObjectType,
     val usage: Usage? = null,

@@ -20,7 +20,7 @@ data class Completion(
     override val stream: Boolean = false,
     val max_tokens: Int? = null,
     val seed: Integer? = null,
-    val stop: Any? = null,
+    val stop: List<String>? = null,
     val n: Integer? = null,
     val top_p: Double = 1.0,
 ) : ModelCompletion {
@@ -34,6 +34,6 @@ data class Completion(
         top_p = 1.0
     )
 
-    override fun content() = listOf(Message(Role.User, prompt.value))
+    override fun content() = listOf(Message.User(prompt.value))
 
 }

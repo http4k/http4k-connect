@@ -1,8 +1,9 @@
 package org.http4k.connect.openai
 
 import org.http4k.connect.model.FinishReason
-import org.http4k.connect.model.FinishReason.*
+import org.http4k.connect.model.FinishReason.stop
 import org.http4k.connect.model.Role
+import org.http4k.connect.model.Timestamp
 import org.http4k.connect.openai.action.ChatCompletion
 import org.http4k.connect.openai.action.Choice
 import org.http4k.connect.openai.action.ChoiceDetail
@@ -43,4 +44,8 @@ val ChatCompletionGenerator.Companion.Echo
     }
 
 private fun ChatCompletion.choices(msg: String) = (if (stream) msg.split(" ").map { "$it " } else listOf(msg))
-    .map { Choice(0, ChoiceDetail(Role.System, it, null), null, FinishReason.stop) }
+    .map {
+        Choice(
+            0, ChoiceDetail(Role.System, it, null), null, FinishReason.stop,
+        )
+    }
