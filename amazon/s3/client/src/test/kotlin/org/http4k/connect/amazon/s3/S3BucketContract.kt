@@ -68,7 +68,7 @@ interface S3BucketContract : AwsContract {
     }
 
     @AfterEach
-    fun stop() {
+    fun stopThings() {
         close()
     }
 
