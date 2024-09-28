@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb.model
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
+@ConsistentCopyVisibility
 data class TransactWriteItem internal constructor(
     val ConditionCheck: Map<String, Any?>? = null,
     val Delete: Map<String, Any?>? = null,

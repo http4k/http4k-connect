@@ -9,7 +9,8 @@ import org.http4k.core.KAFKA_AVRO_v2
 import org.http4k.core.KAFKA_BINARY_v2
 import org.http4k.core.KAFKA_JSON_V2
 
-data class Records private constructor(
+@ExposedCopyVisibility
+data class Records internal constructor(
     val records: List<Record<out Any, Any>>,
     val contentType: ContentType = APPLICATION_JSON,
     val key_schema: Schema? = null,

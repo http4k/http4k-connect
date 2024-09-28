@@ -25,12 +25,12 @@ fun main() {
 
     // get a chat completion
     openai
-        .chatCompletion(ModelName.CHAT_MODEL, listOf(Message(User, "good afternoon")), 1000, true)
+        .chatCompletion(ModelName.CHAT_MODEL, listOf(Message.User("good afternoon")), 1000, true)
         .onFailure { error(it) }
         .toList()
         .first()
         .choices
-        ?.forEach {
+        .forEach {
             println(it.message?.role)
             println(it.message?.content)
         }

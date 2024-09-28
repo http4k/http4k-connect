@@ -13,6 +13,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
+@ExposedCopyVisibility
 data class FilterLogEvents internal constructor(
     val logGroupName: LogGroupName? = null,
     val logGroupIdentifier: ARN? = null,

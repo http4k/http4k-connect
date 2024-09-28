@@ -12,6 +12,7 @@ import java.util.UUID
 
 @Http4kConnectAction
 @JsonSerializable
+@ConsistentCopyVisibility
 data class PutSecretValue internal constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,

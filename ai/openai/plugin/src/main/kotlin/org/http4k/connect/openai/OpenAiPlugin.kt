@@ -26,6 +26,7 @@ fun info(
     legalInfoUrl: Uri = pluginUrl.path("legal")
 ) = PluginInfo(apiVersion, pluginUrl, contactEmail, humanDescription, modelDescription, logoUrl, legalInfoUrl)
 
+@ConsistentCopyVisibility
 data class PluginInfo internal constructor(
     val apiVersion: String,
     val pluginUrl: Uri,

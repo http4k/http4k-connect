@@ -10,6 +10,7 @@ import java.math.BigDecimal
  * { "S": "hello" } or { "BOOL": true } or { "NS": ["123"] }
  */
 @JsonSerializable
+@ExposedCopyVisibility
 data class AttributeValue internal constructor(
     val B: Base64Blob? = null,
     val BOOL: Boolean? = null,

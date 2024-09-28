@@ -21,7 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class ChatCompletionGeneratorTest {
 
     private val input = ChatCompletion(
-        ModelName.CHAT_MODEL, listOf(Message(User, "foobar"))
+        ModelName.CHAT_MODEL, listOf(Message.User("foobar"))
     )
 
     @Test

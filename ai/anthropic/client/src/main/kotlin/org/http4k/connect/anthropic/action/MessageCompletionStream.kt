@@ -21,6 +21,7 @@ import se.ansman.kotshi.PolymorphicLabel
 
 @Http4kConnectAction
 @JsonSerializable
+@ConsistentCopyVisibility
 data class MessageCompletionStream internal constructor(
     override val model: ModelName,
     override val messages: List<Message>,

@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb.model
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
+@ExposedCopyVisibility
 data class ReqWriteItem internal constructor(
     val DeleteRequest: Map<String, Item>? = null,
     val PutRequest: Map<String, Item>? = null

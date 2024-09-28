@@ -12,6 +12,7 @@ import java.util.UUID
 
 @Http4kConnectAction
 @JsonSerializable
+@ExposedCopyVisibility
 data class UpdateSecret internal constructor(
     val SecretId: SecretId,
     val ClientRequestToken: UUID,

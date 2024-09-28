@@ -18,6 +18,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
+@ExposedCopyVisibility
 data class CreateDeliveryStream internal constructor(
     val DeliveryStreamName: DeliveryStreamName,
     val DeliveryStreamType: DeliveryStreamType,

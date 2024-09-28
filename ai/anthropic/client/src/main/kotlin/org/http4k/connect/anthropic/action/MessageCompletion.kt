@@ -20,6 +20,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @Http4kConnectAction
 @JsonSerializable
+@ConsistentCopyVisibility
 data class MessageCompletion internal constructor(
     override val model: ModelName,
     override val messages: List<Message>,

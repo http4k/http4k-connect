@@ -3,6 +3,7 @@ package org.http4k.connect.amazon.dynamodb.model
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
+@ExposedCopyVisibility
 data class TransactGetItem internal constructor(val Get: Map<String, Any?>) {
     companion object {
         fun Get(
