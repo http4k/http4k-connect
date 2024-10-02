@@ -8,6 +8,7 @@ jobs:
       matrix:
         repo:
           - 'http4k/www'
+          - 'http4k/toolbox'
           - 'http4k/http4k-connect-examples'
     runs-on: ubuntu-latest
     steps:
