@@ -1,4 +1,6 @@
+<div class="github">
 # http4k-connect contributions
+</div>
 
 ### Notes for adding a new Client & Fake
 - Use the `Example` project client and fake as a template module.
