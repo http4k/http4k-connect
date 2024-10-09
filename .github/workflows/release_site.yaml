@@ -21,5 +21,7 @@ jobs:
           repository: http4k/www-http4k-connect
           path: tmp
           token: ${{ secrets.TOOLBOX_REPO_TOKEN }}
-      - run: pushd src && mkdocs gh-deploy && popd
+      - run: cp -R build/docs-website/docs tmp/
+      - run: cp -R src/mkdocs.yml tmp/
+      - run: pushd tmp && mkdocs gh-deploy && popd
 
