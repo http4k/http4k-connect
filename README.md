@@ -29,5 +29,8 @@ Although centered around usage in http4k-based projects, http4k-connect does not
 Although convenient, many API Client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
 
 <div class="github">
-The main documentation has moved to the http4k Connect [site](https://www.http4k.org/ecosystem/connect/)
+## About the docs
+
+The main documentation has moved to the main http4k site [site](https://www.http4k.org/ecosystem/connect/)
+The content for the documentation is now hosted alongside the main site in the repo [http4k/www](https://github.com/http4k/www)
 </div>
