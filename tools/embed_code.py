@@ -53,23 +53,3 @@ if __name__ == "__main__":
     copy_and_rename_readme_to_index(".", "src/docs/guide/reference")
 
     shutil.copytree(project_root + '/src/docs', working_dir + '/docs')
-
-    print('Copying manual docs....')
-
-    shutil.copy(project_root + '/CONTRIBUTING.md', working_dir + '/docs/contributing/index.md')
-    shutil.copy(project_root + '/CODE_OF_CONDUCT.md', working_dir + '/docs/code-of-conduct/index.md')
-    shutil.copy(project_root + '/CHANGELOG.md', working_dir + '/docs/changelog/index.md')
-
-    shutil.copy(project_root + '/README.md', working_dir + '/docs/documentation/index.md')
-    shutil.copy(project_root + '/README.md', project_root + 'src/docs/documentation/index.md')
-
-    pages = [f for f in glob.glob(working_dir + "/**/*.md", recursive=True)]
-    for page in pages:
-        print('Processing ' + page)
-        with open(page, 'r', encoding="utf-8") as file:
-            page_contents = file.read()
-        page_contents = re.sub(r"<script src=\"https://gist-it\.appspot\.com/(.*)\"></script>",
-                               lambda m: pull_content(m.group(1)),
-                               page_contents)
-        with open(page, 'w', encoding="utf-8") as file:
-            file.write(page_contents)
