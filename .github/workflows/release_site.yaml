@@ -16,6 +16,7 @@ jobs:
           python-version: '3.12.4'
           architecture: 'x64'
       - run: pip install -r requirements.txt
+      - run: ./tools/embed_code.py
       - uses: actions/checkout@v4.2.0
         with:
           repository: http4k/www-http4k-connect
