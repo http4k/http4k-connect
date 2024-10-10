@@ -28,6 +28,23 @@ Although centered around usage in http4k-based projects, http4k-connect does not
 ## Rationale
 Although convenient, many API Client libraries introduce many heavyweight dependencies or contain a plethora of non-required functionality, which can have a large effect on binary size. As an alternative, http4k-connect provides lightweight versions of popular APIs covering standard use-cases.
 
+### Installation
+```kotlin
+dependencies {
+    // install the platform...
+    implementation(platform("org.http4k:http4k-connect-bom:5.25.0.0"))
+
+    // ...then choose an API Client
+    implementation("org.http4k:http4k-connect-amazon-s3")
+
+    // ...and a storage backend (optional)
+    implementation("org.http4k:http4k-connect-storage-redis")
+
+    // ...a fake for testing (optional)
+    testImplementation("org.http4k:http4k-connect-amazon-s3-fake")
+}
+```
+
 <div class="github">
 ## About the docs
 
