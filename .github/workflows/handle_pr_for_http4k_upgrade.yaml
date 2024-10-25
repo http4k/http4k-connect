@@ -12,5 +12,5 @@ jobs:
                 label-name: automerge
                 reviewers-number: 0
                 merge-method: squash
-                auto-delete: true
+                auto-delete: false
                 github-token: ${{ secrets.ORG_PUBLIC_REPO_RELEASE_TRIGGERING }}
