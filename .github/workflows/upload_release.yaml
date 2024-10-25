@@ -6,7 +6,7 @@ name: Publish Artifacts
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 jobs:
-  ReleaseMC:
+  Release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,16 +22,18 @@ jobs:
           cache: gradle
       - name: Upload to Sonatype
         run: |
-          ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository \
-          -Psign=true \
-          -PreleaseVersion="${{ steps.tagName.outputs.tag }}" \
-          -PsigningKey="${{ secrets.SIGNING_KEY }}" \
-          -PsigningPassword="${{ secrets.SIGNING_PASSWORD }}" \
-          -PnexusUsername="${{ secrets.NEXUS_USERNAME }}" \
-          -PnexusPassword="${{ secrets.NEXUS_PASSWORD }}"
+            ./gradlew publish publishToSonatype closeAndReleaseSonatypeStagingRepository \
+            -Psign=true \
+            -PreleaseVersion="${{ steps.tagName.outputs.tag }}" \
+            -PsigningKey="${{ secrets.SIGNING_KEY }}" \
+            -PsigningPassword="${{ secrets.SIGNING_PASSWORD }}" \
+            -PltsUsername="${{ secrets.LTS_USERNAME }}" \
+            -PltsPassword="${{ secrets.LTS_PASSWORD }}" \
+            -PnexusUsername="${{ secrets.NEXUS_USERNAME }}" \
+            -PnexusPassword="${{ secrets.NEXUS_PASSWORD }}"
   broadcast-release:
     needs:
-      - ReleaseMC
+      - Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

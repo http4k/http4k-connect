@@ -4,6 +4,7 @@ import groovy.util.Node
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.net.URI
 import java.time.Duration
 
 plugins {
@@ -238,6 +239,20 @@ subprojects {
         }
 
         publishing {
+            repositories {
+                maven {
+                    url = URI("s3://http4k-lts/maven2")
+
+                    val ltsUsername: String? by project
+                    val ltsPassword: String? by project
+
+                    credentials(AwsCredentials::class.java) {
+                        accessKey = ltsUsername
+                        secretKey = ltsPassword
+                    }
+                }
+            }
+
             val javaComponent = components["java"] as AdhocComponentWithVariants
 
             javaComponent.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
