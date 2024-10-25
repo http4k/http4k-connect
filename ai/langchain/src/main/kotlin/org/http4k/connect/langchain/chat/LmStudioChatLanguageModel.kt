@@ -41,7 +41,6 @@ import org.http4k.connect.model.Role
 import org.http4k.connect.orThrow
 import org.http4k.core.Uri
 
-
 data class LmStudioChatModelOptions(
     val model: ModelName,
     val stream: Boolean? = null,

@@ -2,8 +2,6 @@ package org.http4k.connect.plugin
 
 import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.getConstructors
-import com.google.devtools.ksp.getVisibility
-import com.google.devtools.ksp.isPrivate
 import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.symbol.ClassKind.OBJECT
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -35,15 +33,16 @@ class Http4kConnectActionVisitor(private val log: (Any?) -> Unit) :
         return classDeclaration.getConstructors()
             .filter { it.isPublic() }
             .flatMap { ctr ->
-            listOfNotNull(
-                generateActionExtension(classDeclaration, data, ctr),
-                classDeclaration.takeIf {
-                    it.getAllSuperTypes().map { it.toClassName().canonicalName }
-                        .contains(PagedAction::class.qualifiedName)
-                }
-                    ?.let { generateActionPagination(classDeclaration, data, ctr) }
-            )
-        }
+                listOfNotNull(
+                    generateActionExtension(classDeclaration, data, ctr),
+                    classDeclaration.takeIf {
+                        it.getAllSuperTypes()
+                            .map { it.declaration.qualifiedName!!.asString() }
+                            .contains(PagedAction::class.qualifiedName)
+                    }
+                        ?.let { generateActionPagination(classDeclaration, data, ctr) }
+                )
+            }
     }
 
     override fun defaultHandler(node: KSNode, data: KSClassDeclaration) = error("unsupported")

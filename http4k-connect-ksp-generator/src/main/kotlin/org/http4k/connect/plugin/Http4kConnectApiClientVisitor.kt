@@ -9,6 +9,7 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.visitor.KSEmptyVisitor
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toTypeName
 import java.util.Locale
 
 class Http4kConnectApiClientVisitor(private val log: (Any?) -> Unit) :
@@ -20,7 +21,7 @@ class Http4kConnectApiClientVisitor(private val log: (Any?) -> Unit) :
                     " with action type: $it"
             )
             FileSpec.builder(
-                it.toClassName().packageName,
+                it.declaration.packageName.asString(),
                 classDeclaration.simpleName.asString().lowercase(Locale.getDefault()) + "Extensions"
             )
                 .apply {
