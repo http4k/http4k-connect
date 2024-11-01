@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Create release note
         run: ./build-release-note.sh ${{ github.event.client_payload.version }} > NOTE.md
       - name: Create release
