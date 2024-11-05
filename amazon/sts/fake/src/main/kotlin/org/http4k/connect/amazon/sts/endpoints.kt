@@ -10,7 +10,7 @@ import org.http4k.core.body.form
 import org.http4k.core.with
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
-import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.PebbleTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
 import java.time.Duration
@@ -56,5 +56,5 @@ fun assumeRoleWithWebIdentity(defaultSessionValidity: Duration, clock: Clock) =
     }
 
 private val viewModelLens by lazy {
-    Body.viewModel(HandlebarsTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()
+    Body.viewModel(PebbleTemplates().CachingClasspath(), ContentType.APPLICATION_XML).toLens()
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ListQueuesResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
     <ListQueuesResult>
-        {{#each queues}}
-            <QueueUrl>{{this}}</QueueUrl>
-        {{/each}}
+        {% for queue in model.QueueUrls %}
+            <QueueUrl>{{queue}}</QueueUrl>
+        {% endfor %}
     </ListQueuesResult>
     <ResponseMetadata>
         <RequestId>11111111-1111-1111-1111-111111111111</RequestId>

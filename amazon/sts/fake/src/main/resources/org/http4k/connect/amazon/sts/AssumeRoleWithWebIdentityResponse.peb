@@ -1,16 +1,16 @@
 <AssumeRoleWithWebIdentityResponse xmlns="https://sts.amazonaws.comdoc/2011-06-15/">
     <AssumeRoleWithWebIdentityResult>
         <AssumedRoleUser>
-            <Arn>{{arn}}</Arn>
-            <AssumedRoleId>{{roleId}}</AssumedRoleId>
+            <Arn>{{model.arn}}</Arn>
+            <AssumedRoleId>{{model.roleId}}</AssumedRoleId>
         </AssumedRoleUser>
         <Credentials>
-            <AccessKeyId>{{accessKeyId}}</AccessKeyId>
-            <SecretAccessKey>{{secretAccessKey}}</SecretAccessKey>
+            <AccessKeyId>{{model.accessKeyId}}</AccessKeyId>
+            <SecretAccessKey>{{model.secretAccessKey}}</SecretAccessKey>
             <SessionToken>
-                {{sessionToken}}
+                {{model.sessionToken}}
             </SessionToken>
-            <Expiration>{{expiration}}</Expiration>
+            <Expiration>{{model.expiration}}</Expiration>
         </Credentials>
         <SubjectFromWebIdentityToken>amzn1.account.111111111111111111111111</SubjectFromWebIdentityToken>
         <Audience>client.111111111111111111111111.1118@apps.example.com</Audience>

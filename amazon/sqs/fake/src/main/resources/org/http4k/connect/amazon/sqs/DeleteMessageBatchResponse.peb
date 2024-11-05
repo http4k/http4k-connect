@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <DeleteMessageBatchResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
     <DeleteMessageBatchResult>
-        {{#each entries}}
-             <DeleteMessageBatchResultEntry>
-                <Id>{{id}}</Id>
-            </DeleteMessageBatchResultEntry>
-        {{/each}}
+        {% for entry in model.entries %}
+        <DeleteMessageBatchResultEntry>
+            <Id>{{entry.id}}</Id>
+        </DeleteMessageBatchResultEntry>
+        {% endfor %}
     </DeleteMessageBatchResult>
     <ResponseMetadata>
         <RequestId>11111111-1111-1111-1111-111111111111</RequestId>

@@ -1,4 +1,4 @@
 dependencies {
-    implementation(Libs.http4k_template_handlebars)
+    implementation(Libs.http4k_template_pebble)
     testImplementation(project(path = ":http4k-connect-amazon-core", configuration = "testArtifacts"))
 }
