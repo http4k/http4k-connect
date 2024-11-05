@@ -1,3 +1,6 @@
+import com.github.jk1.license.filter.LicenseBundleNormalizer
+import com.github.jk1.license.render.InventoryHtmlReportRenderer
+import com.github.jk1.license.render.JsonReportRenderer
 import com.google.devtools.ksp.gradle.KspTask
 import groovy.namespace.QName
 import groovy.util.Node
@@ -17,6 +20,7 @@ plugins {
     signing
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     id("com.github.kt3k.coveralls") version "2.12.2"
+    id("com.github.jk1.dependency-license-report")
 }
 
 buildscript {
@@ -224,6 +228,28 @@ subprojects {
     }
 
     if (hasAnArtifact(project)) {
+        apply(plugin = "com.github.jk1.dependency-license-report")
+
+        licenseReport {
+            val groupsWeKnowArePermissivelyLicensed = arrayOf<String>(
+//                "io.netty",                       // apache2: https://github.com/netty/netty/blob/4.1/LICENSE.txt
+            )
+
+            excludeGroups = groupsWeKnowArePermissivelyLicensed
+
+            configurations = arrayOf("compileClasspath")
+            filters = arrayOf(
+                LicenseBundleNormalizer(
+                    "${project.rootProject.projectDir}/compliance/license-normalizer-bundle.json",
+                    true
+                )
+            )
+            renderers = arrayOf(JsonReportRenderer(), InventoryHtmlReportRenderer())
+            allowedLicensesFile = "${project.rootProject.projectDir}/compliance/allowed-licenses.json"
+            excludeBoms = true
+            excludeOwnGroup = true
+        }
+
         val enableSigning = project.findProperty("sign") == "true"
 
         apply(plugin = "maven-publish") // required to upload to sonatype
@@ -425,5 +451,11 @@ tasks.named<JacocoReport>("jacocoTestReport") {
                 exclude("**/**Extensions**")
             }
         })
+    }
+}
+
+tasks.named("checkLicense") {
+    onlyIf {
+        project != rootProject
     }
 }
