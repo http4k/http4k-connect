@@ -63,7 +63,7 @@ object Libs {
 
     const val http4k_serverless_lambda: String = "org.http4k:http4k-serverless-lambda"
 
-    const val http4k_template_handlebars: String = "org.http4k:http4k-template-handlebars"
+    const val http4k_template_pebble: String = "org.http4k:http4k-template-pebble"
 
     const val http4k_testing_approval: String = "org.http4k:http4k-testing-approval"
 

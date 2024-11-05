@@ -2,11 +2,11 @@
 <ListTopicsResponse xmlns="http://sns.amazonaws.com/doc/2010-03-31/">
     <ListTopicsResult>
         <Topics>
-            {{#each arns}}
-                <member>
-                    <TopicArn>{{this}}</TopicArn>
-                </member>
-            {{/each}}
+            {% for arn in model.arns %}
+            <member>
+                <TopicArn>{{arn}}</TopicArn>
+            </member>
+            {% endfor %}
         </Topics>
     </ListTopicsResult>
     <ResponseMetadata>

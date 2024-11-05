@@ -20,9 +20,9 @@ import org.http4k.core.body.formAsMap
 import org.http4k.core.with
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
-import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.PebbleTemplates
 import org.http4k.template.viewModel
-import java.util.*
+import java.util.UUID
 
 fun createTopic(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, region: Region) =
     { r: Request -> r.form("Action") == "CreateTopic" }
@@ -117,7 +117,7 @@ fun publishBatch(topics: Storage<List<SNSMessage>>, awsAccount: AwsAccount, regi
     }
 
 val viewModelLens by lazy {
-    Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
+    Body.viewModel(PebbleTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 }
 
 private fun attributesFrom(req: Request, prefix: String = ""): List<MessageAttribute> {

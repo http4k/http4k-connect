@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <GetQueueAttributesResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
     <GetQueueAttributesResult>
-        {{#each attributes}}
+        {% for attribute in model.attributes %}
         <Attribute>
-            <Name>{{first}}</Name>
-            <Value>{{second}}</Value>
+            <Name>{{attribute.first}}</Name>
+            <Value>{{attribute.second}}</Value>
         </Attribute>
-        {{/each}}
+        {% endfor %}
     </GetQueueAttributesResult>
     <ResponseMetadata>
         <RequestId>11111111-1111-1111-1111-111111111111</RequestId>

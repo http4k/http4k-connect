@@ -12,6 +12,7 @@ import org.http4k.connect.successValue
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.OK
+import org.http4k.filter.debug
 import org.http4k.hamkrest.hasBody
 import org.http4k.hamkrest.hasStatus
 import org.http4k.lens.LastModified
@@ -23,7 +24,7 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 class FakeS3BucketTest : S3BucketContract, FakeAwsContract {
-    override val http = FakeS3()
+    override val http = FakeS3().debug()
     override val bucket = BucketName.of(UUID.randomUUID().toString())
 
     @Test

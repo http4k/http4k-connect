@@ -21,7 +21,7 @@ import org.http4k.lens.value
 import org.http4k.lens.webForm
 import org.http4k.routing.asRouter
 import org.http4k.routing.bind
-import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.PebbleTemplates
 import org.http4k.template.viewModel
 import org.http4k.connect.amazon.ses.model.Body as SESBody
 
@@ -59,5 +59,5 @@ private fun <T> WebForm.valuesFrom(prefix: String, transform: (String) -> T) = f
     .toSet()
 
 val viewModelLens by lazy {
-    Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
+    Body.viewModel(PebbleTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 }

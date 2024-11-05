@@ -40,7 +40,7 @@ import org.http4k.routing.ResourceLoader.Companion.Classpath
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.static
-import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.PebbleTemplates
 import org.http4k.template.ViewModel
 import org.http4k.template.viewModel
 import java.time.Clock
@@ -83,7 +83,10 @@ fun createEmbeddings(models: Storage<Model>) = "/v1/embeddings" bind POST to
             Response(OK).with(
                 autoBody<Embeddings>().toLens() of
                     Embeddings(request.input.mapIndexed { index, token ->
-                        Embedding(token.split(" ").map { it.hashCode().absoluteValue / 100000000f }.toFloatArray(), index)
+                        Embedding(
+                            token.split(" ").map { it.hashCode().absoluteValue / 100000000f }.toFloatArray(),
+                            index
+                        )
                     }, request.model, Usage(0, 0, 0))
 
             )
@@ -153,7 +156,7 @@ private fun completionResponse(
 fun serveGeneratedContent() = static(Classpath("public"))
 
 fun index(plugins: List<OpenAIPluginId>): RoutingHttpHandler {
-    val lens = Body.viewModel(HandlebarsTemplates().CachingClasspath(), TEXT_HTML).toLens()
+    val lens = Body.viewModel(PebbleTemplates().CachingClasspath(), TEXT_HTML).toLens()
 
     return "/" bind GET to { Response(OK).with(lens of Index(plugins)) }
 }

@@ -14,7 +14,7 @@ import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.with
 import org.http4k.lens.LastModified
 import org.http4k.routing.asRouter
-import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.PebbleTemplates
 import org.http4k.template.viewModel
 import java.time.Clock
 import java.time.Instant
@@ -30,7 +30,7 @@ fun Request.subdomain(buckets: Storage<Unit>): String =
         }
 
 val s3ErrorLens by lazy {
-    Body.viewModel(HandlebarsTemplates().CachingClasspath(), APPLICATION_XML).toLens()
+    Body.viewModel(PebbleTemplates().CachingClasspath(), APPLICATION_XML).toLens()
 }
 
 const val GLOBAL_BUCKET = "unknown"
