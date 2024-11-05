@@ -5,6 +5,18 @@ changes with their rationale when appropriate. Given version `A.B.C.D`, breaking
 
 ### v5.25.2.0 (uncut)
 - **http4k-connect-*** - Upgrade dependencies
+- **http4k-connect-ai-azure-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-ai-lmstudio-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-ai-ollama-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-ai-openai-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-cloudfront-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-s3-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-secretsmanager-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-ses*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-ses-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-sns-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-sqs-fake*** - Replace Handlebars with Pebble (licence reasons)
+- **http4k-connect-amazon-sts-fake*** - Replace Handlebars with Pebble (licence reasons)
 
 ### v5.25.1.0
 - **http4k-connect-*** - Upgrade dependencies
