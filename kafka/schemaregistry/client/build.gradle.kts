@@ -1,6 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.http4k.internal.ModuleLicense.Apache2
+
+val license by project.extra { Apache2 }
 
 plugins {
+    id("org.http4k.module")
     id("com.github.davidmc24.gradle.plugin.avro")
 }
 
@@ -13,13 +17,15 @@ dependencies {
 
     implementation(Libs.api)
 
-    testApi(libs.kotlin.reflect)
+    testFixturesApi(libs.kotlin.reflect)
+
+    testFixturesImplementation("org.apache.avro:avro:_")
 
     testFixturesApi(Libs.api)
 }
 
 tasks {
     withType<KotlinCompile>().configureEach {
-        dependsOn("generateTestAvroJava")
+        dependsOn("generateTestFixturesAvroJava")
     }
 }

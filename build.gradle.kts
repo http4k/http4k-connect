@@ -1,26 +1,14 @@
-import com.github.jk1.license.filter.LicenseBundleNormalizer
-import com.github.jk1.license.render.InventoryHtmlReportRenderer
-import com.github.jk1.license.render.JsonReportRenderer
 import com.google.devtools.ksp.gradle.KspTask
-import groovy.namespace.QName
-import groovy.util.Node
-import org.gradle.api.JavaVersion.VERSION_1_8
+import org.http4k.internal.ModuleLicense.Apache2
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.net.URI
-import java.time.Duration
 
 plugins {
     kotlin("jvm")
+    id("org.http4k.project-metadata")
+    id("org.http4k.nexus")
     id("com.google.devtools.ksp")
-    idea
-    jacoco
-    `java-library`
-    `maven-publish`
-    signing
-    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
-    id("com.github.kt3k.coveralls") version "2.12.2"
-    id("com.github.jk1.dependency-license-report")
+    `java-test-fixtures`
 }
 
 buildscript {
@@ -35,58 +23,26 @@ buildscript {
     }
 }
 
+metadata {
+    developers = mapOf(
+        "David Denton" to "david@http4k.org",
+        "Ivan Sanchez" to "ivan@http4k.org",
+        "Albert Latacz" to "albert@http4k.org"
+    )
+}
+
 allprojects {
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-    apply(plugin = "org.gradle.jacoco")
-    apply(plugin = "com.github.kt3k.coveralls")
-    apply(plugin = "com.google.devtools.ksp")
+    val license by project.extra { Apache2 }
+
+    apply(plugin = "org.http4k.module")
+
     apply(plugin = "java-test-fixtures")
 
-    repositories {
-        mavenCentral()
-    }
-
-    version = project.properties["releaseVersion"] ?: "LOCAL"
-    group = "org.http4k"
-
-    jacoco {
-        toolVersion = "0.8.12"
-    }
+    apply(plugin = "com.google.devtools.ksp")
 
     tasks {
         withType<KspTask> {
             outputs.upToDateWhen { false }
-        }
-
-        withType<KotlinJvmCompile>().configureEach {
-            compilerOptions {
-                allWarningsAsErrors = false
-                jvmTarget.set(JVM_1_8)
-            }
-        }
-
-        java {
-            sourceCompatibility = VERSION_1_8
-            targetCompatibility = VERSION_1_8
-        }
-
-        withType<Test> {
-            useJUnitPlatform()
-        }
-
-        if (hasCodeCoverage(project)) {
-            named<JacocoReport>("jacocoTestReport") {
-                reports {
-                    html.required.set(true)
-                    xml.required.set(true)
-                    csv.required.set(false)
-                }
-            }
-        }
-
-        withType<GenerateModuleMetadata> {
-            enabled = false
         }
     }
 
@@ -98,17 +54,17 @@ allprojects {
 
         ksp("se.ansman.kotshi:compiler:_")
 
-        testImplementation(platform(Libs.junit_bom))
-        testImplementation(Http4k.testing.hamkrest)
-        testImplementation(Http4k.testing.approval)
+        testFixturesApi(platform(Libs.junit_bom))
+        testFixturesApi(Http4k.testing.hamkrest)
+        testFixturesApi(Http4k.testing.approval)
 
-        testImplementation(Testing.junit.jupiter.api)
-        testImplementation(Testing.junit.jupiter.engine)
-        testImplementation(platform(Libs.testcontainers_bom))
-        testImplementation(Testing.junit.jupiter.params)
-        testImplementation("org.testcontainers:junit-jupiter")
-        testImplementation("org.testcontainers:testcontainers")
-        testImplementation("dev.forkhandles:mock4k")
+        testFixturesApi(Testing.junit.jupiter.api)
+        testFixturesApi(Testing.junit.jupiter.engine)
+        testFixturesApi(platform(Libs.testcontainers_bom))
+        testFixturesApi(Testing.junit.jupiter.params)
+        testFixturesApi("org.testcontainers:junit-jupiter")
+        testFixturesApi("org.testcontainers:testcontainers")
+        testFixturesApi("dev.forkhandles:mock4k")
 
         when {
             project.name.endsWith("core-fake") -> {
@@ -118,13 +74,8 @@ allprojects {
             project.name.endsWith("fake") -> {
                 api(project(":http4k-connect-core-fake"))
                 api(project(":${project.name.substring(0, project.name.length - 5)}"))
-                testImplementation(
-                    project(
-                        path = ":${project.name.substring(0, project.name.length - 5)}",
-                        configuration = "testArtifacts"
-                    )
-                )
-                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+                testFixturesApi(testFixtures(project(":${project.name.substring(0, project.name.length - 5)}")))
+                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
             }
 
             project.name.startsWith("http4k-connect-storage-core") -> {
@@ -133,13 +84,13 @@ allprojects {
 
             project.name.startsWith("http4k-connect-storage") -> {
                 api(project(":http4k-connect-storage-core"))
-                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
-                testImplementation(project(path = ":http4k-connect-storage-core", configuration = "testArtifacts"))
+                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
+                testFixturesApi(testFixtures(project(":http4k-connect-storage-core")))
             }
 
             project.name == "http4k-connect" -> {
                 rootProject.subprojects.forEach {
-                    testImplementation(project(it.name))
+                    testFixturesApi(project(it.name))
                 }
             }
 
@@ -162,8 +113,8 @@ allprojects {
                 ksp(project(":http4k-connect-ksp-generator"))
                 ksp(Libs.se_ansman_kotshi_compiler)
 
-                testImplementation(Libs.se_ansman_kotshi_compiler)
-                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+                testFixturesApi(Libs.se_ansman_kotshi_compiler)
+                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
             }
         }
     }
@@ -173,18 +124,6 @@ subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "idea")
     apply(plugin = "java-test-fixtures")
-
-    val sourcesJar by tasks.creating(Jar::class) {
-        archiveClassifier.set("sources")
-        from(project.the<SourceSetContainer>()["main"].allSource)
-        dependsOn(tasks.named("classes"))
-    }
-
-    val javadocJar by tasks.creating(Jar::class) {
-        archiveClassifier.set("javadoc")
-        from(tasks.named<Javadoc>("javadoc").get().destinationDir)
-        dependsOn(tasks.named("javadoc"))
-    }
 
     tasks {
         named<Jar>("jar") {
@@ -198,21 +137,6 @@ subprojects {
                 )
             }
         }
-
-        val testJar by creating(Jar::class) {
-            archiveClassifier.set("test")
-            from(project.the<SourceSetContainer>()["test"].output)
-        }
-
-        configurations.create("testArtifacts") {
-            extendsFrom(configurations["testApi"])
-        }
-
-        artifacts {
-            add("testArtifacts", testJar)
-            archives(sourcesJar)
-            archives(javadocJar)
-        }
     }
 
     sourceSets {
@@ -222,99 +146,11 @@ subprojects {
 
         test {
             kotlin.srcDir("src/examples/kotlin")
-            kotlin.srcDir("build/generated/ksp/test/kotlin")
-            kotlin.srcDir("build/generated-test-avro-java")
-        }
-    }
-
-    if (hasAnArtifact(project)) {
-        apply(plugin = "com.github.jk1.dependency-license-report")
-
-        licenseReport {
-            val groupsWeKnowArePermissivelyLicensed = arrayOf<String>(
-//                "io.netty",                       // apache2: https://github.com/netty/netty/blob/4.1/LICENSE.txt
-            )
-
-            excludeGroups = groupsWeKnowArePermissivelyLicensed
-
-            configurations = arrayOf("compileClasspath")
-            filters = arrayOf(
-                LicenseBundleNormalizer(
-                    "${project.rootProject.projectDir}/compliance/license-normalizer-bundle.json",
-                    true
-                )
-            )
-            renderers = arrayOf(JsonReportRenderer(), InventoryHtmlReportRenderer())
-            allowedLicensesFile = "${project.rootProject.projectDir}/compliance/allowed-licenses.json"
-            excludeBoms = true
-            excludeOwnGroup = true
         }
 
-        val enableSigning = project.findProperty("sign") == "true"
-
-        apply(plugin = "maven-publish") // required to upload to sonatype
-
-        if (enableSigning) { // when added it expects signing keys to be configured
-            apply(plugin = "signing")
-            signing {
-                val signingKey: String? by project
-                val signingPassword: String? by project
-                useInMemoryPgpKeys(signingKey, signingPassword)
-                sign(publishing.publications)
-            }
-        }
-
-        publishing {
-            repositories {
-                maven {
-                    url = URI("s3://http4k-maven")
-
-                    val ltsPublishingUser: String? by project
-                    val ltsPublishingPassword: String? by project
-
-                    credentials(AwsCredentials::class.java) {
-                        accessKey = ltsPublishingUser
-                        secretKey = ltsPublishingPassword
-                    }
-                }
-            }
-
-            val javaComponent = components["java"] as AdhocComponentWithVariants
-
-            javaComponent.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
-            javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
-
-            publications {
-                val archivesBaseName = tasks.jar.get().archiveBaseName.get()
-                create<MavenPublication>("mavenJava") {
-                    artifactId = archivesBaseName
-                    pom.withXml {
-                        asNode().appendNode("name", archivesBaseName)
-                        asNode().appendNode("description", description)
-                        asNode().appendNode("url", "https://http4k.org")
-                        asNode().appendNode("developers")
-                            .appendNode("developer").appendNode("name", "Ivan Sanchez").parent()
-                            .appendNode("email", "ivan@http4k.org")
-                            .parent().parent()
-                            .appendNode("developer").appendNode("name", "David Denton").parent()
-                            .appendNode("email", "david@http4k.org")
-                            .parent().parent()
-                            .appendNode("developer").appendNode("name", "Albert Latacz").parent()
-                            .appendNode("email", "albert@http4k.org")
-                        asNode().appendNode("scm")
-                            .appendNode("url", "https://github.com/http4k/http4k-connect").parent()
-                            .appendNode("connection", "scm:git:git@github.com:http4k/http4k-connect.git").parent()
-                            .appendNode("developerConnection", "scm:git:git@github.com:http4k/http4k-connect.git")
-                        asNode().appendNode("licenses").appendNode("license")
-                            .appendNode("name", "Apache License, Version 2.0").parent()
-                            .appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.html")
-                    }
-                    from(components["java"])
-
-                    artifact(sourcesJar)
-                    artifact(javadocJar)
-                }
-            }
+        testFixtures {
+            kotlin.srcDir("build/generated/ksp/testFixtures/kotlin")
+            kotlin.srcDir("build/generated-testFixtures-avro-java")
         }
     }
 
@@ -322,26 +158,6 @@ subprojects {
         test {
             kotlin.srcDir("$projectDir/src/examples/kotlin")
         }
-    }
-}
-
-tasks.register<JacocoReport>("jacocoRootReport") {
-    dependsOn(subprojects.map { it.tasks.named<Test>("test").get() })
-
-    sourceDirectories.from(subprojects.flatMap { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
-    classDirectories.from(subprojects.map { it.the<SourceSetContainer>()["main"].output })
-    executionData.from(subprojects
-        .filter { it.name != "http4k-bom" && hasAnArtifact(it) }
-        .map {
-            it.tasks.named<JacocoReport>("jacocoTestReport").get().executionData
-        }
-    )
-
-    reports {
-        html.required.set(true)
-        xml.required.set(true)
-        csv.required.set(false)
-        xml.outputLocation.set(file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml"))
     }
 }
 
@@ -375,42 +191,11 @@ sourceSets {
     }
 }
 
-tasks.register("listProjects") {
-    doLast {
-        subprojects
-            .filter { hasAnArtifact(it) }
-            .forEach { System.err.println(it.name) }
-    }
-}
-
-fun Node.childrenCalled(wanted: String) = children()
-    .filterIsInstance<Node>()
-    .filter {
-        val name = it.name()
-        (name is QName) && name.localPart == wanted
-    }
-
 tasks.named<KotlinJvmCompile>("compileTestKotlin") {
     compilerOptions {
         jvmTarget.set(JVM_1_8)
         freeCompilerArgs.add("-Xjvm-default=all")
         freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
-    }
-}
-
-val nexusUsername: String? by project
-val nexusPassword: String? by project
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            username.set(nexusUsername)
-            password.set(nexusPassword)
-        }
-    }
-    transitionCheckOptions {
-        maxRetries.set(150)
-        delayBetween.set(Duration.ofSeconds(5))
     }
 }
 
@@ -437,25 +222,3 @@ dependencies {
 
 fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
     !project.name.endsWith("generator")
-
-coveralls {
-    sourceDirs = subprojects.map { it.sourceSets.getByName("main").allSource.srcDirs }.flatten().map { it.absolutePath }
-    jacocoReportPath = file("${layout.buildDirectory}/reports/jacoco/test/jacocoRootReport.xml")
-}
-
-tasks.named<JacocoReport>("jacocoTestReport") {
-    afterEvaluate {
-        classDirectories.setFrom(classDirectories.files.map {
-            fileTree(it) {
-                exclude("**/Kotshi**/**")
-                exclude("**/**Extensions**")
-            }
-        })
-    }
-}
-
-tasks.named("checkLicense") {
-    onlyIf {
-        project != rootProject
-    }
-}

@@ -1,7 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.http4k.internal.ModuleLicense.Apache2
+
+val license by project.extra { Apache2 }
 
 plugins {
     id("com.github.davidmc24.gradle.plugin.avro")
+    id("org.http4k.module")
 }
 
 dependencies {
@@ -12,14 +16,15 @@ dependencies {
     implementation("org.apache.avro:avro:_")
     implementation(Libs.api)
 
-    testApi(libs.kotlin.reflect)
+    testFixturesApi(libs.kotlin.reflect)
 
-    testApi(project(":http4k-connect-kafka-rest-fake"))
+    testFixturesApi(project(":http4k-connect-kafka-rest-fake"))
+    testFixturesImplementation("org.apache.avro:avro:_")
     testFixturesApi(Libs.api)
 }
 
 tasks {
     withType<KotlinCompile>().configureEach {
-        dependsOn("generateTestAvroJava")
+        dependsOn("generateTestFixturesAvroJava")
     }
 }
