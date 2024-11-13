@@ -11,15 +11,12 @@ import org.http4k.connect.kafka.rest.model.AutoOffsetReset
 import org.http4k.connect.kafka.rest.model.ConsumerGroup
 import org.http4k.connect.kafka.rest.model.ConsumerInstance
 import org.http4k.connect.kafka.rest.model.Topic
-import org.http4k.connect.kafka.rest.randomString
 import org.http4k.connect.kafka.rest.v2.model.Consumer
 import org.http4k.connect.kafka.rest.v2.model.RecordFormat
-import org.http4k.connect.kafka.rest.v2.model.RecordFormat.json
 import org.http4k.connect.kafka.rest.v2.subscribeToTopics
 import org.http4k.connect.kafka.rest.v3.model.ClusterId
 import org.http4k.connect.kafka.rest.v3.model.Record
-import org.http4k.connect.kafka.rest.v3.model.RecordData.Binary
-import org.http4k.connect.kafka.rest.v3.model.RecordData.Json
+import org.http4k.connect.kafka.rest.v3.model.RecordData
 import org.http4k.connect.model.Base64Blob
 import org.http4k.connect.successValue
 import org.http4k.core.Credentials
@@ -28,7 +25,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.Uri
-import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -41,7 +38,7 @@ interface KafkaRestV3Contract {
 
     @BeforeEach
     fun `can get to proxy v3`() {
-        assumeTrue(http(Request(Method.GET, uri)).status == Status.OK)
+        Assumptions.assumeTrue(http(Request(Method.GET, uri)).status == Status.OK)
     }
 
     @Test
@@ -64,13 +61,13 @@ interface KafkaRestV3Contract {
         assertThat(
             kafkaRest.produceRecords(
                 clusterId, topic, listOf(
-                    Record(Binary(Base64Blob.encode("1")), Binary(Base64Blob.encode("3"))),
-                    Record(Binary(Base64Blob.encode("2")), Binary(Base64Blob.encode("4")))
+                    Record(RecordData.Binary(Base64Blob.encode("1")), RecordData.Binary(Base64Blob.encode("3"))),
+                    Record(RecordData.Binary(Base64Blob.encode("2")), RecordData.Binary(Base64Blob.encode("4")))
                 )
             ).successValue()!!.toList().size, equalTo(2)
         )
 
-        val group = ConsumerGroup.of(randomString())
+        val group = ConsumerGroup.of(org.http4k.connect.kafka.rest.randomString())
 
         val consumer1 = KafkaRestConsumer.Http(
             Credentials("", ""), group,
@@ -83,7 +80,7 @@ interface KafkaRestV3Contract {
 
         consumer1.subscribeToTopics(listOf(topic)).successValue()
 
-        val records = consumer1.consumeRecordsTwiceBecauseOfProxy(json)
+        val records = consumer1.consumeRecordsTwiceBecauseOfProxy(RecordFormat.json)
         assertThat(records
             .map { it.key.toString() to it.value.toString() }
             .map { Base64Blob.of(it.first).decoded() to Base64Blob.of(it.second).decoded() },
@@ -116,12 +113,12 @@ interface KafkaRestV3Contract {
         assertThat(
             kafkaRest.produceRecords(
                 clusterId, topic, listOf(
-                    Record(Json("foo1"), Json(mapOf("bar1" to "foo1"))),
+                    Record(RecordData.Json("foo1"), RecordData.Json(mapOf("bar1" to "foo1"))),
                 )
             ).successValue()!!.toList().size, equalTo(1)
         )
 
-        val group = ConsumerGroup.of(randomString())
+        val group = ConsumerGroup.of(org.http4k.connect.kafka.rest.randomString())
 
         val consumer1 = KafkaRestConsumer.Http(
             Credentials("", ""), group,
@@ -134,7 +131,7 @@ interface KafkaRestV3Contract {
 
         consumer1.subscribeToTopics(listOf(topic)).successValue()
 
-        val records = consumer1.consumeRecordsTwiceBecauseOfProxy(json)
+        val records = consumer1.consumeRecordsTwiceBecauseOfProxy(RecordFormat.json)
         assertThat(
             records
                 .map { it.key to it.value },
