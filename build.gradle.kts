@@ -25,7 +25,8 @@ buildscript {
 metadata {
     developers = mapOf(
         "David Denton" to "david@http4k.org",
-        "Ivan Sanchez" to "ivan@http4k.org"
+        "Ivan Sanchez" to "ivan@http4k.org",
+        "Albert Latacz" to "albert@http4k.org"
     )
 }
 
