@@ -31,9 +31,6 @@ metadata {
 subprojects {
     apply(plugin = "org.http4k.module")
     apply(plugin = "org.http4k.connect.module")
-
-    apply(plugin = "java-test-fixtures")
-
     apply(plugin = "com.google.devtools.ksp")
 
     tasks {
