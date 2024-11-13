@@ -40,10 +40,6 @@ subprojects {
     }
 
     dependencies {
-        ksp("se.ansman.kotshi:compiler:_")
-    }
-
-    dependencies {
         when {
             project.name.endsWith("core-fake") -> {
             }
