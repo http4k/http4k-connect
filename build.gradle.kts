@@ -146,10 +146,6 @@ subprojects {
 
         test {
             kotlin.srcDir("src/examples/kotlin")
-            kotlin.srcDir("build/generated/ksp/test/kotlin")
-            kotlin.srcDir("build/generated-test-avro-java")
-            kotlin.srcDir("build/generated/ksp/testFixtures/kotlin")
-            kotlin.srcDir("build/generated-testFixtures-avro-java")
         }
 
         testFixtures {

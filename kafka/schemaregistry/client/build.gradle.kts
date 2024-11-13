@@ -17,13 +17,15 @@ dependencies {
 
     implementation(Libs.api)
 
-    testApi(libs.kotlin.reflect)
+    testFixturesApi(libs.kotlin.reflect)
+
+    testFixturesImplementation("org.apache.avro:avro:_")
 
     testFixturesApi(Libs.api)
 }
 
 tasks {
     withType<KotlinCompile>().configureEach {
-        dependsOn("generateTestAvroJava")
+        dependsOn("generateTestFixturesAvroJava")
     }
 }

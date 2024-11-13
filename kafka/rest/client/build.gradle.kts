@@ -18,13 +18,13 @@ dependencies {
 
     testFixturesApi(libs.kotlin.reflect)
 
-    testApi(project(":http4k-connect-kafka-rest-fake"))
+    testFixturesApi(project(":http4k-connect-kafka-rest-fake"))
+    testFixturesImplementation("org.apache.avro:avro:_")
     testFixturesApi(Libs.api)
 }
 
 tasks {
     withType<KotlinCompile>().configureEach {
-        dependsOn("generateTestAvroJava")
         dependsOn("generateTestFixturesAvroJava")
     }
 }
