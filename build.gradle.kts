@@ -86,8 +86,8 @@ allprojects {
 
             project.name.startsWith("http4k-connect-storage") -> {
                 api(project(":http4k-connect-storage-core"))
-                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
-                testImplementation(project(path = ":http4k-connect-storage-core", configuration = "testArtifacts"))
+                testImplementation(testFixtures(project(":http4k-connect-core-fake")))
+                testImplementation(testFixtures(project(":http4k-connect-storage-core")))
             }
 
             project.name == "http4k-connect" -> {
