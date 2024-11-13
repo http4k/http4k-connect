@@ -1,9 +1,6 @@
 plugins {
-    kotlin("jvm")
     id("org.http4k.project-metadata")
     id("org.http4k.nexus")
-    id("com.google.devtools.ksp")
-    id("org.http4k.connect.module")
 }
 
 metadata {
