@@ -5,6 +5,9 @@ plugins {
     id("org.http4k.project-metadata")
     id("org.http4k.nexus")
     id("com.google.devtools.ksp")
+
+    id("org.http4k.connect.module")
+
     `java-test-fixtures`
 }
 
@@ -29,6 +32,7 @@ metadata {
 
 subprojects {
     apply(plugin = "org.http4k.module")
+    apply(plugin = "org.http4k.connect.module")
 
     apply(plugin = "java-test-fixtures")
 
@@ -41,6 +45,9 @@ subprojects {
     }
 
     dependencies {
+
+        ksp("se.ansman.kotshi:compiler:_")
+
         api(platform("org.http4k:http4k-bom:${project.properties["http4k_version"]}")) // manually set because of auto-upgrading
         api(platform("dev.forkhandles:forkhandles-bom:_"))
         api(Http4k.core)
@@ -59,7 +66,9 @@ subprojects {
         testFixturesApi("org.testcontainers:junit-jupiter")
         testFixturesApi("org.testcontainers:testcontainers")
         testFixturesApi("dev.forkhandles:mock4k")
+    }
 
+    dependencies {
         when {
             project.name.endsWith("core-fake") -> {
             }
