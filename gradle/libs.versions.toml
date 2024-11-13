@@ -2,18 +2,9 @@
 
 [versions]
 
-kotlin = "2.0.20"
-##  ⬆ = "2.0.21"
-
 [libraries]
 
-kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-
 result4k = { module = "dev.forkhandles:result4k" }
-
-forkhandles-bom = "dev.forkhandles:forkhandles-bom:_"
-
-bom = "software.amazon.awssdk:bom:_"
 
 cloudfront = { module = "software.amazon.awssdk:cloudfront" }
 
@@ -39,36 +30,10 @@ ssm = { module = "software.amazon.awssdk:ssm" }
 
 sts = { module = "software.amazon.awssdk:sts" }
 
-testcontainers-bom = "org.testcontainers:testcontainers-bom:_"
-
-junit-jupiter = { module = "org.testcontainers:junit-jupiter" }
-
-testcontainers = { module = "org.testcontainers:testcontainers" }
-
-kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
-
-kotlin-annotation-processing-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-annotation-processing-gradle", version.ref = "kotlin" }
-
-api = "se.ansman.kotshi:api:_"
-
 symbol-processing-api = "com.google.devtools.ksp:symbol-processing-api:_"
-
-se-ansman-kotshi-compiler = "se.ansman.kotshi:compiler:_"
 
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
 parser4k = { module = "dev.forkhandles:parser4k" }
-
-aws-lambda-java-events = "com.amazonaws:aws-lambda-java-events:_"
-
-values4k = { module = "dev.forkhandles:values4k" }
-
-swagger-ui = "org.webjars:swagger-ui:_"
-
-hikaricp = "com.zaxxer:HikariCP:_"
-
-h2 = "com.h2database:h2:_"
-
-lettuce-core = "io.lettuce:lettuce-core:_"
 
 jose4j = "org.bitbucket.b_c:jose4j:_"
