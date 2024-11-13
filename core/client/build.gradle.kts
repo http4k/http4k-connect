@@ -1,3 +1,9 @@
+val license by project.extra { Apache2 }
+
+plugins {
+    id("org.http4k.module")
+}
+
 dependencies {
     api(Libs.values4k)
     compileOnly(Libs.http4k_format_moshi)

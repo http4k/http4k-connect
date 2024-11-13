@@ -4,6 +4,12 @@ plugins {
     id("com.github.davidmc24.gradle.plugin.avro")
 }
 
+val license by project.extra { Apache2 }
+
+plugins {
+    id("org.http4k.module")
+}
+
 dependencies {
     api(Libs.http4k_format_moshi) {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
