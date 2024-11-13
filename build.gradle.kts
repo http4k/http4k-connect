@@ -63,13 +63,7 @@ subprojects {
             }
 
             project.name != "http4k-connect-core" -> {
-                api(Http4k.cloudnative)
-                api(project(":http4k-connect-core"))
-                ksp(project(":http4k-connect-ksp-generator"))
-                ksp("se.ansman.kotshi:compiler:_")
-
-                testFixturesApi("se.ansman.kotshi:compiler:_")
-                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
+                apply(plugin = "org.http4k.connect.client")
             }
         }
     }

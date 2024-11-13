@@ -18,4 +18,5 @@ repositories {
 dependencies {
     api(Kotlin.gradlePlugin)
     api(gradleApi())
+    api("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_")
 }
