@@ -28,11 +28,9 @@ subprojects {
             }
 
             project.name.startsWith("http4k-connect-storage") -> {
-                apply(plugin = "org.http4k.connect.storage")
             }
 
             project.name == "http4k-connect-bom" -> {
-                // bom - no code
             }
 
             project.name == "http4k-connect-ksp-generator" -> {
