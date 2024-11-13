@@ -8,7 +8,6 @@ import org.gradle.api.JavaVersion.VERSION_1_8
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.net.URI
-import java.time.Duration
 
 plugins {
     id("com.google.devtools.ksp")
