@@ -30,7 +30,6 @@ metadata {
 }
 
 allprojects {
-
     val license by project.extra { Apache2 }
 
     apply(plugin = "org.http4k.module")

@@ -27,11 +27,11 @@ refreshVersions {
     }
 }
 
-//include(":http4k-connect-ksp-generator")
-//
+include(":http4k-connect-ksp-generator")
+
 includeWithName("http4k-connect-bom", "bom")
-//includeSystem("core")
-//includeStorage("core")
+includeSystem("core")
+includeStorage("core")
 //includeStorage("jdbc")
 //includeStorage("redis")
 //includeStorage("s3")

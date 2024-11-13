@@ -4,6 +4,8 @@ plugins {
     id("com.github.davidmc24.gradle.plugin.avro")
 }
 
+import org.http4k.internal.ModuleLicense.Apache2
+
 val license by project.extra { Apache2 }
 
 plugins {
