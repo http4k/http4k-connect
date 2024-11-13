@@ -7,6 +7,7 @@ plugins {
     id("com.github.davidmc24.gradle.plugin.avro")
     id("org.http4k.module")
     id("org.http4k.connect.module")
+    id("org.http4k.connect.client")
 }
 
 dependencies {

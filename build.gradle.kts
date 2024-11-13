@@ -23,22 +23,6 @@ subprojects {
             project.name.endsWith("fake") -> {
                 apply(plugin = "org.http4k.connect.fake")
             }
-
-            project.name.startsWith("http4k-connect-storage-core") -> {
-            }
-
-            project.name.startsWith("http4k-connect-storage") -> {
-            }
-
-            project.name == "http4k-connect-bom" -> {
-            }
-
-            project.name == "http4k-connect-ksp-generator" -> {
-            }
-
-            project.name != "http4k-connect-core" -> {
-                apply(plugin = "org.http4k.connect.client")
-            }
         }
     }
 
