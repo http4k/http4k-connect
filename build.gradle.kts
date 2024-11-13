@@ -219,39 +219,3 @@ dependencies {
 
 fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
     !project.name.endsWith("generator")
-
-tasks.register("moveContractFilesToTestFixtures") {
-    group = "Setup"
-    description = "Moves files named '*Contract' from 'src/test' to 'src/testFixtures' in the same relative location."
-
-    doLast {
-        subprojects.forEach { project ->
-            val testDir = project.projectDir.resolve("src/test/kotlin")
-            val testFixturesDir = project.projectDir.resolve("src/testFixtures/kotlin")
-
-            if (testDir.exists()) {
-                // Find all files ending with 'Contract' in 'src/test'
-                testDir.walkTopDown()
-                    .filter { it.isFile && it.name.endsWith("Contract.kt") }
-                    .forEach { file ->
-                        // Calculate the relative path within 'src/test'
-                        val relativePath = file.relativeTo(testDir)
-
-                        // Define the target path within 'src/testFixtures'
-                        val targetFile = testFixturesDir.resolve(relativePath)
-
-                        // Ensure the target directory exists
-                        targetFile.parentFile.mkdirs()
-
-                        // Move the file
-                        file.copyTo(targetFile, overwrite = true)
-                        file.delete()
-
-                        println("Moved ${file.path} to ${targetFile.path}")
-                    }
-            } else {
-                println("No 'src/test' directory found in project ${project.name}")
-            }
-        }
-    }
-}
