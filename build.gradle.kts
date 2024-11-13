@@ -11,16 +11,17 @@ import java.net.URI
 import java.time.Duration
 
 plugins {
-    kotlin("jvm")
     id("com.google.devtools.ksp")
     idea
+    kotlin("jvm")
     jacoco
     `java-library`
     `maven-publish`
     signing
-    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     id("com.github.kt3k.coveralls") version "2.12.2"
     id("com.github.jk1.dependency-license-report")
+    id("org.http4k.project-metadata") version "0.0.0.0"
+    id("org.http4k.nexus") version "0.0.0.0"
 }
 
 buildscript {
@@ -395,22 +396,6 @@ tasks.named<KotlinJvmCompile>("compileTestKotlin") {
         jvmTarget.set(JVM_1_8)
         freeCompilerArgs.add("-Xjvm-default=all")
         freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
-    }
-}
-
-val nexusUsername: String? by project
-val nexusPassword: String? by project
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            username.set(nexusUsername)
-            password.set(nexusPassword)
-        }
-    }
-    transitionCheckOptions {
-        maxRetries.set(150)
-        delayBetween.set(Duration.ofSeconds(5))
     }
 }
 

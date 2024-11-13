@@ -1,5 +1,8 @@
 pluginManagement {
     repositories {
+        mavenLocal {
+            url = uri("$rootDir/gradle/repo")
+        }
         gradlePluginPortal()
     }
 }
