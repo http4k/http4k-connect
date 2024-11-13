@@ -10,7 +10,7 @@ dependencies {
     api(project(":http4k-connect-ai-core"))
     implementation(Libs.api)
 
-    testApi(Libs.http4k_cloudnative)
+    testApi("org.http4k:http4k-cloudnative")
     testApi(Libs.http4k_format_moshi)
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
 }

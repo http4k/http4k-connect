@@ -8,6 +8,6 @@ plugins {
 
 dependencies {
     api(Libs.values4k)
-    compileOnly(Libs.http4k_format_moshi)
-    testCompileOnly(Libs.http4k_format_moshi)
+    compileOnly("org.http4k:http4k-format-moshi")
+    testCompileOnly("org.http4k:http4k-format-moshi")
 }

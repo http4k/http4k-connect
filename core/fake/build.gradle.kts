@@ -8,6 +8,6 @@ plugins {
 
 dependencies {
     api(project(":http4k-connect-storage-core"))
-    api(Libs.http4k_testing_chaos)
-    implementation(Libs.http4k_format_moshi)
+    api("org.http4k:http4k-testing-chaos")
+    implementation("org.http4k:http4k-format-moshi")
 }

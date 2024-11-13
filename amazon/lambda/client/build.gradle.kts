@@ -8,9 +8,9 @@ plugins {
 
 dependencies {
     api(project(":http4k-connect-amazon-core"))
-    api(Libs.http4k_serverless_lambda)
+    api("org.http4k:http4k-serverless-lambda")
 
-    testFixturesApi(Libs.aws_lambda_java_events)
+    testFixturesApi("com.amazonaws:aws-lambda-java-events:_")
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

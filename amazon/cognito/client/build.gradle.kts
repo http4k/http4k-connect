@@ -12,7 +12,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
-    api(Libs.http4k_security_oauth) {
+    api("org.http4k:http4k-security-oauth") {
         exclude("org.http4k", "http4k-format-moshi")
     }
 

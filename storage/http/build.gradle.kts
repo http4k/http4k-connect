@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(Libs.http4k_contract)
-    api(Libs.http4k_format_jackson)
+    api("org.http4k:http4k-contract")
+    api("org.http4k:http4k-format-jackson")
     api(Libs.swagger_ui)
 }

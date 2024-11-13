@@ -14,7 +14,7 @@ dependencies {
     implementation(Libs.api)
 
     testFixturesApi("org.jetbrains.kotlin", "kotlin-reflect")
-    testFixturesApi(Libs.http4k_serverless_lambda)
+    testFixturesApi("org.http4k:http4k-serverless-lambda")
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))

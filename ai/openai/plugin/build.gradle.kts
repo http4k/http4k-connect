@@ -7,21 +7,21 @@ plugins {
 }
 
 dependencies {
-    api(Libs.http4k_contract)
-    api(Libs.http4k_format_jackson)
-    api(Libs.http4k_security_oauth)
+    api("org.http4k:http4k-contract")
+    api("org.http4k:http4k-format-jackson")
+    api("org.http4k:http4k-security-oauth")
     api(project(":http4k-connect-storage-core"))
 
-    compileOnly(platform(Libs.junit_bom))
-    compileOnly(Libs.junit_jupiter_api)
-    compileOnly(Libs.http4k_testing_approval)
-    compileOnly(Libs.http4k_testing_hamkrest)
+    compileOnly(platform("org.junit:junit-bom:_"))
+    compileOnly("org.junit.jupiter:junit-jupiter-api")
+    compileOnly("org.http4k:http4k-testing-approval")
+    compileOnly("org.http4k:http4k-testing-hamkrest")
 
     testApi(project(":http4k-connect-ai-openai-fake"))
-    testApi(Libs.junit_jupiter_api)
-    testApi(Libs.http4k_serverless_lambda)
-    testApi(Libs.http4k_cloudnative)
-    testApi(Libs.http4k_testing_approval)
+    testApi("org.junit.jupiter:junit-jupiter-api")
+    testApi("org.http4k:http4k-serverless-lambda")
+    testApi("org.http4k:http4k-cloudnative")
+    testApi("org.http4k:http4k-testing-approval")
 
     testApi("com.nimbusds:nimbus-jose-jwt:_")
 }

@@ -8,9 +8,9 @@ plugins {
 
 dependencies {
     api(Libs.http4k_format_moshi)
-    api(Libs.exposed_core)
-    api(Libs.exposed_jdbc)
+    api("org.jetbrains.exposed:exposed-core:_")
+    api("org.jetbrains.exposed:exposed-jdbc:_")
 
-    testFixturesApi(Libs.hikaricp)
-    testFixturesApi(Libs.h2)
+    testFixturesApi("com.zaxxer:HikariCP:_")
+    testFixturesApi("com.h2database:h2:_")
 }

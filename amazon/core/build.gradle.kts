@@ -7,14 +7,14 @@ plugins {
 }
 
 dependencies {
-    api(Libs.http4k_aws)
+    api("org.http4k:http4k-aws")
 
     api(Libs.http4k_format_moshi) {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
     implementation(Libs.api)
-    implementation(Libs.http4k_format_core)
+    implementation("org.http4k:http4k-format-core")
 
-    testFixturesApi(Libs.http4k_testing_chaos)
+    testFixturesApi("org.http4k:http4k-testing-chaos")
 }

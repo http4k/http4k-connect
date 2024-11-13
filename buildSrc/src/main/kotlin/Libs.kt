@@ -10,17 +10,6 @@
  * See https://github.com/jmfayard/refreshVersions
  */
 object Libs {
-    const val aws_lambda_java_events: String = "com.amazonaws:aws-lambda-java-events:_"
-
-    const val h2: String = "com.h2database:h2:_"
-
-    const val kotlinpoet: String = "com.squareup:kotlinpoet:_"
-
-    const val kotlinpoet_ksp: String = "com.squareup:kotlinpoet-ksp:_"
-
-    const val kotlinpoet_metadata: String = "com.squareup:kotlinpoet-metadata:_"
-
-    const val hikaricp: String = "com.zaxxer:HikariCP:_"
 
     const val forkhandles_bom: String = "dev.forkhandles:forkhandles-bom:_"
 
@@ -30,41 +19,7 @@ object Libs {
 
     const val values4k: String = "dev.forkhandles:values4k"
 
-    const val lettuce_core: String = "io.lettuce:lettuce-core:_"
-
-    const val mockk: String = "io.mockk:mockk:_"
-
-    const val http4k_aws: String = "org.http4k:http4k-aws"
-
-    const val http4k_cloudnative: String = "org.http4k:http4k-cloudnative"
-
-    const val http4k_contract: String = "org.http4k:http4k-contract"
-
-    const val http4k_format_core: String = "org.http4k:http4k-format-core"
-
-    const val http4k_format_jackson: String = "org.http4k:http4k-format-jackson"
-
     const val http4k_format_moshi: String = "org.http4k:http4k-format-moshi"
-
-    const val http4k_security_oauth: String = "org.http4k:http4k-security-oauth"
-
-    const val http4k_serverless_lambda: String = "org.http4k:http4k-serverless-lambda"
-
-    const val http4k_template_pebble: String = "org.http4k:http4k-template-pebble"
-
-    const val http4k_testing_approval: String = "org.http4k:http4k-testing-approval"
-
-    const val http4k_testing_chaos: String = "org.http4k:http4k-testing-chaos"
-
-    const val http4k_testing_hamkrest: String = "org.http4k:http4k-testing-hamkrest"
-
-    const val exposed_core: String = "org.jetbrains.exposed:exposed-core:_"
-
-    const val exposed_jdbc: String = "org.jetbrains.exposed:exposed-jdbc:_"
-
-    const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api"
-
-    const val junit_bom: String = "org.junit:junit-bom:_"
 
     const val testcontainers: String = "org.testcontainers:testcontainers"
 
@@ -78,19 +33,9 @@ object Libs {
 
     const val bom: String = "software.amazon.awssdk:bom:_"
 
-    const val cloudfront: String = "software.amazon.awssdk:cloudfront"
-
     const val dynamodb: String = "software.amazon.awssdk:dynamodb"
 
-    const val kms: String = "software.amazon.awssdk:kms"
-
-    const val lambda: String = "software.amazon.awssdk:lambda"
-
     const val s3: String = "software.amazon.awssdk:s3"
-
-    const val secretsmanager: String = "software.amazon.awssdk:secretsmanager"
-
-    const val sns: String = "software.amazon.awssdk:sns"
 
     const val sqs: String = "software.amazon.awssdk:sqs"
 

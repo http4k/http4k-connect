@@ -48,7 +48,7 @@ subprojects {
 
         ksp("se.ansman.kotshi:compiler:_")
 
-        testFixturesApi(platform(Libs.junit_bom))
+        testFixturesApi(platform("org.junit:junit-bom:_"))
         testFixturesApi(Http4k.testing.hamkrest)
         testFixturesApi(Http4k.testing.approval)
 
