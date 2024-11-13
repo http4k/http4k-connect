@@ -27,6 +27,8 @@ refreshVersions {
     }
 }
 
+include(":tools")
+
 include(":http4k-connect-ksp-generator")
 
 includeWithName("http4k-connect-bom", "bom")

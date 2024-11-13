@@ -1,7 +1,5 @@
 import com.google.devtools.ksp.gradle.KspTask
 import org.http4k.internal.ModuleLicense.Apache2
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -17,7 +15,6 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
         classpath("com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_")
         classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_")
     }
@@ -160,65 +157,3 @@ subprojects {
         }
     }
 }
-
-dependencies {
-    subprojects
-        .forEach {
-            implementation(project(it.name))
-        }
-
-    implementation(platform(Libs.bom))
-    implementation(libs.cloudfront)
-    implementation(libs.cognitoidentityprovider)
-    implementation(libs.dynamodb)
-    implementation(libs.kms)
-    implementation(libs.lambda)
-    implementation(libs.s3)
-    implementation(libs.secretsmanager)
-    implementation(libs.ses)
-    implementation(libs.sns)
-    implementation(libs.sqs)
-    implementation(libs.ssm)
-    implementation(libs.sts)
-}
-
-fun hasAnArtifact(it: Project) = !it.name.contains("test-function") && !it.name.contains("integration-test")
-
-sourceSets {
-    test {
-        kotlin.srcDir("$projectDir/src/docs")
-        resources.srcDir("$projectDir/src/docs")
-    }
-}
-
-tasks.named<KotlinJvmCompile>("compileTestKotlin") {
-    compilerOptions {
-        jvmTarget.set(JVM_1_8)
-        freeCompilerArgs.add("-Xjvm-default=all")
-        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
-    }
-}
-
-dependencies {
-    subprojects
-        .forEach {
-            implementation(project(it.name))
-        }
-
-    implementation(platform(Libs.bom))
-    implementation(libs.cloudfront)
-    implementation(libs.cognitoidentityprovider)
-    implementation(libs.dynamodb)
-    implementation(libs.kms)
-    implementation(libs.lambda)
-    implementation(libs.s3)
-    implementation(libs.secretsmanager)
-    implementation(libs.ses)
-    implementation(libs.sns)
-    implementation(libs.sqs)
-    implementation(libs.ssm)
-    implementation(libs.sts)
-}
-
-fun hasCodeCoverage(project: Project) = project.name != "http4k-connect-bom" &&
-    !project.name.endsWith("generator")
