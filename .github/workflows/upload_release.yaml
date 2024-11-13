@@ -1,54 +1,55 @@
 name: Publish Artifacts
-'on':
-  push:
-    tags:
-      - '*'
+on:
+    push:
+        tags:
+            - '*'
 env:
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 jobs:
-  Release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-      - name: Grab tag name
-        uses: olegtarasov/get-tag@2.1.3
-        id: tagName
-      - name: Setup Java
-        uses: actions/setup-java@v4.5.0
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
-      - name: Upload to Sonatype
-        run: |
-            ./gradlew publish publishToSonatype closeAndReleaseSonatypeStagingRepository \
-            -Psign=true \
-            -PreleaseVersion="${{ steps.tagName.outputs.tag }}" \
-            -PsigningKey="${{ secrets.SIGNING_KEY }}" \
-            -PsigningPassword="${{ secrets.SIGNING_PASSWORD }}" \
-            -PltsPublishingUser="${{ secrets.LTS_PUBLISHING_USER }}" \
-            -PltsPublishingPassword="${{ secrets.LTS_PUBLISHING_PASSWORD }}" \
-            -PnexusUsername="${{ secrets.NEXUS_USERNAME }}" \
-            -PnexusPassword="${{ secrets.NEXUS_PASSWORD }}"
-      - run: ./notify-lts-slack.sh ${{ steps.tagName.outputs.tag }}
-        env:
-            LTS_SLACK_WEBHOOK: ${{ secrets.LTS_SLACK_WEBHOOK }}
-  broadcast-release:
-    needs:
-      - Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-      - name: Grab tag name
-        uses: olegtarasov/get-tag@2.1.3
-        id: tagName
-      - name: Dispatch Release Event
-        uses: peter-evans/repository-dispatch@v3.0.0
-        with:
-          token: '${{ secrets.ORG_PUBLIC_REPO_WORKFLOW_TRIGGERING }}'
-          repository: http4k/http4k-connect
-          event-type: http4k-connect-release
-          client-payload: '{"version": "${{ steps.tagName.outputs.tag }}"}'
+    Release:
+        runs-on: ubuntu-latest
+        if: github.repository == 'http4k/http4k-connect'
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4.2.2
+            - name: Grab tag name
+              uses: olegtarasov/get-tag@v2.1.3
+              id: tagName
+            - name: Setup Java
+              uses: actions/setup-java@v4.5.0
+              with:
+                  distribution: temurin
+                  java-version: 21
+                  cache: gradle
+            - name: Upload to Sonatype
+              run: |
+                  ./gradlew publish publishToSonatype closeAndReleaseSonatypeStagingRepository \
+                  -Psign=true \
+                  -PreleaseVersion="${{ steps.tagName.outputs.tag }}" \
+                  -PsigningKey="${{ secrets.SIGNING_KEY }}" \
+                  -PsigningPassword="${{ secrets.SIGNING_PASSWORD }}" \
+                  -PltsPublishingUser="${{ secrets.LTS_PUBLISHING_USER }}" \
+                  -PltsPublishingPassword="${{ secrets.LTS_PUBLISHING_PASSWORD }}" \
+                  -PnexusUsername="${{ secrets.NEXUS_USERNAME }}" \
+                  -PnexusPassword="${{ secrets.NEXUS_PASSWORD }}"
+            - run: ./notify-lts-slack.sh ${{ steps.tagName.outputs.tag }}
+              env:
+                  LTS_SLACK_WEBHOOK: ${{ secrets.LTS_SLACK_WEBHOOK }}
+    broadcast-release:
+        needs:
+            - Release
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4.2.2
+            - name: Grab tag name
+              uses: olegtarasov/get-tag@2.1.3
+              id: tagName
+            - name: Dispatch Release Event
+              uses: peter-evans/repository-dispatch@v3.0.0
+              with:
+                  token: '${{ secrets.ORG_PUBLIC_REPO_WORKFLOW_TRIGGERING }}'
+                  repository: http4k/http4k-connect
+                  event-type: http4k-connect-release
+                  client-payload: '{"version": "${{ steps.tagName.outputs.tag }}"}'
 
