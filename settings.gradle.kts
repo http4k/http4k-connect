@@ -77,7 +77,7 @@ includeSystem("openai", "plugin")
 
 includeCommon("langchain", "langchain")
 
-//includeVendorSystem("kafka", "rest")
+includeVendorSystem("kafka", "rest")
 includeVendorSystem("kafka", "schemaregistry")
 
 includeCommon("google-analytics-core", "google/analytics-core")
