@@ -8,5 +8,5 @@ plugins {
 
 dependencies {
     api(project(":http4k-connect-google-analytics-core"))
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 }

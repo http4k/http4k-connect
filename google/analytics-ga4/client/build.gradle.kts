@@ -11,7 +11,7 @@ dependencies {
     api("org.http4k:http4k-format-moshi") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 
     implementation("org.http4k:http4k-format-core")
 }

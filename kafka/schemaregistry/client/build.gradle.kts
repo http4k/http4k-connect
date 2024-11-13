@@ -9,19 +9,19 @@ plugins {
 }
 
 dependencies {
-    api(Libs.http4k_format_moshi) {
+    api("org.http4k:http4k-format-moshi") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
     implementation("org.apache.avro:avro:_")
 
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 
     testFixturesApi(libs.kotlin.reflect)
 
     testFixturesImplementation("org.apache.avro:avro:_")
 
-    testFixturesApi(Libs.api)
+    testFixturesApi("se.ansman.kotshi:api:_")
 }
 
 tasks {

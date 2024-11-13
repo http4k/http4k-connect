@@ -11,33 +11,5 @@
  */
 object Libs {
 
-    const val forkhandles_bom: String = "dev.forkhandles:forkhandles-bom:_"
 
-    const val parser4k: String = "dev.forkhandles:parser4k"
-
-    const val result4k: String = "dev.forkhandles:result4k"
-
-    const val values4k: String = "dev.forkhandles:values4k"
-
-    const val http4k_format_moshi: String = "org.http4k:http4k-format-moshi"
-
-    const val testcontainers: String = "org.testcontainers:testcontainers"
-
-    const val testcontainers_bom: String = "org.testcontainers:testcontainers-bom:_"
-
-    const val swagger_ui: String = "org.webjars:swagger-ui:_"
-
-    const val api: String = "se.ansman.kotshi:api:_"
-
-    const val se_ansman_kotshi_compiler: String = "se.ansman.kotshi:compiler:_"
-
-    const val bom: String = "software.amazon.awssdk:bom:_"
-
-    const val dynamodb: String = "software.amazon.awssdk:dynamodb"
-
-    const val s3: String = "software.amazon.awssdk:s3"
-
-    const val sqs: String = "software.amazon.awssdk:sqs"
-
-    const val sts: String = "software.amazon.awssdk:sts"
 }

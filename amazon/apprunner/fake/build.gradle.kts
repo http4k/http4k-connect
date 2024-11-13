@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    testFixturesApi(Libs.http4k_format_moshi)
+    testFixturesApi("org.http4k:http4k-format-moshi")
     testFixturesApi(project(path = ":http4k-connect-amazon-iamidentitycenter"))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

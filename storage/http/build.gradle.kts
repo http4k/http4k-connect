@@ -9,5 +9,5 @@ plugins {
 dependencies {
     api("org.http4k:http4k-contract")
     api("org.http4k:http4k-format-jackson")
-    api(Libs.swagger_ui)
+    api("org.webjars:swagger-ui:_")
 }

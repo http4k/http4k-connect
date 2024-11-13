@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     api(project(":http4k-connect-amazon-core"))
-    api(Libs.http4k_format_moshi) {
+    api("org.http4k:http4k-format-moshi") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
@@ -16,7 +16,7 @@ dependencies {
         exclude("org.http4k", "http4k-format-moshi")
     }
 
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
     testFixturesApi(libs.jose4j)
 
     testFixturesApi(testFixtures(project(":http4k-connect-core")))

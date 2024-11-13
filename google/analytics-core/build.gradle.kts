@@ -7,5 +7,5 @@ plugins {
 }
 
 dependencies {
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 }

@@ -7,8 +7,8 @@ plugins {
 }
 
 dependencies {
-    api(Libs.http4k_format_moshi) {
+    api("org.http4k:http4k-format-moshi") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 }

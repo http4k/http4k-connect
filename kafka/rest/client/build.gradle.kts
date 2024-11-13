@@ -14,13 +14,13 @@ dependencies {
     }
 
     implementation("org.apache.avro:avro:_")
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 
     testFixturesApi(libs.kotlin.reflect)
 
     testFixturesApi(project(":http4k-connect-kafka-rest-fake"))
     testFixturesImplementation("org.apache.avro:avro:_")
-    testFixturesApi(Libs.api)
+    testFixturesApi("se.ansman.kotshi:api:_")
 }
 
 tasks {

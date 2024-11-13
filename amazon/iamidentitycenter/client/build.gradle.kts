@@ -1,5 +1,3 @@
-import Libs.api
-
 import org.http4k.internal.ModuleLicense.Apache2
 
 val license by project.extra { Apache2 }
@@ -13,7 +11,7 @@ dependencies {
     api("org.http4k:http4k-format-moshi") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
-    implementation(Libs.api)
+    implementation("se.ansman.kotshi:api:_")
 
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))

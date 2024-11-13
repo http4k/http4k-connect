@@ -42,7 +42,7 @@ subprojects {
 
     dependencies {
         api(platform("org.http4k:http4k-bom:${project.properties["http4k_version"]}")) // manually set because of auto-upgrading
-        api(platform(Libs.forkhandles_bom))
+        api(platform("dev.forkhandles:forkhandles-bom:_"))
         api(Http4k.core)
         api("dev.forkhandles:result4k")
 
@@ -54,7 +54,7 @@ subprojects {
 
         testFixturesApi(Testing.junit.jupiter.api)
         testFixturesApi(Testing.junit.jupiter.engine)
-        testFixturesApi(platform(Libs.testcontainers_bom))
+        testFixturesApi(platform("org.testcontainers:testcontainers-bom:_"))
         testFixturesApi(Testing.junit.jupiter.params)
         testFixturesApi("org.testcontainers:junit-jupiter")
         testFixturesApi("org.testcontainers:testcontainers")
@@ -105,9 +105,9 @@ subprojects {
                 api(Http4k.cloudnative)
                 api(project(":http4k-connect-core"))
                 ksp(project(":http4k-connect-ksp-generator"))
-                ksp(Libs.se_ansman_kotshi_compiler)
+                ksp("se.ansman.kotshi:compiler:_")
 
-                testFixturesApi(Libs.se_ansman_kotshi_compiler)
+                testFixturesApi("se.ansman.kotshi:compiler:_")
                 testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
             }
         }
