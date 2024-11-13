@@ -6,30 +6,6 @@
 
 result4k = { module = "dev.forkhandles:result4k" }
 
-cloudfront = { module = "software.amazon.awssdk:cloudfront" }
-
-cognitoidentityprovider = { module = "software.amazon.awssdk:cognitoidentityprovider" }
-
-dynamodb = { module = "software.amazon.awssdk:dynamodb" }
-
-kms = { module = "software.amazon.awssdk:kms" }
-
-lambda = { module = "software.amazon.awssdk:lambda" }
-
-s3 = { module = "software.amazon.awssdk:s3" }
-
-secretsmanager = { module = "software.amazon.awssdk:secretsmanager" }
-
-ses = { module = "software.amazon.awssdk:ses" }
-
-sns = { module = "software.amazon.awssdk:sns" }
-
-sqs = { module = "software.amazon.awssdk:sqs" }
-
-ssm = { module = "software.amazon.awssdk:ssm" }
-
-sts = { module = "software.amazon.awssdk:sts" }
-
 symbol-processing-api = "com.google.devtools.ksp:symbol-processing-api:_"
 
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }

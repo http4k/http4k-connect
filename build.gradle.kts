@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("org.http4k.project-metadata")
     id("org.http4k.nexus")
-    id("com.google.devtools.ksp")
 
     id("org.http4k.connect.module")
 }
@@ -16,7 +15,6 @@ buildscript {
     }
     dependencies {
         classpath("com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_")
-        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_")
     }
 }
 
@@ -31,13 +29,6 @@ metadata {
 subprojects {
     apply(plugin = "org.http4k.module")
     apply(plugin = "org.http4k.connect.module")
-    apply(plugin = "com.google.devtools.ksp")
-
-    tasks {
-        withType<KspTask> {
-            outputs.upToDateWhen { false }
-        }
-    }
 
     dependencies {
         when {

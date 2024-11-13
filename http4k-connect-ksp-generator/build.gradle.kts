@@ -4,6 +4,7 @@ val license by project.extra { Apache2 }
 
 plugins {
     id("org.http4k.module")
+    id("com.google.devtools.ksp")
 }
 
 dependencies {
