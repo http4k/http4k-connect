@@ -1,5 +1,4 @@
 import com.google.devtools.ksp.gradle.KspTask
-import org.http4k.internal.ModuleLicense.Apache2
 
 plugins {
     kotlin("jvm")
@@ -28,9 +27,7 @@ metadata {
     )
 }
 
-allprojects {
-    val license by project.extra { Apache2 }
-
+subprojects {
     apply(plugin = "org.http4k.module")
 
     apply(plugin = "java-test-fixtures")
