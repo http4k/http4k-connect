@@ -18,7 +18,7 @@ dependencies {
     implementation("org.apache.avro:avro:_")
     implementation("se.ansman.kotshi:api:_")
 
-    testFixturesApi(libs.kotlin.reflect)
+    testFixturesApi("org.jetbrains.kotlin:kotlin-reflect")
 
     testFixturesApi(project(":http4k-connect-kafka-rest-fake"))
     testFixturesImplementation("org.apache.avro:avro:_")

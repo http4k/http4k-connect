@@ -15,13 +15,13 @@ dependencies {
     implementation("com.squareup:kotlinpoet:_")
     implementation("com.squareup:kotlinpoet-metadata:_")
     implementation("com.squareup:kotlinpoet-ksp:_")
-    implementation(libs.symbol.processing.api)
+    implementation("com.google.devtools.ksp:symbol-processing-api:_")
 
     ksp("se.ansman.kotshi:compiler:_")
 
     testFixturesApi("se.ansman.kotshi:api:_")
     testFixturesApi("org.http4k:http4k-format-moshi")
-    testFixturesApi(libs.result4k)
+    testFixturesApi("dev.forkhandles:result4k")
 
     kspTest(project(":http4k-connect-ksp-generator"))
     kspTestFixtures(project(":http4k-connect-ksp-generator"))

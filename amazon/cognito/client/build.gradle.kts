@@ -19,7 +19,7 @@ dependencies {
     }
 
     implementation("se.ansman.kotshi:api:_")
-    testFixturesApi(libs.jose4j)
+    testFixturesApi("org.bitbucket.b_c:jose4j:_")
 
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))

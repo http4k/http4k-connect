@@ -10,7 +10,7 @@ plugins {
 
 dependencies {
     api(Http4k.securityOauth)
-    implementation(libs.jose4j)
+    implementation("org.bitbucket.b_c:jose4j:_")
 
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

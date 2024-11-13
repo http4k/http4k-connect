@@ -19,7 +19,7 @@ dependencies {
 
     implementation("se.ansman.kotshi:api:_")
 
-    testFixturesApi(libs.kotlin.reflect)
+    testFixturesApi("org.jetbrains.kotlin:kotlin-reflect")
 
     testFixturesImplementation("org.apache.avro:avro:_")
 
