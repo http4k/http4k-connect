@@ -7,6 +7,6 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(path = ":http4k-connect-amazon-sns-fake"))
+    testFixturesApi(project(path = ":http4k-connect-amazon-sns-fake"))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

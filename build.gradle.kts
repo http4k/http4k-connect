@@ -84,13 +84,13 @@ allprojects {
 
             project.name.startsWith("http4k-connect-storage") -> {
                 api(project(":http4k-connect-storage-core"))
-                testImplementation(testFixtures(project(":http4k-connect-core-fake")))
-                testImplementation(testFixtures(project(":http4k-connect-storage-core")))
+                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
+                testFixturesApi(testFixtures(project(":http4k-connect-storage-core")))
             }
 
             project.name == "http4k-connect" -> {
                 rootProject.subprojects.forEach {
-                    testImplementation(project(it.name))
+                    testFixturesApi(project(it.name))
                 }
             }
 
@@ -113,7 +113,7 @@ allprojects {
                 ksp(project(":http4k-connect-ksp-generator"))
                 ksp(Libs.se_ansman_kotshi_compiler)
 
-                testImplementation(Libs.se_ansman_kotshi_compiler)
+                testFixturesApi(Libs.se_ansman_kotshi_compiler)
                 testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
             }
         }

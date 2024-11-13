@@ -9,5 +9,5 @@ plugins {
 dependencies {
 
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
-    testImplementation(project(":http4k-connect-amazon-sqs"))
+    testFixturesApi(project(":http4k-connect-amazon-sqs"))
 }

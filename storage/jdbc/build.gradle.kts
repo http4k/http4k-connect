@@ -11,6 +11,6 @@ dependencies {
     api(Libs.exposed_core)
     api(Libs.exposed_jdbc)
 
-    testImplementation(Libs.hikaricp)
-    testImplementation(Libs.h2)
+    testFixturesApi(Libs.hikaricp)
+    testFixturesApi(Libs.h2)
 }

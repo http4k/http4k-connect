@@ -10,7 +10,7 @@ dependencies {
     api(project(":http4k-connect-amazon-core"))
     api(Libs.http4k_serverless_lambda)
 
-    testImplementation(Libs.aws_lambda_java_events)
+    testFixturesApi(Libs.aws_lambda_java_events)
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

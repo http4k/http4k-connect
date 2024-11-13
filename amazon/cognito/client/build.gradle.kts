@@ -17,7 +17,7 @@ dependencies {
     }
 
     implementation(Libs.api)
-    testImplementation(libs.jose4j)
+    testFixturesApi(libs.jose4j)
 
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))

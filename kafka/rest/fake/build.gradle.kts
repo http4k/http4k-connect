@@ -9,5 +9,5 @@ plugins {
 dependencies {
     testFixturesApi(Libs.api)
 
-    testImplementation(project(":http4k-connect-kafka-rest"))
+    testFixturesApi(project(":http4k-connect-kafka-rest"))
 }

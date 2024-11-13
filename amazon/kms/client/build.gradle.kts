@@ -13,7 +13,7 @@ dependencies {
     }
     implementation(Libs.api)
 
-    testImplementation("org.bouncycastle:bcprov-jdk18on:_")
+    testFixturesApi("org.bouncycastle:bcprov-jdk18on:_")
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

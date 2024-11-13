@@ -16,5 +16,5 @@ dependencies {
     implementation(Libs.api)
     implementation(Libs.http4k_format_core)
 
-    testImplementation(Libs.http4k_testing_chaos)
+    testFixturesApi(Libs.http4k_testing_chaos)
 }

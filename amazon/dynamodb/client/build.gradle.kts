@@ -13,10 +13,10 @@ dependencies {
     }
     implementation(Libs.api)
 
-    testImplementation("org.jetbrains.kotlin", "kotlin-reflect")
-    testImplementation(Libs.http4k_serverless_lambda)
+    testFixturesApi("org.jetbrains.kotlin", "kotlin-reflect")
+    testFixturesApi(Libs.http4k_serverless_lambda)
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
-    testImplementation(project(path = ":http4k-connect-amazon-s3"))
+    testFixturesApi(project(path = ":http4k-connect-amazon-s3"))
 }

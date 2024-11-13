@@ -10,5 +10,5 @@ dependencies {
     api(project(":http4k-connect-amazon-s3"))
     implementation(Libs.http4k_format_moshi)
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-s3")))
-    testImplementation(project(":http4k-connect-amazon-s3-fake"))
+    testFixturesApi(project(":http4k-connect-amazon-s3-fake"))
 }

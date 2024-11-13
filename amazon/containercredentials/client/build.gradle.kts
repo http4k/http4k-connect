@@ -14,6 +14,6 @@ dependencies {
 
     implementation(Libs.api)
 
-    testImplementation(Libs.mockk)
+    testFixturesApi(Libs.mockk)
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }
