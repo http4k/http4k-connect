@@ -62,7 +62,6 @@ subprojects {
 
         when {
             project.name.endsWith("core-fake") -> {
-                api(project(":http4k-connect-core"))
             }
 
             project.name.endsWith("fake") -> {
@@ -73,7 +72,6 @@ subprojects {
             }
 
             project.name.startsWith("http4k-connect-storage-core") -> {
-                // bom - no code
             }
 
             project.name.startsWith("http4k-connect-storage") -> {
@@ -82,23 +80,11 @@ subprojects {
                 testFixturesApi(testFixtures(project(":http4k-connect-storage-core")))
             }
 
-            project.name == "http4k-connect" -> {
-                rootProject.subprojects.forEach {
-                    testFixturesApi(project(it.name))
-                }
-            }
-
             project.name == "http4k-connect-bom" -> {
                 // bom - no code
             }
 
-            project.name == "http4k-connect-kapt-generator" -> {
-                api(project(":http4k-connect-core"))
-            }
-
             project.name == "http4k-connect-ksp-generator" -> {
-                api(project(":http4k-connect-core"))
-                kspTest(project(":http4k-connect-ksp-generator"))
             }
 
             project.name != "http4k-connect-core" -> {
