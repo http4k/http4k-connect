@@ -13,11 +13,15 @@ pluginManagement {
             }
         }
     }
+
+    includeBuild("gradle/gradle-plugins")
 }
 
 plugins {
     id("de.fayard.refreshVersions").version("0.60.5")
 }
+
+rootProject.name = "http4k-connect"
 
 refreshVersions {
     enableBuildSrcLibs()
