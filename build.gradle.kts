@@ -108,32 +108,4 @@ subprojects {
         }
     }
 
-    tasks {
-        named<Jar>("jar") {
-            manifest {
-                attributes(
-                    mapOf(
-                        "Implementation-Title" to project.name,
-                        "Implementation-Vendor" to "org.http4k",
-                        "Implementation-Version" to project.version
-                    )
-                )
-            }
-        }
-    }
-
-    sourceSets {
-        main {
-            kotlin.srcDir("build/generated/ksp/main/kotlin")
-        }
-
-        test {
-            kotlin.srcDir("src/examples/kotlin")
-        }
-
-        testFixtures {
-            kotlin.srcDir("build/generated/ksp/testFixtures/kotlin")
-            kotlin.srcDir("build/generated-testFixtures-avro-java")
-        }
-    }
 }
