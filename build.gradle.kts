@@ -115,12 +115,6 @@ allprojects {
             }
         }
     }
-}
-
-subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "idea")
-    apply(plugin = "java-test-fixtures")
 
     tasks {
         named<Jar>("jar") {
