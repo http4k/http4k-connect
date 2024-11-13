@@ -8,6 +8,6 @@ plugins {
 
 dependencies {
     implementation(libs.parser4k)
-    testImplementation(project(path = ":http4k-connect-amazon-core", configuration = "testArtifacts"))
+    testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
     testImplementation(project(path = ":http4k-connect-amazon-s3"))
 }

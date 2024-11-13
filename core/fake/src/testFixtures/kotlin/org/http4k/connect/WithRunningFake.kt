@@ -1,7 +1,6 @@
 package org.http4k.connect
 
 import org.http4k.chaos.ChaoticHttpHandler
-import org.http4k.chaos.defaultLocalUri
 import org.http4k.chaos.start
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.HttpHandler

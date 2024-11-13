@@ -14,6 +14,6 @@ dependencies {
     implementation(Libs.api)
 
     testImplementation("org.bouncycastle:bcprov-jdk18on:_")
-    testImplementation(project(path = ":http4k-connect-core", configuration = "testArtifacts"))
-    testImplementation(project(path = ":http4k-connect-amazon-core", configuration = "testArtifacts"))
+    testFixturesApi(testFixtures(project(":http4k-connect-core")))
+    testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

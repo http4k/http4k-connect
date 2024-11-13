@@ -8,6 +8,7 @@ plugins {
     id("org.http4k.project-metadata")
     id("org.http4k.nexus")
     id("com.google.devtools.ksp")
+    `java-test-fixtures`
 }
 
 buildscript {
@@ -34,6 +35,8 @@ allprojects {
     val license by project.extra { Apache2 }
 
     apply(plugin = "org.http4k.module")
+
+    apply(plugin = "java-test-fixtures")
 
     apply(plugin = "com.google.devtools.ksp")
 
@@ -71,13 +74,8 @@ allprojects {
             project.name.endsWith("fake") -> {
                 api(project(":http4k-connect-core-fake"))
                 api(project(":${project.name.substring(0, project.name.length - 5)}"))
-                testImplementation(
-                    project(
-                        path = ":${project.name.substring(0, project.name.length - 5)}",
-                        configuration = "testArtifacts"
-                    )
-                )
-                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+                testFixturesApi(testFixtures(project(":${project.name.substring(0, project.name.length - 5)}")))
+                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
             }
 
             project.name.startsWith("http4k-connect-storage-core") -> {
@@ -116,7 +114,7 @@ allprojects {
                 ksp(Libs.se_ansman_kotshi_compiler)
 
                 testImplementation(Libs.se_ansman_kotshi_compiler)
-                testImplementation(project(path = ":http4k-connect-core-fake", configuration = "testArtifacts"))
+                testFixturesApi(testFixtures(project(":http4k-connect-core-fake")))
             }
         }
     }
@@ -138,10 +136,6 @@ subprojects {
                     )
                 )
             }
-        }
-
-        configurations.create("testArtifacts") {
-            extendsFrom(configurations["testApi"])
         }
     }
 

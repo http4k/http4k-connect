@@ -8,6 +8,6 @@ plugins {
 
 dependencies {
 
-    testImplementation(project(path = ":http4k-connect-amazon-core", configuration = "testArtifacts"))
+    testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
     testImplementation(project(":http4k-connect-amazon-sqs"))
 }
