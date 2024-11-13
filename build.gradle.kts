@@ -150,10 +150,4 @@ subprojects {
             kotlin.srcDir("build/generated-testFixtures-avro-java")
         }
     }
-
-    sourceSets {
-        test {
-            kotlin.srcDir("$projectDir/src/examples/kotlin")
-        }
-    }
 }
