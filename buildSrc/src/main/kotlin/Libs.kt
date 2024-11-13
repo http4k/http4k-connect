@@ -12,12 +12,6 @@
 object Libs {
     const val aws_lambda_java_events: String = "com.amazonaws:aws-lambda-java-events:_"
 
-    const val com_google_devtools_ksp_com_google_devtools_ksp_gradle_plugin: String =
-        "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:_"
-
-    const val com_github_kt3k_coveralls_gradle_plugin: String =
-        "com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_"
-
     const val h2: String = "com.h2database:h2:_"
 
     const val kotlinpoet: String = "com.squareup:kotlinpoet:_"
@@ -28,12 +22,7 @@ object Libs {
 
     const val hikaricp: String = "com.zaxxer:HikariCP:_"
 
-    const val de_fayard_buildsrclibs_gradle_plugin: String =
-        "de.fayard.buildSrcLibs:de.fayard.buildSrcLibs.gradle.plugin:_"
-
     const val forkhandles_bom: String = "dev.forkhandles:forkhandles-bom:_"
-
-    const val data4k: String = "dev.forkhandles:data4k"
 
     const val parser4k: String = "dev.forkhandles:parser4k"
 
@@ -50,8 +39,6 @@ object Libs {
     const val http4k_cloudnative: String = "org.http4k:http4k-cloudnative"
 
     const val http4k_contract: String = "org.http4k:http4k-contract"
-
-    const val http4k_core: String = "org.http4k:http4k-core"
 
     const val http4k_format_core: String = "org.http4k:http4k-format-core"
 
@@ -75,21 +62,9 @@ object Libs {
 
     const val exposed_jdbc: String = "org.jetbrains.exposed:exposed-jdbc:_"
 
-    const val kotlin_annotation_processing_gradle: String =
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:_"
-
-    const val kotlin_gradle_plugin: String = "org.jetbrains.kotlin:kotlin-gradle-plugin:_"
-
-    const val kotlin_scripting_compiler_embeddable: String =
-        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:_"
-
     const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api"
 
-    const val junit_jupiter_engine: String = "org.junit.jupiter:junit-jupiter-engine"
-
     const val junit_bom: String = "org.junit:junit-bom:_"
-
-    const val junit_jupiter: String = "org.testcontainers:junit-jupiter"
 
     const val testcontainers: String = "org.testcontainers:testcontainers"
 
@@ -105,8 +80,6 @@ object Libs {
 
     const val cloudfront: String = "software.amazon.awssdk:cloudfront"
 
-    const val cognitoidentityprovider: String = "software.amazon.awssdk:cognitoidentityprovider"
-
     const val dynamodb: String = "software.amazon.awssdk:dynamodb"
 
     const val kms: String = "software.amazon.awssdk:kms"
@@ -120,8 +93,6 @@ object Libs {
     const val sns: String = "software.amazon.awssdk:sns"
 
     const val sqs: String = "software.amazon.awssdk:sqs"
-
-    const val ssm: String = "software.amazon.awssdk:ssm"
 
     const val sts: String = "software.amazon.awssdk:sts"
 }
