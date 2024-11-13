@@ -1,3 +1,7 @@
+@file:Suppress("UnstableApiUsage")
+
+rootProject.name = "http4k-connect"
+
 pluginManagement {
     repositories {
         mavenLocal {
@@ -22,10 +26,9 @@ plugins {
 }
 
 refreshVersions {
-    enableBuildSrcLibs()
-
     rejectVersionIf {
-        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel)
+        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel) ||
+            setOf("milestone", "-RC").map { it.lowercase() }.any { candidate.value.contains(it) }
     }
 }
 
