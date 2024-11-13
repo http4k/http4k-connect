@@ -1,21 +1,9 @@
-import com.google.devtools.ksp.gradle.KspTask
-
 plugins {
     kotlin("jvm")
     id("org.http4k.project-metadata")
     id("org.http4k.nexus")
-
+    id("com.google.devtools.ksp")
     id("org.http4k.connect.module")
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:_")
-    }
 }
 
 metadata {
@@ -27,9 +15,6 @@ metadata {
 }
 
 subprojects {
-    apply(plugin = "org.http4k.module")
-    apply(plugin = "org.http4k.connect.module")
-
     dependencies {
         when {
             project.name.endsWith("core-fake") -> {

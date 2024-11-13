@@ -6,6 +6,7 @@ val license by project.extra { Apache2 }
 plugins {
     id("com.github.davidmc24.gradle.plugin.avro")
     id("org.http4k.module")
+    id("org.http4k.connect.module")
 }
 
 dependencies {
