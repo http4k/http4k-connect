@@ -13,17 +13,3 @@ metadata {
         "Albert Latacz" to "albert@http4k.org"
     )
 }
-
-subprojects {
-    dependencies {
-        when {
-            project.name.endsWith("core-fake") -> {
-            }
-
-            project.name.endsWith("fake") -> {
-                apply(plugin = "org.http4k.connect.fake")
-            }
-        }
-    }
-
-}
