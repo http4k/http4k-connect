@@ -54,17 +54,17 @@ allprojects {
 
         ksp("se.ansman.kotshi:compiler:_")
 
-        testImplementation(platform(Libs.junit_bom))
-        testImplementation(Http4k.testing.hamkrest)
-        testImplementation(Http4k.testing.approval)
+        testFixturesApi(platform(Libs.junit_bom))
+        testFixturesApi(Http4k.testing.hamkrest)
+        testFixturesApi(Http4k.testing.approval)
 
-        testImplementation(Testing.junit.jupiter.api)
-        testImplementation(Testing.junit.jupiter.engine)
-        testImplementation(platform(Libs.testcontainers_bom))
-        testImplementation(Testing.junit.jupiter.params)
-        testImplementation("org.testcontainers:junit-jupiter")
-        testImplementation("org.testcontainers:testcontainers")
-        testImplementation("dev.forkhandles:mock4k")
+        testFixturesApi(Testing.junit.jupiter.api)
+        testFixturesApi(Testing.junit.jupiter.engine)
+        testFixturesApi(platform(Libs.testcontainers_bom))
+        testFixturesApi(Testing.junit.jupiter.params)
+        testFixturesApi("org.testcontainers:junit-jupiter")
+        testFixturesApi("org.testcontainers:testcontainers")
+        testFixturesApi("dev.forkhandles:mock4k")
 
         when {
             project.name.endsWith("core-fake") -> {
