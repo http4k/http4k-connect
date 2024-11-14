@@ -11,7 +11,7 @@ plugins {
 }
 
 dependencies {
-    api("org.http4k:http4k-format-moshi") {
+    api("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 

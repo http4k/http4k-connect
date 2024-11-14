@@ -9,14 +9,14 @@ plugins {
 }
 
 dependencies {
-    api("org.http4k:http4k-aws")
+    api("org.http4k:http4k-aws:${rootProject.properties["http4k_version"]}")
 
-    api("org.http4k:http4k-format-moshi") {
+    api("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
     implementation("se.ansman.kotshi:api:_")
-    implementation("org.http4k:http4k-format-core")
+    implementation("org.http4k:http4k-format-core:${rootProject.properties["http4k_version"]}")
 
-    testFixturesApi("org.http4k:http4k-testing-chaos")
+    testFixturesApi("org.http4k:http4k-testing-chaos:${rootProject.properties["http4k_version"]}")
 }

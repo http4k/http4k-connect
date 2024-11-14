@@ -9,6 +9,6 @@ plugins {
 }
 
 dependencies {
-    implementation("org.http4k:http4k-format-moshi")
+    implementation("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}")
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

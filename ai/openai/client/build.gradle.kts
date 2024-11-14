@@ -12,7 +12,7 @@ dependencies {
     api(project(":http4k-connect-ai-core"))
     implementation("se.ansman.kotshi:api:_")
 
-    testApi("org.http4k:http4k-cloudnative")
-    testApi("org.http4k:http4k-format-moshi")
+    testApi("org.http4k:http4k-cloudnative:${rootProject.properties["http4k_version"]}")
+    testApi("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}")
     testFixturesApi(testFixtures(project(":http4k-connect-core")))
 }

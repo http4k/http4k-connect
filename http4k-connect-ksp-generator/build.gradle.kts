@@ -11,7 +11,7 @@ plugins {
 dependencies {
     api(project(":http4k-connect-core"))
 
-    implementation("org.http4k:http4k-format-moshi")
+    implementation("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}")
     implementation("com.squareup:kotlinpoet:_")
     implementation("com.squareup:kotlinpoet-metadata:_")
     implementation("com.squareup:kotlinpoet-ksp:_")
@@ -20,7 +20,7 @@ dependencies {
     ksp("se.ansman.kotshi:compiler:_")
 
     testFixturesApi("se.ansman.kotshi:api:_")
-    testFixturesApi("org.http4k:http4k-format-moshi")
+    testFixturesApi("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}")
     testFixturesApi("dev.forkhandles:result4k")
 
     kspTest(project(":http4k-connect-ksp-generator"))

@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-    api("org.http4k:http4k-format-moshi")
+    api("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}")
     api("org.jetbrains.exposed:exposed-core:_")
     api("org.jetbrains.exposed:exposed-jdbc:_")
 

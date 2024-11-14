@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.http4k:http4k-format-moshi")
+    implementation("org.http4k:http4k-format-moshi:${rootProject.properties["http4k_version"]}")
     implementation("dev.forkhandles:values4k")
     implementation(kotlin("script-runtime"))
 }
