@@ -81,11 +81,11 @@
         {
           "name": "gradle-plugins-0.0.0.0.jar",
           "url": "gradle-plugins-0.0.0.0.jar",
-          "size": 1502052,
-          "sha512": "8e419fd7cace6a80ac6b60f29d641d1d2296db6a77bdcfc5e6acddbd520e67acdd615bf15fe08915a791844c2a96f893df8b87278a59a5764a21498f3da86fdd",
-          "sha256": "d9bd06b782d966e953d1065c24d20097aeeddf9b18f8e457b1911785085d55d0",
-          "sha1": "6d796062c435cad107d6758abf1782a0bc2709f2",
-          "md5": "02a32491f17a5b484672923e6da8d652"
+          "size": 1502150,
+          "sha512": "d3cc3adf4ed414f9c2597f6d8b4db1cc301a4dcfe47f37c5a25aeacb2cc2858dbf16c9446525757fe830236d6f4ae0ad068926df61db4ccebdbe17a9669e4e8b",
+          "sha256": "b9ea957db77cc8f56cbd17eb4bcd820561e6cd9987328a7bf16c12bf30e6714c",
+          "sha1": "c3541f70e2422c66d2ac6c79c90780ca9cc2cc5a",
+          "md5": "d4eafb58526d4c97a01d88195a58f0dc"
         }
       ]
     },
@@ -156,11 +156,11 @@
         {
           "name": "gradle-plugins-0.0.0.0.jar",
           "url": "gradle-plugins-0.0.0.0.jar",
-          "size": 1502052,
-          "sha512": "8e419fd7cace6a80ac6b60f29d641d1d2296db6a77bdcfc5e6acddbd520e67acdd615bf15fe08915a791844c2a96f893df8b87278a59a5764a21498f3da86fdd",
-          "sha256": "d9bd06b782d966e953d1065c24d20097aeeddf9b18f8e457b1911785085d55d0",
-          "sha1": "6d796062c435cad107d6758abf1782a0bc2709f2",
-          "md5": "02a32491f17a5b484672923e6da8d652"
+          "size": 1502150,
+          "sha512": "d3cc3adf4ed414f9c2597f6d8b4db1cc301a4dcfe47f37c5a25aeacb2cc2858dbf16c9446525757fe830236d6f4ae0ad068926df61db4ccebdbe17a9669e4e8b",
+          "sha256": "b9ea957db77cc8f56cbd17eb4bcd820561e6cd9987328a7bf16c12bf30e6714c",
+          "sha1": "c3541f70e2422c66d2ac6c79c90780ca9cc2cc5a",
+          "md5": "d4eafb58526d4c97a01d88195a58f0dc"
         }
       ]
     }
