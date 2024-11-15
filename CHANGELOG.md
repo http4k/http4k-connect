@@ -4,8 +4,8 @@ This list is not intended to be all-encompassing - it will document major and br
 changes with their rationale when appropriate. Given version `A.B.C.D`, breaking changes are to be expected in version number increments where changes in the `A` or `B` sections:
 
 ### v5.26.0.2
-- **http4k-connect-*** - [Fix] Missing dev.forkhandles:parser4k dependency in http4k-connect-amazon-dynamodb
-- **http4k-connect-*** - [Fix] Readd implementation dependencies as removed during refactor of build
+- **http4k-connect-*** - [Fix again!] Missing dev.forkhandles:parser4k dependency in http4k-connect-amazon-dynamodb
+- **http4k-connect-*** - [Fix again!] Readd implementation dependencies as removed during refactor of build
 
 ### v5.26.0.1
 - **http4k-connect-*** - [Fix] Missing dev.forkhandles:parser4k dependency in http4k-connect-amazon-dynamodb
