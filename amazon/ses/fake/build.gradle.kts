@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.http4k:http4k-template-pebble:${rootProject.properties["http4k_version"]}")
+    api("org.http4k:http4k-template-pebble:${rootProject.properties["http4k_version"]}")
 
     testFixturesApi(testFixtures(project(":http4k-connect-amazon-core")))
 }

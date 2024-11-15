@@ -15,5 +15,5 @@ dependencies {
     }
     implementation("se.ansman.kotshi:api:_")
 
-    implementation("org.http4k:http4k-format-core:${rootProject.properties["http4k_version"]}")
+    api("org.http4k:http4k-format-core:${rootProject.properties["http4k_version"]}")
 }

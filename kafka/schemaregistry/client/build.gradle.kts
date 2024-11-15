@@ -15,7 +15,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
 
-    implementation("org.apache.avro:avro:_")
+    api("org.apache.avro:avro:_")
 
     implementation("se.ansman.kotshi:api:_")
 

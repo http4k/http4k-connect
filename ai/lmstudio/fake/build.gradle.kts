@@ -10,5 +10,5 @@ plugins {
 
 dependencies {
     api("org.http4k:http4k-template-pebble:${rootProject.properties["http4k_version"]}")
-    implementation("de.sven-jacobs:loremipsum:_")
+    api("de.sven-jacobs:loremipsum:_")
 }
